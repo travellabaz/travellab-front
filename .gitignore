@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-server
 .claude
 dist-ssr
 *.local
