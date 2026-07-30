@@ -1,8 +1,9 @@
+import { Link } from 'react-router-dom';
 import LogoFull from './LogoFull';
 import { useModals } from '../context/ModalContext';
 
 export default function Footer() {
-  const { openPrivacy, openTerms } = useModals();
+  const { openPrivacy, openTerms, openAuth } = useModals();
   const year = new Date().getFullYear();
 
   return (
@@ -14,6 +15,27 @@ export default function Footer() {
               <LogoFull style={{ height: 24, width: 'auto' }} />
             </a>
             <p>Azərbaycanın aparıcı travel platforması. Biletlər, otellər, turlar — hamısı bir yerdə.</p>
+          </div>
+
+          <div className="tl-footer-cols">
+            <div className="tl-footer-col">
+              <div className="tl-footer-col-title">Şirkət</div>
+              <Link to="/about">Haqqımızda</Link>
+              <Link to="/blog">Xəbərlər</Link>
+              <Link to="/blog">Bloqlar</Link>
+              <a href="mailto:info@travellab.az">Yardım</a>
+            </div>
+            <div className="tl-footer-col">
+              <div className="tl-footer-col-title">Hesab</div>
+              <a href="#" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>Daxil ol</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>Qeydiyyat</a>
+            </div>
+            <div className="tl-footer-col">
+              <div className="tl-footer-col-title">Hüquqi</div>
+              <a href="#" onClick={(e) => { e.preventDefault(); openPrivacy(); }}>Məxfilik Siyasəti</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); openTerms(); }}>Şərtlər və Qaydalar</a>
+              <a href="mailto:info@travellab.az">Əlaqə</a>
+            </div>
           </div>
         </div>
 
@@ -70,15 +92,7 @@ export default function Footer() {
 
         <div className="tl-footer-bottom">
           <span>© {year} Travellab. Bütün hüquqlar qorunur.</span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); openPrivacy(); }} style={{ color: 'inherit', textDecoration: 'none' }}>
-              Məxfilik Siyasəti
-            </a>
-            <a href="#" onClick={(e) => { e.preventDefault(); openTerms(); }} style={{ color: 'inherit', textDecoration: 'none' }}>
-              Şərtlər və Qaydalar
-            </a>
-            <span>🇦🇿 Bakı, Azərbaycan</span>
-          </span>
+          <span>🇦🇿 Bakı, Azərbaycan</span>
         </div>
       </div>
     </footer>

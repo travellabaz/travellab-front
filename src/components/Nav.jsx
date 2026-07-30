@@ -6,14 +6,14 @@ import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 
 const NAV_LINKS = [
-  { to: '/search', label: 'Uçuşlar' },
-  { to: '/hotels', label: 'Otellər' },
-  { to: '/tours', label: 'Turlar' },
-  { to: '/labpoint', label: 'Labpoint' },
-  { to: '/events', label: 'Tədbirlər' },
-  { to: '/viza', label: 'Viza' },
-  { to: '/about', label: 'Haqqımızda' },
-  { to: '/blog', label: 'Blog' },
+  { to: '/search', label: 'Uçuşlar', icon: '✈' },
+  { to: '/hotels', label: 'Otellər', icon: '🏨' },
+  { to: '/tours', label: 'Turlar', icon: '🧳' },
+  { to: '/labpoint', label: 'Labpoint', icon: '⭐' },
+  { to: '/events', label: 'Tədbirlər', icon: '🎫' },
+  { to: '/viza', label: 'Viza', icon: '🛂' },
+  { to: '/about', label: 'Haqqımızda', icon: 'ℹ' },
+  { to: '/blog', label: 'Blog', icon: '📝' },
 ];
 
 export default function Nav() {
@@ -30,6 +30,7 @@ export default function Nav() {
         {NAV_LINKS.map((link) => (
           <li key={link.to}>
             <NavLink to={link.to} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
+              <span className="tl-nav-icon" aria-hidden="true">{link.icon}</span>
               {link.label}
             </NavLink>
           </li>

@@ -150,7 +150,7 @@ export default function VizaSection() {
             ) : (
               <div style={{ textAlign: 'center' }}>
                 <div className="tl-viza-done-ico">✓</div>
-                <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
+                <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
                   Müraciətiniz qəbul edildi
                 </h3>
                 <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>

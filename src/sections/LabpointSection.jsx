@@ -5,6 +5,25 @@ const TIERS = [
   { icon: '💎', name: 'VIP', pts: '50,000+' },
 ];
 
+const FAQ = [
+  {
+    q: 'Bonusumu nə vaxt istifadə edə bilərəm?',
+    a: 'Qazandığınız Labpoint balları dərhal hesabınıza yazılır və növbəti sifarişinizdə birbaşa tətbiq edə bilərsiniz.',
+  },
+  {
+    q: 'İlk alış bonusu nə zaman keçərlidir?',
+    a: 'İlk sifarişinizdə qazandığınız bonus yalnız növbəti alışınızda istifadə oluna bilər.',
+  },
+  {
+    q: 'LabPoint bonuslarımı başqası ilə bölüşə bilərəm?',
+    a: 'Ballar şəxsi hesabınıza bağlıdır və birbaşa köçürülmür — lakin dostunuzu dəvət etsəniz, hər ikiniz bonus qazanırsınız.',
+  },
+  {
+    q: 'LabPoint ilə hara səyahət edə bilərəm?',
+    a: 'Bilet, otel və tur sifarişlərinin hamısında — Travellab-ın təklif etdiyi bütün istiqamətlərdə.',
+  },
+];
+
 export default function LabpointSection() {
   return (
     <section id="labpoint" className="tl-page-top">
@@ -67,6 +86,18 @@ export default function LabpointSection() {
                 <div className="tl-lp-stat-l">Cari səviyyə</div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="tl-lp-faq">
+          <h3 className="tl-lp-faq-title">Tez-tez verilən suallar</h3>
+          <div className="tl-lp-faq-list">
+            {FAQ.map((item) => (
+              <details className="tl-lp-faq-item" key={item.q}>
+                <summary>{item.q}</summary>
+                <p>{item.a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </div>

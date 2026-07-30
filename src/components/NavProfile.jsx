@@ -45,7 +45,7 @@ export default function NavProfile() {
         </div>
         {profile.referralLink && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--tl-gray-200)', marginBottom: 6 }}>
-            <div style={{ fontSize: 10, color: 'rgba(14,42,61,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
+            <div style={{ fontSize: 10, color: 'rgba(29,41,57,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
               🎁 Dosta dəvət linki
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
@@ -61,7 +61,7 @@ export default function NavProfile() {
                   padding: '0 10px',
                   color: 'var(--tl-navy)',
                   fontSize: 11,
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Geist Sans', sans-serif",
                   outline: 'none',
                 }}
               />
@@ -77,7 +77,7 @@ export default function NavProfile() {
                   color: '#0D1520',
                   fontSize: 11,
                   fontWeight: 700,
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontFamily: "'Geist Sans', sans-serif",
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                 }}

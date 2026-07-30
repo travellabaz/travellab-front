@@ -76,8 +76,8 @@ export default function PrivacyModal() {
         <div
           style={{
             display: 'inline-block',
-            background: 'rgba(12,138,70,0.1)',
-            border: '1px solid rgba(12,138,70,0.25)',
+            background: 'rgba(4,149,72,0.1)',
+            border: '1px solid rgba(4,149,72,0.25)',
             borderRadius: 100,
             padding: '4px 14px',
             fontSize: 11,
@@ -90,10 +90,10 @@ export default function PrivacyModal() {
         >
           Gizlilik Siyasəti
         </div>
-        <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 6, letterSpacing: '-0.5px' }}>
+        <h2 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 24, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 6, letterSpacing: '-0.5px' }}>
           Gizlilik Siyasəti – Travellab
         </h2>
-        <p style={{ fontSize: 13, color: 'rgba(14,42,61,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 13, color: 'rgba(29,41,57,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
           Travellab, sizin şəxsi məlumatlarınızın məxfiliyini qorumağa sadiqdir. Bu Gizlilik Siyasəti,{' '}
           <a href="https://www.travellab.az" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--tl-green)' }}>
             www.travellab.az
@@ -165,7 +165,7 @@ export default function PrivacyModal() {
           <div className="pv-contact">
             <span style={{ fontSize: 20 }}>📧</span>
             <div>
-              <div style={{ fontSize: 12, color: 'rgba(14,42,61,0.5)', marginBottom: 2 }}>Sual və narahatlıqlarınız üçün:</div>
+              <div style={{ fontSize: 12, color: 'rgba(29,41,57,0.5)', marginBottom: 2 }}>Sual və narahatlıqlarınız üçün:</div>
               <a href="mailto:info@travellab.az">info@travellab.az</a>
             </div>
           </div>

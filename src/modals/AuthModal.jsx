@@ -161,7 +161,7 @@ export default function AuthModal() {
       if (ok) {
         countdown.start(0);
         if (sessionRef.current.flow === 'reg') {
-          setSuccessMsg('Hesabınız uğurla yaradıldı!');
+          setSuccessMsg('Qeydiyyatınız uğurla tamamlanmışdır!');
           setSuccessAction(() => () => {
             setTab('login');
             setPage('main');
@@ -332,7 +332,7 @@ export default function AuthModal() {
                   </div>
                 </div>
                 <div className="am-group">
-                  <label className="am-label">Telefon</label>
+                  <label className="am-label">Mobil Nömrə (Whatsapp aktiv olan nömrə)</label>
                   <div className="am-ph-row">
                     <div className="am-prefix">🇦🇿 +994</div>
                     <input className="am-input" type="tel" placeholder="50 XXX XX XX" maxLength={9} value={reg.phone} onChange={(e) => setReg((r) => ({ ...r, phone: e.target.value }))} />
@@ -363,7 +363,7 @@ export default function AuthModal() {
                     onChange={(e) => setReg((r) => ({ ...r, terms: e.target.checked }))}
                     style={{ width: 18, height: 18, marginTop: 1, accentColor: 'var(--tl-green)', flexShrink: 0, cursor: 'pointer' }}
                   />
-                  <span style={{ fontSize: 12, color: 'rgba(14,42,61,.6)', lineHeight: 1.5 }}>
+                  <span style={{ fontSize: 12, color: 'rgba(29,41,57,.6)', lineHeight: 1.5 }}>
                     <a
                       href="#"
                       onClick={(e) => { e.preventDefault(); openTerms(); }}
@@ -375,7 +375,7 @@ export default function AuthModal() {
                   </span>
                 </label>
                 <button className={'am-btn' + (regLoading ? ' ld' : '')} disabled={regLoading} onClick={submitRegister}>
-                  <span className="bt">Qeydiyyatdan keç</span>
+                  <span className="bt">Davam et</span>
                   <div className="sp" />
                 </button>
               </div>
@@ -385,7 +385,7 @@ export default function AuthModal() {
                 <div className="am-sub">Hesabınıza daxil olun</div>
                 {loginMsg && <div className="am-msg er show">{loginMsg}</div>}
                 <div className="am-group">
-                  <label className="am-label">Telefon</label>
+                  <label className="am-label">Mobil Nömrə</label>
                   <div className="am-ph-row">
                     <div className="am-prefix">🇦🇿 +994</div>
                     <input className="am-input" type="tel" placeholder="50 XXX XX XX" maxLength={9} value={login.phone} onChange={(e) => setLogin((l) => ({ ...l, phone: e.target.value }))} />
@@ -438,7 +438,7 @@ export default function AuthModal() {
               <div className="sp" />
             </button>
             <div style={{ textAlign: 'center', marginTop: 11 }}>
-              <span style={{ fontSize: 12, color: 'rgba(14,42,61,.45)' }}>Kod gəlmədi? </span>
+              <span style={{ fontSize: 12, color: 'rgba(29,41,57,.45)' }}>Kod gəlmədi? </span>
               <button className="am-link" disabled={countdown.secondsLeft > 0} onClick={resend}>Yenidən göndər</button>
             </div>
           </div>
@@ -447,18 +447,18 @@ export default function AuthModal() {
         {page === 'fg' && (
           <div className="am-page active">
             <button className="am-back" onClick={() => setPage('main')}>← Geri</button>
-            <div className="am-title">Şifrəmi unutdum</div>
-            <div className="am-sub">Telefon nömrənizə WhatsApp OTP göndərəcəyik.</div>
+            <div className="am-title">Şifrəni yenilə</div>
+            <div className="am-sub">Şifrəni yeniləmək üçün ilk öncə qeydiyyatda olan mobil nömrənizi daxil edin.</div>
             {forgotMsg && <div className="am-msg er show">{forgotMsg}</div>}
             <div className="am-group">
-              <label className="am-label">Telefon</label>
+              <label className="am-label">Mobil Nömrə (Whatsapp aktiv olan nömrə)</label>
               <div className="am-ph-row">
                 <div className="am-prefix">🇦🇿 +994</div>
                 <input className="am-input" type="tel" placeholder="50 XXX XX XX" maxLength={9} value={forgotPhone} onChange={(e) => setForgotPhone(e.target.value)} />
               </div>
             </div>
             <button className={'am-btn' + (forgotLoading ? ' ld' : '')} disabled={forgotLoading} onClick={submitForgot}>
-              <span className="bt">OTP göndər</span>
+              <span className="bt">Davam et</span>
               <div className="sp" />
             </button>
           </div>

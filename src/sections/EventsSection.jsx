@@ -82,7 +82,7 @@ export default function EventsSection() {
               borderRadius: 12,
               border: '1px solid var(--tl-gray-200)',
               padding: '0 16px',
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Geist Sans', sans-serif",
               fontSize: 14,
               color: 'var(--tl-navy)',
               outline: 'none',

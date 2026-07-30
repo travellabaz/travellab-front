@@ -5,7 +5,7 @@ body {
   box-sizing: border-box;
   color: var(--tpwl-main-text);
   background-color: var(--tpwl-search-result-background);
-  font-family: var(--tpwl-font-family), 'DM Sans', sans-serif;
+  font-family: var(--tpwl-font-family), 'Geist Sans', sans-serif;
 }
 
 body a {
@@ -172,30 +172,38 @@ html {
     --tpwl-search-result-background: #F6F8F7;
     --tpwl-search-form-background: #FFFFFF;
     --tpwl-links: #0C8A46;
-    --tpwl-font-family: 'DM Sans';
+    --tpwl-font-family: 'Geist Sans';
   }
 }
 
 :root {
-  --tl-green: #0C8A46;
-  --tl-green-dark: #096B37;
+  /* Brand palette — from the Figma redesign (Design page, frame 65:3443
+     + Login/Register/Success modals). Green/orange are the same brand
+     colors as before (orange is an exact match); green and the navy/gray
+     text scale are updated to Figma's exact values. */
+  --tl-green: #049548;
+  --tl-green-dark: #037A3A;
   --tl-green-light: #E4F5EA;
+  --tl-blue: #0C75BA;
+  --tl-blue-dark: #0774BA;
   --tl-orange: #F5A623;
   --tl-orange-dark: #E08E00;
   --tl-hero-orange: #FCB148;
-  --tl-navy: #0E2A3D;
+  --tl-navy: #1D2939;
   --tl-navy2: #0A2030;
   --tl-teal: #0C4A4A;
   --tl-gray-50: #F6F8F7;
   --tl-gray-100: #EEF2EF;
   --tl-gray-200: #E3E9E5;
-  --tl-gray-400: #93A3A0;
-  --tl-gray-600: #52645F;
+  --tl-gray-400: #999CA0;
+  --tl-gray-600: #475467;
+  --tl-gray-700: #344054;
   --tl-white: #FFFFFF;
-  --tl-r-sm: 10px;
-  --tl-r-md: 14px;
-  --tl-r-lg: 22px;
-  --tl-r-xl: 30px;
+  --tl-r-xs: 4px;
+  --tl-r-sm: 8px;
+  --tl-r-md: 16px;
+  --tl-r-lg: 24px;
+  --tl-r-xl: 32px;
   --tl-shadow: 0 8px 32px rgba(10, 30, 25, 0.08);
   --tl-shadow-lg: 0 24px 64px rgba(10, 30, 25, 0.16);
 }
@@ -228,7 +236,7 @@ html {
 }
 
 .tl-logo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-weight: 800;
   font-size: 22px;
   color: var(--tl-navy);
@@ -258,12 +266,21 @@ html {
 }
 
 .tl-nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--tl-gray-600);
   text-decoration: none;
   font-size: 13px;
-  padding: 6px 14px;
-  border-radius: 8px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 100px;
   transition: all 0.2s;
+}
+
+.tl-nav-icon {
+  font-size: 13px;
+  line-height: 1;
 }
 
 .tl-nav-links a:hover {
@@ -273,8 +290,8 @@ html {
 }
 
 .tl-nav-links a.active {
-  color: var(--tl-navy);
-  background: var(--tl-gray-100);
+  color: #fff;
+  background: var(--tl-green);
   font-weight: 700;
 }
 
@@ -522,7 +539,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-hero h1 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: clamp(34px, 5.5vw, 60px);
   font-weight: 800;
   color: #fff;
@@ -623,7 +640,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 26px;
   font-weight: 800;
   color: var(--tl-navy);
@@ -661,7 +678,7 @@ body:not(.tl-subpage) .tl-about-extra {
   border: 1.5px solid var(--tl-gray-200);
   background: var(--tl-white);
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   color: var(--tl-gray-600);
   cursor: pointer;
   transition: all 0.2s;
@@ -761,7 +778,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-pkg-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: var(--tl-navy);
@@ -785,7 +802,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-price-now {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 19px;
   font-weight: 800;
   color: var(--tl-navy);
@@ -817,7 +834,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #fff;
   font-size: 13px;
   font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   border: none;
   cursor: pointer;
   transition: 0.2s;
@@ -879,7 +896,7 @@ body:not(.tl-subpage) .tl-about-extra {
   border: 1.5px solid rgba(255, 255, 255, 0.12);
   background: transparent;
   font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   transition: 0.2s;
@@ -939,7 +956,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-idea-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   font-weight: 700;
   color: #fff;
@@ -957,7 +974,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 16px;
   font-weight: 700;
   color: var(--tl-green);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
 }
 
 .tl-idea-price .old {
@@ -995,7 +1012,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-cta-text h2 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 30px;
   font-weight: 800;
   color: #fff;
@@ -1028,7 +1045,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-cta-btn {
   background: var(--tl-green);
   color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   font-weight: 700;
   padding: 14px 32px;
@@ -1102,7 +1119,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-hotel-visual-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 17px;
   font-weight: 700;
   color: #fff;
@@ -1130,7 +1147,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-hotel-stat-n {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
   color: #0C75BA;
@@ -1179,7 +1196,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-viza-input {
   width: 100%;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   color: var(--tl-navy);
   background: var(--tl-white);
@@ -1197,7 +1214,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-viza-input:focus {
   border-color: var(--tl-green);
-  box-shadow: 0 0 0 3px rgba(12, 138, 70, .1);
+  box-shadow: 0 0 0 3px rgba(4, 149, 72, .1);
 }
 
 .tl-viza-textarea {
@@ -1250,7 +1267,7 @@ body:not(.tl-subpage) .tl-about-extra {
   cursor: pointer;
   background: var(--tl-green);
   color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   font-weight: 700;
   border-radius: 12px;
@@ -1331,7 +1348,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #fff;
   font-size: 14px;
   font-weight: 700;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   border: 0;
   border-radius: 12px;
   cursor: pointer;
@@ -1349,7 +1366,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-viza-visual h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: #fff;
@@ -1425,7 +1442,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-viza-stat-n {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 16px;
   font-weight: 700;
   color: var(--tl-orange);
@@ -1445,7 +1462,7 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   gap: 8px;
   color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   font-weight: 700;
   padding: 12px 24px;
@@ -1489,7 +1506,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-lp-logo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 34px;
   font-weight: 800;
   background: linear-gradient(135deg, #0C75BA, #F5A623);
@@ -1577,7 +1594,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-lp-cv-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: #fff;
@@ -1590,7 +1607,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-lp-cv-bal {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 26px;
   font-weight: 800;
   color: #fff;
@@ -1616,7 +1633,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-lp-stat-n {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: var(--tl-green);
@@ -1626,6 +1643,62 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 10px;
   color: rgba(255, 255, 255, 0.4);
   margin-top: 3px;
+}
+
+.tl-lp-faq {
+  margin-top: 24px;
+}
+
+.tl-lp-faq-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  margin-bottom: 12px;
+}
+
+.tl-lp-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tl-lp-faq-item {
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  padding: 14px 18px;
+}
+
+.tl-lp-faq-item summary {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+  list-style: none;
+}
+
+.tl-lp-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.tl-lp-faq-item summary::before {
+  content: '+';
+  display: inline-block;
+  width: 18px;
+  color: var(--tl-green);
+  font-weight: 700;
+}
+
+.tl-lp-faq-item[open] summary::before {
+  content: '−';
+}
+
+.tl-lp-faq-item p {
+  margin: 10px 0 0 18px;
+  font-size: 13px;
+  color: var(--tl-gray-600);
+  line-height: 1.6;
 }
 
 /* ── REGIONS ── */
@@ -1739,7 +1812,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-about-stat-n {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 28px;
   font-weight: 800;
   color: var(--tl-green);
@@ -1906,7 +1979,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-partner {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 17px;
   font-weight: 800;
   transition: 0.2s;
@@ -2011,7 +2084,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-blog-title {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--tl-navy);
@@ -2036,7 +2109,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-footer {
   background: var(--tl-orange);
   padding: 56px 32px 24px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Geist Sans', sans-serif;
   border-radius: 32px;
   margin: 24px 24px 24px;
 }
@@ -2048,11 +2121,52 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-footer-top {
   padding-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.tl-footer-brand {
+  max-width: 340px;
+}
+
+.tl-footer-cols {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.tl-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 120px;
+}
+
+.tl-footer-col-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(29, 41, 57, 0.5);
+  margin-bottom: 4px;
+}
+
+.tl-footer-col a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tl-navy);
+  text-decoration: none;
+}
+
+.tl-footer-col a:hover {
+  text-decoration: underline;
 }
 
 .tl-footer-brand p {
   font-size: 13px;
-  color: rgba(14, 42, 61, 0.65);
+  color: rgba(29, 41, 57, 0.65);
   line-height: 1.7;
   margin: 14px 0 0;
   max-width: 480px;
@@ -2065,13 +2179,13 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: flex-start;
   gap: 24px;
   padding: 20px 0 22px;
-  border-top: 1px solid rgba(14, 42, 61, 0.12);
-  border-bottom: 1px solid rgba(14, 42, 61, 0.12);
+  border-top: 1px solid rgba(29, 41, 57, 0.12);
+  border-bottom: 1px solid rgba(29, 41, 57, 0.12);
 }
 
 .tl-footer-contact-label {
   font-size: 11px;
-  color: rgba(14, 42, 61, 0.55);
+  color: rgba(29, 41, 57, 0.55);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
@@ -2134,7 +2248,7 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   justify-content: space-between;
   font-size: 12px;
-  color: rgba(14, 42, 61, 0.55);
+  color: rgba(29, 41, 57, 0.55);
 }
 
 /* scroll reveal */
@@ -2310,6 +2424,12 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-footer-top {
     padding-bottom: 14px;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .tl-footer-cols {
+    gap: 24px;
   }
 
   .tl-footer-brand p {
@@ -2385,10 +2505,10 @@ body:not(.tl-subpage) .tl-about-extra {
   padding: 9px;
   border: none;
   background: transparent;
-  color: rgba(14, 42, 61, 0.5);
+  color: rgba(29, 41, 57, 0.5);
   font-size: 13px;
   font-weight: 500;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   border-radius: 9px;
   cursor: pointer;
   transition: all .2s
@@ -2397,7 +2517,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .am-tab.active {
   background: var(--tl-green);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(12, 138, 70, .3)
+  box-shadow: 0 4px 12px rgba(4, 149, 72, .3)
 }
 
 .am-title {
@@ -2410,7 +2530,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .am-sub {
   font-size: 13px;
-  color: rgba(14, 42, 61, .55);
+  color: rgba(29, 41, 57, .55);
   margin-bottom: 18px;
   line-height: 1.5
 }
@@ -2423,7 +2543,7 @@ body:not(.tl-subpage) .tl-about-extra {
   display: block;
   font-size: 10px;
   font-weight: 600;
-  color: rgba(14, 42, 61, .45);
+  color: rgba(29, 41, 57, .45);
   text-transform: uppercase;
   letter-spacing: .6px;
   margin-bottom: 4px
@@ -2439,7 +2559,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
   font-size: 14px;
   font-weight: 500;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   outline: none;
   transition: all .2s;
   box-sizing: border-box
@@ -2447,11 +2567,11 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .am-input:focus {
   border-color: var(--tl-green);
-  background: rgba(12, 138, 70, .06)
+  background: rgba(4, 149, 72, .06)
 }
 
 .am-input::placeholder {
-  color: rgba(14, 42, 61, .3)
+  color: rgba(29, 41, 57, .3)
 }
 
 .am-row {
@@ -2475,7 +2595,7 @@ body:not(.tl-subpage) .tl-about-extra {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgba(14, 42, 61, .45);
+  color: rgba(29, 41, 57, .45);
   cursor: pointer;
   font-size: 15px;
   padding: 2px
@@ -2495,7 +2615,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
   font-size: 13px;
   font-weight: 600;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -2516,7 +2636,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #fff;
   font-size: 14px;
   font-weight: 700;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   cursor: pointer;
   transition: all .2s;
   margin-top: 4px;
@@ -2529,7 +2649,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .am-btn:hover {
   background: #095E34;
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(12, 138, 70, .35)
+  box-shadow: 0 8px 20px rgba(4, 149, 72, .35)
 }
 
 .am-btn:disabled {
@@ -2578,8 +2698,8 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .am-msg.ok {
-  background: rgba(12, 138, 70, .08);
-  border: 1px solid rgba(12, 138, 70, .3);
+  background: rgba(4, 149, 72, .08);
+  border: 1px solid rgba(4, 149, 72, .3);
   color: #0C8A46
 }
 
@@ -2593,7 +2713,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-green);
   font-size: 12px;
   font-weight: 600;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px
@@ -2605,10 +2725,10 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 5px;
   background: none;
   border: none;
-  color: rgba(14, 42, 61, .45);
+  color: rgba(29, 41, 57, .45);
   font-size: 12px;
   font-weight: 500;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   cursor: pointer;
   margin-bottom: 14px;
   padding: 0
@@ -2636,7 +2756,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
   font-size: 20px;
   font-weight: 700;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   outline: none;
   transition: all .2s;
   box-sizing: border-box;
@@ -2645,18 +2765,18 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .am-otp-cell:focus {
   border-color: var(--tl-green);
-  background: rgba(12, 138, 70, .06)
+  background: rgba(4, 149, 72, .06)
 }
 
 .am-otp-cell.fl {
   border-color: var(--tl-green);
-  background: rgba(12, 138, 70, .08)
+  background: rgba(4, 149, 72, .08)
 }
 
 .am-timer {
   text-align: center;
   font-size: 12px;
-  color: rgba(14, 42, 61, .45);
+  color: rgba(29, 41, 57, .45);
   margin-bottom: 8px
 }
 
@@ -2667,8 +2787,8 @@ body:not(.tl-subpage) .tl-about-extra {
 .am-si {
   width: 58px;
   height: 58px;
-  background: rgba(12, 138, 70, .12);
-  border: 2px solid rgba(12, 138, 70, .35);
+  background: rgba(4, 149, 72, .12);
+  border: 2px solid rgba(4, 149, 72, .35);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2692,7 +2812,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .am-terms {
   font-size: 11px;
-  color: rgba(14, 42, 61, .4);
+  color: rgba(29, 41, 57, .4);
   text-align: center;
   margin-top: 11px;
   line-height: 1.5
@@ -2716,7 +2836,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
   font-size: 13px;
   font-weight: 600;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Geist Sans", sans-serif;
   transition: all .2s;
   position: relative
 }
@@ -2781,7 +2901,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .nav-dd-ph {
   font-size: 11px;
-  color: rgba(14, 42, 61, .5);
+  color: rgba(29, 41, 57, .5);
   margin-top: 2px
 }
 
@@ -2820,7 +2940,7 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 10px;
   padding: 8px 12px;
   border-radius: 10px;
-  color: rgba(14, 42, 61, .75);
+  color: rgba(29, 41, 57, .75);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -2874,7 +2994,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .pv-p {
   font-size: 13px;
-  color: rgba(14, 42, 61, 0.65);
+  color: rgba(29, 41, 57, 0.65);
   line-height: 1.7;
   margin-bottom: 8px;
 }
@@ -2887,7 +3007,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .pv-ul li {
   font-size: 13px;
-  color: rgba(14, 42, 61, 0.65);
+  color: rgba(29, 41, 57, 0.65);
   line-height: 1.6;
   padding: 6px 0 6px 20px;
   position: relative;
@@ -2912,13 +3032,13 @@ body:not(.tl-subpage) .tl-about-extra {
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 12px;
-  color: rgba(14, 42, 61, 0.65);
+  color: rgba(29, 41, 57, 0.65);
   margin-top: 8px;
 }
 
 .pv-contact {
-  background: rgba(12, 138, 70, 0.06);
-  border: 1px solid rgba(12, 138, 70, 0.2);
+  background: rgba(4, 149, 72, 0.06);
+  border: 1px solid rgba(4, 149, 72, 0.2);
   border-radius: 12px;
   padding: 14px 18px;
   display: flex;

@@ -34,10 +34,8 @@ export default function HeroSearch() {
       </section>
 
       {/* ── FLIGHT SEARCH FORM (sticky) ──
-          Originally filled server-side by the Travelpayouts embed script
-          ([:embed_script:]). This standalone build doesn't load that
-          script, so the slot renders empty — wire the provider's embed
-          snippet back in via an effect here once it's available. */}
+          Filled by the Travelpayouts embed script wired into index.html —
+          it renders its own UI into these two divs by id. */}
       <header className="tpwl-search-header" id="search">
         <div className="tpwl-search__wrapper">
           <div className="tpwl__content">

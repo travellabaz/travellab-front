@@ -90,7 +90,7 @@ export default function TourModal() {
           }}
         />
         <div style={{ padding: '24px 28px 28px' }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 14, lineHeight: 1.3 }}>
+          <div style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 14, lineHeight: 1.3 }}>
             {tour.title}
           </div>
           <div style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.7, whiteSpace: 'pre-wrap', marginBottom: 20 }}>
