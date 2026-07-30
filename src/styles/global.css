@@ -161,18 +161,22 @@ html {
   scroll-padding-top: 70px;
 }
 
-:root {
-  /* Fallbacks for the Travelpayouts widget's own CSS variables — normally
-     injected by their embed script ([:embed_script:]), which this
-     standalone build doesn't load. Values match the Travellab brand so the
-     search widget slot doesn't render unstyled if/when the real script
-     is wired back in. */
-  --tpwl-main-text: var(--tl-navy, #0E2A3D);
-  --tpwl-search-result-background: #F6F8F7;
-  --tpwl-search-form-background: #FFFFFF;
-  --tpwl-links: #0C8A46;
-  --tpwl-font-family: 'DM Sans';
+/* Fallback values for the Travelpayouts widget's own CSS variables, for
+   contexts where the real embed script (index.html) isn't loaded — e.g.
+   a plain `vite build` preview with no network access to tpwgt.com.
+   Wrapped in a low-priority @layer so the embed script's own `:root`
+   block (unlayered) always wins once it runs, regardless of DOM order. */
+@layer tpwl-fallback {
+  :root {
+    --tpwl-main-text: var(--tl-navy, #0E2A3D);
+    --tpwl-search-result-background: #F6F8F7;
+    --tpwl-search-form-background: #FFFFFF;
+    --tpwl-links: #0C8A46;
+    --tpwl-font-family: 'DM Sans';
+  }
+}
 
+:root {
   --tl-green: #0C8A46;
   --tl-green-dark: #096B37;
   --tl-green-light: #E4F5EA;
@@ -2927,4 +2931,99 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-green);
   font-weight: 600;
   text-decoration: none;
+}
+
+/* ── TRAVELPAYOUTS COOKIE BANNER ──
+   Also normally injected by Travelpayouts' hosting alongside the
+   [:cookie_policy_script:] placeholder; ported here verbatim since this
+   build is self-hosted. */
+.tpwl-cookie-banner {
+  font-family: Inter, Arial, sans-serif;
+  width: 670px;
+  background-color: #1E1E1E;
+  color: #FFFFFF;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  border-radius: 24px;
+  padding: 20px 24px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  transition: all 0.3s linear;
+}
+
+.tpwl-cookie-banner__logo {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NCIgaGVpZ2h0PSI1NCIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI0Q4N0IwMCIgZD0iTTMyLjYyNSA2Ljc1YTE0LjYyNSAxNC42MjUgMCAxIDAgMCAyOS4yNSAxNC42MjUgMTQuNjI1IDAgMCAwIDAtMjkuMjVaIi8+PHBhdGggZmlsbD0iI0ZGQjMwMCIgZD0iTTIxLjM3NSAxOGExNC42MjUgMTQuNjI1IDAgMSAwIDAgMjkuMjUgMTQuNjI1IDE0LjYyNSAwIDAgMCAwLTI5LjI1WiIvPjxwYXRoIGZpbGw9IiM2ODM1MjkiIGQ9Ik0xOS42ODggMjkuMjVhMi44MTIgMi44MTIgMCAxIDAgMCA1LjYyNCAyLjgxMiAyLjgxMiAwIDAgMCAwLTUuNjI0Wm0yLjI1LTYuNzVhMS42ODcgMS42ODcgMCAxIDAgMCAzLjM3NCAxLjY4NyAxLjY4NyAwIDAgMCAwLTMuMzc0Wk0yNS44NzUgMzZhMi4yNSAyLjI1IDAgMSAwIDAgNC41IDIuMjUgMi4yNSAwIDAgMCAwLTQuNVptLTEyLjkzOC0zLjM3NWExLjY4NyAxLjY4NyAwIDEgMCAwIDMuMzc0IDEuNjg3IDEuNjg3IDAgMCAwIDAtMy4zNzRabTE1Ljc1Mi0zLjM3NmExLjY4OCAxLjY4OCAwIDEgMCAwIDMuMzc1IDEuNjg4IDEuNjg4IDAgMCAwIDAtMy4zNzVaTTE4IDM5LjM3NWExLjEyNSAxLjEyNSAwIDEgMCAwIDIuMjUgMS4xMjUgMS4xMjUgMCAwIDAgMC0yLjI1WiIvPjxwYXRoIGZpbGw9IiM0QzIxMTQiIGQ9Ik0yOS4yNSAxMS4yNWEyLjI1IDIuMjUgMCAxIDAgMCA0LjUgMi4yNSAyLjI1IDAgMCAwIDAtNC41Wm02LjE4NiA1LjYyNGExLjY4OCAxLjY4OCAwIDEgMCAwIDMuMzc2IDEuNjg4IDEuNjg4IDAgMCAwIDAtMy4zNzZabTEuMTI1LTYuNzQ5YTEuNjg4IDEuNjg4IDAgMSAwIDAgMy4zNzUgMS42ODggMS42ODggMCAwIDAgMC0zLjM3NVpNNDAuNSAyMi41YTEuMTI1IDEuMTI1IDAgMSAwIDAgMi4yNSAxLjEyNSAxLjEyNSAwIDAgMCAwLTIuMjVaIi8+PC9zdmc+");
+}
+
+.tpwl-cookie-banner__actions {
+  flex: 1 0 140px;
+}
+
+.tpwl-cookie-banner__base-button {
+  width: 100%;
+  padding: 8px 8px;
+  transition: all 0.3s linear;
+  display: block;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tpwl-cookie-banner__accept {
+  border-radius: 200px;
+  background-color: #F8F8F8;
+  color: #000000;
+  border: 0;
+  margin-bottom: 4px;
+}
+
+.tpwl-cookie-banner__accept:hover {
+  background-color: #EAECF0;
+}
+
+.tpwl-cookie-banner__link {
+  color: #F8F8F8;
+  flex: 1 1 60%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 540px) {
+  .tpwl-cookie-banner {
+    padding: 20px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tpwl-cookie-banner__actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    flex: 0;
+  }
+
+  .tpwl-cookie-banner__accept {
+    margin-bottom: 0px;
+  }
+}
+
+@media (max-width: 1175px) {
+  .tpwl-cookie-banner {
+    width: auto;
+    transform: none;
+    left: 8px;
+    right: 8px;
+    bottom: 12px;
+  }
 }

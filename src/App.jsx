@@ -1,6 +1,9 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
+import AttributionFooter from './components/AttributionFooter';
+import CookieBanner from './components/CookieBanner';
+import HeroSearch from './sections/HeroSearch';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import HotelsPage from './pages/HotelsPage';
@@ -22,10 +25,22 @@ export default function App() {
   usePageMeta();
   useSubpageClass();
   useScrollTopOnRouteChange();
+  const location = useLocation();
+
+  // The Travelpayouts search widget (#tpwl-search / #tpwl-tickets) only
+  // initializes once and never re-detects a remounted DOM node. Keeping
+  // HeroSearch permanently mounted and just toggling its visibility (the
+  // same display:none trick the original single-page version used)
+  // avoids React Router unmounting it on navigation and killing the
+  // widget on the way back to "/" or "/search".
+  const showHero = location.pathname === '/' || location.pathname === '/search';
 
   return (
     <>
       <Nav />
+      <div className="tpwl-main" style={showHero ? undefined : { display: 'none' }}>
+        <HeroSearch />
+      </div>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/search" element={<SearchPage />} />
@@ -39,6 +54,8 @@ export default function App() {
         <Route path="*" element={<HomePage />} />
       </Routes>
       <Footer />
+      <AttributionFooter />
+      <CookieBanner />
 
       <TourModal />
       <AuthModal />

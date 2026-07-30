@@ -1,9 +1,6 @@
-import HeroSearch from '../sections/HeroSearch';
-
+// HeroSearch (hero + Travelpayouts search widget) is mounted persistently
+// in App.jsx and already covers everything this dedicated route shows —
+// nothing else renders here.
 export default function SearchPage() {
-  return (
-    <main className="tpwl-main">
-      <HeroSearch />
-    </main>
-  );
+  return null;
 }

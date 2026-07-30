@@ -67,6 +67,154 @@
       rel="stylesheet"
     />
     <title>Travellab — Bilet və Otel</title>
+
+    <!-- ✅ Travelpayouts White Label search widget embed.
+         Previously auto-injected by Travelpayouts' own hosting wherever
+         [:embed_script:] appeared in the pasted HTML template; now that
+         this site is self-hosted, the same snippet (copied verbatim from
+         the still-live production page) is wired in directly. It fills
+         #tpwl-search / #tpwl-tickets (see HeroSearch.jsx) and is tied to
+         this exact domain via marker/trs in TPWL_EXTRA below. -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+      :root {
+        --tpwl-font-family: "Inter";
+        --tpwl-headline-text: #FFFFFF;
+        --tpwl-links: #FF6325;
+        --tpwl-main-text: #353333;
+        --tpwl-search-form-background: #2D6DB5;
+        --tpwl-search-result-background: #F6F7F8;
+      }
+    </style>
+
+    <script data-noptimize="1" data-cfasync="false" data-wpfc-render="false">
+      (function () {
+        const script = document.createElement("script");
+        script.async = 1;
+        script.type = "module";
+        script.src = "https://tpwgt.com/wl_web/main.js?wl_id=17018";
+        document.head.appendChild(script);
+
+        function setCookie(name, value) {
+          var d = new Date();
+          d.setTime(d.getTime() + 31536000000);
+          var host = window.location.hostname.split('.');
+          var domain;
+          if (host.length > 3) {
+            domain = '.' + host.slice(-3).join('.');
+          } else if (host.length > 1) {
+            domain = '.' + host.slice(-2).join('.');
+          } else {
+            domain = window.location.hostname;
+          }
+          document.cookie = name + '=' + value + ';expires=' + d.toUTCString() + ';path=/;domain=' + domain;
+        }
+
+        window.tpwlCurrencyChange = function (value) {
+          setCookie('tpwl_currency', value);
+        };
+
+        window.tpwlLocaleChange = function (value) {
+          setCookie('tpwl_locale', value);
+          window.location.reload();
+        };
+
+        window.TPWL_CONFIGURATION = {
+          version: "v2",
+          ab_flag: "",
+          ab_variant: "",
+          ab_evaluation_id: ""
+        };
+
+        window.TPWL_EXTRA = {
+          currency: "AZN",
+          marker: "571353",
+          trs: "349139",
+          domain: "www.travellab.az",
+          locale: "AZ",
+          link_color: "FF6325"
+        };
+
+        if (window.TPWL_CONFIGURATION.ab_flag === 'wl_web_drive' && window.TPWL_CONFIGURATION.ab_variant.toUpperCase() === 'B') {
+          const trs = window.TPWL_EXTRA.trs;
+          const enc = { '+': '.', '/': '_', '=': '' };
+          const encodedTrs = btoa(String(trs)).replace(/[+/=]/g, function (m) { return enc[m]; });
+          const driveScript = document.createElement('script');
+          driveScript.async = 1;
+          driveScript.src = 'https://emrldco.com/' + encodedTrs + '.js?t=' + trs;
+          document.head.appendChild(driveScript);
+        }
+
+        function scrollToResults() {
+          const resultsBlock = document.getElementById('tpwl-tickets');
+          if (!resultsBlock) return;
+
+          const headerBlock = document.querySelector('.tpwl-search-header');
+          const topOffset = parseInt(resultsBlock.offsetTop, 10);
+          const offset = !!headerBlock && window.getComputedStyle(headerBlock).position === 'sticky'
+            ? topOffset - parseInt(headerBlock.clientHeight, 10)
+            : topOffset;
+
+          window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+
+        function checkFlightSearchParam() {
+          const hasFlightSearch = /flightSearch=\w+/.test(window.location.href);
+
+          if (hasFlightSearch && 'scrollBehavior' in document.documentElement.style) {
+            scrollToResults();
+          }
+
+          const widgetsBlock = document.querySelector('.tpwl-widgets__wrapper');
+          if (!widgetsBlock) return;
+
+          if (hasFlightSearch) {
+            const resultsBlock = document.getElementById('tpwl-tickets');
+            if (!resultsBlock) {
+              widgetsBlock.style.display = 'none';
+              return;
+            }
+
+            const checkInterval = setInterval(function () {
+              const height = resultsBlock.offsetHeight;
+              if (height > 0) {
+                widgetsBlock.style.display = 'none';
+                clearInterval(checkInterval);
+              }
+            }, 100);
+
+            setTimeout(function () {
+              clearInterval(checkInterval);
+            }, 10000);
+
+            if (resultsBlock.offsetHeight > 0) {
+              widgetsBlock.style.display = 'none';
+              clearInterval(checkInterval);
+            }
+          } else {
+            widgetsBlock.style.display = 'flex';
+          }
+        }
+
+        window.addEventListener('load', function () {
+          checkFlightSearchParam();
+
+          const originalPushState = history.pushState;
+          const originalReplaceState = history.replaceState;
+
+          history.pushState = function (...args) {
+            originalPushState.apply(this, args);
+            checkFlightSearchParam();
+          };
+
+          history.replaceState = function (...args) {
+            originalReplaceState.apply(this, args);
+            checkFlightSearchParam();
+          };
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
