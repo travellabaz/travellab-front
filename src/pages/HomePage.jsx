@@ -3,14 +3,12 @@ import HotelsSection from '../sections/HotelsSection';
 import CtaSection from '../sections/CtaSection';
 import EventsSection from '../sections/EventsSection';
 import LabpointSection from '../sections/LabpointSection';
-import AboutSection from '../sections/AboutSection';
 import PartnersSection from '../sections/PartnersSection';
-import BlogSection from '../sections/BlogSection';
 
 // HeroSearch (the Travelpayouts search widget) is mounted persistently in
 // App.jsx instead of here — see the comment there for why.
-// The homepage flat-scrolls every section together (except Viza, which is
-// reachable only via its own dedicated page/nav link).
+// About and Blog stay reachable via their own dedicated pages/nav links,
+// just not flattened into the homepage scroll.
 export default function HomePage() {
   return (
     <main className="tpwl-main">
@@ -19,9 +17,7 @@ export default function HomePage() {
       <CtaSection />
       <EventsSection />
       <LabpointSection />
-      <AboutSection />
       <PartnersSection />
-      <BlogSection />
     </main>
   );
 }
