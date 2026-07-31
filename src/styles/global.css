@@ -842,7 +842,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-family: 'Geist Sans', sans-serif;
   font-size: 19px;
   font-weight: 800;
-  color: var(--tl-navy);
+  color: var(--tl-green);
 }
 
 .tl-price-old {

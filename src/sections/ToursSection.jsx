@@ -81,7 +81,7 @@ export default function ToursSection() {
                     </div>
                     {price && (
                       <div className="tl-pkg-price" style={{ display: 'block' }}>
-                        <span className="tl-price-now">{formatPrice(price.amount, price.currency)}-dan</span>
+                        <span className="tl-price-now">{formatPrice(price.amount, price.currency)}</span>
                         {balanceDiscount && balanceDiscount.discountAzn > 0 && (
                           <div className="tl-price-inst">
                             <span>Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}</span>

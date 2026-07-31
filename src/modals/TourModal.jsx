@@ -105,8 +105,8 @@ export default function TourModal() {
           {price && (
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-navy)' }}>
-                  {formatPrice(price.amount, price.currency)}-dan
+                <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-green)' }}>
+                  {formatPrice(price.amount, price.currency)}
                 </span>
                 <span className="tl-badge tl-badge-lp">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
