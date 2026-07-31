@@ -4,8 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Versioned query string: browsers cache favicons very aggressively
-         and otherwise won't refetch a changed one until this changes. -->
+         and otherwise won't refetch a changed one until this changes.
+         PNG fallbacks alongside the SVG: iOS Safari doesn't use SVG
+         favicons at all (needs apple-touch-icon), and some mobile/older
+         browsers only look at sized PNG <link> icons. -->
     <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32x32.png?v=2" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-16x16.png?v=2" sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180" />
     <meta name="description" content="Travellab — Biletlər, Otellər, Turlar" id="meta-desc" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Travellab" />
