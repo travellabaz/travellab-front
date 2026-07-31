@@ -2,10 +2,12 @@
 // writes it to disk. Run by .github/workflows/daily-blog.yml on a
 // schedule; the workflow commits+pushes whatever this script writes.
 //
-// Uses GitHub Models (https://docs.github.com/en/github-models) — free,
-// no separate API key, authenticated with the workflow's own GITHUB_TOKEN
-// (needs `permissions: models: read`). Swap MODEL / the fetch URL below if
-// you'd rather use a different free provider.
+// Uses the Google Gemini API (free tier via Google AI Studio) — needs a
+// GEMINI_API_KEY repo secret (get one at https://aistudio.google.com/apikey).
+// Previously used GitHub Models, which is being retired (scheduled
+// "retirement brownout" 410s as of 2026-07-31); switched to Gemini for
+// both stability and noticeably better Azerbaijani-language output than
+// the free Llama/Gemma models on other free providers (e.g. Groq).
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,8 +15,8 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const postsDir = path.join(__dirname, '../src/data/blog/posts');
 
-const MODEL = 'openai/gpt-4o-mini';
-const ENDPOINT = 'https://models.github.ai/inference/chat/completions';
+const MODEL = 'gemini-2.5-flash';
+const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 // CSS only has these four category pill colors defined (see .cat-a/.cat-t/
 // .cat-n/.cat-m in global.css) — the model has to pick one of these exact
@@ -56,20 +58,19 @@ function existingSlugsAndTitles() {
 }
 
 async function callModel(prompt) {
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) throw new Error('GITHUB_TOKEN is not set');
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
 
-  const res = await fetch(ENDPOINT, {
+  const res = await fetch(`${ENDPOINT}?key=${apiKey}`, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: MODEL,
-      temperature: 0.85,
-      max_tokens: 4096,
-      messages: [{ role: 'user', content: prompt }],
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.85,
+        maxOutputTokens: 4096,
+        responseMimeType: 'application/json',
+      },
     }),
   });
 
@@ -77,7 +78,9 @@ async function callModel(prompt) {
     throw new Error(`Model request failed: ${res.status} ${await res.text()}`);
   }
   const data = await res.json();
-  return data.choices[0].message.content;
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error(`No text in model response: ${JSON.stringify(data)}`);
+  return text;
 }
 
 function buildPrompt(existing) {
