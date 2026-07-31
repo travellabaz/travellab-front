@@ -2096,6 +2096,56 @@ body:not(.tl-subpage) .tl-about-extra {
   line-height: 1.6;
 }
 
+.tl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+.tl-pagination-pages {
+  display: flex;
+  gap: 4px;
+}
+
+.tl-pagination-btn,
+.tl-pagination-page {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tl-pagination-page {
+  padding: 8px 13px;
+  min-width: 38px;
+}
+
+.tl-pagination-btn:hover:not(:disabled),
+.tl-pagination-page:hover {
+  border-color: var(--tl-green);
+  color: var(--tl-green);
+}
+
+.tl-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tl-pagination-page.active {
+  background: var(--tl-green);
+  border-color: var(--tl-green);
+  color: var(--tl-white);
+}
+
 /* ── BLOG ARTICLE (single post) ── */
 .tl-article {
   max-width: 760px;
