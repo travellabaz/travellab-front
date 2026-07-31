@@ -76,14 +76,11 @@ async function callModel(prompt) {
         // A 1400-2000 word Azerbaijani article plus JSON structure
         // overhead runs well past 4096 tokens — that limit truncated the
         // response mid-string and broke JSON.parse downstream.
-        maxOutputTokens: 8192,
+        // Generous headroom: some Gemini models spend part of this budget
+        // on hidden internal reasoning before the visible output, on top
+        // of the ~1400-2000 word article the prompt asks for.
+        maxOutputTokens: 16384,
         responseMimeType: 'application/json',
-        // Flash models default to spending part of maxOutputTokens on
-        // internal "thinking" before the final answer, which competes
-        // with the article itself for the same budget. Not useful for a
-        // single-pass writing task, so disable it and give the full
-        // budget to the actual output.
-        thinkingConfig: { thinkingBudget: 0 },
       },
     }),
   });
