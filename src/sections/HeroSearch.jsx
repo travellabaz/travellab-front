@@ -22,7 +22,7 @@ export default function HeroSearch() {
         <div className="tl-float tl-float-1">
           🎫 GYD → IST <strong style={{ color: '#1DB47A' }}>$89-dan</strong>
         </div>
-        <div className="tl-float tl-float-2">⭐ Hər sifarişdə +50 Labpoint</div>
+        <div className="tl-float tl-float-2">Hər tur alışında +10% Labpoint</div>
         <div className="tl-hero-content">
           <div className="tl-hero-badge">✈ Azərbaycanın rəsmi travel platforması</div>
           <h1>

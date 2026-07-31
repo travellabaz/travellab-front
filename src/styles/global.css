@@ -278,11 +278,6 @@ html {
   transition: all 0.2s;
 }
 
-.tl-nav-icon {
-  font-size: 13px;
-  line-height: 1;
-}
-
 .tl-nav-links a:hover {
   color: var(--tl-navy);
   background: var(--tl-gray-100);
@@ -835,6 +830,7 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   align-items: baseline;
   gap: 6px;
+  margin-top: auto;
   margin-bottom: 12px;
 }
 
