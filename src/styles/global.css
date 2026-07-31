@@ -773,22 +773,10 @@ body:not(.tl-subpage) .tl-about-extra {
   box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
 }
 
-.tl-pkg-ribbon {
+.tl-pkg-badges {
   position: absolute;
-  top: -2px;
-  left: 20px;
-  width: 41px;
-  height: 51px;
-  background: #12B76A;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
-  border-radius: 0 0 8px 8px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 10px;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 800;
+  top: 10px;
+  left: 10px;
 }
 
 .tl-badge {

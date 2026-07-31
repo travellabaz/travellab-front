@@ -69,7 +69,9 @@ export default function ToursSection() {
                       </svg>
                     </div>
                     {reward && (
-                      <div className="tl-pkg-ribbon">%</div>
+                      <div className="tl-pkg-badges">
+                        <span className="tl-badge tl-badge-lp">+{formatPoints(reward.points)} Lab Point</span>
+                      </div>
                     )}
                   </div>
                   <div className="tl-pkg-body">
@@ -77,11 +79,6 @@ export default function ToursSection() {
                     <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
                       {truncate(tour.description, 110)}
                     </div>
-                    {reward && (
-                      <div style={{ marginBottom: 10 }}>
-                        <span className="tl-badge tl-badge-lp">+{formatPoints(reward.points)} Lab Point</span>
-                      </div>
-                    )}
                     {price && (
                       <div className="tl-pkg-price" style={{ display: 'block' }}>
                         <span className="tl-price-now">{formatPrice(price.amount, price.currency)}-dan</span>
