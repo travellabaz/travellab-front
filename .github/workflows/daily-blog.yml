@@ -2,9 +2,8 @@ name: Daily blog post
 
 on:
   schedule:
-    # 07:13 UTC every day — picked off the :00/:30 mark on purpose, see
-    # scripts/generate-blog-post.mjs for what actually gets written.
-    - cron: '13 7 * * *'
+    # TEMPORARY test slot — revert to '13 7 * * *' after confirming the run.
+    - cron: '34 21 * * *'
   workflow_dispatch: {}
 
 permissions:
