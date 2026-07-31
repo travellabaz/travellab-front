@@ -63,14 +63,14 @@ export default function ToursSection() {
                         : {}),
                     }}
                   >
-                    <div className="tl-pkg-fav" aria-hidden="true">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 13.7C7.8 13.7 7.6 13.63 7.44 13.51C5.87 12.29 4.44 11.06 3.34 9.72C2.1 8.22 1.5 6.82 1.5 5.36C1.5 3.32 3.1 1.75 5.13 1.75C6.29 1.75 7.39 2.29 8 3.15C8.61 2.29 9.71 1.75 10.87 1.75C12.9 1.75 14.5 3.32 14.5 5.36C14.5 6.82 13.9 8.22 12.66 9.72C11.56 11.06 10.13 12.29 8.56 13.51C8.4 13.63 8.2 13.7 8 13.7Z" stroke="#344054" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
                     {reward && (
                       <div className="tl-pkg-badges">
-                        <span className="tl-badge tl-badge-lp">+{formatPoints(reward.points)} Lab Point</span>
+                        <span className="tl-badge tl-badge-lp">
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
+                          </svg>
+                          +{formatPoints(reward.points)} Lab Point
+                        </span>
                       </div>
                     )}
                   </div>

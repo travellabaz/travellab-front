@@ -759,37 +759,35 @@ body:not(.tl-subpage) .tl-about-extra {
   background-position: center;
 }
 
-.tl-pkg-fav {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
-}
-
 .tl-pkg-badges {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
 }
 
 .tl-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 5px 10px;
-  border-radius: 6px;
-  display: inline-block;
+  padding: 6px 12px 6px 10px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1;
+  letter-spacing: 0.1px;
 }
 
 .tl-badge-lp {
-  background: #039855;
+  background: linear-gradient(135deg, #17c471, #039855);
   color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 14px rgba(3, 152, 85, 0.45), 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.tl-badge-lp svg {
+  color: #ffe27a;
+  flex-shrink: 0;
 }
 
 .tl-badge-off {

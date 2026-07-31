@@ -108,7 +108,12 @@ export default function TourModal() {
                 <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-navy)' }}>
                   {formatPrice(price.amount, price.currency)}-dan
                 </span>
-                <span className="tl-badge tl-badge-lp">+{formatPoints(reward.points)} Lab Point</span>
+                <span className="tl-badge tl-badge-lp">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
+                  </svg>
+                  +{formatPoints(reward.points)} Lab Point
+                </span>
               </div>
               {balanceDiscount && balanceDiscount.discountAzn > 0 && (
                 <div className="tl-price-inst">
