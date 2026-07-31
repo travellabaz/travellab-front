@@ -78,15 +78,7 @@ export default function LabpointSection() {
               <div className="tl-lp-cv-bal">
                 {points} <span>LP</span>
               </div>
-              <div className="tl-lp-cv-azn">
-                ≈ {azn} ₼
-                <span className="tl-lp-cv-info" title="1₼ = 10LP">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 11v5M12 8h.01" strokeLinecap="round" />
-                  </svg>
-                </span>
-              </div>
+              <div className="tl-lp-cv-azn">≈ {azn} ₼</div>
             </div>
           </div>
         </div>

@@ -1548,7 +1548,7 @@ body:not(.tl-subpage) .tl-about-extra {
   border-radius: var(--tl-r-xl);
   padding: 48px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 420px;
   gap: 48px;
   align-items: center;
   border: 1px solid var(--tl-gray-200);
@@ -1626,8 +1626,6 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-lp-visual {
   position: relative;
   padding: 20px;
-  max-width: 460px;
-  margin-left: auto;
 }
 
 .tl-lp-glow {
@@ -1728,14 +1726,6 @@ body:not(.tl-subpage) .tl-about-extra {
   z-index: 1;
 }
 
-.tl-lp-cv-info {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  cursor: help;
-}
 
 /* ── REGIONS ── */
 .tl-regions-grid {
