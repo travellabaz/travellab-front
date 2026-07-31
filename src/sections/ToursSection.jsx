@@ -4,7 +4,7 @@ import { useModals } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
-import { extractMinPrice, formatPrice, calcReward } from '../utils/price';
+import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 
 // 260px card + 20px gap = one "step" per click, matching the CSS.
 const SCROLL_STEP = 280;
@@ -49,6 +49,7 @@ export default function ToursSection() {
               {tours.map((tour, idx) => {
                 const price = extractMinPrice(tour.description);
                 const reward = price ? calcReward(price) : null;
+                const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
                 return (
                 <div className="tl-pkg-card" key={tour.id ?? idx}>
                   <div
@@ -62,10 +63,13 @@ export default function ToursSection() {
                         : {}),
                     }}
                   >
+                    <div className="tl-pkg-fav" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 13.7C7.8 13.7 7.6 13.63 7.44 13.51C5.87 12.29 4.44 11.06 3.34 9.72C2.1 8.22 1.5 6.82 1.5 5.36C1.5 3.32 3.1 1.75 5.13 1.75C6.29 1.75 7.39 2.29 8 3.15C8.61 2.29 9.71 1.75 10.87 1.75C12.9 1.75 14.5 3.32 14.5 5.36C14.5 6.82 13.9 8.22 12.66 9.72C11.56 11.06 10.13 12.29 8.56 13.51C8.4 13.63 8.2 13.7 8 13.7Z" stroke="#344054" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
                     {reward && (
-                      <div className="tl-pkg-badges">
-                        <span className="tl-badge tl-badge-lp">+{formatPrice(reward.amount, reward.currency)} Lab Point</span>
-                      </div>
+                      <div className="tl-pkg-ribbon">%</div>
                     )}
                   </div>
                   <div className="tl-pkg-body">
@@ -73,11 +77,21 @@ export default function ToursSection() {
                     <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
                       {truncate(tour.description, 110)}
                     </div>
+                    {reward && (
+                      <div style={{ marginBottom: 10 }}>
+                        <span className="tl-badge tl-badge-lp">+{formatPoints(reward.points)} Lab Point</span>
+                      </div>
+                    )}
                     {price && (
                       <div className="tl-pkg-price" style={{ display: 'block' }}>
                         <span className="tl-price-now">{formatPrice(price.amount, price.currency)}-dan</span>
-                        {isAuthenticated && (
-                          <div className="tl-price-inst">Lab Point balansınız: {formatPrice(Number(profile.azn) || 0, 'AZN')}</div>
+                        {balanceDiscount && balanceDiscount.discountAzn > 0 && (
+                          <div className="tl-price-inst">
+                            <span>Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}</span>
+                            <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
                         )}
                       </div>
                     )}

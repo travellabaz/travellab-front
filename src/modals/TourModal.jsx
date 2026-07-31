@@ -3,7 +3,7 @@ import { useModals } from '../context/ModalContext';
 import { useTours } from '../context/ToursContext';
 import { useAuth } from '../context/AuthContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
-import { extractMinPrice, formatPrice, calcReward } from '../utils/price';
+import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 
 export default function TourModal() {
   const { tourIndex, closeTour } = useModals();
@@ -32,6 +32,7 @@ export default function TourModal() {
   const link = managerLink(tour, manager);
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
+  const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
 
   return (
     <div
@@ -102,15 +103,20 @@ export default function TourModal() {
             {tour.description}
           </div>
           {price && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
-              <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-navy)' }}>
-                {formatPrice(price.amount, price.currency)}-dan
-              </span>
-              <span className="tl-badge tl-badge-lp">+{formatPrice(reward.amount, reward.currency)} Lab Point</span>
-              {isAuthenticated && (
-                <span style={{ fontSize: 12, color: '#0C75BA', fontWeight: 500 }}>
-                  Lab Point balansınız: {formatPrice(Number(profile.azn) || 0, 'AZN')}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-navy)' }}>
+                  {formatPrice(price.amount, price.currency)}-dan
                 </span>
+                <span className="tl-badge tl-badge-lp">+{formatPoints(reward.points)} Lab Point</span>
+              </div>
+              {balanceDiscount && balanceDiscount.discountAzn > 0 && (
+                <div className="tl-price-inst">
+                  <span>Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}</span>
+                  <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
               )}
             </div>
           )}

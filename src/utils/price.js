@@ -36,7 +36,32 @@ export function formatPrice(amount, currency) {
   return symbol ? `${symbol}${numStr}` : `${numStr} ${currency}`;
 }
 
-// The site's LabPoint loyalty cashback rate is 1% of the tour price.
+// Fixed rates used only to size the LabPoint reward — not a live FX feed.
+const AZN_RATES = { USD: 1.7, EUR: 1.95, AZN: 1 };
+
+export function toAzn(amount, currency) {
+  return amount * (AZN_RATES[currency] ?? 1);
+}
+
+// How much of the tour price a user's LabPoint (AZN) balance can cover —
+// capped at the tour price itself, since the balance can't push it negative.
+export function calcBalanceDiscount(price, balanceAzn) {
+  const priceAzn = toAzn(price.amount, price.currency);
+  const discountAzn = Math.max(0, Math.min(balanceAzn, priceAzn));
+  return {
+    discountAzn: Math.round(discountAzn * 100) / 100,
+    finalAzn: Math.round((priceAzn - discountAzn) * 100) / 100,
+  };
+}
+
+// LabPoint reward: convert the tour price to AZN, take 1% of that, then the
+// loyalty program pays out 10 points per AZN of cashback.
 export function calcReward({ amount, currency }) {
-  return { amount: Math.round(amount * 0.01 * 100) / 100, currency };
+  const azn = toAzn(amount, currency);
+  const points = azn * 0.01 * 10;
+  return { points: Math.round(points * 100) / 100 };
+}
+
+export function formatPoints(points) {
+  return points.toLocaleString('en-US', { maximumFractionDigits: 2 });
 }
