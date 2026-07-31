@@ -13,6 +13,7 @@ import EventsPage from './pages/EventsPage';
 import VizaPage from './pages/VizaPage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
 import AuthModal from './modals/AuthModal';
 import TourModal from './modals/TourModal';
 import PrivacyModal from './modals/PrivacyModal';
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/viza" element={<VizaPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
       <Footer />

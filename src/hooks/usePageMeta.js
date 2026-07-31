@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
+import { getPostBySlug } from '../data/blog';
 
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/
 // breadcrumb-JSON-LD updates, driven by the router location instead of
@@ -10,7 +11,9 @@ export default function usePageMeta() {
 
   useEffect(() => {
     const path = location.pathname === '/' ? '/' : location.pathname.replace(/\/$/, '');
-    const page = PAGE_META[path] || PAGE_META['/'];
+    const postSlug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : null;
+    const post = postSlug ? getPostBySlug(postSlug) : null;
+    const page = post ? { title: `${post.title} — Travellab`, desc: post.excerpt } : PAGE_META[path] || PAGE_META['/'];
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
 

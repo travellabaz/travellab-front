@@ -2091,6 +2091,84 @@ body:not(.tl-subpage) .tl-about-extra {
   line-height: 1.6;
 }
 
+/* ── BLOG ARTICLE (single post) ── */
+.tl-article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+.tl-article-head {
+  margin-bottom: 24px;
+}
+
+.tl-article-head .tl-viewall {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.tl-article-head .tl-blog-cat {
+  margin-right: 10px;
+}
+
+.tl-article-head .tl-blog-date {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.tl-article-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  line-height: 1.25;
+  margin: 14px 0 16px;
+}
+
+.tl-article-lead {
+  font-size: 17px;
+  color: var(--tl-gray-600);
+  line-height: 1.6;
+}
+
+.tl-article-cover {
+  height: 380px;
+  border-radius: var(--tl-r-lg);
+  background-color: var(--tl-gray-50);
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 32px;
+}
+
+.tl-article-body h2 {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  margin: 32px 0 12px;
+}
+
+.tl-article-body p {
+  font-size: 15px;
+  color: var(--tl-gray-600);
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+
+@media (max-width: 560px) {
+  .tl-article {
+    padding: 32px 20px 60px;
+  }
+
+  .tl-article-title {
+    font-size: 26px;
+  }
+
+  .tl-article-cover {
+    height: 220px;
+  }
+}
+
 /* ── POPULAR DESTINATIONS (TP) ── */
 .tl-popular-header {
   padding: 48px 32px 0;

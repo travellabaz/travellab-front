@@ -15,6 +15,20 @@ import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
 const ssrDir = path.join(__dirname, 'dist-server');
+const postsDir = path.join(__dirname, 'src/data/blog/posts');
+
+// Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
+// JSON file per post, so the route list has to be built from whatever
+// files exist at build time instead of being hardcoded.
+function loadBlogRouteMeta() {
+  const routes = {};
+  for (const file of fs.readdirSync(postsDir)) {
+    if (!file.endsWith('.json')) continue;
+    const post = JSON.parse(fs.readFileSync(path.join(postsDir, file), 'utf-8'));
+    routes[`/blog/${post.slug}`] = { title: `${post.title} — Travellab`, desc: post.excerpt };
+  }
+  return routes;
+}
 
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -38,9 +52,10 @@ function buildBreadcrumbJson(pageUrl, title, isHome) {
 async function main() {
   const { render } = await import(path.join(ssrDir, 'entry-server.js'));
   const template = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
+  const allRouteMeta = { ...PAGE_META, ...loadBlogRouteMeta() };
 
-  for (const routePath of Object.keys(PAGE_META)) {
-    const meta = PAGE_META[routePath];
+  for (const routePath of Object.keys(allRouteMeta)) {
+    const meta = allRouteMeta[routePath];
     const isHome = routePath === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : routePath);
     const appHtml = render(routePath);
@@ -68,7 +83,7 @@ async function main() {
   const sitemap =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    Object.keys(PAGE_META)
+    Object.keys(allRouteMeta)
       .map((routePath) => `  <url><loc>${BASE_URL}${routePath === '/' ? '/' : routePath}</loc></url>`)
       .join('\n') +
     `\n</urlset>\n`;
