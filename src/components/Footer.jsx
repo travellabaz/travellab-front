@@ -1,12 +1,38 @@
 import { Link } from 'react-router-dom';
 import LogoFull from './LogoFull';
+import FooterSitemap from './FooterSitemap';
 import { useModals } from '../context/ModalContext';
+
+// Simple leaf / wave / sun line-icons, matching the Figma footer's
+// decorative row (replacing the old hand-copied rainbow/zigzag icons,
+// which were a different set entirely).
+function LeafIcon() {
+  return (
+    <svg width="16" height="18" viewBox="0 0 16 18" fill="none"><path d="M8 17V6" stroke="#0C8A46" strokeWidth="1.4" strokeLinecap="round" /><path d="M8 10C8 6 4 4 1 4c0 4 3 6 7 6Z" stroke="#0C8A46" strokeWidth="1.4" strokeLinejoin="round" /><path d="M8 8c0-4 4-6 7-6 0 4-3 6-7 6Z" stroke="#0C8A46" strokeWidth="1.4" strokeLinejoin="round" /></svg>
+  );
+}
+
+function WaveIcon() {
+  return (
+    <svg width="22" height="12" viewBox="0 0 22 12" fill="none"><path d="M1 6c1.8-3.6 3.6-3.6 5.4 0s3.6 3.6 5.4 0 3.6-3.6 5.4 0 3.6 3.6 5.4 0" stroke="#0E2A3D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="#FFF6E6" strokeWidth="1.3" /><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M13 3l-1.4 1.4M4.4 11.6L3 13" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
+  );
+}
+
+const WAVE_ICONS = [LeafIcon, WaveIcon, SunIcon, LeafIcon, WaveIcon, SunIcon, LeafIcon];
 
 export default function Footer() {
   const { openPrivacy, openTerms, openAuth } = useModals();
   const year = new Date().getFullYear();
 
   return (
+    <>
+    <FooterSitemap />
     <footer className="tl-footer">
       <div className="tl-footer-inner">
         <div className="tl-footer-top">
@@ -70,22 +96,10 @@ export default function Footer() {
 
         <div className="tl-footer-waves" aria-hidden="true">
           <div className="tl-fw-row">
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M2 12a8 8 0 0 1 16 0" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M4.3 12a5.7 5.7 0 0 1 11.4 0" stroke="#FFF6E6" strokeWidth="1.1" strokeLinecap="round" /><path d="M10 1.6v2" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M5.6 2.9l1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M14.4 2.9l-1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M2.6 6.4l1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.4 6.4l-1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="24" height="13" viewBox="0 0 24 13" fill="none"><path d="M1 7c2.4-4.8 4.8-4.8 7.2 0s4.8 4.8 7.2 0 4.8-4.8 7.2 0" stroke="#0E2A3D" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M10.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M10.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M2 12a8 8 0 0 1 16 0" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M4.3 12a5.7 5.7 0 0 1 11.4 0" stroke="#FFF6E6" strokeWidth="1.1" strokeLinecap="round" /><path d="M10 1.6v2" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M5.6 2.9l1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M14.4 2.9l-1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M2.6 6.4l1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.4 6.4l-1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M10.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /></svg>
+            {WAVE_ICONS.map((Icon, i) => <Icon key={i} />)}
           </div>
           <div className="tl-fw-row tl-fw-row-offset">
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 6.5c.8-2.4 2.4-2.4 3.2-.8s1.6 3.2 2.4 1.6 2.4-2.4 4-.8" stroke="#0E2A3D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M2 12a8 8 0 0 1 16 0" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M4.3 12a5.7 5.7 0 0 1 11.4 0" stroke="#FFF6E6" strokeWidth="1.1" strokeLinecap="round" /><path d="M10 1.6v2" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M5.6 2.9l1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M14.4 2.9l-1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M2.6 6.4l1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.4 6.4l-1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
+            {WAVE_ICONS.slice(0, 5).map((Icon, i) => <Icon key={i} />)}
           </div>
         </div>
 
@@ -95,5 +109,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

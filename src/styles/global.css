@@ -2105,6 +2105,76 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 auto;
 }
 
+/* ── FOOTER SITEMAP (white band above the orange footer card) ── */
+.tl-footer-sitemap {
+  background: var(--tl-gray-50);
+  padding: 48px 32px;
+}
+
+.tl-footer-sitemap-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tl-footer-region-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.tl-footer-region-tab {
+  padding: 7px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  font-size: 13px;
+  font-family: 'Geist Sans', sans-serif;
+  color: var(--tl-gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tl-footer-region-tab.active,
+.tl-footer-region-tab:hover {
+  background: var(--tl-green);
+  border-color: var(--tl-green);
+  color: #fff;
+}
+
+.tl-footer-city-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px 24px;
+}
+
+.tl-footer-city-grid a {
+  font-size: 13px;
+  color: var(--tl-gray-600);
+  text-decoration: none;
+}
+
+.tl-footer-city-grid a:hover {
+  color: var(--tl-green);
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .tl-footer-city-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .tl-footer-sitemap {
+    padding: 28px 20px;
+  }
+
+  .tl-footer-city-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ── FOOTER ── */
 .tl-footer {
   background: var(--tl-orange);

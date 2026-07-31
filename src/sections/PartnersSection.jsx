@@ -9,22 +9,8 @@ export default function PartnersSection() {
           </div>
         </div>
         <div className="tl-partners">
-          <div className="tl-partner">
-            <div className="tl-partner-icon" style={{ color: '#8C8C8C' }}>
-              <span style={{ width: 4, height: 20, background: '#C8102E', borderRadius: 2, display: 'inline-block' }} />
-              Hotels.com
-            </div>
-          </div>
-          <div className="tl-partner">
-            <div style={{ color: '#5A5A5A' }}>agoda</div>
-            <div className="tl-partner-dots">
-              <span style={{ background: '#EA2829' }} />
-              <span style={{ background: '#F5A623' }} />
-              <span style={{ background: '#0C8A46' }} />
-              <span style={{ background: '#8E44AD' }} />
-              <span style={{ background: '#0C75BA' }} />
-            </div>
-          </div>
+          <div className="tl-partner" style={{ color: '#333333' }}>Hotels.com</div>
+          <div className="tl-partner" style={{ color: '#5A5A5A' }}>agoda</div>
           <div className="tl-partner" style={{ color: '#1550A4', letterSpacing: 1 }}>AMADEUS</div>
           <div className="tl-partner">
             <div className="tl-partner-icon" style={{ color: '#FF385C' }}>
