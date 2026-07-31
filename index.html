@@ -91,6 +91,14 @@
         --tpwl-search-form-background: #FFFFFF;
         --tpwl-search-result-background: #F6F7F8;
       }
+
+      /* The widget's own script sets --search-form-link-color as an
+         inline style on #tpwl-search (defaulting to blue), which beats
+         the --tpwl-links variable above for the currency/multi-city
+         links — override it with !important so it actually wins. */
+      #tpwl-search {
+        --search-form-link-color: #049548 !important;
+      }
     </style>
 
     <script data-noptimize="1" data-cfasync="false" data-wpfc-render="false">
