@@ -1623,44 +1623,6 @@ body:not(.tl-subpage) .tl-about-extra {
   border-color: var(--tl-navy);
 }
 
-.tl-tier-row {
-  display: flex;
-  gap: 10px;
-}
-
-.tl-tier {
-  flex: 1;
-  background: var(--tl-gray-50);
-  border-radius: var(--tl-r-md);
-  padding: 14px 10px;
-  text-align: center;
-  border: 1.5px solid var(--tl-gray-200);
-  transition: 0.2s;
-}
-
-.tl-tier:hover {
-  border-color: var(--tl-green);
-}
-
-.tl-tier-icon {
-  font-size: 18px;
-  margin-bottom: 5px;
-}
-
-.tl-tier-name {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--tl-navy);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.tl-tier-pts {
-  font-size: 9px;
-  color: var(--tl-gray-400);
-  margin-top: 2px;
-}
-
 .tl-lp-visual {
   background: linear-gradient(135deg, var(--tl-navy), var(--tl-navy2));
   border-radius: var(--tl-r-lg);

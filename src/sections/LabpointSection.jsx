@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const TIERS = [
-  { icon: '⭐', name: 'Standard', pts: '0–4,999' },
-  { icon: '🥈', name: 'Silver', pts: '5,000+' },
-  { icon: '🥇', name: 'Gold', pts: '20,000+' },
-  { icon: '💎', name: 'VIP', pts: '50,000+' },
-];
-
 const DEMO_POINTS = '25 000';
 const DEMO_AZN = '2500';
 
@@ -48,7 +41,12 @@ export default function LabpointSection() {
                   <path d="M9 6l6 6-6 6" />
                 </svg>
               </a>
-              <a href="#labpoint-tiers" className="tl-lp-btn tl-lp-btn-outline">
+              <a
+                href="https://travellab-point.az/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tl-lp-btn tl-lp-btn-outline"
+              >
                 Ətraflı Məlumat
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 6l6 6-6 6" />
@@ -82,23 +80,14 @@ export default function LabpointSection() {
               </div>
               <div className="tl-lp-cv-azn">
                 ≈ {azn} ₼
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" title="1 LP ≈ 0.1 ₼ məzənnəsi ilə hesablanır">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <title>1₼ = 10LP</title>
                   <circle cx="12" cy="12" r="9" />
                   <path d="M12 11v5M12 8h.01" strokeLinecap="round" />
                 </svg>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="tl-tier-row" id="labpoint-tiers" style={{ marginTop: 28 }}>
-          {TIERS.map((tier) => (
-            <div className="tl-tier" key={tier.name}>
-              <div className="tl-tier-icon">{tier.icon}</div>
-              <div className="tl-tier-name">{tier.name}</div>
-              <div className="tl-tier-pts">{tier.pts}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>
