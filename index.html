@@ -81,9 +81,14 @@
       :root {
         --tpwl-font-family: "Inter";
         --tpwl-headline-text: #FFFFFF;
-        --tpwl-links: #FF6325;
+        /* Retheme toward the Figma redesign's brand colors — these are
+           the widget's own documented customization variables (it reads
+           them at render time), not a CSS override hack: green links
+           instead of Travelpayouts' default orange, and a white search
+           card instead of blue, matching the Figma search bar. */
+        --tpwl-links: #049548;
         --tpwl-main-text: #353333;
-        --tpwl-search-form-background: #2D6DB5;
+        --tpwl-search-form-background: #FFFFFF;
         --tpwl-search-result-background: #F6F7F8;
       }
     </style>

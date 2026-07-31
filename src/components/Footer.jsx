@@ -23,7 +23,6 @@ export default function Footer() {
               <Link to="/about">Haqqımızda</Link>
               <Link to="/blog">Xəbərlər</Link>
               <Link to="/blog">Bloqlar</Link>
-              <a href="mailto:info@travellab.az">Yardım</a>
             </div>
             <div className="tl-footer-col">
               <div className="tl-footer-col-title">Hesab</div>
