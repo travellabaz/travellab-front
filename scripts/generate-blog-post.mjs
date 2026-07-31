@@ -24,14 +24,49 @@ const MODEL = 'gemini-flash-latest';
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 // CSS only has these four category pill colors defined (see .cat-a/.cat-t/
-// .cat-n/.cat-m in global.css) — the model has to pick one of these exact
-// Azerbaijani names, not invent a new category with no matching style.
+// .cat-n/.cat-m in global.css) — has to be one of these exact Azerbaijani
+// names, not something the model invents with no matching style.
+//
+// The category is picked by pickCategory() below, not left to the model —
+// left to itself, Gemini defaulted to "Məsləhətlər" for every single post.
+// Each entry also carries its own topic guidance so the prompt steers
+// toward genuinely different kinds of posts per category, not just a
+// different label on the same "tips" article.
 const CATEGORIES = {
-  'Məsləhətlər': 'cat-a',
-  'Bələdçi': 'cat-t',
-  'Xəbərlər': 'cat-n',
-  'Macəra': 'cat-m',
+  'Məsləhətlər': {
+    class: 'cat-a',
+    guidance:
+      'Praktiki səyahət məsləhətləri: büdcə səyahəti, bagaj/sənəd hazırlığı, səyahət sığortası, ailəvi səyahət, uçuşda rahatlıq, pul qənaəti üsulları, aviabilet axtarışı.',
+  },
+  'Bələdçi': {
+    class: 'cat-t',
+    guidance:
+      'Konkret bir şəhər/ölkə/bölgə bələdçisi (məs. İstanbul, Dubay, Tbilisi, Antalya, Bakı ətrafı gəzinti yerləri). Nə görməli, neçə gün kifayətdir, yerli nəqliyyat necədir, hansı məhəllələr maraqlıdır, yemək mədəniyyəti. Dəqiq qiymət/viza rəqəmləri YAZMA — bunlar tez köhnəlir.',
+  },
+  'Xəbərlər': {
+    class: 'cat-n',
+    guidance:
+      'Turizm sənayesində ümumi, HƏMİŞƏ DOĞRU olan tendensiyalar və dəyişikliklər: rəqəmsal check-in, mövsümi tələb dəyişiklikləri, dayanıqlı/məsuliyyətli turizm, hava limanı prosesləri necə asanlaşır. KONKRET tarix, statistika və ya "bu gün elan edildi" tipli iddialar YAZMA (bunlar uydurma olardı) — ümumi trend təsviri ver.',
+  },
+  'Macəra': {
+    class: 'cat-m',
+    guidance:
+      'Aktiv/macəra səyahəti: dağ trekkinqi, kempinq, su idmanları, solo macəra səyahəti, az tanınan təbiət istiqamətləri, ekstremal və ya qeyri-adi təcrübələr.',
+  },
 };
+
+// Least-used category first (ties broken deterministically by post count)
+// so the four categories stay roughly balanced over time instead of
+// drifting toward whichever one the model likes best.
+function pickCategory(existing) {
+  const counts = Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, 0]));
+  for (const p of existing) {
+    if (counts[p.category] !== undefined) counts[p.category]++;
+  }
+  const minCount = Math.min(...Object.values(counts));
+  const candidates = Object.keys(CATEGORIES).filter((c) => counts[c] === minCount);
+  return candidates[existing.length % candidates.length];
+}
 
 // Fallback only — used if the Pexels lookup below fails (no key, rate
 // limit, no results) so a post never fails to publish for lack of a photo.
@@ -77,12 +112,12 @@ function slugify(title) {
     .slice(0, 60);
 }
 
-function existingSlugsAndTitles() {
+function existingPosts() {
   return fs
     .readdirSync(postsDir)
     .filter((f) => f.endsWith('.json'))
     .map((f) => JSON.parse(fs.readFileSync(path.join(postsDir, f), 'utf-8')))
-    .map((p) => ({ slug: p.slug, title: p.title }));
+    .map((p) => ({ slug: p.slug, title: p.title, category: p.category }));
 }
 
 async function callModel(prompt) {
@@ -121,20 +156,19 @@ async function callModel(prompt) {
   return text;
 }
 
-function buildPrompt(existing) {
-  const categoryList = Object.keys(CATEGORIES).join(', ');
+function buildPrompt(existing, category) {
   const avoidList = existing.length
     ? `Bu mövzular artıq işlənib, onları TƏKRARLAMA:\n${existing.map((p) => `- ${p.title}`).join('\n')}`
     : '';
 
   return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət/turizm platforması) üçün SEO üzrə ekspert bloq yazıçısısan. Məqsəd — Google-da yaxşı sıralanan, oxucuya real dəyər verən, DƏRİN və ƏTRAFLI bir bloq yazısı yazmaqdır. Səthi, ümumi cümlələrlə dolu qısa mətnlər yazma.
 
-Azərbaycan dilində, səyahət və turizm mövzusunda, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur belə olmalıdır:
+Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur belə olmalıdır:
 - Giriş abzası (mövzunu təqdim edir, oxucuya faydasını izah edir, əsas açar sözü ilk 1-2 cümlədə keçir)
 - 7-10 alt başlıqlı (h2) bölmə, hər biri 2-4 dolğun abzasdan ibarət, konkret nümunə/addım/tövsiyə ilə izah edilir
 - Yekun bölməsi ("Nəticə" və ya "Yekun olaraq" başlıqlı h2), qısa xülasə və oxucunu hərəkətə çağırış ilə
 
-Mövzu nümunələri: büdcə səyahəti, konkret istiqamət bələdçisi, bagaj/sənəd məsləhətləri, mövsümi tövsiyələr, ailəvi səyahət, ucuz bilet tapmaq üsulları, uçuşda rahatlıq, otel seçimi, səyahət sığortası, solo səyahət, iş səyahəti və s. Faktiki səhv ehtimalı olan konkret rəqəm/qanun iddiaları (məsələn dəqiq vizasız ölkə siyahısı) YAZMA — ümumi, həmişə doğru olan, praktiki məsləhətlərə üstünlük ver.
+Bu yazının kateqoriyası MÜTLƏQ **${category}**dir — mövzunu bu kateqoriyaya uyğun seç: ${CATEGORIES[category].guidance}
 
 SEO tələbləri:
 - Bir əsas açar söz ifadəsi seç (məsələn "ucuz bilet tapmaq", "ailəvi səyahət məsləhətləri") və onu başlıqda, girişdə, ən azı iki alt başlıqda və excerpt-də təbii şəkildə istifadə et.
@@ -145,15 +179,12 @@ SEO tələbləri:
 
 ${avoidList}
 
-Kateqoriya YALNIZ bunlardan biri olmalıdır: ${categoryList}.
-
 Bundan əlavə, yazının mövzusuna uyğun stok fotoları tapmaq üçün 2-3 sadə İNGİLİSCƏ axtarış ifadəsi ver (məsələn mövzu "ucuz bilet tapmaq" olarsa: "airport departure board", "backpacker with suitcase", "budget flight booking laptop"). Hər ifadə konkret, vizual şəkildə təsvir edilə bilən bir səhnə olmalıdır — mövzunun ümumi adı yox (məs. "cheap flights" YOX, "airport check-in counter" BƏLİ).
 
 Cavabı YALNIZ aşağıdakı JSON formatında ver, başqa heç nə yazma (izah, markdown fence və ya əlavə mətn olmasın):
 
 {
   "title": "45-65 simvol, açar sözlü, cəlbedici başlıq",
-  "category": "yuxarıdakı siyahıdan biri",
   "excerpt": "140-160 simvollu, açar sözlü, cəlbedici təsvir",
   "imageQueries": ["specific visual scene 1", "specific visual scene 2", "specific visual scene 3"],
   "body": [
@@ -173,7 +204,6 @@ function extractJson(raw) {
 
 function validate(post) {
   if (!post.title || typeof post.title !== 'string') throw new Error('Missing/invalid title');
-  if (!CATEGORIES[post.category]) throw new Error(`Unknown category: ${post.category}`);
   if (!post.excerpt || typeof post.excerpt !== 'string') throw new Error('Missing/invalid excerpt');
   if (!Array.isArray(post.body) || post.body.length === 0) throw new Error('Missing/empty body');
   for (const block of post.body) {
@@ -208,8 +238,9 @@ function insertInlinePhotos(body, photos) {
 }
 
 async function main() {
-  const existing = existingSlugsAndTitles();
-  const raw = await callModel(buildPrompt(existing));
+  const existing = existingPosts();
+  const category = pickCategory(existing);
+  const raw = await callModel(buildPrompt(existing, category));
   const draft = extractJson(raw);
   validate(draft);
 
@@ -232,8 +263,8 @@ async function main() {
     slug,
     title: draft.title,
     excerpt: draft.excerpt,
-    category: draft.category,
-    categoryClass: CATEGORIES[draft.category],
+    category,
+    categoryClass: CATEGORIES[category].class,
     date: today,
     coverImage: coverPhoto?.src || COVER_IMAGES[dayIndex % COVER_IMAGES.length],
     coverCredit: coverPhoto ? { name: coverPhoto.credit, url: coverPhoto.creditUrl } : null,
