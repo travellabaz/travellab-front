@@ -1,8 +1,10 @@
 import { useRef } from 'react';
 import { useTours } from '../context/ToursContext';
 import { useModals } from '../context/ModalContext';
+import { useAuth } from '../context/AuthContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
+import { extractMinPrice, formatPrice, calcReward } from '../utils/price';
 
 // 260px card + 20px gap = one "step" per click, matching the CSS.
 const SCROLL_STEP = 280;
@@ -10,6 +12,7 @@ const SCROLL_STEP = 280;
 export default function ToursSection() {
   const { tours, loading, empty } = useTours();
   const { openTour } = useModals();
+  const { isAuthenticated, profile } = useAuth();
   const gridRef = useRef(null);
 
   const scrollBy = (delta) => {
@@ -43,7 +46,10 @@ export default function ToursSection() {
               ‹
             </button>
             <div id="tl-tours-grid" className="tl-pkg-grid" ref={gridRef}>
-              {tours.map((tour, idx) => (
+              {tours.map((tour, idx) => {
+                const price = extractMinPrice(tour.description);
+                const reward = price ? calcReward(price) : null;
+                return (
                 <div className="tl-pkg-card" key={tour.id ?? idx}>
                   <div
                     className="tl-pkg-img"
@@ -55,12 +61,26 @@ export default function ToursSection() {
                         ? { backgroundImage: `url('${tour.imageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }
                         : {}),
                     }}
-                  />
+                  >
+                    {reward && (
+                      <div className="tl-pkg-badges">
+                        <span className="tl-badge tl-badge-lp">+{formatPrice(reward.amount, reward.currency)} Lab Point</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="tl-pkg-body">
                     <h3 className="tl-pkg-name">{truncate(tour.title, 60)}</h3>
                     <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
                       {truncate(tour.description, 110)}
                     </div>
+                    {price && (
+                      <div className="tl-pkg-price" style={{ display: 'block' }}>
+                        <span className="tl-price-now">{formatPrice(price.amount, price.currency)}-dan</span>
+                        {isAuthenticated && (
+                          <div className="tl-price-inst">Lab Point balansınız: {formatPrice(Number(profile.azn) || 0, 'AZN')}</div>
+                        )}
+                      </div>
+                    )}
                     <div className="tl-pkg-actions">
                       <button
                         type="button"
@@ -76,7 +96,8 @@ export default function ToursSection() {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
             <button type="button" className="tl-tours-arrow tl-tours-arrow-next" aria-label="Növbəti turlar" onClick={() => scrollBy(SCROLL_STEP)}>
               ›

@@ -776,7 +776,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-badge-lp {
-  background: var(--tl-orange);
+  background: var(--tl-green);
   color: #fff;
 }
 

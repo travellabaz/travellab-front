@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useModals } from '../context/ModalContext';
 import { useTours } from '../context/ToursContext';
+import { useAuth } from '../context/AuthContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
+import { extractMinPrice, formatPrice, calcReward } from '../utils/price';
 
 export default function TourModal() {
   const { tourIndex, closeTour } = useModals();
   const { tours } = useTours();
+  const { isAuthenticated, profile } = useAuth();
   const tour = tourIndex != null ? tours[tourIndex] : null;
   const [manager, setManager] = useState(pickManager);
 
@@ -27,6 +30,8 @@ export default function TourModal() {
   if (!tour) return null;
 
   const link = managerLink(tour, manager);
+  const price = extractMinPrice(tour.description);
+  const reward = price ? calcReward(price) : null;
 
   return (
     <div
@@ -96,6 +101,19 @@ export default function TourModal() {
           <div style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.7, whiteSpace: 'pre-wrap', marginBottom: 20 }}>
             {tour.description}
           </div>
+          {price && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 20 }}>
+              <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-navy)' }}>
+                {formatPrice(price.amount, price.currency)}-dan
+              </span>
+              <span className="tl-badge tl-badge-lp">+{formatPrice(reward.amount, reward.currency)} Lab Point</span>
+              {isAuthenticated && (
+                <span style={{ fontSize: 12, color: '#0C75BA', fontWeight: 500 }}>
+                  Lab Point balansınız: {formatPrice(Number(profile.azn) || 0, 'AZN')}
+                </span>
+              )}
+            </div>
+          )}
           <a
             href={link}
             target={isMobile() ? '_blank' : '_self'}
