@@ -33,14 +33,28 @@ export default function BlogPostPage() {
           aria-label={post.title}
           style={{ backgroundImage: `url('${post.coverImage}')` }}
         />
+        {post.coverCredit && (
+          <div className="tl-article-photo-credit">
+            Foto: <a href={post.coverCredit.url} target="_blank" rel="noopener noreferrer">{post.coverCredit.name}</a> / Pexels
+          </div>
+        )}
         <div className="tl-article-body">
-          {post.body.map((block, i) =>
-            block.type === 'h2' ? (
-              <h2 key={i}>{block.text}</h2>
-            ) : (
-              <p key={i}>{block.text}</p>
-            )
-          )}
+          {post.body.map((block, i) => {
+            if (block.type === 'h2') return <h2 key={i}>{block.text}</h2>;
+            if (block.type === 'img') {
+              return (
+                <figure className="tl-article-inline-img" key={i}>
+                  <img src={block.src} alt={block.alt} loading="lazy" />
+                  {block.credit && (
+                    <figcaption>
+                      Foto: <a href={block.creditUrl} target="_blank" rel="noopener noreferrer">{block.credit}</a> / Pexels
+                    </figcaption>
+                  )}
+                </figure>
+              );
+            }
+            return <p key={i}>{block.text}</p>;
+          })}
         </div>
       </article>
     </main>

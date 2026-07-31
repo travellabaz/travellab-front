@@ -33,14 +33,37 @@ const CATEGORIES = {
   'Macəra': 'cat-m',
 };
 
-// Rotate through our own already-licensed hero photos instead of hotlinking
-// external images (no image API/budget, and no copyright risk).
+// Fallback only — used if the Pexels lookup below fails (no key, rate
+// limit, no results) so a post never fails to publish for lack of a photo.
 const COVER_IMAGES = [
   '/images/hero/aurora.jpg',
   '/images/hero/balloons.jpg',
   '/images/hero/plane-wing.jpg',
   '/images/hero/mosque.jpg',
 ];
+
+// Topic photos: Gemini picks an English search phrase for the post's actual
+// subject (Pexels' search doesn't work well in Azerbaijani), then this hits
+// the free Pexels API for real matching photos — one cover + a couple
+// inline. Needs a PEXELS_API_KEY repo secret (free at pexels.com/api).
+async function fetchPexelsPhotos(query, count) {
+  const apiKey = process.env.PEXELS_API_KEY;
+  if (!apiKey) return [];
+
+  const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`;
+  const res = await fetch(url, { headers: { Authorization: apiKey } });
+  if (!res.ok) {
+    console.error(`Pexels request failed: ${res.status} ${await res.text()}`);
+    return [];
+  }
+  const data = await res.json();
+  return (data.photos || []).map((p) => ({
+    src: p.src.large2x,
+    alt: p.alt || query,
+    credit: p.photographer,
+    creditUrl: p.url,
+  }));
+}
 
 function slugify(title) {
   const map = { ə: 'e', ı: 'i', ğ: 'g', ş: 's', ç: 'c', ö: 'o', ü: 'u', Ə: 'e', İ: 'i', Ğ: 'g', Ş: 's', Ç: 'c', Ö: 'o', Ü: 'u' };
@@ -124,12 +147,15 @@ ${avoidList}
 
 Kateqoriya YALNIZ bunlardan biri olmalıdır: ${categoryList}.
 
+Bundan əlavə, yazının mövzusuna uyğun stok fotoları tapmaq üçün 2-3 sadə İNGİLİSCƏ axtarış ifadəsi ver (məsələn mövzu "ucuz bilet tapmaq" olarsa: "airport departure board", "backpacker with suitcase", "budget flight booking laptop"). Hər ifadə konkret, vizual şəkildə təsvir edilə bilən bir səhnə olmalıdır — mövzunun ümumi adı yox (məs. "cheap flights" YOX, "airport check-in counter" BƏLİ).
+
 Cavabı YALNIZ aşağıdakı JSON formatında ver, başqa heç nə yazma (izah, markdown fence və ya əlavə mətn olmasın):
 
 {
   "title": "45-65 simvol, açar sözlü, cəlbedici başlıq",
   "category": "yuxarıdakı siyahıdan biri",
   "excerpt": "140-160 simvollu, açar sözlü, cəlbedici təsvir",
+  "imageQueries": ["specific visual scene 1", "specific visual scene 2", "specific visual scene 3"],
   "body": [
     { "type": "p", "text": "..." },
     { "type": "h2", "text": "..." },
@@ -161,6 +187,26 @@ function validate(post) {
   if (wordCount < 900) throw new Error(`Body too short: ${wordCount} words (expected ~1400-2000)`);
 }
 
+// Spreads inline photos evenly through the p/h2 blocks (e.g. 2 photos in a
+// 12-block body land after block ~4 and ~8) so they break up the article
+// instead of clustering at one spot.
+function insertInlinePhotos(body, photos) {
+  if (!photos.length) return body;
+  const result = [...body];
+  const step = Math.floor(result.length / (photos.length + 1));
+  photos.forEach((photo, i) => {
+    const insertAt = step * (i + 1) + i;
+    result.splice(insertAt, 0, {
+      type: 'img',
+      src: photo.src,
+      alt: photo.alt,
+      credit: photo.credit,
+      creditUrl: photo.creditUrl,
+    });
+  });
+  return result;
+}
+
 async function main() {
   const existing = existingSlugsAndTitles();
   const raw = await callModel(buildPrompt(existing));
@@ -174,6 +220,14 @@ async function main() {
   const today = new Date().toISOString().slice(0, 10);
   const dayIndex = new Date(today).getUTCDate();
 
+  const queries = Array.isArray(draft.imageQueries) ? draft.imageQueries.slice(0, 3) : [];
+  const photos = [];
+  for (const query of queries) {
+    const [photo] = await fetchPexelsPhotos(query, 1);
+    if (photo) photos.push(photo);
+  }
+  const [coverPhoto, ...inlinePhotos] = photos;
+
   const post = {
     slug,
     title: draft.title,
@@ -181,8 +235,9 @@ async function main() {
     category: draft.category,
     categoryClass: CATEGORIES[draft.category],
     date: today,
-    coverImage: COVER_IMAGES[dayIndex % COVER_IMAGES.length],
-    body: draft.body,
+    coverImage: coverPhoto?.src || COVER_IMAGES[dayIndex % COVER_IMAGES.length],
+    coverCredit: coverPhoto ? { name: coverPhoto.credit, url: coverPhoto.creditUrl } : null,
+    body: insertInlinePhotos(draft.body, inlinePhotos),
   };
 
   const outPath = path.join(postsDir, `${slug}.json`);

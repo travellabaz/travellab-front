@@ -2142,7 +2142,37 @@ body:not(.tl-subpage) .tl-about-extra {
   background-color: var(--tl-gray-50);
   background-size: cover;
   background-position: center;
-  margin-bottom: 32px;
+}
+
+.tl-article-photo-credit {
+  font-size: 11px;
+  color: var(--tl-gray-400);
+  text-align: right;
+  margin: 6px 0 26px;
+}
+
+.tl-article-photo-credit a,
+.tl-article-inline-img figcaption a {
+  color: var(--tl-gray-400);
+}
+
+.tl-article-inline-img {
+  margin: 28px 0;
+}
+
+.tl-article-inline-img img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: var(--tl-r-lg);
+  display: block;
+}
+
+.tl-article-inline-img figcaption {
+  font-size: 11px;
+  color: var(--tl-gray-400);
+  text-align: right;
+  margin-top: 6px;
 }
 
 .tl-article-body h2 {
@@ -2171,6 +2201,10 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-article-cover {
     height: 220px;
+  }
+
+  .tl-article-inline-img img {
+    height: 200px;
   }
 }
 
