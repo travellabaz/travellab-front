@@ -1624,11 +1624,8 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-lp-visual {
-  background: linear-gradient(135deg, var(--tl-navy), var(--tl-navy2));
-  border-radius: var(--tl-r-lg);
-  padding: 28px;
   position: relative;
-  overflow: hidden;
+  padding: 20px;
 }
 
 .tl-lp-glow {
@@ -1654,11 +1651,10 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-lp-cardvis {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 14px;
-  padding: 22px;
-  margin-bottom: 14px;
+  background: #191919;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 28px;
   position: relative;
   z-index: 1;
 }

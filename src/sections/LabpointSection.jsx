@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const DEMO_POINTS = '25 000';
+const DEMO_POINTS = '2 500';
 const DEMO_AZN = '2500';
 
 export default function LabpointSection() {
