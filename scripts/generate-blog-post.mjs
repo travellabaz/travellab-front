@@ -15,7 +15,12 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const postsDir = path.join(__dirname, '../src/data/blog/posts');
 
-const MODEL = 'gemini-2.5-flash';
+// "-latest" alias instead of a pinned version: Gemini model versions get
+// retired from new-key access surprisingly fast (gemini-2.5-flash 404'd
+// within the same year), and this alias is Google's own mechanism for
+// scripts like this one to keep pointing at whatever flash-tier model is
+// currently available without needing a code change each time.
+const MODEL = 'gemini-flash-latest';
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 // CSS only has these four category pill colors defined (see .cat-a/.cat-t/
