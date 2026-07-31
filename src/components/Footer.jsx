@@ -2,6 +2,59 @@ import { Link } from 'react-router-dom';
 import LogoFull from './LogoFull';
 import { useModals } from '../context/ModalContext';
 
+// Decorative footer icons — exact paths from the Figma footer (provided
+// directly by the user), framed via viewBox rather than re-based to 0,0
+// so the path data stays byte-for-byte identical to the source.
+function FlowerIcon() {
+  return (
+    <svg width="34" height="18" viewBox="935 725 65 35" fill="none">
+      <path d="M949.779 757.2C949.779 759.4 953.179 759.4 953.179 757.2C953.179 749.1 959.679 742.5 967.779 742.5C975.879 742.5 982.479 749.1 982.479 757.2C982.479 759.4 985.879 759.4 985.879 757.2C985.879 747.3 977.779 739.2 967.779 739.2C957.879 739.2 949.779 747.3 949.779 757.2Z" fill="white" />
+      <path d="M974.68 756C974.78 756.9 975.48 757.4 976.38 757.4C980.38 757.4 976.58 746.9 967.78 746.9C959.58 746.9 955.38 756.6 958.98 757.3C959.88 757.4 960.78 756.8 960.98 755.9C962.38 748.3 973.38 748.4 974.68 756Z" fill="white" />
+      <path d="M966.18 729.7V733.9C966.18 736.1 969.48 736.1 969.48 733.9V729.7C969.48 728.8 968.78 728 967.78 728C966.88 728 966.18 728.8 966.18 729.7Z" fill="white" />
+      <path d="M990.179 754.3C988.679 754.5 988.279 756.5 989.479 757.3C990.279 757.8 990.479 757.6 994.879 756.8C997.079 756.4 996.479 753.1 994.279 753.5L990.179 754.3Z" fill="white" />
+      <path d="M945.48 754.3C940.98 753.5 940.78 753.3 940.08 753.8C938.88 754.6 939.28 756.5 940.68 756.8L944.88 757.6C947.08 758 947.68 754.7 945.48 754.3Z" fill="white" />
+      <path d="M983.179 739.6C981.579 741.1 983.979 743.5 985.479 741.9L988.479 738.9C990.079 737.4 987.679 735 986.179 736.6L983.179 739.6Z" fill="white" />
+      <path d="M952.58 739.6L949.58 736.6C947.98 735 945.68 737.4 947.18 738.9C950.38 742.1 950.48 742.4 951.38 742.4C952.88 742.4 953.68 740.6 952.58 739.6Z" fill="white" />
+      <path d="M987.179 748.4C987.579 750.2 989.679 750.8 990.879 749.6C992.379 748 990.979 745.4 988.879 745.9C987.679 746.1 986.979 747.3 987.179 748.4Z" fill="white" />
+      <path d="M948.48 747.8C948.18 746.4 946.78 745.7 945.48 746.2C943.08 747.2 944.079 750.9 946.779 750.4C947.979 750.1 948.68 749 948.48 747.8Z" fill="white" />
+      <path d="M961.079 735.6C961.079 734.2 959.779 733.1 958.379 733.4C957.079 733.7 956.279 735.1 956.779 736.4C957.679 738.6 961.079 737.9 961.079 735.6Z" fill="white" />
+      <path d="M977.08 737.6C979.98 737 978.98 732.8 976.28 733.3C973.38 733.9 974.18 738.2 977.08 737.6Z" fill="white" />
+    </svg>
+  );
+}
+
+function NavyWaveIcon() {
+  return (
+    <svg width="34" height="17" viewBox="306 725 67 34" fill="none">
+      <path d="M343.289 741.537C340.989 743.737 338.189 743.937 335.889 741.837C334.989 740.937 331.989 737.137 327.489 737.237C324.889 737.337 322.389 738.737 319.789 741.437C318.089 743.337 320.889 745.937 322.589 744.037C327.889 738.437 330.289 741.937 333.289 744.637C337.089 748.137 342.189 747.837 345.989 744.437C346.889 743.537 348.889 740.837 351.389 741.037C354.989 741.337 356.589 746.237 358.889 743.837C359.589 743.137 359.589 741.837 358.789 741.137C356.489 738.837 354.189 737.337 351.689 737.137C347.189 736.837 344.389 740.537 343.289 741.537Z" fill="#304872" />
+      <path d="M367.389 732.037C365.789 734.637 361.489 734.737 359.289 732.537C354.089 727.137 348.989 726.137 343.889 731.837C341.389 734.637 337.989 735.037 335.389 732.137C330.389 726.737 325.089 726.637 319.789 732.337C317.589 734.737 313.189 734.737 311.589 732.037C310.189 729.837 306.989 731.937 308.289 734.037C311.289 739.037 318.689 739.137 322.589 734.937C326.389 731.037 328.989 731.037 332.489 734.737C336.589 739.237 342.589 739.037 346.789 734.437C350.189 730.637 352.689 731.237 356.589 735.237C360.689 739.237 367.789 738.737 370.689 734.037C371.989 731.937 368.789 729.837 367.389 732.037Z" fill="#304872" />
+      <path d="M343.289 750.637C340.989 752.837 338.189 753.037 335.889 750.937C335.289 750.437 333.889 748.637 331.589 747.437C329.189 746.137 325.589 745.637 325.589 748.337C325.689 749.437 326.589 750.237 327.589 750.237C330.189 750.137 332.289 752.937 333.289 753.737C337.089 757.237 342.189 757.037 345.989 753.537C346.889 752.637 348.789 750.037 351.189 750.137C352.289 750.137 353.189 749.337 353.189 748.337C353.289 745.637 349.889 745.937 347.489 747.237C345.389 748.337 344.089 750.037 343.289 750.637Z" fill="#304872" />
+    </svg>
+  );
+}
+
+function GreenLinesIcon() {
+  return (
+    <svg width="25" height="17" viewBox="1114 727 38 26" fill="none">
+      <path d="M1149.86 730.7H1116.66C1115.86 730.7 1115.26 730.1 1115.26 729.3C1115.26 728.6 1115.86 728 1116.66 728H1149.86C1150.56 728 1151.16 728.6 1151.16 729.3C1151.16 730.1 1150.56 730.7 1149.86 730.7Z" fill="#049548" />
+      <path d="M1149.86 740.9H1116.66C1115.86 740.9 1115.26 740.3 1115.26 739.5C1115.26 738.7 1115.86 738.1 1116.66 738.1H1149.86C1150.56 738.1 1151.16 738.7 1151.16 739.5C1151.16 740.3 1150.56 740.9 1149.86 740.9Z" fill="#049548" />
+      <path d="M1149.86 750.9H1116.66C1115.86 750.9 1115.26 750.3 1115.26 749.5C1115.26 748.8 1115.86 748.2 1116.66 748.2H1149.86C1150.56 748.2 1151.16 748.8 1151.16 749.5C1151.16 750.3 1150.56 750.9 1149.86 750.9Z" fill="#049548" />
+    </svg>
+  );
+}
+
+function BlueWaveIcon() {
+  return (
+    <svg width="20" height="20" viewBox="729 778 33 33" fill="none">
+      <path d="M747.944 810.61C747.144 810.61 746.444 810.01 746.244 809.21C745.344 803.81 747.044 798.91 751.044 794.91C751.111 794.843 751.177 794.776 751.244 794.71C756.144 791.41 758.944 785.91 758.244 781.01C758.044 780.01 758.744 779.21 759.644 779.01C760.644 778.91 761.444 779.61 761.644 780.51C762.544 786.81 759.244 793.41 753.344 797.41C750.144 800.61 748.944 804.41 749.644 808.61C749.844 809.51 749.144 810.41 748.244 810.61C748.177 810.61 748.077 810.61 747.944 810.61Z" fill="#0774BA" />
+      <path d="M730.944 810.61C730.044 810.61 729.344 810.01 729.244 809.21C728.344 803.81 729.944 798.91 733.944 794.91C734.01 794.843 734.11 794.776 734.244 794.71C739.044 791.41 741.844 785.91 741.144 781.01C741.044 780.01 741.644 779.21 742.644 779.01C743.544 778.91 744.444 779.61 744.544 780.51C745.444 786.81 742.144 793.41 736.244 797.41C733.144 800.61 731.844 804.41 732.544 808.61C732.744 809.51 732.144 810.41 731.144 810.61C731.077 810.61 731.01 810.61 730.944 810.61Z" fill="#0774BA" />
+      <path d="M739.444 810.61C738.644 810.61 737.844 810.01 737.744 809.21C736.844 803.81 738.544 798.91 742.444 794.91C742.577 794.843 742.677 794.776 742.744 794.71C747.644 791.41 750.444 785.91 749.644 781.01C749.544 780.01 750.244 779.21 751.144 779.01C752.044 778.91 752.944 779.61 753.044 780.51C753.944 786.81 750.744 793.41 744.744 797.41C741.644 800.61 740.444 804.41 741.144 808.61C741.244 809.51 740.644 810.41 739.744 810.61C739.61 810.61 739.51 810.61 739.444 810.61Z" fill="#0774BA" />
+    </svg>
+  );
+}
+
+const FOOTER_ICONS = [FlowerIcon, NavyWaveIcon, GreenLinesIcon, BlueWaveIcon];
+
 export default function Footer() {
   const { openPrivacy, openTerms, openAuth } = useModals();
   const year = new Date().getFullYear();
@@ -70,22 +123,16 @@ export default function Footer() {
 
         <div className="tl-footer-waves" aria-hidden="true">
           <div className="tl-fw-row">
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M2 12a8 8 0 0 1 16 0" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M4.3 12a5.7 5.7 0 0 1 11.4 0" stroke="#FFF6E6" strokeWidth="1.1" strokeLinecap="round" /><path d="M10 1.6v2" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M5.6 2.9l1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M14.4 2.9l-1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M2.6 6.4l1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.4 6.4l-1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="24" height="13" viewBox="0 0 24 13" fill="none"><path d="M1 7c2.4-4.8 4.8-4.8 7.2 0s4.8 4.8 7.2 0 4.8-4.8 7.2 0" stroke="#0E2A3D" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M10.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M10.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M2 12a8 8 0 0 1 16 0" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M4.3 12a5.7 5.7 0 0 1 11.4 0" stroke="#FFF6E6" strokeWidth="1.1" strokeLinecap="round" /><path d="M10 1.6v2" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M5.6 2.9l1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M14.4 2.9l-1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M2.6 6.4l1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.4 6.4l-1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /><path d="M10.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0E2A3D" strokeWidth="1.3" strokeLinecap="round" /></svg>
+            {[0, 1, 2, 3, 2, 1, 0].map((i, idx) => {
+              const Icon = FOOTER_ICONS[i];
+              return <Icon key={idx} />;
+            })}
           </div>
           <div className="tl-fw-row tl-fw-row-offset">
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1.5 6.5c.8-2.4 2.4-2.4 3.2-.8s1.6 3.2 2.4 1.6 2.4-2.4 4-.8" stroke="#0E2A3D" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <svg width="18" height="11" viewBox="0 0 18 11" fill="none"><path d="M1 1.5h16M1 5.5h16M1 9.5h16" stroke="#0C8A46" strokeWidth="1.7" strokeLinecap="round" /></svg>
-            <svg width="13" height="16" viewBox="0 0 13 16" fill="none"><path d="M2.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /><path d="M6.5 1c-1.6 1.6 1.6 3.2 0 4.8s1.6 3.2 0 4.8" stroke="#0C75BA" strokeWidth="1.3" strokeLinecap="round" /></svg>
-            <svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M2 12a8 8 0 0 1 16 0" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M4.3 12a5.7 5.7 0 0 1 11.4 0" stroke="#FFF6E6" strokeWidth="1.1" strokeLinecap="round" /><path d="M10 1.6v2" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M5.6 2.9l1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M14.4 2.9l-1.3 1.4" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M2.6 6.4l1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /><path d="M17.4 6.4l-1.6 1" stroke="#FFF6E6" strokeWidth="1.3" strokeLinecap="round" /></svg>
+            {[2, 3, 1, 2, 0].map((i, idx) => {
+              const Icon = FOOTER_ICONS[i];
+              return <Icon key={idx} />;
+            })}
           </div>
         </div>
 
