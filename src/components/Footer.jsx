@@ -123,13 +123,13 @@ export default function Footer() {
 
         <div className="tl-footer-waves" aria-hidden="true">
           <div className="tl-fw-row">
-            {[0, 1, 2, 3, 2, 1, 0].map((i, idx) => {
+            {[1, 2, 3, 0, 3, 2, 1].map((i, idx) => {
               const Icon = FOOTER_ICONS[i];
               return <Icon key={idx} />;
             })}
           </div>
           <div className="tl-fw-row tl-fw-row-offset">
-            {[2, 3, 1, 2, 0].map((i, idx) => {
+            {[2, 3, 1, 2, 3].map((i, idx) => {
               const Icon = FOOTER_ICONS[i];
               return <Icon key={idx} />;
             })}
