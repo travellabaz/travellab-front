@@ -19,15 +19,36 @@ const postsDir = path.join(__dirname, 'src/data/blog/posts');
 
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
 // JSON file per post, so the route list has to be built from whatever
-// files exist at build time instead of being hardcoded.
-function loadBlogRouteMeta() {
-  const routes = {};
+// files exist at build time instead of being hardcoded. Keyed by route path
+// so the main loop can also pull the full post (image/date/excerpt) to
+// build the BlogPosting JSON-LD below.
+function loadBlogPosts() {
+  const postsByRoute = {};
   for (const file of fs.readdirSync(postsDir)) {
     if (!file.endsWith('.json')) continue;
     const post = JSON.parse(fs.readFileSync(path.join(postsDir, file), 'utf-8'));
-    routes[`/blog/${post.slug}`] = { title: `${post.title} — Travellab`, desc: post.excerpt };
+    postsByRoute[`/blog/${post.slug}`] = post;
   }
-  return routes;
+  return postsByRoute;
+}
+
+function buildArticleJson(post, pageUrl) {
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    image: `${BASE_URL}${post.coverImage}`,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: { '@type': 'Organization', name: 'Travellab' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Travellab',
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}/favicon.svg` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+  });
 }
 
 function escapeHtml(str) {
@@ -52,7 +73,11 @@ function buildBreadcrumbJson(pageUrl, title, isHome) {
 async function main() {
   const { render } = await import(path.join(ssrDir, 'entry-server.js'));
   const template = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
-  const allRouteMeta = { ...PAGE_META, ...loadBlogRouteMeta() };
+  const blogPosts = loadBlogPosts();
+  const blogRouteMeta = Object.fromEntries(
+    Object.entries(blogPosts).map(([route, post]) => [route, { title: `${post.title} — Travellab`, desc: post.excerpt }])
+  );
+  const allRouteMeta = { ...PAGE_META, ...blogRouteMeta };
 
   for (const routePath of Object.keys(allRouteMeta)) {
     const meta = allRouteMeta[routePath];
@@ -73,6 +98,11 @@ async function main() {
       /(<script type="application\/ld\+json" id="breadcrumb-ld">)[\s\S]*?(<\/script>)/i,
       (_, open, close) => `${open}${buildBreadcrumbJson(pageUrl, meta.title, isHome)}${close}`
     );
+
+    if (blogPosts[routePath]) {
+      const articleJson = buildArticleJson(blogPosts[routePath], pageUrl);
+      html = html.replace('</head>', `<script type="application/ld+json" id="article-ld">${articleJson}</script>\n  </head>`);
+    }
 
     const outDir = isHome ? distDir : path.join(distDir, routePath);
     fs.mkdirSync(outDir, { recursive: true });

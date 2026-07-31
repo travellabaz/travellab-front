@@ -67,7 +67,8 @@ async function callModel(prompt) {
     },
     body: JSON.stringify({
       model: MODEL,
-      temperature: 0.9,
+      temperature: 0.85,
+      max_tokens: 4096,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -85,9 +86,21 @@ function buildPrompt(existing) {
     ? `Bu mövzular artıq işlənib, onları TƏKRARLAMA:\n${existing.map((p) => `- ${p.title}`).join('\n')}`
     : '';
 
-  return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət/turizm platforması) üçün SEO məqsədli bloq yazıçısısan.
+  return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət/turizm platforması) üçün SEO üzrə ekspert bloq yazıçısısan. Məqsəd — Google-da yaxşı sıralanan, oxucuya real dəyər verən, DƏRİN və ƏTRAFLI bir bloq yazısı yazmaqdır. Səthi, ümumi cümlələrlə dolu qısa mətnlər yazma.
 
-Azərbaycan dilində, səyahət və turizm mövzusunda, faydalı və konkret bir bloq yazısı yaz (təxminən 600-900 söz, 5-8 abzas, bəziləri alt başlıqla). Mövzu nümunələri: büdcə səyahəti, konkret istiqamət bələdçisi, bagaj/sənəd məsləhətləri, mövsümi tövsiyələr, ailəvi səyahət, ucuz bilet tapmaq üsulları və s. Faktiki səhv ehtimalı olan konkret vasitə/rəqəm iddiaları (məsələn dəqiq vizasız ölkə siyahısı) YAZMA — ümumi, həmişə doğru olan məsləhətlərə üstünlük ver.
+Azərbaycan dilində, səyahət və turizm mövzusunda, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur belə olmalıdır:
+- Giriş abzası (mövzunu təqdim edir, oxucuya faydasını izah edir, əsas açar sözü ilk 1-2 cümlədə keçir)
+- 7-10 alt başlıqlı (h2) bölmə, hər biri 2-4 dolğun abzasdan ibarət, konkret nümunə/addım/tövsiyə ilə izah edilir
+- Yekun bölməsi ("Nəticə" və ya "Yekun olaraq" başlıqlı h2), qısa xülasə və oxucunu hərəkətə çağırış ilə
+
+Mövzu nümunələri: büdcə səyahəti, konkret istiqamət bələdçisi, bagaj/sənəd məsləhətləri, mövsümi tövsiyələr, ailəvi səyahət, ucuz bilet tapmaq üsulları, uçuşda rahatlıq, otel seçimi, səyahət sığortası, solo səyahət, iş səyahəti və s. Faktiki səhv ehtimalı olan konkret rəqəm/qanun iddiaları (məsələn dəqiq vizasız ölkə siyahısı) YAZMA — ümumi, həmişə doğru olan, praktiki məsləhətlərə üstünlük ver.
+
+SEO tələbləri:
+- Bir əsas açar söz ifadəsi seç (məsələn "ucuz bilet tapmaq", "ailəvi səyahət məsləhətləri") və onu başlıqda, girişdə, ən azı iki alt başlıqda və excerpt-də təbii şəkildə istifadə et.
+- title 45-65 simvol arası, cəlbedici və açar sözlü olsun.
+- excerpt 140-160 simvol arası, açar sözlü, Google axtarış nəticəsində göstəriləcək qədər cəlbedici olsun (bu sahə həm də meta description kimi istifadə olunur).
+- Mətn daxilində münasib yerlərdə Travellab-ın xidmətlərinə (uçuş/otel axtarışı, turlar, LabPoint bal proqramı) 1-2 dəfə təbii keçid ver, amma reklam kimi səslənməsin.
+- Boş, ümumi cümlələr əvəzinə konkret nümunələr, siyahılar və praktiki addımlar istifadə et.
 
 ${avoidList}
 
@@ -96,9 +109,9 @@ Kateqoriya YALNIZ bunlardan biri olmalıdır: ${categoryList}.
 Cavabı YALNIZ aşağıdakı JSON formatında ver, başqa heç nə yazma (izah, markdown fence və ya əlavə mətn olmasın):
 
 {
-  "title": "qısa, cəlbedici başlıq",
+  "title": "45-65 simvol, açar sözlü, cəlbedici başlıq",
   "category": "yuxarıdakı siyahıdan biri",
-  "excerpt": "1-2 cümləlik qısa təsvir (150 simvoldan az)",
+  "excerpt": "140-160 simvollu, açar sözlü, cəlbedici təsvir",
   "body": [
     { "type": "p", "text": "..." },
     { "type": "h2", "text": "..." },
@@ -124,6 +137,10 @@ function validate(post) {
       throw new Error(`Invalid body block: ${JSON.stringify(block)}`);
     }
   }
+  const wordCount = post.body
+    .filter((b) => b.type === 'p')
+    .reduce((sum, b) => sum + b.text.trim().split(/\s+/).length, 0);
+  if (wordCount < 900) throw new Error(`Body too short: ${wordCount} words (expected ~1400-2000)`);
 }
 
 async function main() {

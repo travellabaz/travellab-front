@@ -44,5 +44,37 @@ export default function usePageMeta() {
         itemListElement: items,
       });
     }
+
+    // Article rich-result eligibility only applies to blog posts — created
+    // on demand here rather than living as a static tag in index.html like
+    // breadcrumb-ld, since every other route has no article to describe.
+    let articleLd = document.getElementById('article-ld');
+    if (post) {
+      const articleJson = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt,
+        image: BASE_URL + post.coverImage,
+        datePublished: post.date,
+        dateModified: post.date,
+        author: { '@type': 'Organization', name: 'Travellab' },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Travellab',
+          logo: { '@type': 'ImageObject', url: `${BASE_URL}/favicon.svg` },
+        },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+      });
+      if (!articleLd) {
+        articleLd = document.createElement('script');
+        articleLd.type = 'application/ld+json';
+        articleLd.id = 'article-ld';
+        document.head.appendChild(articleLd);
+      }
+      articleLd.textContent = articleJson;
+    } else if (articleLd) {
+      articleLd.remove();
+    }
   }, [location.pathname]);
 }
