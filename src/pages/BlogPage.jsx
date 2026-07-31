@@ -15,7 +15,7 @@ export default function BlogPage() {
           </div>
           <div className="tl-blog-grid">
             {BLOG_POSTS.map((post) => (
-              <Link to={`/blog/${post.slug}`} key={post.slug} style={{ textDecoration: 'none' }}>
+              <Link to={`/blog/${post.slug}`} key={post.slug} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
                 <div className="tl-blog-card">
                   <div
                     className="tl-blog-img"

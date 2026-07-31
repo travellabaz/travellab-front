@@ -2019,6 +2019,9 @@ body:not(.tl-subpage) .tl-about-extra {
   border: 1px solid var(--tl-gray-200);
   transition: 0.25s;
   cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .tl-blog-card:hover {
@@ -2028,6 +2031,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-blog-img {
   height: 120px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2037,6 +2041,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-blog-body {
   padding: 14px;
+  flex: 1;
 }
 
 .tl-blog-cat {
