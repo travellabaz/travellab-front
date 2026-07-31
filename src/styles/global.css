@@ -1993,50 +1993,21 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* ── PARTNERS ── */
-.tl-partners {
+.tl-partners-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 36px;
-  flex-wrap: wrap;
-  padding: 24px 32px;
+  padding: 16px 32px;
   background: var(--tl-white);
   border-radius: var(--tl-r-lg);
   border: 1px solid var(--tl-gray-200);
+  overflow: hidden;
 }
 
-.tl-partner {
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 17px;
-  font-weight: 800;
-  transition: 0.2s;
-  opacity: 0.9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.tl-partner:hover {
-  opacity: 1;
-}
-
-.tl-partner-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.tl-partner-dots span {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.tl-partner-icon {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+.tl-partners-svg {
+  width: 100%;
+  height: auto;
+  max-width: 1280px;
 }
 
 /* ── BLOG ── */
