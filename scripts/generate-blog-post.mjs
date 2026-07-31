@@ -73,8 +73,17 @@ async function callModel(prompt) {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.85,
-        maxOutputTokens: 4096,
+        // A 1400-2000 word Azerbaijani article plus JSON structure
+        // overhead runs well past 4096 tokens — that limit truncated the
+        // response mid-string and broke JSON.parse downstream.
+        maxOutputTokens: 8192,
         responseMimeType: 'application/json',
+        // Flash models default to spending part of maxOutputTokens on
+        // internal "thinking" before the final answer, which competes
+        // with the article itself for the same budget. Not useful for a
+        // single-pass writing task, so disable it and give the full
+        // budget to the actual output.
+        thinkingConfig: { thinkingBudget: 0 },
       },
     }),
   });
@@ -83,8 +92,12 @@ async function callModel(prompt) {
     throw new Error(`Model request failed: ${res.status} ${await res.text()}`);
   }
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const candidate = data.candidates?.[0];
+  const text = candidate?.content?.parts?.[0]?.text;
   if (!text) throw new Error(`No text in model response: ${JSON.stringify(data)}`);
+  if (candidate.finishReason === 'MAX_TOKENS') {
+    throw new Error(`Response truncated by maxOutputTokens (finishReason=MAX_TOKENS)`);
+  }
   return text;
 }
 
