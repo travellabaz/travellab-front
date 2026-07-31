@@ -1557,12 +1557,18 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-lp-logo {
   font-family: 'Geist Sans', sans-serif;
-  font-size: 34px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-gray-400);
+  margin-bottom: 10px;
+}
+
+.tl-lp-headline {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, #0C75BA, #F5A623);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--tl-navy);
+  line-height: 1.2;
   margin-bottom: 14px;
 }
 
@@ -1699,94 +1705,71 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 46px;
 }
 
-.tl-lp-cv-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+.tl-lp-cv-brand {
   display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.tl-lp-cv-tierchip {
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 100px;
-  padding: 5px 12px;
-}
-
-.tl-lp-cv-name {
+  gap: 8px;
   font-family: 'Geist Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 18px;
+}
+
+.tl-lp-cv-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 100px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tl-lp-cv-share:hover {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .tl-lp-cv-bal-l {
-  font-size: 10px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
 }
 
 .tl-lp-cv-bal {
   font-family: 'Geist Sans', sans-serif;
-  font-size: 26px;
+  font-size: 34px;
   font-weight: 800;
   color: #fff;
+  margin-bottom: 10px;
 }
 
 .tl-lp-cv-bal span {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
 }
 
-.tl-lp-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+.tl-lp-cv-azn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
   position: relative;
   z-index: 1;
 }
 
-.tl-lp-stat {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--tl-r-md);
-  padding: 14px 8px;
-  text-align: center;
-}
-
-.tl-lp-stat-icon {
-  width: 26px;
-  height: 26px;
-  margin: 0 auto 8px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--tl-green-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tl-lp-stat-n {
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.tl-lp-stat-l {
-  font-size: 9.5px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 3px;
+.tl-lp-cv-azn svg {
+  cursor: help;
 }
 
 /* ── REGIONS ── */

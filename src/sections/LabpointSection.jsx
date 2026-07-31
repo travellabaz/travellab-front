@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+
 const TIERS = [
   { icon: '⭐', name: 'Standard', pts: '0–4,999' },
   { icon: '🥈', name: 'Silver', pts: '5,000+' },
@@ -5,54 +8,33 @@ const TIERS = [
   { icon: '💎', name: 'VIP', pts: '50,000+' },
 ];
 
-const STATS = [
-  {
-    n: '10x',
-    l: 'Hər $1 = 10 bal',
-    icon: (
-      <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-    ),
-  },
-  {
-    n: '$124',
-    l: 'Bal dəyəri',
-    icon: (
-      <>
-        <rect x="2" y="6" width="20" height="14" rx="2.5" />
-        <path d="M2 10h20M15.5 15h3" />
-      </>
-    ),
-  },
-  {
-    n: '4',
-    l: 'Aktiv sifariş',
-    icon: (
-      <>
-        <path d="M4 8l1.5-4h13L20 8" />
-        <path d="M4 8h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" />
-        <path d="M9 12a3 3 0 0 0 6 0" />
-      </>
-    ),
-  },
-];
+const DEMO_POINTS = '25 000';
+const DEMO_AZN = '2500';
 
 export default function LabpointSection() {
+  const { isAuthenticated, profile } = useAuth();
+  const [copied, setCopied] = useState(false);
+
+  const points = isAuthenticated ? Number(profile.points || 0).toLocaleString('en-US').replace(/,/g, ' ') : DEMO_POINTS;
+  const azn = isAuthenticated ? profile.azn : DEMO_AZN;
+  const shareUrl = (isAuthenticated && profile.referralLink) || 'https://travellab-point.az/';
+
+  const share = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <section id="labpoint" className="tl-page-top">
       <div className="tl-section">
-        <div className="tl-section-header" style={{ marginBottom: 28 }}>
-          <div>
-            <div className="tl-tag">Loyallıq Proqramı</div>
-            <h2 className="tl-title">Labpoint ilə Qazanın</h2>
-          </div>
-        </div>
-
         <div className="tl-lp-card">
           <div>
-            <div className="tl-lp-logo">Labpoint</div>
+            <div className="tl-lp-logo">LabPoint by Travellab</div>
+            <h2 className="tl-lp-headline">Səyahət edin və bonus qazanın!</h2>
             <p className="tl-lp-desc">
-              Hər sifarişdən bal qazanın. Ballarınızla növbəti səyahətinizə endirim alın. Travellab ilə hər
-              yol bir bonus gətirir.
+              Səfərləriniz zamanı pointlər qazanın və bonuslardan yararlanın. İndi LabPoint ilə daha çox
+              səyahət edin!
             </p>
             <div className="tl-lp-actions">
               <a
@@ -61,10 +43,16 @@ export default function LabpointSection() {
                 rel="noopener noreferrer"
                 className="tl-lp-btn tl-lp-btn-primary"
               >
-                Labpoint saytına keç →
+                Kart yarat
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
               </a>
               <a href="#labpoint-tiers" className="tl-lp-btn tl-lp-btn-outline">
-                Səviyyələr →
+                Ətraflı Məlumat
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
               </a>
             </div>
           </div>
@@ -74,31 +62,31 @@ export default function LabpointSection() {
             <div className="tl-lp-glow tl-lp-glow-green" />
             <div className="tl-lp-cardvis">
               <div className="tl-lp-cv-head">
-                <div className="tl-lp-cv-badge">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2.5l2.6 5.3 5.9.8-4.3 4.1 1 5.8L12 15.6l-5.2 2.9 1-5.8-4.3-4.1 5.9-.8L12 2.5Z" />
+                <div className="tl-lp-cv-brand">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 2h6M10 2v6.2L5.4 17a2 2 0 0 0 1.8 3h9.6a2 2 0 0 0 1.8-3L14 8.2V2" />
+                    <path d="M7.5 14h9" />
                   </svg>
+                  LabPoint<sup>™</sup>
                 </div>
-                <span className="tl-lp-cv-tierchip">🥇 Gold üzv</span>
+                <button type="button" className="tl-lp-cv-share" onClick={share}>
+                  {copied ? 'Kopyalandı' : 'Paylaş'}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 17L17 7M8 7h9v9" />
+                  </svg>
+                </button>
               </div>
-              <div className="tl-lp-cv-name">Əsəd Məmmədov</div>
-              <div className="tl-lp-cv-bal-l">Balans</div>
+              <div className="tl-lp-cv-bal-l">Balansınız:</div>
               <div className="tl-lp-cv-bal">
-                12,450 <span>bal</span>
+                {points} <span>LP</span>
               </div>
-            </div>
-            <div className="tl-lp-stats">
-              {STATS.map((s) => (
-                <div className="tl-lp-stat" key={s.l}>
-                  <div className="tl-lp-stat-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      {s.icon}
-                    </svg>
-                  </div>
-                  <div className="tl-lp-stat-n">{s.n}</div>
-                  <div className="tl-lp-stat-l">{s.l}</div>
-                </div>
-              ))}
+              <div className="tl-lp-cv-azn">
+                ≈ {azn} ₼
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" title="1 LP ≈ 0.1 ₼ məzənnəsi ilə hesablanır">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 11v5M12 8h.01" strokeLinecap="round" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
