@@ -1,12 +1,17 @@
 import { useState } from 'react';
 
-const HERO_SEEDS = ['tl-asia', 'tl-europe', 'tl-namerica', 'tl-oceania', 'tl-baltics', 'tl-balkans'];
+const HERO_PHOTOS = [
+  { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
+  { src: '/images/hero/balloons.jpg', alt: 'Kapadokyada isti hava şarları' },
+  { src: '/images/hero/plane-wing.jpg', alt: 'Təyyarə pəncərəsindən gün batımı mənzərəsi' },
+  { src: '/images/hero/mosque.jpg', alt: 'İstanbulda məscid və Boğaz — axşam mənzərəsi' },
+];
 
-// Picking the seed with useState's initializer (instead of useEffect)
+// Picking the photo with useState's initializer (instead of useEffect)
 // keeps the original's "changes on every visit" behaviour, since it only
 // needs to run once per mount, not react to anything.
 export default function HeroSearch() {
-  const [seed] = useState(() => HERO_SEEDS[Math.floor(Math.random() * HERO_SEEDS.length)]);
+  const [photo] = useState(() => HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
 
   return (
     <>
@@ -14,8 +19,8 @@ export default function HeroSearch() {
         <div
           className="tl-hero-photo"
           role="img"
-          aria-label="Dağ gölü və dumanlı mənzərə — səyahət ovqatı"
-          style={{ backgroundImage: `url('https://picsum.photos/seed/${seed}/1800/700')` }}
+          aria-label={photo.alt}
+          style={{ backgroundImage: `url('${photo.src}')` }}
         />
         <div className="tl-hero-bg" />
         <div className="tl-hero-grid" />
