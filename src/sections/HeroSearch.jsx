@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const HERO_PHOTOS = [
   { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
@@ -7,11 +7,19 @@ const HERO_PHOTOS = [
   { src: '/images/hero/mosque.jpg', alt: 'İstanbulda məscid və Boğaz — axşam mənzərəsi' },
 ];
 
-// Picking the photo with useState's initializer (instead of useEffect)
-// keeps the original's "changes on every visit" behaviour, since it only
-// needs to run once per mount, not react to anything.
+// This page is prerendered at build time (see prerender.mjs) and then
+// hydrated — a useState initializer runs during that one build-time
+// render and gets baked into the static HTML, so every visitor would
+// see whichever photo Math.random() happened to pick at build time.
+// Picking it client-side in an effect (after hydration) instead keeps
+// the original "changes on every visit" behaviour for real visitors;
+// prerendered/JS-less crawlers just get the first photo as a fallback.
 export default function HeroSearch() {
-  const [photo] = useState(() => HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
+  const [photo, setPhoto] = useState(HERO_PHOTOS[0]);
+
+  useEffect(() => {
+    setPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
+  }, []);
 
   return (
     <>
