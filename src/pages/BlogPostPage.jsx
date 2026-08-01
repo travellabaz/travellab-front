@@ -1,22 +1,21 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { BLOG_POSTS, getPostBySlug } from '../data/blog';
 import { BLOG_CATEGORIES } from '../data/blog/categories';
 import { formatDateAz } from '../utils/date';
 
-// Same category first (most recent first, since BLOG_POSTS is already
-// date-sorted), then backfilled with other posts so the sidebar still
-// shows 3 even for a category that only has one or two entries so far.
-function getRelatedPosts(post) {
-  const others = BLOG_POSTS.filter((p) => p.slug !== post.slug);
-  const sameCategory = others.filter((p) => p.category === post.category);
-  const rest = others.filter((p) => p.category !== post.category);
-  return [...sameCategory, ...rest].slice(0, 3);
-}
-
 export default function BlogPostPage() {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const post = getPostBySlug(slug);
+
+  // Picking a category in the sidebar filters "Əlaqəli Bloqlar" in place —
+  // it doesn't navigate away. Resets to the current post's own category
+  // whenever the post changes (e.g. clicking a related-post link doesn't
+  // remount this component, just changes the slug param).
+  const [relatedCategory, setRelatedCategory] = useState(post?.category);
+  useEffect(() => {
+    setRelatedCategory(post?.category);
+  }, [slug]);
 
   if (!post) {
     return (
@@ -29,7 +28,7 @@ export default function BlogPostPage() {
     );
   }
 
-  const relatedPosts = getRelatedPosts(post);
+  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug && p.category === relatedCategory).slice(0, 3);
 
   return (
     <main className="tpwl-main">
@@ -79,8 +78,8 @@ export default function BlogPostPage() {
             <select
               id="blog-category-select"
               className="tl-sidebar-select"
-              value={post.category}
-              onChange={(e) => navigate(`/blog?category=${encodeURIComponent(e.target.value)}`)}
+              value={relatedCategory}
+              onChange={(e) => setRelatedCategory(e.target.value)}
             >
               {BLOG_CATEGORIES.map((c) => (
                 <option key={c.name} value={c.name}>{c.name}</option>
@@ -88,10 +87,12 @@ export default function BlogPostPage() {
             </select>
           </div>
 
-          {relatedPosts.length > 0 && (
-            <div className="tl-sidebar-block">
-              <h3 className="tl-sidebar-title">Əlaqəli Bloqlar</h3>
-              <p className="tl-sidebar-subtitle">Bu mövzu ilə bağlı digər yazılar.</p>
+          <div className="tl-sidebar-block">
+            <h3 className="tl-sidebar-title">Əlaqəli Bloqlar</h3>
+            <p className="tl-sidebar-subtitle">Bu mövzu ilə bağlı digər yazılar.</p>
+            {relatedPosts.length === 0 ? (
+              <p className="tl-blog-empty" style={{ padding: 0 }}>Bu kateqoriyada başqa yazı yoxdur.</p>
+            ) : (
               <div className="tl-related-list">
                 {relatedPosts.map((related) => (
                   <Link to={`/blog/${related.slug}`} key={related.slug} className="tl-related-card">
@@ -110,8 +111,8 @@ export default function BlogPostPage() {
                   </Link>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </aside>
       </div>
     </main>
