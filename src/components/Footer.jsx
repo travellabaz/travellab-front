@@ -83,11 +83,13 @@ export default function Footer() {
             <p>Azərbaycanın aparıcı travel platforması. Biletlər, otellər, turlar — hamısı bir yerdə.</p>
             <div className="tl-footer-membership">
               <span className="tl-footer-membership-label">Üzvüyük:</span>
-              <img
-                src="/images/partners/aztaa-logo.jpeg"
-                alt="Azərbaycan Turizm Agentlikləri Assosiasiyası (AZTAA)"
-                className="tl-footer-membership-logo"
-              />
+              <a href="https://ataa.az/" target="_blank" rel="noopener noreferrer" aria-label="Azərbaycan Turizm Agentlikləri Assosiasiyası">
+                <img
+                  src="/images/partners/aztaa-logo.jpeg"
+                  alt="Azərbaycan Turizm Agentlikləri Assosiasiyası (AZTAA)"
+                  className="tl-footer-membership-logo"
+                />
+              </a>
             </div>
           </div>
 
