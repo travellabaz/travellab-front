@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { BLOG_POSTS } from '../data/blog';
 import { BLOG_CATEGORIES } from '../data/blog/categories';
@@ -5,7 +6,22 @@ import { formatDateAz } from '../utils/date';
 
 const POSTS_PER_PAGE = 8;
 
+// Same photo set/rotation approach as HeroSearch.jsx's homepage hero —
+// picked client-side after hydration so prerendered/JS-less crawlers get
+// a stable fallback instead of whatever Math.random() picked at build time.
+const HERO_PHOTOS = [
+  '/images/hero/aurora.jpg',
+  '/images/hero/balloons.jpg',
+  '/images/hero/plane-wing.jpg',
+  '/images/hero/mosque.jpg',
+];
+
 export default function BlogPage() {
+  const [heroPhoto, setHeroPhoto] = useState(HERO_PHOTOS[0]);
+  useEffect(() => {
+    setHeroPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
+  }, []);
+
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category') || '';
   const isKnownCategory = BLOG_CATEGORIES.some((c) => c.name === category);
@@ -38,14 +54,13 @@ export default function BlogPage() {
 
   return (
     <main className="tpwl-main">
-      <section id="blog" className="tl-page-top">
-        <div className="tl-section">
-          <div className="tl-section-header">
-            <div>
-              <div className="tl-tag">Bloq</div>
-              <h2 className="tl-title">Səyahət Məsləhətləri</h2>
-            </div>
-          </div>
+      <section className="tl-blog-hero tl-page-top">
+        <div className="tl-blog-hero-photo" style={{ backgroundImage: `url('${heroPhoto}')` }} />
+        <div className="tl-blog-hero-bg" />
+        <div className="tl-blog-hero-content">
+          <div className="tl-hero-badge">✈ Travellab Bloqu</div>
+          <h1>Səyahət ilhamı burada</h1>
+          <p>Faydalı məsləhətlər, şəhər bələdçiləri, macəra hekayələri və son xəbərlər — bir yerdə.</p>
 
           <div className="tl-blog-filter" role="tablist" aria-label="Bloq kateqoriyaları">
             <button
@@ -68,7 +83,11 @@ export default function BlogPage() {
               </button>
             ))}
           </div>
+        </div>
+      </section>
 
+      <section id="blog">
+        <div className="tl-section">
           {pagePosts.length === 0 ? (
             <p className="tl-blog-empty">Bu kateqoriyada hələ yazı yoxdur.</p>
           ) : (

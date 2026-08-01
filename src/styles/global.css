@@ -2006,6 +2006,63 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* ── BLOG ── */
+.tl-blog-hero {
+  background: var(--tl-hero-orange);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px 48px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.tl-blog-hero-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.tl-blog-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+          radial-gradient(ellipse 65% 85% at 50% 48%, rgba(10, 25, 35, 0.6) 0%, rgba(10, 25, 35, 0.28) 55%, transparent 78%),
+          linear-gradient(180deg, rgba(252, 177, 72, 0.32) 0%, rgba(230, 140, 20, 0.22) 50%, rgba(230, 140, 20, 0.4) 100%);
+}
+
+.tl-blog-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  animation: tlFadeUp 0.8s ease both;
+}
+
+.tl-blog-hero-content h1 {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: clamp(30px, 4.5vw, 46px);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+
+.tl-blog-hero-content p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: 460px;
+  margin: 0 auto 24px;
+}
+
+.tl-blog-hero .tl-blog-filter {
+  justify-content: center;
+  margin-bottom: 0;
+}
+
 .tl-blog-filter {
   display: flex;
   flex-wrap: wrap;
