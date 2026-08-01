@@ -39,5 +39,10 @@ jobs:
             echo "Nothing to commit"
           else
             git commit -m "Add daily blog post"
+            # main can move between checkout and here (this job runs the
+            # slow Gemini/Pexels calls first) — rebase onto whatever's
+            # current before pushing instead of failing outright on a
+            # stale ref, like it did when an unrelated push landed mid-run.
+            git pull --rebase origin main
             git push
           fi
