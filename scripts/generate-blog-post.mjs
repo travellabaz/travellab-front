@@ -163,10 +163,12 @@ function buildPrompt(existing, category) {
 
   return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət/turizm platforması) üçün SEO üzrə ekspert bloq yazıçısısan. Məqsəd — Google-da yaxşı sıralanan, oxucuya real dəyər verən, DƏRİN və ƏTRAFLI bir bloq yazısı yazmaqdır. Səthi, ümumi cümlələrlə dolu qısa mətnlər yazma.
 
-Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur belə olmalıdır:
+Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur TƏQRIBƏN belə olmalıdır (dəqiq bənd sayını özün seç, hər yazıda eyni qəlibi TƏKRARLAMA):
 - Giriş abzası (mövzunu təqdim edir, oxucuya faydasını izah edir, əsas açar sözü ilk 1-2 cümlədə keçir)
-- 7-10 alt başlıqlı (h2) bölmə, hər biri 2-4 dolğun abzasdan ibarət, konkret nümunə/addım/tövsiyə ilə izah edilir
-- Yekun bölməsi ("Nəticə" və ya "Yekun olaraq" başlıqlı h2), qısa xülasə və oxucunu hərəkətə çağırış ilə
+- 6-10 alt başlıqlı (h2) bölmə (yazıdan yazıya say dəyişsin), hər biri 2-4 dolğun abzasdan ibarət, konkret nümunə/addım/tövsiyə ilə izah edilir
+- Yekun bir bölmə — başlığını sən seç (hər dəfə "Nəticə" yazma, fərqli formalaşdır), qısa xülasə və oxucunu hərəkətə çağırış ilə
+
+Yazı canlı və fərdi səslənsin, şablon kimi deyil: cümlə uzunluğunu dəyişdir, hər yazıda eyni keçid ifadələrini ("İlk növbədə", "Bundan əlavə" və s.) təkrarlama, mümkün olduqca Azərbaycan reallıqlarına bağla (AZN valyutası, Bakı Heydər Əliyev Beynəlxalq Hava Limanı (GYD), yerli mövsüm/iqlim, azərbaycanlı səyahətçinin perspektivi) — bu həm oxucuya daha faydalı olur, həm də yazını generic olmaqdan çıxarır.
 
 Bu yazının kateqoriyası MÜTLƏQ **${category}**dir — mövzunu bu kateqoriyaya uyğun seç: ${CATEGORIES[category].guidance}
 
@@ -265,6 +267,9 @@ async function main() {
     excerpt: draft.excerpt,
     category,
     categoryClass: CATEGORIES[category].class,
+    // Shown on the article so it doesn't read as anonymous/unattributed —
+    // transparency about it being editorial-team content, not a disguise.
+    author: 'Travellab Komandası',
     date: today,
     coverImage: coverPhoto?.src || COVER_IMAGES[dayIndex % COVER_IMAGES.length],
     coverCredit: coverPhoto ? { name: coverPhoto.credit, url: coverPhoto.creditUrl } : null,

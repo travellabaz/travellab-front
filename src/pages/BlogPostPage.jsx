@@ -23,7 +23,7 @@ export default function BlogPostPage() {
         <div className="tl-article-head">
           <Link to="/blog" className="tl-viewall">← Bütün bloqlara qayıt</Link>
           <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
-          <div className="tl-blog-date">{formatDateAz(post.date)}</div>
+          <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab Komandası'}</div>
           <h1 className="tl-article-title">{post.title}</h1>
           <p className="tl-article-lead">{post.excerpt}</p>
         </div>
