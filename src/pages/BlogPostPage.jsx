@@ -1,9 +1,21 @@
-import { Link, useParams } from 'react-router-dom';
-import { getPostBySlug } from '../data/blog';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { BLOG_POSTS, getPostBySlug } from '../data/blog';
+import { BLOG_CATEGORIES } from '../data/blog/categories';
 import { formatDateAz } from '../utils/date';
+
+// Same category first (most recent first, since BLOG_POSTS is already
+// date-sorted), then backfilled with other posts so the sidebar still
+// shows 3 even for a category that only has one or two entries so far.
+function getRelatedPosts(post) {
+  const others = BLOG_POSTS.filter((p) => p.slug !== post.slug);
+  const sameCategory = others.filter((p) => p.category === post.category);
+  const rest = others.filter((p) => p.category !== post.category);
+  return [...sameCategory, ...rest].slice(0, 3);
+}
 
 export default function BlogPostPage() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const post = getPostBySlug(slug);
 
   if (!post) {
@@ -17,46 +29,91 @@ export default function BlogPostPage() {
     );
   }
 
+  const relatedPosts = getRelatedPosts(post);
+
   return (
     <main className="tpwl-main">
-      <article className="tl-article tl-page-top">
-        <div className="tl-article-head">
-          <Link to="/blog" className="tl-viewall">← Bütün bloqlara qayıt</Link>
-          <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
-          <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab Komandası'}</div>
-          <h1 className="tl-article-title">{post.title}</h1>
-          <p className="tl-article-lead">{post.excerpt}</p>
-        </div>
-        <div
-          className="tl-article-cover"
-          role="img"
-          aria-label={post.title}
-          style={{ backgroundImage: `url('${post.coverImage}')` }}
-        />
-        {post.coverCredit && (
-          <div className="tl-article-photo-credit">
-            Foto: <a href={post.coverCredit.url} target="_blank" rel="noopener noreferrer">{post.coverCredit.name}</a> / Pexels
+      <div className="tl-article-layout tl-page-top">
+        <article className="tl-article">
+          <div className="tl-article-head">
+            <Link to="/blog" className="tl-viewall">← Bütün bloqlara qayıt</Link>
+            <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
+            <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab Komandası'}</div>
+            <h1 className="tl-article-title">{post.title}</h1>
+            <p className="tl-article-lead">{post.excerpt}</p>
           </div>
-        )}
-        <div className="tl-article-body">
-          {post.body.map((block, i) => {
-            if (block.type === 'h2') return <h2 key={i}>{block.text}</h2>;
-            if (block.type === 'img') {
-              return (
-                <figure className="tl-article-inline-img" key={i}>
-                  <img src={block.src} alt={block.alt} loading="lazy" />
-                  {block.credit && (
-                    <figcaption>
-                      Foto: <a href={block.creditUrl} target="_blank" rel="noopener noreferrer">{block.credit}</a> / Pexels
-                    </figcaption>
-                  )}
-                </figure>
-              );
-            }
-            return <p key={i}>{block.text}</p>;
-          })}
-        </div>
-      </article>
+          <div
+            className="tl-article-cover"
+            role="img"
+            aria-label={post.title}
+            style={{ backgroundImage: `url('${post.coverImage}')` }}
+          />
+          {post.coverCredit && (
+            <div className="tl-article-photo-credit">
+              Foto: <a href={post.coverCredit.url} target="_blank" rel="noopener noreferrer">{post.coverCredit.name}</a> / Pexels
+            </div>
+          )}
+          <div className="tl-article-body">
+            {post.body.map((block, i) => {
+              if (block.type === 'h2') return <h2 key={i}>{block.text}</h2>;
+              if (block.type === 'img') {
+                return (
+                  <figure className="tl-article-inline-img" key={i}>
+                    <img src={block.src} alt={block.alt} loading="lazy" />
+                    {block.credit && (
+                      <figcaption>
+                        Foto: <a href={block.creditUrl} target="_blank" rel="noopener noreferrer">{block.credit}</a> / Pexels
+                      </figcaption>
+                    )}
+                  </figure>
+                );
+              }
+              return <p key={i}>{block.text}</p>;
+            })}
+          </div>
+        </article>
+
+        <aside className="tl-article-sidebar">
+          <div className="tl-sidebar-block">
+            <label className="tl-sidebar-label" htmlFor="blog-category-select">Kateqoriya</label>
+            <select
+              id="blog-category-select"
+              className="tl-sidebar-select"
+              value={post.category}
+              onChange={(e) => navigate(`/blog?category=${encodeURIComponent(e.target.value)}`)}
+            >
+              {BLOG_CATEGORIES.map((c) => (
+                <option key={c.name} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {relatedPosts.length > 0 && (
+            <div className="tl-sidebar-block">
+              <h3 className="tl-sidebar-title">Əlaqəli Bloqlar</h3>
+              <p className="tl-sidebar-subtitle">Bu mövzu ilə bağlı digər yazılar.</p>
+              <div className="tl-related-list">
+                {relatedPosts.map((related) => (
+                  <Link to={`/blog/${related.slug}`} key={related.slug} className="tl-related-card">
+                    <div
+                      className="tl-related-img"
+                      role="img"
+                      aria-label={related.title}
+                      style={{ backgroundImage: `url('${related.coverImage}')` }}
+                    />
+                    <div className="tl-related-body">
+                      <span className={`tl-blog-cat ${related.categoryClass}`}>{related.category}</span>
+                      <div className="tl-blog-date">{formatDateAz(related.date)}</div>
+                      <h4 className="tl-related-title">{related.title}</h4>
+                      <p className="tl-related-exc">{related.excerpt}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
     </main>
   );
 }
