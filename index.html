@@ -12,6 +12,12 @@
     <link rel="icon" href="/favicon-32x32.png?v=2" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon-16x16.png?v=2" sizes="16x16" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180" />
+    <!-- Google's crawler checks /favicon.ico at the domain root as its own
+         separate signal for the Search-result favicon, independent of the
+         <link rel="icon"> tags above — without this file present, Search
+         results fall back to a generic globe icon even though the site's
+         own tab favicon renders fine. -->
+    <link rel="shortcut icon" href="/favicon.ico" />
     <meta name="description" content="Travellab — Biletlər, Otellər, Turlar" id="meta-desc" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Travellab" />
