@@ -1,13 +1,14 @@
 // Exact vector reproduction of the Figma "Partnyorlar" logo row.
 // Cropped to the logo strip (viewBox y 88–184) — the tag/title text from the
 // same Figma export is rendered as real HTML above instead of baked-in paths.
-export default function PartnersLogos() {
+export default function PartnersLogos(props) {
   return (
     <svg
       className="tl-partners-svg"
       viewBox="0 88 1280 96"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g clipPath="url(#tl-partners-clip0)">
         <g clipPath="url(#tl-partners-clip1)">

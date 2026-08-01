@@ -11,7 +11,12 @@ export default function PartnersSection() {
           </div>
         </div>
         <div className="tl-partners-row">
-          <PartnersLogos />
+          {/* Duplicated for a seamless CSS loop — the copy is decorative,
+              the real one right before it is what screen readers get. */}
+          <div className="tl-partners-track">
+            <PartnersLogos />
+            <PartnersLogos aria-hidden="true" />
+          </div>
         </div>
       </div>
     </section>
