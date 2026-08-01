@@ -81,6 +81,14 @@ export default function Footer() {
               <LogoFull style={{ height: 24, width: 'auto' }} />
             </a>
             <p>Azərbaycanın aparıcı travel platforması. Biletlər, otellər, turlar — hamısı bir yerdə.</p>
+            <div className="tl-footer-membership">
+              <span className="tl-footer-membership-label">Üzvüyük:</span>
+              <img
+                src="/images/partners/aztaa-logo.jpeg"
+                alt="Azərbaycan Turizm Agentlikləri Assosiasiyası (AZTAA)"
+                className="tl-footer-membership-logo"
+              />
+            </div>
           </div>
 
           <div className="tl-footer-cols">
