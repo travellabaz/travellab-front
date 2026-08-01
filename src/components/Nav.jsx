@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import LogoFull from './LogoFull';
 import NavProfile from './NavProfile';
 import { useAuth } from '../context/AuthContext';
@@ -18,10 +18,21 @@ export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
+  const location = useLocation();
+
+  const handleLogoClick = () => {
+    setMobileOpen(false);
+    // Navigating to "/" while already there is a no-op for the router —
+    // useScrollTopOnRouteChange only fires on an actual pathname change —
+    // so scroll up explicitly here to cover the already-on-home case.
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <nav className="tl-nav">
-      <Link to="/" className="tl-logo" onClick={() => setMobileOpen(false)}>
+      <Link to="/" className="tl-logo" onClick={handleLogoClick}>
         <LogoFull className="tl-logo-svg" style={{ height: 26, width: 'auto' }} />
       </Link>
       <ul className={'tl-nav-links' + (mobileOpen ? ' tl-nav-open' : '')}>
