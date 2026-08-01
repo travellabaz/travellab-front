@@ -2797,24 +2797,21 @@ body:not(.tl-subpage) .tl-about-extra {
   }
 
   .tl-footer {
-    padding: 24px 16px 12px;
-    border-radius: 16px;
-    margin: 10px 10px 10px;
+    padding: 18px 16px 10px;
+    border-radius: 14px;
+    margin: 8px 8px 8px;
   }
 
-  .tl-fw-row-offset {
-    padding: 0 16px;
-  }
-
+  /* Purely decorative on a card that's already tight on mobile — cut it
+     to buy back the space. */
   .tl-footer-waves {
-    gap: 4px;
-    padding: 4px 0;
+    display: none;
   }
 
   .tl-footer-top {
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     flex-direction: column;
-    gap: 18px;
+    gap: 14px;
   }
 
   /* 3 full-width stacked columns read as an oversized wall of links on
@@ -2822,26 +2819,36 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-footer-cols {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px 20px;
+    gap: 12px 16px;
   }
 
   .tl-footer-brand p {
-    margin: 6px 0 0;
+    margin: 4px 0 0;
     font-size: 12px;
+    line-height: 1.5;
   }
 
   .tl-footer-contact {
     flex-direction: column;
-    gap: 12px;
-    padding: 14px 0 16px;
+    gap: 8px;
+    padding: 10px 0 12px;
   }
 
   .tl-footer-bottom {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
-    padding: 10px 0 0;
+    padding: 8px 0 0;
     font-size: 11px;
+  }
+
+  .tl-footer-contact-label {
+    margin-bottom: 3px;
+  }
+
+  .tl-footer-social a {
+    width: 30px;
+    height: 30px;
   }
 
   .tl-hero h1 {
