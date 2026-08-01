@@ -32,9 +32,17 @@ export default function Nav() {
 
   return (
     <nav className="tl-nav">
-      <Link to="/" className="tl-logo" onClick={handleLogoClick}>
-        <LogoFull className="tl-logo-svg" style={{ height: 26, width: 'auto' }} />
-      </Link>
+      <div className="tl-nav-brand">
+        <Link to="/" className="tl-logo" onClick={handleLogoClick}>
+          <LogoFull className="tl-logo-svg" style={{ height: 26, width: 'auto' }} />
+        </Link>
+        <span className="tl-nav-divider" aria-hidden="true" />
+        <img
+          src="/images/partners/aztaa-logo.jpeg"
+          alt="Azərbaycan Turizm Agentlikləri Assosiasiyası üzvü"
+          className="tl-nav-membership-logo"
+        />
+      </div>
       <ul className={'tl-nav-links' + (mobileOpen ? ' tl-nav-open' : '')}>
         {NAV_LINKS.map((link) => (
           <li key={link.to}>

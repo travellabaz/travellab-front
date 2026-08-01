@@ -235,6 +235,12 @@ html {
   padding: 0 32px;
 }
 
+.tl-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .tl-logo {
   font-family: 'Geist Sans', sans-serif;
   font-weight: 800;
@@ -244,6 +250,19 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.tl-nav-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--tl-gray-200);
+}
+
+.tl-nav-membership-logo {
+  height: 26px;
+  width: auto;
+  border-radius: 4px;
+  display: block;
 }
 
 .tl-logo-icon {
@@ -2766,6 +2785,12 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-logo-svg {
     height: 20px !important;
+  }
+
+  /* No room next to the logo + burger button at this width. */
+  .tl-nav-divider,
+  .tl-nav-membership-logo {
+    display: none;
   }
 
   .tl-nav-right {
