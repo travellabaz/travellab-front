@@ -2492,7 +2492,7 @@ body:not(.tl-subpage) .tl-about-extra {
 /* ── FOOTER ── */
 .tl-footer {
   background: var(--tl-orange);
-  padding: 56px 32px 24px;
+  padding: 40px 32px 20px;
   font-family: 'Geist Sans', sans-serif;
   border-radius: 32px;
   margin: 24px 24px 24px;
@@ -2504,10 +2504,10 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-footer-top {
-  padding-bottom: 24px;
+  padding-bottom: 20px;
   display: flex;
   justify-content: space-between;
-  gap: 48px;
+  gap: 40px;
   flex-wrap: wrap;
 }
 
@@ -2517,15 +2517,15 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-footer-cols {
   display: flex;
-  gap: 48px;
+  gap: 32px;
   flex-wrap: wrap;
 }
 
 .tl-footer-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  min-width: 120px;
+  gap: 8px;
+  min-width: 110px;
 }
 
 .tl-footer-col-title {
@@ -2551,8 +2551,8 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-footer-brand p {
   font-size: 13px;
   color: rgba(29, 41, 57, 0.65);
-  line-height: 1.7;
-  margin: 14px 0 0;
+  line-height: 1.6;
+  margin: 10px 0 0;
   max-width: 480px;
 }
 
@@ -2561,8 +2561,8 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 24px;
-  padding: 20px 0 22px;
+  gap: 20px;
+  padding: 16px 0 18px;
   border-top: 1px solid rgba(29, 41, 57, 0.12);
   border-bottom: 1px solid rgba(29, 41, 57, 0.12);
 }
@@ -2610,8 +2610,8 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-footer-waves {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 0;
+  gap: 6px;
+  padding: 8px 0;
   overflow: hidden;
 }
 
@@ -2627,7 +2627,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-footer-bottom {
-  padding: 18px 0;
+  padding: 14px 0 2px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2797,41 +2797,50 @@ body:not(.tl-subpage) .tl-about-extra {
   }
 
   .tl-footer {
-    padding: 28px 20px 16px;
-    border-radius: 20px;
-    margin: 12px 12px 12px;
+    padding: 24px 16px 12px;
+    border-radius: 16px;
+    margin: 10px 10px 10px;
   }
 
   .tl-fw-row-offset {
     padding: 0 16px;
   }
 
-  .tl-footer-top {
-    padding-bottom: 14px;
-    flex-direction: column;
-    gap: 24px;
+  .tl-footer-waves {
+    gap: 4px;
+    padding: 4px 0;
   }
 
+  .tl-footer-top {
+    padding-bottom: 12px;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* 3 full-width stacked columns read as an oversized wall of links on
+     mobile — 2-up keeps it to 2 short rows instead. */
   .tl-footer-cols {
-    gap: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
   }
 
   .tl-footer-brand p {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     font-size: 12px;
   }
 
   .tl-footer-contact {
     flex-direction: column;
-    gap: 18px;
-    padding: 18px 0 22px;
+    gap: 12px;
+    padding: 14px 0 16px;
   }
 
   .tl-footer-bottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    padding: 12px 0;
+    gap: 4px;
+    padding: 10px 0 0;
     font-size: 11px;
   }
 
