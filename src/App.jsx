@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
+import MobileTabBar from './components/MobileTabBar';
 import Footer from './components/Footer';
 import AttributionFooter from './components/AttributionFooter';
 import CookieBanner from './components/CookieBanner';
@@ -39,6 +40,7 @@ export default function App() {
   return (
     <>
       <Nav />
+      <MobileTabBar />
       <div className="tpwl-main" style={showHero ? undefined : { display: 'none' }}>
         <HeroSearch />
       </div>
