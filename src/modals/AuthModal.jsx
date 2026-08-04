@@ -4,9 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
 
 const OTP_SECONDS = 120;
-// Unset until a real Google Cloud OAuth Web Client ID is added to the env —
-// the button section below simply doesn't render until then.
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+// OAuth client IDs aren't secrets — they're meant to be public (this one
+// ends up in the built JS bundle regardless of how it's stored), so it's
+// hardcoded directly rather than routed through an env var. Must match
+// google.oauth.client-id in site-backend's application*.yml exactly, since
+// the backend checks it as the token's audience.
+const GOOGLE_CLIENT_ID = '738014137628-kthokrumvtc3897t182d3cd7h07jvk6e.apps.googleusercontent.com';
 
 function useCountdown() {
   const [secondsLeft, setSecondsLeft] = useState(0);
