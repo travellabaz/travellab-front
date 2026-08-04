@@ -3,7 +3,8 @@ import { REVIEWS } from '../data/reviews';
 import { truncate } from '../utils/text';
 
 const SCROLL_STEP = 280;
-const AUTO_SCROLL_SPEED = 0.5; // px per animation frame (~30px/s)
+const AUTO_SCROLL_SPEED = 0.5; // px per animation frame (~30px/s) — desktop pace
+const SECONDS_PER_CARD = 10; // mobile marquee pace, matched to desktop's ~30px/s
 const RESUME_DELAY = 2000; // ms after a manual arrow click before autoplay resumes
 const MOBILE_QUERY = '(max-width: 900px)';
 
@@ -96,7 +97,7 @@ export default function ReviewsSection() {
         </div>
 
         <div className="tl-review-marquee">
-          <div className="tl-review-track">
+          <div className="tl-review-track" style={{ animationDuration: `${REVIEWS.length * SECONDS_PER_CARD}s` }}>
             {REVIEWS.map((review) => (
               <ReviewCard key={review.id} review={review} />
             ))}

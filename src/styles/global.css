@@ -473,7 +473,12 @@ body:not(.tl-subpage) #tl-tours-grid .tl-pkg-card {
   display: flex;
   gap: 20px;
   width: max-content;
-  animation: tlReviewScroll 45s linear infinite;
+  /* Duration set inline per render (ReviewsSection.jsx), scaled to the
+     number of reviews so the scroll speed stays constant as the review
+     count grows instead of the whole strip whipping past faster. */
+  animation-name: tlReviewScroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .tl-review-marquee:active .tl-review-track {
