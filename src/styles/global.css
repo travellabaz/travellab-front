@@ -404,8 +404,10 @@ body:not(.tl-subpage) #tl-tours-grid .tl-pkg-card {
   /* No scroll-snap here on purpose — this grid auto-scrolls continuously
      (see ReviewsSection.jsx), and scroll-snap fights a programmatic
      scrollLeft nudged by a fraction of a pixel each frame by snapping
-     it straight back to the nearest card. */
-  -webkit-overflow-scrolling: touch;
+     it straight back to the nearest card. Also deliberately no
+     -webkit-overflow-scrolling: touch — on iOS Safari that makes an
+     element ignore JS scrollLeft/scrollTo() writes (see HeroSearch.jsx
+     for the same fix), which would silently break this on iPad. */
 }
 
 .tl-review-card {

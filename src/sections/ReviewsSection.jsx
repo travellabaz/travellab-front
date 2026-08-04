@@ -30,6 +30,7 @@ function ReviewCard({ review, hidden }) {
 export default function ReviewsSection() {
   const gridRef = useRef(null);
   const pausedRef = useRef(false);
+  const positionRef = useRef(0);
   const resumeTimeoutRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -54,11 +55,19 @@ export default function ReviewsSection() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
 
     let frameId;
+    // Tracked in a ref rather than read back from el.scrollLeft — on iOS
+    // Safari (iPad landscape lands in this "desktop" branch too) a
+    // scrollTo() write isn't guaranteed to show up on the very next read.
+    // A ref (not a plain closure var) so the arrow-click handler below,
+    // which lives outside this effect, can resync it after a manual
+    // scrollBy() before autoplay resumes.
+    positionRef.current = el.scrollLeft;
     const step = () => {
       if (!pausedRef.current) {
         const maxScroll = el.scrollWidth - el.clientWidth;
         if (maxScroll > 0) {
-          el.scrollLeft = el.scrollLeft >= maxScroll - 1 ? 0 : el.scrollLeft + AUTO_SCROLL_SPEED;
+          positionRef.current = positionRef.current >= maxScroll - 1 ? 0 : positionRef.current + AUTO_SCROLL_SPEED;
+          el.scrollTo({ left: positionRef.current, behavior: 'auto' });
         }
       }
       frameId = requestAnimationFrame(step);
@@ -66,7 +75,10 @@ export default function ReviewsSection() {
     frameId = requestAnimationFrame(step);
 
     const pause = () => { pausedRef.current = true; };
-    const resume = () => { pausedRef.current = false; };
+    const resume = () => {
+      positionRef.current = el.scrollLeft;
+      pausedRef.current = false;
+    };
     el.addEventListener('mouseenter', pause);
     el.addEventListener('mouseleave', resume);
 
@@ -83,7 +95,10 @@ export default function ReviewsSection() {
     pausedRef.current = true;
     gridRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
     clearTimeout(resumeTimeoutRef.current);
-    resumeTimeoutRef.current = setTimeout(() => { pausedRef.current = false; }, RESUME_DELAY);
+    resumeTimeoutRef.current = setTimeout(() => {
+      if (gridRef.current) positionRef.current = gridRef.current.scrollLeft;
+      pausedRef.current = false;
+    }, RESUME_DELAY);
   };
 
   if (isMobile) {
