@@ -724,6 +724,16 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #fff;
 }
 
+.tl-hero-pill-accent {
+  background: var(--tl-green);
+  border-color: var(--tl-green);
+}
+
+.tl-hero-pill-accent:hover {
+  background: var(--tl-green-dark);
+  border-color: var(--tl-green-dark);
+}
+
 /* ── FLOAT BADGES ── */
 .tl-float {
   position: absolute;
