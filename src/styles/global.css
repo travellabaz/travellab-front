@@ -615,7 +615,7 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 88px 32px 36px;
+  padding: 88px 32px 16px;
   position: relative;
   overflow: hidden;
 }
@@ -3093,7 +3093,7 @@ body:not(.tl-subpage) .tl-about-extra {
   }
 
   .tl-hero {
-    padding: 84px 20px 28px;
+    padding: 84px 20px 14px;
   }
 
   .tl-hero-badge {
