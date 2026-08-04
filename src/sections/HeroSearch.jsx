@@ -5,7 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 
 const PILLS_SCROLL_SPEED = 0.6; // px per animation frame
-const PILLS_END_PAUSE_MS = 1200; // pause at each end before reversing
+const PILLS_END_PAUSE_MS = 900; // pause once fully revealed, before scrolling back
+const PILLS_REST_PEEK = 40; // px of the last pill left showing once it scrolls back
 
 const HERO_PHOTOS = [
   { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
@@ -32,51 +33,57 @@ export default function HeroSearch() {
   }, []);
 
   // Mobile-only nudge: the pills row overflows there (see the
-  // max-width: 900px rules in global.css), so this gently scrolls it
-  // back and forth to hint that "Qrup Turlar"/"Endirimlər" are reachable
-  // by swipe — and stops for good the moment someone actually touches or
-  // scrolls it themselves, since it's real navigation, not decoration.
+  // max-width: 900px rules in global.css). One-shot, not a loop: scrolls
+  // all the way to the end to reveal every pill, pauses, then scrolls
+  // back — but not all the way to 0, stopping PILLS_REST_PEEK short so
+  // the last pill still peeks into view as a "there's more here" hint.
+  // Stops for good the moment someone actually touches or scrolls it
+  // themselves, since it's real navigation, not decoration.
   useEffect(() => {
     const el = pillsRef.current;
     if (!el) return undefined;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
 
     let frameId;
-    let direction = 1;
-    let pausedUntil = 0;
     let stopped = false;
+    let phase = 'forward'; // 'forward' -> 'pause' -> 'backward' -> 'done'
+    let pauseUntil = 0;
     // Tracked ourselves rather than read back from el.scrollLeft — on iOS
     // Safari a scrollTo() write doesn't necessarily show up on the very
-    // next read, which would throw this loop's direction logic off.
+    // next read, which would throw this loop's phase logic off.
     let position = el.scrollLeft;
 
     const step = (timestamp) => {
-      if (!stopped) {
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (maxScroll > 2 && timestamp >= pausedUntil) {
-          position += direction * PILLS_SCROLL_SPEED;
-          if (direction > 0 && position >= maxScroll - 1) {
-            position = maxScroll;
-            direction = -1;
-            pausedUntil = timestamp + PILLS_END_PAUSE_MS;
-          } else if (direction < 0 && position <= 1) {
-            position = 0;
-            direction = 1;
-            pausedUntil = timestamp + PILLS_END_PAUSE_MS;
-          }
+      if (stopped) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll > 2) {
+        const restPosition = Math.max(0, maxScroll - PILLS_REST_PEEK);
+        if (phase === 'forward') {
+          position = Math.min(maxScroll, position + PILLS_SCROLL_SPEED);
           el.scrollTo({ left: position, behavior: 'auto' });
+          if (position >= maxScroll - 0.5) {
+            phase = 'pause';
+            pauseUntil = timestamp + PILLS_END_PAUSE_MS;
+          }
+        } else if (phase === 'pause') {
+          if (timestamp >= pauseUntil) phase = 'backward';
+        } else if (phase === 'backward') {
+          position = Math.max(restPosition, position - PILLS_SCROLL_SPEED);
+          el.scrollTo({ left: position, behavior: 'auto' });
+          if (position <= restPosition + 0.5) phase = 'done';
         }
       }
-      frameId = requestAnimationFrame(step);
+      if (phase !== 'done') frameId = requestAnimationFrame(step);
     };
     frameId = requestAnimationFrame(step);
 
-    const stop = () => { stopped = true; };
+    const stop = () => { stopped = true; cancelAnimationFrame(frameId); };
     el.addEventListener('touchstart', stop, { passive: true });
     el.addEventListener('mousedown', stop);
     el.addEventListener('wheel', stop, { passive: true });
 
     return () => {
+      stopped = true;
       cancelAnimationFrame(frameId);
       el.removeEventListener('touchstart', stop);
       el.removeEventListener('mousedown', stop);
