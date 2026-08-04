@@ -693,10 +693,12 @@ body:not(.tl-subpage) .tl-about-extra {
   position: relative;
   z-index: 2;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 18px;
+  width: 100%;
+  max-width: 680px;
+  margin-top: 20px;
 }
 
 .tl-hero-pill {
