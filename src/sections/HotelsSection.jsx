@@ -1,4 +1,4 @@
-const HOTELS_URL = 'https://backend.travellab-point.az/site-backend/v1/go/hotels';
+export const HOTELS_URL = 'https://backend.travellab-point.az/site-backend/v1/go/hotels';
 
 // NOTE: RateHawk's White Label site sends X-Frame-Options / CSP
 // frame-ancestors headers that block being embedded in an iframe from
