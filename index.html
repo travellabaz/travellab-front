@@ -18,6 +18,10 @@
          results fall back to a generic globe icon even though the site's
          own tab favicon renders fine. -->
     <link rel="shortcut icon" href="/favicon.ico" />
+    <!-- Google Identity Services — powers the "Google ilə davam et" button
+         in AuthModal.jsx (src/modals/AuthModal.jsx). Loaded globally here
+         since it exposes itself as window.google.accounts.id. -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="description" content="Travellab — Biletlər, Otellər, Turlar" id="meta-desc" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Travellab" />

@@ -3262,6 +3262,27 @@ body:not(.tl-subpage) .tl-about-extra {
   display: none
 }
 
+.am-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.am-divider::before,
+.am-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--tl-gray-200);
+}
+
+.am-divider span {
+  font-size: 11px;
+  color: rgba(29, 41, 57, .45);
+  white-space: nowrap;
+}
+
 .am-btn.ld .sp {
   display: block
 }

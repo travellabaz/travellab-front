@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
 
 const OTP_SECONDS = 120;
+// Unset until a real Google Cloud OAuth Web Client ID is added to the env —
+// the button section below simply doesn't render until then.
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 function useCountdown() {
   const [secondsLeft, setSecondsLeft] = useState(0);
@@ -94,6 +97,61 @@ export default function AuthModal() {
       document.removeEventListener('keydown', onKey);
     };
   }, [authOpen, closeAuth]);
+
+  // Google Identity Services — the callback below is re-registered whenever
+  // `tab` changes so it always closes over the currently-visible page's
+  // message setter (regMsg vs loginMsg), and the button is re-rendered into
+  // whichever tab's container div is actually mounted right now.
+  const googleBtnRef = useRef(null);
+
+  const handleGoogleCredential = async (response) => {
+    try {
+      const { ok, data } = await authApi.googleLogin(response.credential);
+      if (!ok) {
+        const msg = data.message || 'Google ilə daxil olarkən xəta baş verdi.';
+        (tab === 'register' ? setRegMsg : setLoginMsg)(msg);
+        return;
+      }
+      closeAuth();
+      await loginSuccess(data.tokens.accessToken, data.tokens.refreshToken);
+    } catch {
+      (tab === 'register' ? setRegMsg : setLoginMsg)('Şəbəkə xətası.');
+    }
+  };
+
+  useEffect(() => {
+    if (!authOpen || page !== 'main' || !GOOGLE_CLIENT_ID) return undefined;
+
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryInit = () => {
+      if (cancelled) return;
+      if (window.google?.accounts?.id && googleBtnRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCredential,
+        });
+        googleBtnRef.current.innerHTML = '';
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: 'outline',
+          size: 'large',
+          width: 380,
+          text: 'continue_with',
+          locale: 'az',
+        });
+      } else if (attempts < 25) {
+        attempts += 1;
+        setTimeout(tryInit, 200);
+      }
+    };
+
+    tryInit();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authOpen, page, tab]);
 
   if (!authOpen) return null;
 
@@ -378,6 +436,12 @@ export default function AuthModal() {
                   <span className="bt">Davam et</span>
                   <div className="sp" />
                 </button>
+                {GOOGLE_CLIENT_ID && (
+                  <>
+                    <div className="am-divider"><span>və ya</span></div>
+                    <div ref={googleBtnRef} style={{ display: 'flex', justifyContent: 'center' }} />
+                  </>
+                )}
               </div>
             ) : (
               <div>
@@ -405,6 +469,12 @@ export default function AuthModal() {
                   <span className="bt">Daxil ol</span>
                   <div className="sp" />
                 </button>
+                {GOOGLE_CLIENT_ID && (
+                  <>
+                    <div className="am-divider"><span>və ya</span></div>
+                    <div ref={googleBtnRef} style={{ display: 'flex', justifyContent: 'center' }} />
+                  </>
+                )}
               </div>
             )}
           </div>

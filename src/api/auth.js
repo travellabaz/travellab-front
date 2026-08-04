@@ -33,6 +33,19 @@ export async function login({ phone, password }) {
   return { ok: res.ok, data };
 }
 
+// idToken comes from Google Identity Services (see AuthModal.jsx). Returns
+// the same { clientType, tokens } shape as login()/register()+otpCheck(),
+// so callers feed it into loginSuccess() the same way.
+export async function googleLogin(idToken) {
+  const res = await fetch(API_BASE + '/auth/google', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+  const data = await res.json();
+  return { ok: res.ok, data };
+}
+
 export async function otpCheck(sessionId, otp) {
   const res = await fetch(API_BASE + '/auth/otp/check', {
     method: 'POST',
