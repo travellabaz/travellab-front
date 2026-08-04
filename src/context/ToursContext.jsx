@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { extractMinPrice } from '../utils/price';
 
 const API_BASE = 'https://backend.travellab-point.az/site-backend/v1';
 
@@ -16,7 +17,10 @@ export function ToursProvider({ children }) {
         return res.json();
       })
       .then((data) => {
-        setTours(data || []);
+        // Instagram posts with no mentioned price aren't bookable tours —
+        // filtered out here (not per-section) so every place tours are
+        // shown, and the modal's index-into-tours lookup, stay consistent.
+        setTours((data || []).filter((t) => extractMinPrice(t.description)));
         setLoading(false);
       })
       .catch((err) => {

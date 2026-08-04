@@ -4,6 +4,10 @@
 // a price out of the caption. First matching category wins; anything that
 // matches nothing falls into DEFAULT_TOUR_CATEGORY.
 export const TOUR_CATEGORIES = [
+  // Checked first, ahead of destination keywords, so e.g. "İstanbul QRUP
+  // turu" lands here rather than in Türkiyə — the group-tour format is
+  // the more useful distinction for these regardless of destination.
+  { name: 'Qrup Turları', class: 'cat-q', keywords: ['qrup turu', 'qrup turları', 'group tour'] },
   { name: 'Türkiyə', class: 'cat-t', keywords: ['türkiyə', 'istanbul', 'antalya', 'bodrum', 'kapadokya', 'izmir', 'trabzon', 'ege', 'egey'] },
   { name: 'Avropa', class: 'cat-a', keywords: ['avropa', 'budapeşt', 'bazel', 'kolmar', 'italiya', 'fransa', 'ispaniya', 'almaniya', 'praga', 'vyana', 'amsterdam', 'london', 'paris', 'roma', 'milan', 'yunanıstan', 'santorini', 'portuqaliya', 'isveçrə'] },
   { name: 'Ekzotik', class: 'cat-m', keywords: ['maldiv', 'zanzibar', 'bali', 'seyşel', 'mavritius', 'dubay', 'tayland', 'şri lanka'] },

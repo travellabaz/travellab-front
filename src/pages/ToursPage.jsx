@@ -12,9 +12,14 @@ export default function ToursPage() {
   const { openTour } = useModals();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const category = searchParams.get('category') || '';
-  const isKnownCategory = TOUR_CATEGORIES.some((c) => c.name === category);
-  const filteredTours = isKnownCategory ? tours.filter((t) => getTourCategory(t).name === category) : tours;
+  const categoryParam = searchParams.get('category') || '';
+  // Case-insensitive: the pill buttons always send an exact TOUR_CATEGORIES
+  // name, but a hand-typed or externally-linked URL might not match case.
+  const matchedCategory = TOUR_CATEGORIES.find(
+    (c) => c.name.toLocaleLowerCase('az') === categoryParam.toLocaleLowerCase('az')
+  );
+  const category = matchedCategory ? matchedCategory.name : '';
+  const filteredTours = matchedCategory ? tours.filter((t) => getTourCategory(t).name === matchedCategory.name) : tours;
 
   const totalPages = Math.max(1, Math.ceil(filteredTours.length / TOURS_PER_PAGE));
   const page = Math.min(totalPages, Math.max(1, parseInt(searchParams.get('page'), 10) || 1));

@@ -2519,6 +2519,11 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-600);
 }
 
+.cat-q {
+  background: #F3E8FF;
+  color: #7C3AED;
+}
+
 .tl-blog-date {
   font-size: 11px;
   color: var(--tl-gray-400);

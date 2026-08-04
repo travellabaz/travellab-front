@@ -52,6 +52,7 @@ export default function HeroSearch() {
         <div className="tl-hero-mode-pills">
           <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">Otellər</a>
           <Link to="/tours" className="tl-hero-pill">Turlar</Link>
+          <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">Qrup Turlar</Link>
         </div>
       </section>
 
