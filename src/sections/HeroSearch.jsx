@@ -6,7 +6,6 @@ import { useModals } from '../context/ModalContext';
 
 const PILLS_SCROLL_SPEED = 0.6; // px per animation frame
 const PILLS_END_PAUSE_MS = 900; // pause once fully revealed, before scrolling back
-const PILLS_REST_PEEK = 40; // px of the last pill left showing once it scrolls back
 
 const HERO_PHOTOS = [
   { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
@@ -35,8 +34,12 @@ export default function HeroSearch() {
   // Mobile-only nudge: the pills row overflows there (see the
   // max-width: 900px rules in global.css). One-shot, not a loop: scrolls
   // all the way to the end to reveal every pill, pauses, then scrolls
-  // back — but not all the way to 0, stopping PILLS_REST_PEEK short so
-  // the last pill still peeks into view as a "there's more here" hint.
+  // all the way back to 0 — not to some in-between "peek" position, since
+  // anything short of 0 risks partially scrolling Otellər (the first
+  // pill) out of view. Resting at 0 already shows as much of the last
+  // pill as naturally fits in the remaining width once Otellər and its
+  // neighbors are fully in view — nothing if there's no room, however
+  // much fits otherwise — without needing a hardcoded peek amount.
   // Stops for good the moment someone actually touches or scrolls it
   // themselves, since it's real navigation, not decoration.
   useEffect(() => {
@@ -57,7 +60,6 @@ export default function HeroSearch() {
       if (stopped) return;
       const maxScroll = el.scrollWidth - el.clientWidth;
       if (maxScroll > 2) {
-        const restPosition = Math.max(0, maxScroll - PILLS_REST_PEEK);
         if (phase === 'forward') {
           position = Math.min(maxScroll, position + PILLS_SCROLL_SPEED);
           el.scrollTo({ left: position, behavior: 'auto' });
@@ -68,9 +70,9 @@ export default function HeroSearch() {
         } else if (phase === 'pause') {
           if (timestamp >= pauseUntil) phase = 'backward';
         } else if (phase === 'backward') {
-          position = Math.max(restPosition, position - PILLS_SCROLL_SPEED);
+          position = Math.max(0, position - PILLS_SCROLL_SPEED);
           el.scrollTo({ left: position, behavior: 'auto' });
-          if (position <= restPosition + 0.5) phase = 'done';
+          if (position <= 0.5) phase = 'done';
         }
       }
       if (phase !== 'done') frameId = requestAnimationFrame(step);
