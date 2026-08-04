@@ -55,8 +55,6 @@ export default function HeroSearch() {
             go live (next up: "Yanan Turlar" once that integration lands). */}
         <div className="tl-hero-mode-pills">
           <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">Otellər</a>
-          <Link to="/tours" className="tl-hero-pill">Turlar</Link>
-          <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">Qrup Turlar</Link>
           {/* Signup bait: only shown to visitors who aren't logged in yet —
               disappears the moment they are, since the point is to nudge
               them toward registering, not to advertise a real discounts
@@ -66,6 +64,8 @@ export default function HeroSearch() {
               Endirimlər 🔥
             </button>
           )}
+          <Link to="/tours" className="tl-hero-pill">Turlar</Link>
+          <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">Qrup Turlar</Link>
         </div>
       </section>
 
