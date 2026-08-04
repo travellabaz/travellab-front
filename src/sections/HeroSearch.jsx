@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const HERO_PHOTOS = [
   { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
@@ -43,6 +44,13 @@ export default function HeroSearch() {
             <span className="acc">sürətlə bron et</span>
           </h1>
           <p>Biletlər, otellər, turlar və transferlər — hamısı bir yerdə. Labpoint ilə hər səyahətdən qazanın.</p>
+        </div>
+        {/* Quick-search-type switcher — pinned to the bottom-left of the
+            hero, right above the search form. More get added here as they
+            go live (next up: "Yanan Turlar" once that integration lands). */}
+        <div className="tl-hero-mode-pills">
+          <Link to="/hotels" className="tl-hero-pill tl-hero-pill-accent">Otellər</Link>
+          <Link to="/tours" className="tl-hero-pill">Turlar</Link>
         </div>
       </section>
 
