@@ -615,7 +615,7 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 108px 32px 44px;
+  padding: 88px 32px 36px;
   position: relative;
   overflow: hidden;
 }
@@ -648,7 +648,7 @@ body:not(.tl-subpage) .tl-about-extra {
   z-index: 2;
   text-align: center;
   max-width: 680px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   animation: tlFadeUp 0.8s ease both;
 }
 
@@ -696,7 +696,7 @@ body:not(.tl-subpage) .tl-about-extra {
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .tl-hero-pill {
@@ -3090,8 +3090,40 @@ body:not(.tl-subpage) .tl-about-extra {
     height: 30px;
   }
 
+  .tl-hero {
+    padding: 84px 20px 28px;
+  }
+
+  .tl-hero-badge {
+    font-size: 11px;
+    padding: 4px 12px;
+    margin-bottom: 10px;
+  }
+
   .tl-hero h1 {
-    font-size: 32px;
+    font-size: 26px;
+    margin: 0 0 10px;
+  }
+
+  .tl-hero p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .tl-hero-mode-pills {
+    margin-top: 14px;
+    gap: 8px;
+  }
+
+  .tl-hero-pill {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+
+  /* Decorative only, and already overlapping the pills at this width —
+     cut instead of fighting for the space. */
+  .tl-float {
+    display: none;
   }
 }
 
