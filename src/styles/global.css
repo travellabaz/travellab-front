@@ -401,7 +401,10 @@ body:not(.tl-subpage) #tl-tours-grid .tl-pkg-card {
   overflow-y: hidden;
   gap: 20px;
   padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
+  /* No scroll-snap here on purpose — this grid auto-scrolls continuously
+     (see ReviewsSection.jsx), and scroll-snap fights a programmatic
+     scrollLeft nudged by a fraction of a pixel each frame by snapping
+     it straight back to the nearest card. */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -411,7 +414,6 @@ body:not(.tl-subpage) #tl-tours-grid .tl-pkg-card {
   border-radius: var(--tl-r-lg);
   border: 1px solid var(--tl-gray-200);
   padding: 18px;
-  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
 }
