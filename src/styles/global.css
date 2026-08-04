@@ -698,13 +698,17 @@ body:not(.tl-subpage) .tl-about-extra {
   position: relative;
   z-index: 2;
   display: flex;
-  /* .tl-hero centers its children by default (align-items: center) — this
-     breaks just the pill row out to hug the section's actual left edge,
-     same corner the "GYD → IST" float badge sits in, instead of being
-     confined to the centered 680px headline column. */
-  align-self: flex-start;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 10px;
+  width: 100%;
+  /* Matches .tpwl-search-header .tpwl__content's box exactly (1200px
+     max-width + 16px padding each side) so the pills' left edge lines up
+     with the white search card's left edge below, instead of an
+     arbitrary column width. .tl-hero's align-items: center then centers
+     this same as it does everything else — the shared max-width is what
+     makes the two line up. */
+  max-width: 1232px;
   margin-top: 20px;
 }
 
