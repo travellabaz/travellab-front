@@ -1,4 +1,5 @@
 import { API_BASE, authFetch } from './client';
+import { getReferralId } from '../utils/referral';
 
 export function toApiPhone(localDigits) {
   return '994' + localDigits.replace(/\D/g, '');
@@ -16,7 +17,7 @@ export async function register({ name, surname, phone, mail, password, passwordC
       mail,
       password,
       passwordConfirm,
-      referralId: null,
+      referralId: getReferralId(),
     }),
   });
   const data = await res.json();
@@ -33,14 +34,17 @@ export async function login({ phone, password }) {
   return { ok: res.ok, data };
 }
 
-// idToken comes from Google Identity Services (see AuthModal.jsx). Returns
-// the same { clientType, tokens } shape as login()/register()+otpCheck(),
-// so callers feed it into loginSuccess() the same way.
+// idToken comes from Google Identity Services (see AuthModal.jsx /
+// GoogleOneTap.jsx). Returns the same { clientType, tokens } shape as
+// login()/register()+otpCheck(), so callers feed it into loginSuccess() the
+// same way. referralId only actually matters the first time this email
+// signs up — the backend ignores it when linking/logging into an existing
+// account.
 export async function googleLogin(idToken) {
   const res = await fetch(API_BASE + '/auth/google', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idToken }),
+    body: JSON.stringify({ idToken, referralId: getReferralId() }),
   });
   const data = await res.json();
   return { ok: res.ok, data };

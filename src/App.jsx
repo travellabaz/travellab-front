@@ -16,6 +16,7 @@ import VizaPage from './pages/VizaPage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
+import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
 import TourModal from './modals/TourModal';
 import PrivacyModal from './modals/PrivacyModal';
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/r/:code" element={<ReferralRedirect />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
       <Footer />
