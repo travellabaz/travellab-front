@@ -1,10 +1,7 @@
 import { useRef } from 'react';
 import { useTours } from '../context/ToursContext';
 import { useModals } from '../context/ModalContext';
-import { useAuth } from '../context/AuthContext';
-import { truncate } from '../utils/text';
-import { contactManager, managerLabel } from '../utils/managers';
-import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
+import TourCard from '../components/TourCard';
 
 // 260px card + 20px gap = one "step" per click, matching the CSS.
 const SCROLL_STEP = 280;
@@ -12,7 +9,6 @@ const SCROLL_STEP = 280;
 export default function ToursSection() {
   const { tours, loading, empty } = useTours();
   const { openTour } = useModals();
-  const { isAuthenticated, profile } = useAuth();
   const gridRef = useRef(null);
 
   const scrollBy = (delta) => {
@@ -46,69 +42,9 @@ export default function ToursSection() {
               ‹
             </button>
             <div id="tl-tours-grid" className="tl-pkg-grid" ref={gridRef}>
-              {tours.map((tour, idx) => {
-                const price = extractMinPrice(tour.description);
-                const reward = price ? calcReward(price) : null;
-                const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
-                return (
-                <div className="tl-pkg-card" key={tour.id ?? idx}>
-                  <div
-                    className="tl-pkg-img"
-                    role="img"
-                    aria-label={truncate(tour.title, 60)}
-                    style={{
-                      fontSize: 0,
-                      ...(tour.imageUrl
-                        ? { backgroundImage: `url('${tour.imageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                        : {}),
-                    }}
-                  >
-                    {reward && (
-                      <div className="tl-pkg-badges">
-                        <span className="tl-badge tl-badge-lp">
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
-                          </svg>
-                          +{formatPoints(reward.points)} Lab Point
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="tl-pkg-body">
-                    <h3 className="tl-pkg-name">{truncate(tour.title, 60)}</h3>
-                    <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
-                      {truncate(tour.description, 110)}
-                    </div>
-                    {price && (
-                      <div className="tl-pkg-price" style={{ display: 'block' }}>
-                        <span className="tl-price-now">{formatPrice(price.amount, price.currency)}</span>
-                        {balanceDiscount && balanceDiscount.discountAzn > 0 && (
-                          <div className="tl-price-inst">
-                            <span>Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}</span>
-                            <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    <div className="tl-pkg-actions">
-                      <button
-                        type="button"
-                        className="tl-btn-book"
-                        style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)' }}
-                        onClick={() => openTour(idx)}
-                      >
-                        Ətraflı
-                      </button>
-                      <button type="button" className="tl-btn-book" style={{ border: 'none', cursor: 'pointer' }} onClick={() => contactManager(tour)}>
-                        {managerLabel()}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                );
-              })}
+              {tours.map((tour, idx) => (
+                <TourCard key={tour.id ?? idx} tour={tour} onOpen={() => openTour(idx)} />
+              ))}
             </div>
             <button type="button" className="tl-tours-arrow tl-tours-arrow-next" aria-label="Növbəti turlar" onClick={() => scrollBy(SCROLL_STEP)}>
               ›

@@ -1039,6 +1039,18 @@ body:not(.tl-subpage) .tl-about-extra {
   border-color: transparent;
 }
 
+/* Tour departure date has passed (best-effort parsed from the caption text,
+   see utils/tourDate.js) — shown, not hidden, but visually de-emphasized. */
+.tl-pkg-card-expired {
+  opacity: 0.6;
+  filter: grayscale(0.4);
+}
+
+.tl-pkg-card-expired:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .tl-pkg-img {
   height: 155px;
   display: flex;
@@ -2500,6 +2512,11 @@ body:not(.tl-subpage) .tl-about-extra {
 .cat-m {
   background: #FFF8E1;
   color: #F57F17;
+}
+
+.cat-o {
+  background: var(--tl-gray-100);
+  color: var(--tl-gray-600);
 }
 
 .tl-blog-date {
