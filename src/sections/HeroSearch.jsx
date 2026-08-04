@@ -63,7 +63,7 @@ export default function HeroSearch() {
               page. */}
           {!isAuthenticated && (
             <button type="button" className="tl-hero-pill tl-hero-pill-deal" onClick={() => openAuth('register')}>
-              Endirimlər
+              Endirimlər 🔥
             </button>
           )}
         </div>

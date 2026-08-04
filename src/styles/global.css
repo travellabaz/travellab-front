@@ -855,27 +855,21 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* Signup-bait pill (see HeroSearch.jsx) — a button, not a link, so it
-   needs its own reset; the pulsing glow is what has to do the "entice"
-   work here since there's no emoji/icon on these pills. */
+   needs its own reset. Same look as the other pills; the 🔥 plus a
+   subtle pulse is what does the "entice" work instead of a standout
+   color. */
 .tl-hero-pill-deal {
   font: inherit;
   cursor: pointer;
-  background: linear-gradient(135deg, #ff6b5f, #ee3b3b);
-  border-color: transparent;
   animation: tlDealPulse 2.2s ease-in-out infinite;
-}
-
-.tl-hero-pill-deal:hover {
-  background: linear-gradient(135deg, #ff6b5f, #d92a2a);
-  color: #fff;
 }
 
 @keyframes tlDealPulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(238, 59, 59, 0.55);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.45);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(238, 59, 59, 0);
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
   }
 }
 
