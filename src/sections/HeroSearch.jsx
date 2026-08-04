@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HOTELS_URL } from './HotelsSection';
+import { useAuth } from '../context/AuthContext';
+import { useModals } from '../context/ModalContext';
 
 const HERO_PHOTOS = [
   { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
@@ -18,6 +20,8 @@ const HERO_PHOTOS = [
 // prerendered/JS-less crawlers just get the first photo as a fallback.
 export default function HeroSearch() {
   const [photo, setPhoto] = useState(HERO_PHOTOS[0]);
+  const { isAuthenticated } = useAuth();
+  const { openAuth } = useModals();
 
   useEffect(() => {
     setPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
@@ -53,6 +57,15 @@ export default function HeroSearch() {
           <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">Otellər</a>
           <Link to="/tours" className="tl-hero-pill">Turlar</Link>
           <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">Qrup Turlar</Link>
+          {/* Signup bait: only shown to visitors who aren't logged in yet —
+              disappears the moment they are, since the point is to nudge
+              them toward registering, not to advertise a real discounts
+              page. */}
+          {!isAuthenticated && (
+            <button type="button" className="tl-hero-pill tl-hero-pill-deal" onClick={() => openAuth('register')}>
+              Endirimlər
+            </button>
+          )}
         </div>
       </section>
 
