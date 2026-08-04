@@ -32,19 +32,36 @@ export default function ReviewsSection() {
 
     // Mouse hover pauses it (desktop); touching the strip pauses it the
     // same way on mobile, since there's no hover there.
+    let touchResumeTimer;
     const pause = () => { pausedRef.current = true; };
-    const resume = () => { pausedRef.current = false; };
+    const resume = () => {
+      pausedRef.current = false;
+      clearTimeout(touchResumeTimer);
+    };
+    const pauseOnTouch = () => {
+      pause();
+      // Safety net: when this element only started the gesture and the
+      // page ends up handling a vertical scroll instead, mobile browsers
+      // fire touchcancel — or sometimes neither event — so without a
+      // fallback timer the carousel would stay paused forever after the
+      // very first touch anywhere near it.
+      clearTimeout(touchResumeTimer);
+      touchResumeTimer = setTimeout(resume, RESUME_DELAY);
+    };
     el.addEventListener('mouseenter', pause);
     el.addEventListener('mouseleave', resume);
-    el.addEventListener('touchstart', pause, { passive: true });
+    el.addEventListener('touchstart', pauseOnTouch, { passive: true });
     el.addEventListener('touchend', resume);
+    el.addEventListener('touchcancel', resume);
 
     return () => {
       cancelAnimationFrame(frameId);
+      clearTimeout(touchResumeTimer);
       el.removeEventListener('mouseenter', pause);
       el.removeEventListener('mouseleave', resume);
-      el.removeEventListener('touchstart', pause);
+      el.removeEventListener('touchstart', pauseOnTouch);
       el.removeEventListener('touchend', resume);
+      el.removeEventListener('touchcancel', resume);
     };
   }, []);
 
