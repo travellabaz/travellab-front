@@ -631,6 +631,11 @@ body:not(.tl-subpage) .tl-about-extra {
   position: absolute;
   inset: 0;
   background:
+          /* Solid orange footer band — same color the search widget's own
+             card already uses right below — so the pills sit on a flat
+             match instead of the photo, and the hero visually merges
+             into the search form instead of reading as a separate block. */
+          linear-gradient(180deg, transparent 0%, transparent 80%, var(--tl-hero-orange) 100%),
           /* Dark vignette centered behind the headline for contrast,
              fading out toward the edges so the photo stays visible. */
           radial-gradient(ellipse 65% 85% at 50% 48%, rgba(10, 25, 35, 0.6) 0%, rgba(10, 25, 35, 0.28) 55%, transparent 78%),
@@ -693,11 +698,13 @@ body:not(.tl-subpage) .tl-about-extra {
   position: relative;
   z-index: 2;
   display: flex;
-  justify-content: flex-start;
+  /* .tl-hero centers its children by default (align-items: center) — this
+     breaks just the pill row out to hug the section's actual left edge,
+     same corner the "GYD → IST" float badge sits in, instead of being
+     confined to the centered 680px headline column. */
+  align-self: flex-start;
   flex-wrap: wrap;
   gap: 10px;
-  width: 100%;
-  max-width: 680px;
   margin-top: 20px;
 }
 
@@ -753,7 +760,9 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-float-1 {
-  bottom: 14px;
+  /* Pinned above the hero pills, which now sit in this same bottom-left
+     corner — was bottom: 14px, which overlapped them. */
+  top: 18px;
   left: 4%;
   animation-delay: 0s;
 }
