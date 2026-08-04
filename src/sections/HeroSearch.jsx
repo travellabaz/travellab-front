@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HOTELS_URL } from './HotelsSection';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+
+const PILLS_SCROLL_SPEED = 0.6; // px per animation frame
+const PILLS_END_PAUSE_MS = 1200; // pause at each end before reversing
 
 const HERO_PHOTOS = [
   { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
@@ -22,9 +25,56 @@ export default function HeroSearch() {
   const [photo, setPhoto] = useState(HERO_PHOTOS[0]);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
+  const pillsRef = useRef(null);
 
   useEffect(() => {
     setPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
+  }, []);
+
+  // Mobile-only nudge: the pills row overflows there (see the
+  // max-width: 900px rules in global.css), so this gently scrolls it
+  // back and forth to hint that "Qrup Turlar"/"Endirimlər" are reachable
+  // by swipe — and stops for good the moment someone actually touches or
+  // scrolls it themselves, since it's real navigation, not decoration.
+  useEffect(() => {
+    const el = pillsRef.current;
+    if (!el) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    let frameId;
+    let direction = 1;
+    let pausedUntil = 0;
+    let stopped = false;
+
+    const step = (timestamp) => {
+      if (!stopped) {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (maxScroll > 2 && timestamp >= pausedUntil) {
+          el.scrollLeft += direction * PILLS_SCROLL_SPEED;
+          if (direction > 0 && el.scrollLeft >= maxScroll - 1) {
+            direction = -1;
+            pausedUntil = timestamp + PILLS_END_PAUSE_MS;
+          } else if (direction < 0 && el.scrollLeft <= 1) {
+            direction = 1;
+            pausedUntil = timestamp + PILLS_END_PAUSE_MS;
+          }
+        }
+      }
+      frameId = requestAnimationFrame(step);
+    };
+    frameId = requestAnimationFrame(step);
+
+    const stop = () => { stopped = true; };
+    el.addEventListener('touchstart', stop, { passive: true });
+    el.addEventListener('mousedown', stop);
+    el.addEventListener('wheel', stop, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      el.removeEventListener('touchstart', stop);
+      el.removeEventListener('mousedown', stop);
+      el.removeEventListener('wheel', stop);
+    };
   }, []);
 
   return (
@@ -53,7 +103,7 @@ export default function HeroSearch() {
         {/* Quick-search-type switcher — pinned to the bottom-left of the
             hero, right above the search form. More get added here as they
             go live (next up: "Yanan Turlar" once that integration lands). */}
-        <div className="tl-hero-mode-pills">
+        <div className="tl-hero-mode-pills" ref={pillsRef}>
           <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">Otellər</a>
           {/* Signup bait: only shown to visitors who aren't logged in yet —
               disappears the moment they are, since the point is to nudge
