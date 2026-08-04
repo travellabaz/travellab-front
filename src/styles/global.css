@@ -689,6 +689,41 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 auto;
 }
 
+.tl-hero-mode-pills {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.tl-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: #fff;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 24px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.tl-hero-pill:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: #fff;
+}
+
 /* ── FLOAT BADGES ── */
 .tl-float {
   position: absolute;
