@@ -33,7 +33,7 @@ export default function Nav() {
   return (
     <nav className="tl-nav">
       <Link to="/" className="tl-logo" onClick={handleLogoClick}>
-        <LogoFull className="tl-logo-svg" style={{ height: 26, width: 'auto' }} />
+        <LogoFull className="tl-logo-svg" style={{ height: 29, width: 'auto' }} />
       </Link>
       <ul className={'tl-nav-links' + (mobileOpen ? ' tl-nav-open' : '')}>
         {NAV_LINKS.map((link) => (
