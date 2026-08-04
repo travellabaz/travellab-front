@@ -2,14 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useModals } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
+import { GOOGLE_CLIENT_ID } from '../config/google';
 
 const OTP_SECONDS = 120;
-// OAuth client IDs aren't secrets — they're meant to be public (this one
-// ends up in the built JS bundle regardless of how it's stored), so it's
-// hardcoded directly rather than routed through an env var. Must match
-// google.oauth.client-id in site-backend's application*.yml exactly, since
-// the backend checks it as the token's audience.
-const GOOGLE_CLIENT_ID = '738014137628-kthokrumvtc3897t182d3cd7h07jvk6e.apps.googleusercontent.com';
 
 function useCountdown() {
   const [secondsLeft, setSecondsLeft] = useState(0);
@@ -139,7 +134,11 @@ export default function AuthModal() {
         window.google.accounts.id.renderButton(googleBtnRef.current, {
           theme: 'outline',
           size: 'large',
-          width: 380,
+          // Google renders this as a fixed-width iframe — a hardcoded
+          // 380 overflowed/got clipped in the narrower mobile modal.
+          // Measuring the actual container keeps it full-width at any
+          // screen size instead.
+          width: Math.min(400, googleBtnRef.current.offsetWidth || 380),
           text: 'continue_with',
           locale: 'az',
         });

@@ -1,6 +1,7 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Nav from './components/Nav';
 import MobileTabBar from './components/MobileTabBar';
+import GoogleOneTap from './components/GoogleOneTap';
 import Footer from './components/Footer';
 import AttributionFooter from './components/AttributionFooter';
 import CookieBanner from './components/CookieBanner';
@@ -65,6 +66,7 @@ export default function App() {
       <AuthModal />
       <PrivacyModal />
       <TermsModal />
+      <GoogleOneTap />
     </>
   );
 }
