@@ -45,19 +45,26 @@ export default function HeroSearch() {
     let direction = 1;
     let pausedUntil = 0;
     let stopped = false;
+    // Tracked ourselves rather than read back from el.scrollLeft — on iOS
+    // Safari a scrollTo() write doesn't necessarily show up on the very
+    // next read, which would throw this loop's direction logic off.
+    let position = el.scrollLeft;
 
     const step = (timestamp) => {
       if (!stopped) {
         const maxScroll = el.scrollWidth - el.clientWidth;
         if (maxScroll > 2 && timestamp >= pausedUntil) {
-          el.scrollLeft += direction * PILLS_SCROLL_SPEED;
-          if (direction > 0 && el.scrollLeft >= maxScroll - 1) {
+          position += direction * PILLS_SCROLL_SPEED;
+          if (direction > 0 && position >= maxScroll - 1) {
+            position = maxScroll;
             direction = -1;
             pausedUntil = timestamp + PILLS_END_PAUSE_MS;
-          } else if (direction < 0 && el.scrollLeft <= 1) {
+          } else if (direction < 0 && position <= 1) {
+            position = 0;
             direction = 1;
             pausedUntil = timestamp + PILLS_END_PAUSE_MS;
           }
+          el.scrollTo({ left: position, behavior: 'auto' });
         }
       }
       frameId = requestAnimationFrame(step);

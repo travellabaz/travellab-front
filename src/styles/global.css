@@ -3088,7 +3088,11 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-hero-mode-pills {
     flex-wrap: nowrap;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    /* Deliberately no -webkit-overflow-scrolling: touch here — on iOS
+       Safari it's known to make the element ignore JS writes to
+       scrollLeft (the auto-scroll in HeroSearch.jsx), even though it
+       still scrolls fine by hand. Modern iOS already has native
+       momentum scrolling without this legacy property. */
     padding-bottom: 2px;
     scrollbar-width: none;
   }
