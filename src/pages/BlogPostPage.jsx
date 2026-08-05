@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { BLOG_POSTS, getPostBySlug } from '../data/blog';
 import { BLOG_CATEGORIES } from '../data/blog/categories';
 import { formatDateAz } from '../utils/date';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -35,7 +36,13 @@ export default function BlogPostPage() {
       <div className="tl-article-layout tl-page-top">
         <article className="tl-article">
           <div className="tl-article-head">
-            <Link to="/blog" className="tl-viewall">← Bütün bloqlara qayıt</Link>
+            <Breadcrumb
+              items={[
+                { name: 'Ana səhifə', to: '/' },
+                { name: 'Bloq', to: '/blog' },
+                { name: post.title },
+              ]}
+            />
             <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
             <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab Komandası'}</div>
             <h1 className="tl-article-title">{post.title}</h1>

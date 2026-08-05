@@ -4,6 +4,7 @@ import { BASE_URL, PAGE_META } from '../data/pageMeta';
 import { getPostBySlug } from '../data/blog';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
+import { getVizaCountryBySlug } from '../data/vizaCountries';
 
 // Matches the default set in index.html — reused here to reset og:image/
 // twitter:image back to it when navigating off a blog post (an SPA route
@@ -30,11 +31,18 @@ export default function usePageMeta() {
     const post = postSlug ? getPostBySlug(postSlug) : null;
     const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
+    const vizaCountryMatch = /^\/viza\/([^/]+)$/.exec(path);
+    const vizaCountry = vizaCountryMatch ? getVizaCountryBySlug(vizaCountryMatch[1]) : null;
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.excerpt }
       : tour
         ? { title: `${tour.title} — Travellab`, desc: truncate(tour.description, 160) }
-        : PAGE_META[path] || PAGE_META['/'];
+        : vizaCountry
+          ? {
+              title: `${vizaCountry.name} vizası — Travellab`,
+              desc: `Travellab ilə ${vizaCountry.name} vizasını asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq.`,
+            }
+          : PAGE_META[path] || PAGE_META['/'];
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
     const image = post
@@ -64,14 +72,20 @@ export default function usePageMeta() {
 
     const breadcrumb = document.getElementById('breadcrumb-ld');
     if (breadcrumb) {
-      const items = [{ '@type': 'ListItem', position: 1, name: 'Ana səhifə', item: BASE_URL + '/' }];
-      if (!isHome) {
-        items.push({ '@type': 'ListItem', position: 2, name: page.title.split(' — ')[0], item: pageUrl });
+      const items = [{ name: 'Ana səhifə', url: BASE_URL + '/' }];
+      if (post) {
+        items.push({ name: 'Bloq', url: BASE_URL + '/blog' }, { name: post.title, url: pageUrl });
+      } else if (tour) {
+        items.push({ name: 'Turlar', url: BASE_URL + '/tours' }, { name: tour.title, url: pageUrl });
+      } else if (vizaCountry) {
+        items.push({ name: 'Viza', url: BASE_URL + '/viza' }, { name: `${vizaCountry.name} vizası`, url: pageUrl });
+      } else if (!isHome) {
+        items.push({ name: page.title.split(' — ')[0], url: pageUrl });
       }
       breadcrumb.textContent = JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
-        itemListElement: items,
+        itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })),
       });
     }
 

@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { pickManager, formatManagerNumber } from '../utils/managers';
+import { VIZA_COUNTRIES_SCHENGEN, VIZA_COUNTRIES_OTHER } from '../data/vizaCountries';
 
-const COUNTRIES_SCHENGEN = ['Almaniya', 'Fransa', 'İtaliya', 'İspaniya', 'Avstriya', 'Niderland', 'Yunanıstan', 'Çexiya', 'Polşa', 'Macarıstan', 'Portuqaliya', 'İsveçrə'];
-const COUNTRIES_OTHER = ['Böyük Britaniya', 'Amerika Birləşmiş Ştatları', 'Kanada', 'Birləşmiş Ərəb Əmirlikləri', 'Çin', 'Yaponiya', 'Cənubi Koreya', 'Hindistan', 'Tailand', 'Vyetnam', 'Rusiya', 'Avstraliya'];
-
-const initialForm = { country: '', name: '', surname: '', phone: '', date: '', note: '' };
-
-export default function VizaSection() {
-  const [form, setForm] = useState(initialForm);
+// initialCountry: pre-selects the dropdown when arriving from a
+// per-country page (VizaCountryPage.jsx) — the visa request itself still
+// works exactly the same either way, this just saves a click.
+export default function VizaSection({ initialCountry = '' }) {
+  const [form, setForm] = useState({ country: initialCountry, name: '', surname: '', phone: '', date: '', note: '' });
   const [pax, setPax] = useState(1);
   const [error, setError] = useState('');
   const [view, setView] = useState('form'); // 'form' | 'done'
@@ -102,10 +101,10 @@ export default function VizaSection() {
                   <select id="viza-country" className="tl-viza-input" value={form.country} onChange={setField('country')}>
                     <option value="">Ölkə seçin…</option>
                     <optgroup label="Şengen">
-                      {COUNTRIES_SCHENGEN.map((c) => <option key={c}>{c}</option>)}
+                      {VIZA_COUNTRIES_SCHENGEN.map((c) => <option key={c.name}>{c.name}</option>)}
                     </optgroup>
                     <optgroup label="Digər ölkələr">
-                      {COUNTRIES_OTHER.map((c) => <option key={c}>{c}</option>)}
+                      {VIZA_COUNTRIES_OTHER.map((c) => <option key={c.name}>{c.name}</option>)}
                     </optgroup>
                     <option value="Digər">Siyahıda yoxdur</option>
                   </select>

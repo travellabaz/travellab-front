@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function TourDetailPage() {
   const { id } = useParams();
@@ -60,9 +61,13 @@ export default function TourDetailPage() {
     <main className="tpwl-main">
       <section className="tl-page-top">
         <div className="tl-section">
-          <Link to="/tours" className="tl-viewall" style={{ display: 'inline-block', marginBottom: 16, fontWeight: 700 }}>
-            ← Bütün turlar
-          </Link>
+          <Breadcrumb
+            items={[
+              { name: 'Ana səhifə', to: '/' },
+              { name: 'Turlar', to: '/tours' },
+              { name: tour.title },
+            ]}
+          />
 
           <div className="tl-tour-detail">
             <div

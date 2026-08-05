@@ -1014,6 +1014,32 @@ body:not(.tl-subpage) .tl-about-extra {
   text-decoration: none;
 }
 
+/* ── BREADCRUMB (Breadcrumb.jsx) ── */
+.tl-breadcrumb {
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.tl-breadcrumb-item a {
+  color: var(--tl-green);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tl-breadcrumb-item a:hover {
+  color: var(--tl-green-dark);
+  text-decoration: underline;
+}
+
+.tl-breadcrumb-current {
+  color: var(--tl-gray-400);
+}
+
+.tl-breadcrumb-sep {
+  color: var(--tl-gray-400);
+  margin: 0 6px;
+}
+
 /* filter buttons */
 .tl-filters {
   display: flex;
@@ -2586,6 +2612,8 @@ body:not(.tl-subpage) .tl-about-extra {
   border-radius: 100px;
   padding: 9px 18px;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
   transition: 0.2s;
 }
 

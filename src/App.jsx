@@ -14,6 +14,7 @@ import TourDetailPage from './pages/TourDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
 import VizaPage from './pages/VizaPage';
+import VizaCountryPage from './pages/VizaCountryPage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/labpoint" element={<LabpointPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/viza" element={<VizaPage />} />
+        <Route path="/viza/:country" element={<VizaCountryPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />

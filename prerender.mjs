@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
+import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -92,10 +93,12 @@ function setAttrById(html, id, attr, value) {
   });
 }
 
-function buildBreadcrumbJson(pageUrl, title, isHome) {
-  const items = [{ '@type': 'ListItem', position: 1, name: 'Ana səhifə', item: `${BASE_URL}/` }];
-  if (!isHome) items.push({ '@type': 'ListItem', position: 2, name: title.split(' — ')[0], item: pageUrl });
-  return JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items });
+function buildBreadcrumbJson(items) {
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })),
+  });
 }
 
 async function main() {
@@ -105,13 +108,26 @@ async function main() {
   const blogRouteMeta = Object.fromEntries(
     Object.entries(blogPosts).map(([route, post]) => [route, { title: `${post.title} — Travellab`, desc: post.excerpt }])
   );
-  const allRouteMeta = { ...PAGE_META, ...blogRouteMeta };
+  // Unlike tours (a live Instagram feed, fetched at build time only for the
+  // sitemap below), the country list is static data already in the repo —
+  // these pages get the full prerender treatment, same as blog posts.
+  const vizaRouteMeta = Object.fromEntries(
+    VIZA_COUNTRIES.map((c) => [
+      `/viza/${c.slug}`,
+      {
+        title: `${c.name} vizası — Travellab`,
+        desc: `Travellab ilə ${c.name} vizasını asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq.`,
+      },
+    ])
+  );
+  const allRouteMeta = { ...PAGE_META, ...blogRouteMeta, ...vizaRouteMeta };
 
   for (const routePath of Object.keys(allRouteMeta)) {
     const meta = allRouteMeta[routePath];
     const isHome = routePath === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : routePath);
     const post = blogPosts[routePath];
+    const vizaCountry = VIZA_COUNTRIES.find((c) => `/viza/${c.slug}` === routePath);
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`)
       : meta.image
@@ -130,9 +146,18 @@ async function main() {
     html = setAttrById(html, 'twitter-title', 'content', meta.title);
     html = setAttrById(html, 'twitter-desc', 'content', meta.desc);
     html = setAttrById(html, 'twitter-image', 'content', image);
+
+    const breadcrumbItems = [{ name: 'Ana səhifə', url: `${BASE_URL}/` }];
+    if (post) {
+      breadcrumbItems.push({ name: 'Bloq', url: `${BASE_URL}/blog` }, { name: post.title, url: pageUrl });
+    } else if (vizaCountry) {
+      breadcrumbItems.push({ name: 'Viza', url: `${BASE_URL}/viza` }, { name: `${vizaCountry.name} vizası`, url: pageUrl });
+    } else if (!isHome) {
+      breadcrumbItems.push({ name: meta.title.split(' — ')[0], url: pageUrl });
+    }
     html = html.replace(
       /(<script type="application\/ld\+json" id="breadcrumb-ld">)[\s\S]*?(<\/script>)/i,
-      (_, open, close) => `${open}${buildBreadcrumbJson(pageUrl, meta.title, isHome)}${close}`
+      (_, open, close) => `${open}${buildBreadcrumbJson(breadcrumbItems)}${close}`
     );
 
     if (blogPosts[routePath]) {
