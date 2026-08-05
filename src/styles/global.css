@@ -1558,30 +1558,33 @@ body:not(.tl-subpage) .tl-about-extra {
   box-shadow: var(--tl-shadow);
 }
 
-/* ── TOUR DETAIL PAGE (TourDetailPage.jsx) — same top-banner-then-content
-   shape as .tl-article-cover on the blog post page, not a side-by-side
-   grid: a grid with align-items: stretch let the image grow to match
-   whatever height the description text needed, so a long caption made
-   the photo huge. Fixed banner height sidesteps that entirely. ── */
+/* ── TOUR DETAIL PAGE (TourDetailPage.jsx) — side-by-side like the first
+   version, but the image is now capped to a fixed height and
+   align-items: start instead of stretch, so it no longer grows to match
+   however tall the description text happens to be (that's what made it
+   look huge on tours with a long caption). ── */
 .tl-tour-detail {
   background: var(--tl-white);
   border-radius: var(--tl-r-xl);
   overflow: hidden;
-  max-width: 760px;
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
   border: 1px solid var(--tl-gray-200);
   box-shadow: var(--tl-shadow);
 }
 
 .tl-tour-detail-img {
   position: relative;
-  height: 380px;
+  height: 300px;
   background-size: cover;
   background-position: center;
   background-color: var(--tl-gray-50);
 }
 
 .tl-tour-detail-body {
-  padding: 32px 40px 40px;
+  padding: 40px;
 }
 
 .tl-tour-detail-title {
@@ -1602,8 +1605,12 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 900px) {
+  .tl-tour-detail {
+    grid-template-columns: 1fr;
+  }
+
   .tl-tour-detail-img {
-    height: 240px;
+    height: 220px;
   }
 
   .tl-tour-detail-body {
