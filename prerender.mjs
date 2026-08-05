@@ -17,6 +17,12 @@ const distDir = path.join(__dirname, 'dist');
 const ssrDir = path.join(__dirname, 'dist-server');
 const postsDir = path.join(__dirname, 'src/data/blog/posts');
 
+// Matches the default set in index.html and src/hooks/usePageMeta.js
+// (the client-side equivalent of this file, for post-hydration route
+// changes) — every page gets this unless it's a blog post, which uses
+// its own cover image instead.
+const DEFAULT_OG_IMAGE = `${BASE_URL}/images/hero/balloons.jpg`;
+
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
 // JSON file per post, so the route list has to be built from whatever
 // files exist at build time instead of being hardcoded. Keyed by route path
@@ -83,6 +89,10 @@ async function main() {
     const meta = allRouteMeta[routePath];
     const isHome = routePath === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : routePath);
+    const post = blogPosts[routePath];
+    const image = post
+      ? (post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`)
+      : DEFAULT_OG_IMAGE;
     const appHtml = render(routePath);
 
     let html = template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
@@ -92,8 +102,10 @@ async function main() {
     html = setAttrById(html, 'og-title', 'content', meta.title);
     html = setAttrById(html, 'og-desc', 'content', meta.desc);
     html = setAttrById(html, 'og-url', 'content', pageUrl);
+    html = setAttrById(html, 'og-image', 'content', image);
     html = setAttrById(html, 'twitter-title', 'content', meta.title);
     html = setAttrById(html, 'twitter-desc', 'content', meta.desc);
+    html = setAttrById(html, 'twitter-image', 'content', image);
     html = html.replace(
       /(<script type="application\/ld\+json" id="breadcrumb-ld">)[\s\S]*?(<\/script>)/i,
       (_, open, close) => `${open}${buildBreadcrumbJson(pageUrl, meta.title, isHome)}${close}`

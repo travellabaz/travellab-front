@@ -3,6 +3,12 @@ import { useLocation } from 'react-router-dom';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
 import { getPostBySlug } from '../data/blog';
 
+// Matches the default set in index.html — reused here to reset og:image/
+// twitter:image back to it when navigating off a blog post (an SPA route
+// change doesn't reload index.html's own tags, so without this the last
+// post's cover image would linger on every page after it).
+const DEFAULT_OG_IMAGE = BASE_URL + '/images/hero/balloons.jpg';
+
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/
 // breadcrumb-JSON-LD updates, driven by the router location instead of
 // location.hash.
@@ -16,6 +22,9 @@ export default function usePageMeta() {
     const page = post ? { title: `${post.title} — Travellab`, desc: post.excerpt } : PAGE_META[path] || PAGE_META['/'];
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
+    const image = post
+      ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
+      : DEFAULT_OG_IMAGE;
 
     document.title = page.title;
 
@@ -28,8 +37,10 @@ export default function usePageMeta() {
     setMeta('og-title', 'content', page.title);
     setMeta('og-desc', 'content', page.desc);
     setMeta('og-url', 'content', pageUrl);
+    setMeta('og-image', 'content', image);
     setMeta('twitter-title', 'content', page.title);
     setMeta('twitter-desc', 'content', page.desc);
+    setMeta('twitter-image', 'content', image);
     setMeta('canonical', 'href', pageUrl);
 
     const breadcrumb = document.getElementById('breadcrumb-ld');

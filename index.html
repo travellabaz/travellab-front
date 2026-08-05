@@ -60,10 +60,19 @@
     <meta content="az_AZ" property="og:locale" />
     <meta content="website" property="og:type" />
     <meta content="https://www.travellab.az/" property="og:url" id="og-url" />
+    <!-- Default OG image for every page — updated per-page in
+         usePageMeta.js: blog posts swap in their own cover image,
+         everything else keeps this one. Landscape (not one of the
+         portrait hero photos), since og:image gets cropped to ~1.91:1
+         by Facebook/Twitter/Google and a portrait source crops badly. -->
+    <meta property="og:image" content="https://www.travellab.az/images/hero/balloons.jpg" id="og-image" />
+    <meta property="og:image:width" content="1599" />
+    <meta property="og:image:height" content="1066" />
 
     <meta content="Travellab — Bilet və Otel" name="twitter:title" id="twitter-title" />
     <meta content="Yüzlərlə travel saytını bir anda axtarıb sizin üçün ən ucuz uçuşları tapırıq." name="twitter:description" id="twitter-desc" />
     <meta content="summary_large_image" name="twitter:card" />
+    <meta content="https://www.travellab.az/images/hero/balloons.jpg" name="twitter:image" id="twitter-image" />
 
     <script type="application/ld+json">
       {
