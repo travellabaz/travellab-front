@@ -25,7 +25,7 @@ export default function TourCard({ tour }) {
         style={{
           fontSize: 0,
           ...(tour.imageUrl
-            ? { backgroundImage: `url('${tour.imageUrl}')`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }
+            ? { backgroundImage: `url('${tour.imageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }
             : {}),
         }}
       >
