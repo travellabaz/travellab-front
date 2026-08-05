@@ -31,6 +31,9 @@ export const PAGE_META = {
   '/labpoint': {
     title: 'Labpoint — Travellab',
     desc: 'Hər səyahətdən Labpoint qazanın və qazandığınız xalları növbəti bilet, otel və ya tur bronunda endirim kimi istifadə edin.',
+    // Free Pexels stock photo (travel rewards cards + passport) — none of
+    // the site's own hero photos depict a loyalty/points program.
+    image: 'https://images.pexels.com/photos/32642485/pexels-photo-32642485.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },
   '/about': {
     title: 'Haqqımızda — Travellab',
@@ -44,9 +47,13 @@ export const PAGE_META = {
   '/events': {
     title: 'Konsert və Tədbir Biletləri — Travellab',
     desc: 'Travellab ilə dünya üzrə konsert, şou və idman tədbirlərinin biletlərini tapın — axtarın, seçin, biletmaster üzərindən bron edin.',
+    // Free Pexels stock photo (concert crowd) — no in-house concert photo.
+    image: 'https://images.pexels.com/photos/30215324/pexels-photo-30215324.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },
   '/viza': {
     title: 'Turistik Viza — Travellab',
     desc: 'Travellab ilə vizanızı asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq — sorğunuza qısa müddətdə cavab veririk.',
+    // Free Pexels stock photo (passports + travel documents).
+    image: 'https://images.pexels.com/photos/33497885/pexels-photo-33497885.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },
 };

@@ -93,7 +93,7 @@ async function main() {
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`)
       : meta.image
-        ? `${BASE_URL}${meta.image}`
+        ? (meta.image.startsWith('http') ? meta.image : `${BASE_URL}${meta.image}`)
         : DEFAULT_OG_IMAGE;
     const appHtml = render(routePath);
 

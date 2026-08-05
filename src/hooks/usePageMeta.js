@@ -25,7 +25,7 @@ export default function usePageMeta() {
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
       : page.image
-        ? BASE_URL + page.image
+        ? (page.image.startsWith('http') ? page.image : BASE_URL + page.image)
         : DEFAULT_OG_IMAGE;
 
     document.title = page.title;
