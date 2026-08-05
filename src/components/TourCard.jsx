@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
@@ -7,13 +7,17 @@ import { isTourExpired } from '../utils/tourDate';
 
 export default function TourCard({ tour }) {
   const { isAuthenticated, profile } = useAuth();
+  const navigate = useNavigate();
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
   const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
   const expired = isTourExpired(tour.description);
 
   return (
-    <div className={`tl-pkg-card${expired ? ' tl-pkg-card-expired' : ''}`}>
+    <div
+      className={`tl-pkg-card${expired ? ' tl-pkg-card-expired' : ''}`}
+      onClick={() => navigate(`/tours/${tour.id}`)}
+    >
       <div
         className="tl-pkg-img"
         role="img"
@@ -21,7 +25,7 @@ export default function TourCard({ tour }) {
         style={{
           fontSize: 0,
           ...(tour.imageUrl
-            ? { backgroundImage: `url('${tour.imageUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            ? { backgroundImage: `url('${tour.imageUrl}')`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center' }
             : {}),
         }}
       >
@@ -63,11 +67,17 @@ export default function TourCard({ tour }) {
             to={`/tours/${tour.id}`}
             className="tl-btn-book"
             style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={(e) => e.stopPropagation()}
           >
             Ətraflı
           </Link>
           {!expired && (
-            <button type="button" className="tl-btn-book" style={{ border: 'none', cursor: 'pointer' }} onClick={() => contactManager(tour)}>
+            <button
+              type="button"
+              className="tl-btn-book"
+              style={{ border: 'none', cursor: 'pointer' }}
+              onClick={(e) => { e.stopPropagation(); contactManager(tour); }}
+            >
               {managerLabel()}
             </button>
           )}
