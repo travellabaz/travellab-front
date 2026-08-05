@@ -76,7 +76,11 @@ export default function VizaSection({ initialCountry = '' }) {
     : null;
 
   return (
-    <section id="viza" className="tl-page-top">
+    // No tl-page-top here — VizaSection is never the first section on the
+    // page anymore (VizaPage puts the country picker above it,
+    // VizaCountryPage puts the breadcrumb above it), so the page-level
+    // top-nav clearance belongs on whichever of those actually is first.
+    <section id="viza">
       <div className="tl-section">
         <div className="tl-section-header">
           <div>

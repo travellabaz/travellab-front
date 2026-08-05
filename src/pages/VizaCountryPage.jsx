@@ -28,7 +28,7 @@ export default function VizaCountryPage() {
 
   return (
     <main className="tpwl-main">
-      <section id="viza" className="tl-page-top">
+      <section className="tl-page-top">
         <div className="tl-section">
           <Breadcrumb
             items={[

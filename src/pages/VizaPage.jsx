@@ -7,9 +7,7 @@ import { VIZA_COUNTRIES } from '../data/vizaCountries';
 export default function VizaPage() {
   return (
     <main className="tpwl-main">
-      <VizaSection />
-
-      <section className="tl-section">
+      <section className="tl-section tl-page-top">
         <div className="tl-section-header">
           <div>
             <div className="tl-tag">Ölkələr</div>
@@ -24,6 +22,8 @@ export default function VizaPage() {
           ))}
         </div>
       </section>
+
+      <VizaSection />
 
       <FaqSection tag="Suallar" title="Viza ilə bağlı tez-tez verilən suallar" items={VIZA_FAQ} />
     </main>
