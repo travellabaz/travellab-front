@@ -23,6 +23,28 @@ const postsDir = path.join(__dirname, 'src/data/blog/posts');
 // its own cover image instead.
 const DEFAULT_OG_IMAGE = `${BASE_URL}/images/hero/balloons.jpg`;
 
+// Same endpoint ToursContext.jsx fetches client-side. Tours aren't
+// build-time data (they're a live Instagram feed, see TourDetailPage.jsx),
+// so /tours/:id pages can't be prerendered the way blog posts are — but
+// their URLs can still be listed in the sitemap so Google discovers and
+// crawls them (it renders JS, so the real content still gets indexed;
+// only static, non-JS previews like WhatsApp/Telegram stay unsupported).
+const TOURS_API_URL = 'https://backend.travellab-point.az/site-backend/v1/tours';
+
+async function fetchLiveTourIds() {
+  try {
+    const res = await fetch(TOURS_API_URL);
+    if (!res.ok) throw new Error(`tours request failed: ${res.status}`);
+    const tours = await res.json();
+    return (tours || []).map((t) => t.id).filter(Boolean);
+  } catch (err) {
+    // Never fail the whole build over this — a sitemap missing tour URLs
+    // for one run is much better than a broken deploy.
+    console.warn('Could not fetch live tours for sitemap:', err.message);
+    return [];
+  }
+}
+
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
 // JSON file per post, so the route list has to be built from whatever
 // files exist at build time instead of being hardcoded. Keyed by route path
@@ -124,15 +146,17 @@ async function main() {
     console.log(`prerendered ${routePath} -> ${path.relative(__dirname, path.join(outDir, 'index.html'))}`);
   }
 
+  const tourIds = await fetchLiveTourIds();
   const sitemap =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    Object.keys(allRouteMeta)
-      .map((routePath) => `  <url><loc>${BASE_URL}${routePath === '/' ? '/' : routePath}</loc></url>`)
-      .join('\n') +
+    [
+      ...Object.keys(allRouteMeta).map((routePath) => `  <url><loc>${BASE_URL}${routePath === '/' ? '/' : routePath}</loc></url>`),
+      ...tourIds.map((id) => `  <url><loc>${BASE_URL}/tours/${id}</loc></url>`),
+    ].join('\n') +
     `\n</urlset>\n`;
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap);
-  console.log('wrote dist/sitemap.xml');
+  console.log(`wrote dist/sitemap.xml (${tourIds.length} tour URLs)`);
 
   fs.rmSync(ssrDir, { recursive: true, force: true });
 }
