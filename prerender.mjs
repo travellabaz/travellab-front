@@ -92,7 +92,9 @@ async function main() {
     const post = blogPosts[routePath];
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`)
-      : DEFAULT_OG_IMAGE;
+      : meta.image
+        ? `${BASE_URL}${meta.image}`
+        : DEFAULT_OG_IMAGE;
     const appHtml = render(routePath);
 
     let html = template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
