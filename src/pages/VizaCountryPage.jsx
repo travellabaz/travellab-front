@@ -29,7 +29,7 @@ export default function VizaCountryPage() {
   return (
     <main className="tpwl-main">
       <section className="tl-page-top">
-        <div className="tl-section">
+        <div className="tl-section" style={{ paddingBottom: 0 }}>
           <Breadcrumb
             items={[
               { name: 'Ana səhifə', to: '/' },

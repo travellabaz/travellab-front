@@ -7,7 +7,7 @@ import { VIZA_COUNTRIES } from '../data/vizaCountries';
 export default function VizaPage() {
   return (
     <main className="tpwl-main">
-      <section className="tl-section tl-page-top">
+      <section className="tl-section tl-page-top" style={{ paddingBottom: 0 }}>
         <div className="tl-section-header">
           <div>
             <div className="tl-tag">Ölkələr</div>
