@@ -79,22 +79,20 @@
           "addressLocality": "Bakı",
           "addressCountry": "AZ"
         },
-        "sameAs": []
+        "sameAs": [
+          "https://www.facebook.com/travellab.az/",
+          "https://www.instagram.com/travellab.az/",
+          "https://www.linkedin.com/company/travellab-azerbaijan/",
+          "https://www.tiktok.com/@travellab.az"
+        ]
       }
     </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Travellab",
-        "url": "https://www.travellab.az/",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://www.travellab.az/?q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
-      }
-    </script>
+    <!-- No WebSite/SearchAction schema on purpose — the site has no
+         actual free-text search (see SearchPage.jsx, which renders
+         nothing; /search?q= does nothing). Claiming a SearchAction
+         Google might one day surface as a sitelinks searchbox would
+         send real user queries into a dead end. Add it back once a
+         real site-wide search page exists. -->
     <script type="application/ld+json" id="breadcrumb-ld">
       {
         "@context": "https://schema.org",

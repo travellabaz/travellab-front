@@ -107,8 +107,21 @@ export default function EventsSection() {
             {events.map((ev, idx) => {
               const name = truncate(ev.name, 60);
               const meta = truncate([formatEventDate(ev.date), ev.venue].filter(Boolean).join(' · '), 90);
+              // No offers/price here — EventDto (site-backend) doesn't proxy
+              // Ticketmaster's price data, and a fabricated price would be
+              // actively wrong in a rich-result. Only real fields included.
+              const eventLd = {
+                '@context': 'https://schema.org',
+                '@type': 'Event',
+                name: ev.name,
+                ...(ev.date ? { startDate: ev.date } : {}),
+                ...(ev.venue ? { location: { '@type': 'Place', name: ev.venue } } : {}),
+                ...(ev.imageUrl ? { image: ev.imageUrl } : {}),
+                ...(ev.ticketUrl ? { url: ev.ticketUrl } : {}),
+              };
               return (
                 <div className="tl-pkg-card" key={idx}>
+                  <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(eventLd) }} />
                   <div
                     className="tl-pkg-img"
                     role="img"
