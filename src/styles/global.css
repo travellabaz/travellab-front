@@ -1558,6 +1558,61 @@ body:not(.tl-subpage) .tl-about-extra {
   box-shadow: var(--tl-shadow);
 }
 
+/* ── TOUR DETAIL PAGE (TourDetailPage.jsx) ── */
+.tl-tour-detail {
+  background: var(--tl-white);
+  border-radius: var(--tl-r-xl);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  border: 1px solid var(--tl-gray-200);
+  box-shadow: var(--tl-shadow);
+}
+
+.tl-tour-detail-img {
+  position: relative;
+  min-height: 320px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--tl-gray-50);
+}
+
+.tl-tour-detail-body {
+  padding: 40px;
+}
+
+.tl-tour-detail-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.tl-tour-detail-desc {
+  font-size: 14px;
+  color: var(--tl-gray-600);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 900px) {
+  .tl-tour-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .tl-tour-detail-img {
+    min-height: 220px;
+  }
+
+  .tl-tour-detail-body {
+    padding: 24px;
+  }
+}
+
 .tl-viza-field {
   margin-bottom: 16px;
 }

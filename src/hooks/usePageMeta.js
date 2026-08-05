@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
 import { getPostBySlug } from '../data/blog';
+import { useTours } from '../context/ToursContext';
+import { truncate } from '../utils/text';
 
 // Matches the default set in index.html — reused here to reset og:image/
 // twitter:image back to it when navigating off a blog post (an SPA route
@@ -14,19 +16,34 @@ const DEFAULT_OG_IMAGE = BASE_URL + '/images/hero/balloons.jpg';
 // location.hash.
 export default function usePageMeta() {
   const location = useLocation();
+  // Tours aren't known at build time (fetched from Instagram, see
+  // ToursContext) — can't be a PAGE_META entry like the fixed routes.
+  // Unlike blog posts they also can't be prerendered per-URL for the same
+  // reason, so this only reaches crawlers that execute JS (Googlebot does;
+  // WhatsApp/Telegram/Facebook link previews won't get a tour-specific
+  // image/title).
+  const { tours } = useTours();
 
   useEffect(() => {
     const path = location.pathname === '/' ? '/' : location.pathname.replace(/\/$/, '');
     const postSlug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : null;
     const post = postSlug ? getPostBySlug(postSlug) : null;
-    const page = post ? { title: `${post.title} — Travellab`, desc: post.excerpt } : PAGE_META[path] || PAGE_META['/'];
+    const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
+    const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
+    const page = post
+      ? { title: `${post.title} — Travellab`, desc: post.excerpt }
+      : tour
+        ? { title: `${tour.title} — Travellab`, desc: truncate(tour.description, 160) }
+        : PAGE_META[path] || PAGE_META['/'];
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
-      : page.image
-        ? (page.image.startsWith('http') ? page.image : BASE_URL + page.image)
-        : DEFAULT_OG_IMAGE;
+      : tour && tour.imageUrl
+        ? tour.imageUrl
+        : page.image
+          ? (page.image.startsWith('http') ? page.image : BASE_URL + page.image)
+          : DEFAULT_OG_IMAGE;
 
     document.title = page.title;
 
@@ -89,5 +106,8 @@ export default function usePageMeta() {
     } else if (articleLd) {
       articleLd.remove();
     }
-  }, [location.pathname]);
+    // tours: re-run once the async fetch in ToursContext resolves, so a
+    // /tours/:id visit gets the real title/image instead of staying on
+    // the generic fallback it started with.
+  }, [location.pathname, tours]);
 }

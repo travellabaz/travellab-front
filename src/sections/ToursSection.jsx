@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { useTours } from '../context/ToursContext';
-import { useModals } from '../context/ModalContext';
 import TourCard from '../components/TourCard';
 
 // 260px card + 20px gap = one "step" per click, matching the CSS.
@@ -8,7 +7,6 @@ const SCROLL_STEP = 280;
 
 export default function ToursSection() {
   const { tours, loading, empty } = useTours();
-  const { openTour } = useModals();
   const gridRef = useRef(null);
 
   const scrollBy = (delta) => {
@@ -43,7 +41,7 @@ export default function ToursSection() {
             </button>
             <div id="tl-tours-grid" className="tl-pkg-grid" ref={gridRef}>
               {tours.map((tour, idx) => (
-                <TourCard key={tour.id ?? idx} tour={tour} onOpen={() => openTour(idx)} />
+                <TourCard key={tour.id ?? idx} tour={tour} />
               ))}
             </div>
             <button type="button" className="tl-tours-arrow tl-tours-arrow-next" aria-label="Növbəti turlar" onClick={() => scrollBy(SCROLL_STEP)}>

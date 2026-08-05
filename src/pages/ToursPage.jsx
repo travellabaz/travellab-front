@@ -1,6 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
 import { useTours } from '../context/ToursContext';
-import { useModals } from '../context/ModalContext';
 import { TOUR_CATEGORIES, getTourCategory } from '../utils/tourCategory';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../sections/ReviewsSection';
@@ -11,7 +10,6 @@ const TOURS_PER_PAGE = 12;
 
 export default function ToursPage() {
   const { tours, loading, empty } = useTours();
-  const { openTour } = useModals();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const categoryParam = searchParams.get('category') || '';
@@ -98,7 +96,7 @@ export default function ToursPage() {
           {!loading && pageTours.length > 0 && (
             <div className="tl-pkg-grid">
               {pageTours.map((tour) => (
-                <TourCard key={tour.id} tour={tour} onOpen={() => openTour(tours.indexOf(tour))} />
+                <TourCard key={tour.id} tour={tour} />
               ))}
             </div>
           )}

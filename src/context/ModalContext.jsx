@@ -6,13 +6,9 @@ export function ModalProvider({ children }) {
   const [authState, setAuthState] = useState({ open: false, tab: 'login' });
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
-  const [tourIndex, setTourIndex] = useState(null);
 
   const openAuth = useCallback((tab = 'login') => setAuthState({ open: true, tab }), []);
   const closeAuth = useCallback(() => setAuthState((s) => ({ ...s, open: false })), []);
-
-  const openTour = useCallback((idx) => setTourIndex(idx), []);
-  const closeTour = useCallback(() => setTourIndex(null), []);
 
   const value = useMemo(
     () => ({
@@ -26,11 +22,8 @@ export function ModalProvider({ children }) {
       termsOpen,
       openTerms: () => setTermsOpen(true),
       closeTerms: () => setTermsOpen(false),
-      tourIndex,
-      openTour,
-      closeTour,
     }),
-    [authState, privacyOpen, termsOpen, tourIndex, openAuth, closeAuth, openTour, closeTour]
+    [authState, privacyOpen, termsOpen, openAuth, closeAuth]
   );
 
   return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;

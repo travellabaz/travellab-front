@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import HotelsPage from './pages/HotelsPage';
 import ToursPage from './pages/ToursPage';
+import TourDetailPage from './pages/TourDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
 import VizaPage from './pages/VizaPage';
@@ -18,7 +19,6 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
-import TourModal from './modals/TourModal';
 import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
 import usePageMeta from './hooks/usePageMeta';
@@ -51,6 +51,7 @@ export default function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/hotels" element={<HotelsPage />} />
         <Route path="/tours" element={<ToursPage />} />
+        <Route path="/tours/:id" element={<TourDetailPage />} />
         <Route path="/labpoint" element={<LabpointPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/viza" element={<VizaPage />} />
@@ -64,7 +65,6 @@ export default function App() {
       <AttributionFooter />
       <CookieBanner />
 
-      <TourModal />
       <AuthModal />
       <PrivacyModal />
       <TermsModal />

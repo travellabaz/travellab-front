@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
 
-export default function TourCard({ tour, onOpen }) {
+export default function TourCard({ tour }) {
   const { isAuthenticated, profile } = useAuth();
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
@@ -58,14 +59,13 @@ export default function TourCard({ tour, onOpen }) {
           </div>
         )}
         <div className="tl-pkg-actions">
-          <button
-            type="button"
+          <Link
+            to={`/tours/${tour.id}`}
             className="tl-btn-book"
-            style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)' }}
-            onClick={onOpen}
+            style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
           >
             Ətraflı
-          </button>
+          </Link>
           {!expired && (
             <button type="button" className="tl-btn-book" style={{ border: 'none', cursor: 'pointer' }} onClick={() => contactManager(tour)}>
               {managerLabel()}
