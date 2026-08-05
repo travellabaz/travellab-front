@@ -1570,6 +1570,9 @@ body:not(.tl-subpage) .tl-about-extra {
   max-width: 960px;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  /* Not stretch — a long description would keep growing the photo taller
+     to match it. Fixed, generous height instead; if the text column ends
+     up taller, the extra space below the photo just stays empty. */
   align-items: start;
   border: 1px solid var(--tl-gray-200);
   box-shadow: var(--tl-shadow);
@@ -1577,7 +1580,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-tour-detail-img {
   position: relative;
-  height: 300px;
+  height: 480px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
