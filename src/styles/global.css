@@ -1690,6 +1690,13 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 auto 16px;
 }
 
+/* Shown when window.open() for the WhatsApp handoff got blocked — see
+   VizaSection.jsx's waOpened state. */
+.tl-viza-done-ico-warn {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
 .tl-viza-recap {
   background: var(--tl-gray-100);
   border-radius: 12px;

@@ -12,6 +12,12 @@ export default function VizaSection() {
   const [error, setError] = useState('');
   const [view, setView] = useState('form'); // 'form' | 'done'
   const [lead, setLead] = useState(null);
+  // Nothing is actually sent anywhere until the visitor presses Send inside
+  // WhatsApp itself — this is only a prefilled wa.me link, not a real form
+  // submission to our own backend. So "qəbul edildi" would be a lie if the
+  // popup got blocked (or the visitor just closes it) — track whether
+  // window.open actually succeeded and show an honest state either way.
+  const [waOpened, setWaOpened] = useState(null); // null | true | false
 
   const setField = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const changePax = (delta) => setPax((p) => Math.max(1, Math.min(10, p + delta)));
@@ -25,7 +31,10 @@ export default function VizaSection() {
       'Nəfər sayı: ' + (lead.pax || 1) + '\n' +
       'Gediş tarixi: ' + (lead.date || 'Dəqiqləşdirilməyib') +
       (lead.note ? '\nQeyd: ' + lead.note : '');
-    window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(msg), '_blank');
+    const win = window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(msg), '_blank');
+    const opened = !!win;
+    setWaOpened(opened);
+    return opened;
   };
 
   const submit = () => {
@@ -149,13 +158,27 @@ export default function VizaSection() {
               </div>
             ) : (
               <div style={{ textAlign: 'center' }}>
-                <div className="tl-viza-done-ico">✓</div>
-                <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
-                  Müraciətiniz qəbul edildi
-                </h3>
-                <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
-                  Viza mütəxəssisimiz qısa müddətdə sizinlə əlaqə saxlayacaq.
-                </p>
+                {waOpened === false ? (
+                  <>
+                    <div className="tl-viza-done-ico tl-viza-done-ico-warn">!</div>
+                    <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
+                      WhatsApp avtomatik açılmadı
+                    </h3>
+                    <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
+                      Brauzeriniz pəncərəni blokladı — müraciətiniz hələ bizə çatmayıb. Aşağıdakı düyməni klikləyib mesajı özünüz göndərin.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="tl-viza-done-ico">✓</div>
+                    <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
+                      Mesajınız WhatsApp-da hazırdır
+                    </h3>
+                    <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
+                      Müraciətinizin bizə çatması üçün açılan WhatsApp söhbətində <b>&quot;Göndər&quot;</b> düyməsini basmağı unutmayın.
+                    </p>
+                  </>
+                )}
                 <div className="tl-viza-recap">
                   {recap?.map(([label, value]) => (
                     <div key={label}>
@@ -165,7 +188,7 @@ export default function VizaSection() {
                   ))}
                 </div>
                 <button className="tl-viza-wa" type="button" onClick={() => lead && openWhatsApp(lead)}>
-                  İndi WhatsApp-dan yazın
+                  {waOpened === false ? 'WhatsApp-ı aç və göndər' : 'WhatsApp-ı yenidən aç'}
                 </button>
               </div>
             )}
