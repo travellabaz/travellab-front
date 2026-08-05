@@ -1578,8 +1578,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-tour-detail-img {
   position: relative;
   height: 300px;
-  background-size: contain;
-  background-repeat: no-repeat;
+  background-size: cover;
   background-position: center;
   background-color: var(--tl-gray-50);
 }
