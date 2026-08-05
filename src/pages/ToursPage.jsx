@@ -4,6 +4,8 @@ import { useModals } from '../context/ModalContext';
 import { TOUR_CATEGORIES, getTourCategory } from '../utils/tourCategory';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../sections/ReviewsSection';
+import FaqSection from '../components/FaqSection';
+import { TOURS_FAQ } from '../data/toursFaq';
 
 const TOURS_PER_PAGE = 12;
 
@@ -138,6 +140,7 @@ export default function ToursPage() {
       </section>
 
       <ReviewsSection />
+      <FaqSection tag="Suallar" title="Turlarla bağlı tez-tez verilən suallar" items={TOURS_FAQ} />
     </main>
   );
 }
