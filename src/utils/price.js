@@ -23,6 +23,18 @@ export function extractMinPrice(text) {
   for (const match of text.matchAll(PRICE_RE)) {
     const amount = parseAmount(match[1]);
     if (!Number.isFinite(amount)) continue;
+
+    // Captions often list a cashback figure right after the real price, e.g.
+    // "Toplam: 969 EURO (9 EURO keşbek)" — that "9 EURO" matches the same
+    // pattern and is usually smaller than the real price, so without this
+    // check it would win as the "lowest" price instead of 969. Must be the
+    // very next word (only whitespace before it) — a plain char-count
+    // window would also catch "969 EURO" here, since "keşbek" is still only
+    // ~16 characters after it, just on the other side of "(9 EURO ".
+    const after = text.slice(match.index + match[0].length, match.index + match[0].length + 15);
+    const before = text.slice(Math.max(0, match.index - 15), match.index);
+    if (/^\s*(keşbek|kesbek|cashback)/i.test(after) || /(keşbek|kesbek|cashback)\s*:?\s*$/i.test(before)) continue;
+
     const currency = CURRENCY_ALIASES[match[2].toUpperCase()] || match[2].toUpperCase();
     if (!min || amount < min.amount) min = { amount, currency };
   }
