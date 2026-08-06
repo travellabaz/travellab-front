@@ -4229,3 +4229,114 @@ body:not(.tl-subpage) .tl-about-extra {
     bottom: 12px;
   }
 }
+
+/* ── TOUR SEARCH (TourSearchPage.jsx / OfferSearchFilters.jsx / OfferCard.jsx) ── */
+
+.tl-offer-filters {
+  background: var(--tl-white);
+  border-radius: var(--tl-r-xl);
+  padding: 32px;
+  border: 1px solid var(--tl-gray-200);
+  box-shadow: var(--tl-shadow);
+  max-width: 640px;
+  margin: 0 auto 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tl-offer-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tl-offer-submit .sp {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, .3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+
+.tl-offer-submit.ld .sp {
+  display: block;
+}
+
+.tl-offer-submit.ld .bt {
+  opacity: 0;
+}
+
+.tl-offer-submit:disabled {
+  opacity: .75;
+  cursor: not-allowed;
+}
+
+.tl-offer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.tl-offer-card {
+  background: var(--tl-white);
+  border-radius: var(--tl-r-lg);
+  border: 1px solid var(--tl-gray-200);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all .25s;
+}
+
+.tl-offer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--tl-shadow-lg);
+  border-color: transparent;
+}
+
+.tl-offer-card-star {
+  color: #F5A623;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.tl-offer-card-hotel {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  margin: 0;
+}
+
+.tl-offer-card-meta {
+  font-size: 12.5px;
+  color: var(--tl-gray-600);
+  line-height: 1.5;
+}
+
+.tl-offer-card-price {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 6px 0 4px;
+}
+
+@media (max-width: 900px) {
+  .tl-offer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .tl-offer-filters {
+    padding: 20px;
+  }
+
+  .tl-offer-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -11,6 +11,7 @@ import SearchPage from './pages/SearchPage';
 import HotelsPage from './pages/HotelsPage';
 import ToursPage from './pages/ToursPage';
 import TourDetailPage from './pages/TourDetailPage';
+import TourSearchPage from './pages/TourSearchPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
 import VizaPage from './pages/VizaPage';
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/hotels" element={<HotelsPage />} />
         <Route path="/tours" element={<ToursPage />} />
+        <Route path="/tours/search" element={<TourSearchPage />} />
         <Route path="/tours/:id" element={<TourDetailPage />} />
         <Route path="/labpoint" element={<LabpointPage />} />
         <Route path="/events" element={<EventsPage />} />

@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTours } from '../context/ToursContext';
 import { TOUR_CATEGORIES, getTourCategory } from '../utils/tourCategory';
 import TourCard from '../components/TourCard';
@@ -55,6 +55,13 @@ export default function ToursPage() {
               <div className="tl-tag">Xüsusi Təkliflər</div>
               <h2 className="tl-title">Turlarımız</h2>
             </div>
+            <Link
+              to="/tours/search"
+              className="tl-btn-book"
+              style={{ flex: '0 0 auto', padding: '11px 20px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              Bütün otel və qiymətləri axtar →
+            </Link>
           </div>
 
           <div className="tl-blog-filter" role="tablist" aria-label="Tur kateqoriyaları">
