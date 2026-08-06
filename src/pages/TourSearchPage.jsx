@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import OfferSearchFilters from '../components/OfferSearchFilters';
 import OfferCard from '../components/OfferCard';
 import { getDestinations, searchOffers } from '../api/offers';
+import { getDestinationPhotos } from '../api/photos';
+import { photoQueryForCountry } from '../utils/destinationPhotos';
 
 const RESULTS_PER_PAGE = 12;
 
 export default function TourSearchPage() {
   const [destinations, setDestinations] = useState([]);
   const [offers, setOffers] = useState(null); // null = no search run yet
+  const [photos, setPhotos] = useState([]); // real destination photos for the last search's country
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [page, setPage] = useState(1);
@@ -33,6 +36,20 @@ export default function TourSearchPage() {
         setFailed(true);
         setLoading(false);
       });
+
+    // One photo pool per search (every result shares the same selected
+    // country) rather than one Pexels lookup per card.
+    const country = destinations.find((d) => String(d.state) === String(criteria.state));
+    if (country) {
+      getDestinationPhotos(photoQueryForCountry(country.name))
+        .then(setPhotos)
+        .catch((err) => {
+          console.error('ActionLog.offers.photosFailed', err);
+          setPhotos([]);
+        });
+    } else {
+      setPhotos([]);
+    }
   };
 
   const totalPages = offers ? Math.max(1, Math.ceil(offers.length / RESULTS_PER_PAGE)) : 1;
@@ -75,7 +92,7 @@ export default function TourSearchPage() {
           {!loading && pageOffers.length > 0 && (
             <div className="tl-pkg-grid">
               {pageOffers.map((offer, i) => (
-                <OfferCard key={i} offer={offer} />
+                <OfferCard key={i} offer={offer} photos={photos} />
               ))}
             </div>
           )}

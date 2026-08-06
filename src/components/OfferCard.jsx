@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { contactManager, managerLabel } from '../utils/managers';
@@ -23,22 +24,36 @@ export function offerContactShape(offer) {
 
 // Mirrors TourCard.jsx's structure/classes so live Kompas offers look and
 // behave like the existing Instagram-tour cards (same LabPoint badge,
-// balance-discount line, whole-card click-through) — the only real
-// difference is the photo slot, which is a gradient instead of a real
-// image since Kompas doesn't provide hotel photos (see utils/offerVisual.js).
-export default function OfferCard({ offer }) {
+// balance-discount line, whole-card click-through). `photos` is the shared
+// pool of real destination photos fetched once per search (see
+// TourSearchPage.jsx) — every card picks a random one from it and sticks
+// with it; if the pool is empty (still loading, or Pexels/no key), a
+// gradient (utils/offerVisual.js) fills in instead, since Kompas itself has
+// no hotel-photo API.
+export default function OfferCard({ offer, photos }) {
   const navigate = useNavigate();
   const { isAuthenticated, profile } = useAuth();
+  const [photoUrl, setPhotoUrl] = useState(null);
+
+  useEffect(() => {
+    if (photos && photos.length > 0 && !photoUrl) {
+      setPhotoUrl(photos[Math.floor(Math.random() * photos.length)]);
+    }
+  }, [photos]);
 
   const price = offer.price != null ? { amount: offer.price, currency: offer.currency } : null;
   const reward = price ? calcReward(price) : null;
   const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
 
-  const openDetail = () => navigate('/tours/search/offer', { state: { offer } });
+  const openDetail = () => navigate('/tours/search/offer', { state: { offer: { ...offer, photoUrl } } });
+
+  const imgStyle = photoUrl
+    ? { backgroundImage: `url('${photoUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : { background: offerGradient(offer.hotelName) };
 
   return (
     <div className="tl-pkg-card" onClick={openDetail}>
-      <div className="tl-pkg-img" style={{ background: offerGradient(offer.hotelName) }}>
+      <div className="tl-pkg-img" style={imgStyle}>
         {reward && (
           <div className="tl-pkg-badges">
             <span className="tl-badge tl-badge-lp">
@@ -49,10 +64,12 @@ export default function OfferCard({ offer }) {
             </span>
           </div>
         )}
-        <div className="tl-offer-img-content">
-          {offer.star ? <div className="tl-offer-img-star">{'★'.repeat(offer.star)}</div> : null}
-          <div className="tl-offer-img-place">{offer.resortTown || offer.tourTitle}</div>
-        </div>
+        {!photoUrl && (
+          <div className="tl-offer-img-content">
+            {offer.star ? <div className="tl-offer-img-star">{'★'.repeat(offer.star)}</div> : null}
+            <div className="tl-offer-img-place">{offer.resortTown || offer.tourTitle}</div>
+          </div>
+        )}
       </div>
       <div className="tl-pkg-body">
         <h3 className="tl-pkg-name">{offer.hotelName}</h3>

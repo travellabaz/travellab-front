@@ -71,7 +71,14 @@ export default function OfferDetailPage() {
           />
 
           <div className="tl-tour-detail">
-            <div className="tl-tour-detail-img" style={{ background: offerGradient(offer.hotelName) }}>
+            <div
+              className="tl-tour-detail-img"
+              style={
+                offer.photoUrl
+                  ? { backgroundImage: `url('${offer.photoUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                  : { background: offerGradient(offer.hotelName) }
+              }
+            >
               {reward && (
                 <div className="tl-pkg-badges">
                   <span className="tl-badge tl-badge-lp">
@@ -82,10 +89,12 @@ export default function OfferDetailPage() {
                   </span>
                 </div>
               )}
-              <div className="tl-offer-img-content">
-                {offer.star ? <div className="tl-offer-img-star">{'★'.repeat(offer.star)}</div> : null}
-                <div className="tl-offer-img-place">{offer.resortTown || offer.tourTitle}</div>
-              </div>
+              {!offer.photoUrl && (
+                <div className="tl-offer-img-content">
+                  {offer.star ? <div className="tl-offer-img-star">{'★'.repeat(offer.star)}</div> : null}
+                  <div className="tl-offer-img-place">{offer.resortTown || offer.tourTitle}</div>
+                </div>
+              )}
             </div>
 
             <div className="tl-tour-detail-body">
