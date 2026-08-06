@@ -4275,68 +4275,57 @@ body:not(.tl-subpage) .tl-about-extra {
   cursor: not-allowed;
 }
 
-.tl-offer-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+/* Kompas offers reuse TourCard's .tl-pkg-* classes directly (see
+   OfferCard.jsx) so results look/behave like the Instagram tour cards —
+   only the "photo" is different: a gradient instead of a real image, since
+   Kompas has no hotel-photo API. This is that gradient's overlay content. */
+.tl-offer-img-content {
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+  padding: 0 16px;
 }
 
-.tl-offer-card {
-  background: var(--tl-white);
-  border-radius: var(--tl-r-lg);
-  border: 1px solid var(--tl-gray-200);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: all .25s;
+.tl-offer-img-star {
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #FFE27A;
+  margin-bottom: 6px;
 }
 
-.tl-offer-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--tl-shadow-lg);
-  border-color: transparent;
-}
-
-.tl-offer-card-star {
-  color: #F5A623;
-  font-size: 13px;
-  letter-spacing: 1px;
-}
-
-.tl-offer-card-hotel {
+.tl-offer-img-place {
   font-family: 'Geist Sans', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--tl-navy);
-  margin: 0;
-}
-
-.tl-offer-card-meta {
-  font-size: 12.5px;
-  color: var(--tl-gray-600);
-  line-height: 1.5;
-}
-
-.tl-offer-card-price {
-  font-size: 19px;
+  font-size: 15px;
   font-weight: 800;
-  color: var(--tl-navy);
-  margin: 6px 0 4px;
-}
-
-@media (max-width: 900px) {
-  .tl-offer-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 600px) {
   .tl-offer-filters {
     padding: 20px;
   }
+}
 
-  .tl-offer-grid {
-    grid-template-columns: 1fr;
-  }
+/* "Canlı qiymətlərlə axtar" — sits among the ToursPage category pills but
+   deliberately doesn't look like one, so it reads as "a different kind of
+   thing" (a live search tool) rather than just another filter. */
+.tl-search-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #FF7A45, #F5384E);
+  border: none;
+  border-radius: 100px;
+  padding: 9px 18px 9px 16px;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(245, 56, 78, .3);
+  transition: transform .18s, box-shadow .18s;
+}
+
+.tl-search-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(245, 56, 78, .4);
 }

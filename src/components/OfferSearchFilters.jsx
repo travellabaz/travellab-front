@@ -2,6 +2,27 @@ import { useState } from 'react';
 
 const STAR_OPTIONS = [2, 3, 4, 5];
 
+// Kompas's CURRENCY codes — confirmed live via SearchTour_CURRENCIES
+// (USD=2, EUR=3, AZN=13), not documented anywhere on the public wiki.
+const CURRENCY_OPTIONS = [
+  { value: '2', label: 'USD' },
+  { value: '3', label: 'EUR' },
+  { value: '13', label: 'AZN' },
+];
+
+// Standard hotel meal-plan abbreviations — sent as-is to the backend, which
+// compares them directly against Kompas's own "meal" field (also one of
+// these abbreviations, e.g. "AI", "BB").
+const MEAL_OPTIONS = [
+  { value: '', label: 'Hamısı' },
+  { value: 'RO', label: 'Yalnız otaq (RO)' },
+  { value: 'BB', label: 'Səhər yeməyi (BB)' },
+  { value: 'HB', label: 'Yarım pansion (HB)' },
+  { value: 'FB', label: 'Tam pansion (FB)' },
+  { value: 'AI', label: 'Hər şey daxil (AI)' },
+  { value: 'UAI', label: 'Ultra hər şey daxil (UAI)' },
+];
+
 function toIsoDate(date) {
   return date.toISOString().slice(0, 10);
 }
@@ -28,6 +49,8 @@ export default function OfferSearchFilters({ destinations, onSearch, loading }) 
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [stars, setStars] = useState([]);
+  const [meal, setMeal] = useState('');
+  const [currency, setCurrency] = useState('2');
   const [error, setError] = useState('');
 
   const changeNights = (delta) => setNights((n) => Math.max(1, Math.min(30, n + delta)));
@@ -43,7 +66,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading }) 
     if (!state) return setError('İstiqaməti seçin.');
     if (!checkinFrom || !checkinTo) return setError('Tarixləri seçin.');
     if (checkinTo < checkinFrom) return setError('Tarixlər düzgün deyil.');
-    onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars });
+    onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency });
   };
 
   return (
@@ -115,6 +138,25 @@ export default function OfferSearchFilters({ destinations, onSearch, loading }) 
               {star}★
             </button>
           ))}
+        </div>
+      </div>
+
+      <div className="tl-viza-row">
+        <div className="tl-viza-field">
+          <label htmlFor="offer-meal">Qidalanma</label>
+          <select id="offer-meal" className="tl-viza-input" value={meal} onChange={(e) => setMeal(e.target.value)}>
+            {MEAL_OPTIONS.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="tl-viza-field">
+          <label htmlFor="offer-currency">Valyuta</label>
+          <select id="offer-currency" className="tl-viza-input" value={currency} onChange={(e) => setCurrency(e.target.value)}>
+            {CURRENCY_OPTIONS.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
         </div>
       </div>
 

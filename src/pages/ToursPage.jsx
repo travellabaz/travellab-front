@@ -55,13 +55,6 @@ export default function ToursPage() {
               <div className="tl-tag">Xüsusi Təkliflər</div>
               <h2 className="tl-title">Turlarımız</h2>
             </div>
-            <Link
-              to="/tours/search"
-              className="tl-btn-book"
-              style={{ flex: '0 0 auto', padding: '11px 20px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-            >
-              Bütün otel və qiymətləri axtar →
-            </Link>
           </div>
 
           <div className="tl-blog-filter" role="tablist" aria-label="Tur kateqoriyaları">
@@ -84,6 +77,13 @@ export default function ToursPage() {
                 {c.name}
               </button>
             ))}
+            <Link to="/tours/search" className="tl-search-cta">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2.2" />
+                <path d="M21 21L16.5 16.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+              </svg>
+              Canlı qiymətlərlə axtar
+            </Link>
           </div>
 
           {loading && (

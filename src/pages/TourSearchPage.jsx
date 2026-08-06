@@ -73,7 +73,7 @@ export default function TourSearchPage() {
           )}
 
           {!loading && pageOffers.length > 0 && (
-            <div className="tl-offer-grid">
+            <div className="tl-pkg-grid">
               {pageOffers.map((offer, i) => (
                 <OfferCard key={i} offer={offer} />
               ))}

@@ -6,7 +6,7 @@ export async function getDestinations() {
   return res.json();
 }
 
-export async function searchOffers({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal }) {
+export async function searchOffers({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency }) {
   const query = new URLSearchParams();
   query.set('state', state);
   query.set('checkinFrom', checkinFrom);
@@ -16,6 +16,7 @@ export async function searchOffers({ state, checkinFrom, checkinTo, nights, adul
   query.set('children', children);
   if (stars && stars.length) query.set('stars', stars.join(','));
   if (meal) query.set('meal', meal);
+  if (currency) query.set('currency', currency);
 
   const res = await fetch(API_BASE + '/tours/offers/results?' + query.toString());
   if (!res.ok) throw new Error('offers search failed: ' + res.status);
