@@ -110,15 +110,28 @@ export default function OfferDetailPage() {
                 </div>
               )}
 
-              <a
-                href={link}
-                target={isMobile() ? '_blank' : '_self'}
-                rel="noopener noreferrer"
-                className="tl-btn-book"
-                style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-              >
-                {managerLabel()} →
-              </a>
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <a
+                  href={link}
+                  target={isMobile() ? '_blank' : '_self'}
+                  rel="noopener noreferrer"
+                  className="tl-btn-book"
+                  style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                >
+                  {managerLabel()} →
+                </a>
+                {offer.hotelUrl && (
+                  <a
+                    href={offer.hotelUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tl-btn-book"
+                    style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)', padding: '13px 26px' }}
+                  >
+                    Otel haqqında
+                  </a>
+                )}
+              </div>
               <div style={{ marginTop: 10, fontSize: 12, color: 'var(--tl-gray-400)' }}>
                 Menecer: {manager.name} — {formatManagerNumber(manager.number)}
               </div>
