@@ -239,12 +239,30 @@ function insertInlinePhotos(body, photos) {
   return result;
 }
 
+// Gemini doesn't always hit the 1400-2000 word target the prompt asks for
+// (seen as low as 717) — that's a model-compliance miss, not a real error,
+// so it's worth a couple of retries before giving up and failing the whole
+// workflow (which means no post at all gets published that day).
+async function generatePost(existing, category, maxAttempts = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const raw = await callModel(buildPrompt(existing, category));
+      const draft = extractJson(raw);
+      validate(draft);
+      return draft;
+    } catch (err) {
+      lastError = err;
+      console.warn(`Attempt ${attempt}/${maxAttempts} failed: ${err.message}`);
+    }
+  }
+  throw lastError;
+}
+
 async function main() {
   const existing = existingPosts();
   const category = pickCategory(existing);
-  const raw = await callModel(buildPrompt(existing, category));
-  const draft = extractJson(raw);
-  validate(draft);
+  const draft = await generatePost(existing, category);
 
   let slug = slugify(draft.title);
   const existingSlugs = new Set(existing.map((p) => p.slug));
