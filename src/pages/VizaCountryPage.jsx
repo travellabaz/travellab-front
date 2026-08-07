@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import VizaSection from '../sections/VizaSection';
 import FaqSection from '../components/FaqSection';
 import Breadcrumb from '../components/Breadcrumb';
+import SeoBodyText from '../components/SeoBodyText';
 import { getVizaCountryFaq } from '../data/vizaFaq';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 
@@ -45,6 +46,19 @@ export default function VizaCountryPage() {
         title={`${country.name} Vizası Haqqında Nə Bilmək Lazımdır?`}
         items={getVizaCountryFaq(country.name)}
       />
+      <section>
+        <div className="tl-section">
+          <SeoBodyText key={country.name}>
+            {getVizaCountryFaq(country.name).map(({ q, a }) => (
+              <p key={q}>
+                <strong>{q}</strong>
+                <br />
+                {a}
+              </p>
+            ))}
+          </SeoBodyText>
+        </div>
+      </section>
     </main>
   );
 }
