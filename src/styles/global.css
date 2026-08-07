@@ -4731,6 +4731,62 @@ body:not(.tl-subpage) .tl-about-extra {
   text-align: center;
 }
 
+.tl-hotel-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tl-hotel-filter-popover {
+  width: 300px;
+}
+
+.tl-hotel-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+}
+
+.tl-hotel-filter-option:hover {
+  background: var(--tl-gray-100);
+}
+
+.tl-hotel-filter-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--tl-green);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.tl-hotel-filter-clear {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--tl-gray-100);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  background: none;
+  color: var(--tl-green);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+
+.tl-hotel-filter-clear:hover {
+  color: var(--tl-green-dark);
+}
+
 @media (max-width: 900px) {
   .tl-searchbar {
     margin-top: -20px;

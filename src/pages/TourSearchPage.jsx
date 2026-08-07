@@ -10,6 +10,7 @@ import { getDestinations, searchOffers } from '../api/offers';
 import { getDestinationPhotos } from '../api/photos';
 import { photoQueryForCountry } from '../utils/destinationPhotos';
 import { paginationItems } from '../utils/pagination';
+import HotelFilter from '../components/HotelFilter';
 
 const RESULTS_PER_PAGE = 12;
 
@@ -63,6 +64,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
   const [failed, setFailed] = useState(false);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState('price_asc');
+  const [selectedHotels, setSelectedHotels] = useState([]);
 
   useEffect(() => {
     setHeroPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
@@ -78,6 +80,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
     setLoading(true);
     setFailed(false);
     setPage(1);
+    setSelectedHotels([]);
     searchOffers(criteria)
       .then((data) => {
         setOffers(data || []);
@@ -111,13 +114,27 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
     ? destinations.find((d) => d.name === initialCountryName)?.state
     : undefined;
 
-  const sortedOffers = offers ? sortOffers(offers, sort) : null;
+  // Built from whatever's actually in this search's results, not a
+  // separate hotels lookup — matches Kompas's own agent widget's hotel
+  // picker (see HotelFilter.jsx), just scoped to the current result set.
+  const hotelNames = offers ? [...new Set(offers.map((o) => o.hotelName).filter(Boolean))].sort() : [];
+  const hotelFilteredOffers = offers
+    ? selectedHotels.length
+      ? offers.filter((o) => selectedHotels.includes(o.hotelName))
+      : offers
+    : null;
+  const sortedOffers = hotelFilteredOffers ? sortOffers(hotelFilteredOffers, sort) : null;
   const totalPages = sortedOffers ? Math.max(1, Math.ceil(sortedOffers.length / RESULTS_PER_PAGE)) : 1;
   const pageOffers = sortedOffers ? sortedOffers.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE) : [];
 
   const goToPage = (n) => {
     setPage(n);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const selectHotels = (names) => {
+    setSelectedHotels(names);
+    setPage(1);
   };
 
   const selectSort = (value) => {
@@ -172,7 +189,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
             </div>
           )}
 
-          {!loading && pageOffers.length > 0 && (
+          {!loading && offers && offers.length > 0 && (
             <div className="tl-searchbar-extra-group" style={{ marginBottom: 20 }}>
               <span className="tl-searchbar-extra-label">Sırala:</span>
               {SORT_OPTIONS.map((opt) => (
@@ -186,6 +203,12 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
                   {opt.label}
                 </button>
               ))}
+              {hotelNames.length > 1 && (
+                <>
+                  <span className="tl-searchbar-extra-label" style={{ marginLeft: 12 }}>Otel:</span>
+                  <HotelFilter hotels={hotelNames} selected={selectedHotels} onChange={selectHotels} />
+                </>
+              )}
             </div>
           )}
 
