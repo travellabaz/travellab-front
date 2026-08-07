@@ -84,8 +84,22 @@ export default function AboutSection() {
               ))}
             </div>
           </div>
-          <div className="tl-about-address">
+          <a
+            className="tl-about-address"
+            href="https://www.google.com/maps/search/?api=1&query=Caspian+Business+Center%2C+40+C%C9%99f%C9%99r+Cabbarl%C4%B1+k%C3%BC%C3%A7%C9%99si%2C+Bak%C4%B1"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span>📍</span> 40 Cəfər Cabbarlı küçəsi, Caspian Business Center, Bakı
+          </a>
+          <div className="tl-about-map">
+            <iframe
+              title="Travellab — Google Xəritədə ünvan"
+              src="https://www.google.com/maps?q=Caspian+Business+Center,+40+C%C9%99f%C9%99r+Cabbarl%C4%B1+k%C3%BC%C3%A7%C9%99si,+Bak%C4%B1&output=embed"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
           </div>
         </div>
 
