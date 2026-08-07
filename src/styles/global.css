@@ -3037,6 +3037,110 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 24px;
 }
 
+.tl-article-toc {
+  background: var(--tl-gray-100);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  padding: 18px 22px;
+  margin: 0 0 28px;
+}
+
+.tl-article-toc-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  margin-bottom: 10px;
+}
+
+.tl-article-toc ol {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tl-article-toc a {
+  font-size: 13.5px;
+  color: var(--tl-gray-600);
+  text-decoration: none;
+}
+
+.tl-article-toc a:hover {
+  color: var(--tl-green);
+  text-decoration: underline;
+}
+
+.tl-article-body a {
+  color: var(--tl-green);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--tl-green-light);
+  text-underline-offset: 2px;
+}
+
+.tl-article-body a:hover {
+  color: var(--tl-green-dark);
+}
+
+.tl-end-related {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--tl-gray-200);
+}
+
+.tl-end-related-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 16px;
+}
+
+.tl-end-related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.tl-end-related-grid .tl-related-img {
+  height: 130px;
+}
+
+.tl-end-service-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  border-radius: var(--tl-r-md);
+  padding: 20px;
+  background: var(--tl-navy);
+  text-decoration: none;
+}
+
+.tl-end-service-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--tl-green-light);
+}
+
+.tl-end-service-cta {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+}
+
+@media (max-width: 700px) {
+  .tl-end-related-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tl-article-head .tl-viewall {
   display: inline-block;
   margin-bottom: 20px;
@@ -3111,6 +3215,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700;
   color: var(--tl-navy);
   margin: 32px 0 12px;
+  scroll-margin-top: 84px;
 }
 
 .tl-article-body p {

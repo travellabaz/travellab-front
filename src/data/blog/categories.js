@@ -6,4 +6,6 @@ export const BLOG_CATEGORIES = [
   { name: 'Bələdçi', class: 'cat-t' },
   { name: 'Xəbərlər', class: 'cat-n' },
   { name: 'Macəra', class: 'cat-m' },
+  { name: 'Vizasız Ölkələr', class: 'cat-q' },
+  { name: 'Tibbi Turizm', class: 'cat-o' },
 ];

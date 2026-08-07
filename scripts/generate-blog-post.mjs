@@ -53,6 +53,16 @@ const CATEGORIES = {
     guidance:
       'Aktiv/macəra səyahəti: dağ trekkinqi, kempinq, su idmanları, solo macəra səyahəti, az tanınan təbiət istiqamətləri, ekstremal və ya qeyri-adi təcrübələr.',
   },
+  'Vizasız Ölkələr': {
+    class: 'cat-q',
+    guidance:
+      'Azərbaycan vətəndaşlarının vizasız və ya qapıda viza (viza on arrival) ilə gedə biləcəyi ölkələr: hansı ölkələr, nə qədər müddətə qalmaq olar, hansı sənədlər lazımdır (adətən yalnız pasport). Konkret gün sayı və şərtlər ölkədən ölkəyə dəyişə bilər deyə "adətən", "ümumi qayda olaraq" kimi ehtiyatlı ifadələr istifadə et, tarixlə bağlı iddialar YAZMA.',
+  },
+  'Tibbi Turizm': {
+    class: 'cat-o',
+    guidance:
+      'Tibbi turizm: xaricdə müalicə/estetik prosedurlar üçün səyahət planlaması, hansı ölkələr məşhurdur (Türkiyə, Cənubi Koreya və s.), tibbi turizmdə nələrə diqqət etmək lazımdır, səyahət+müalicə əlaqələndirilməsi. Konkret klinika adı, qiymət və ya tibbi tövsiyə YAZMA — bu, həkim səlahiyyətidir, yalnız səyahət təşkilatı perspektivindən yaz.',
+  },
 };
 
 // Least-used category first (ties broken deterministically by post count)
@@ -156,6 +166,24 @@ async function callModel(prompt) {
   return text;
 }
 
+// Paths the model is allowed to link to from inside a post's body text (see
+// the "Daxili linkləmə" prompt section below) — a fixed, real list rather
+// than letting the model invent URLs, so every in-body link actually
+// resolves to a real page.
+const INTERNAL_LINK_PATHS = [
+  '/search — aviabilet axtarışı',
+  '/hotels — otel axtarışı və bron',
+  '/tours — hazır tur paketləri (bütün kateqoriyalar)',
+  '/tours?category=Türkiyə — Türkiyə turları',
+  '/tours?category=Avropa — Avropa turları',
+  '/tours?category=Ekzotik — ekzotik/uzaq turlar',
+  '/tours?category=Qrup%20Turları — qrup turları',
+  '/viza — viza xidməti (bütün ölkələr)',
+  '/labpoint — Labpoint bonus proqramı',
+  '/events — tədbir və konsert biletləri',
+  '/about — Travellab haqqında',
+];
+
 function buildPrompt(existing, category) {
   const avoidList = existing.length
     ? `Bu mövzular artıq işlənib, onları TƏKRARLAMA:\n${existing.map((p) => `- ${p.title}`).join('\n')}`
@@ -177,8 +205,12 @@ SEO tələbləri:
 - title 45-65 simvol arası, cəlbedici və açar sözlü olsun.
 - excerpt 140-160 simvol arası, məqalənin başında oxucuya görünən, cəlbedici bir giriş cümləsi olsun.
 - metaDescription 150-160 simvol arası — excerpt-dən FƏRQLİ formalaşdırılmış, açar sözü önə çıxaran, Google axtarış nəticəsində göstəriləcək qısa təsvir (oxucu üçün deyil, axtarış motoru üçün yazılır).
-- Mətn daxilində münasib yerlərdə Travellab-ın xidmətlərinə (uçuş/otel axtarışı, turlar, LabPoint bal proqramı) 1-2 dəfə təbii keçid ver, amma reklam kimi səslənməsin.
 - Boş, ümumi cümlələr əvəzinə konkret nümunələr, siyahılar və praktiki addımlar istifadə et.
+- Açar söz sıxlığı: əsas açar söz ifadən mətnin təxminən 1-2%-i qədər təkrarlansın (250-400 sözə 3-6 dəfə kimi düşün, bütün 1400-2000 sözlük mətn üzrə mütənasib artır) — süni yığılma hiss olunmasın, çoxu yerdə açar sözün özü yox, sinonim/əlaqəli ifadələr (LSI) işlət (məs. "Budapeşt səyahət bələdçisi" əvəzinə növbə ilə "Budapeştə səyahət", "Macarıstan səyahəti", "bu şəhərə səfər" kimi variasiyalar).
+
+Daxili linkləmə (ZƏRURİDİR): body massivində olan p bloklarının mətni daxilində, təbii cümlə axını içində, 2-4 dəfə aşağıdakı siyahıdan konkret bir səhifəyə keçid ver. Format MÜTLƏQ markdown link sintaksisi olmalıdır: [açar söz mətni](/yol) — link mətni HƏMİŞƏ mövzuya uyğun açar söz olmalıdır, "buraya klikləyin" və ya "bu linkə bax" kimi ifadələr YOX. Yalnız aşağıdakı siyahıdakı yolları istifadə et, başqa URL uydurma:
+${INTERNAL_LINK_PATHS.map((p) => `- ${p}`).join('\n')}
+Nümunə cümlə: "Ən sərfəli qiymətləri tapmaq üçün [aviabilet axtarışı](/search) bölməsindən müqayisə edə bilərsiniz." Bu linklər yalnız "p" tipli bloklarda, mövzuya uyğun düşən yerdə olsun — hər paraqrafda yox, süni doldurma olmasın.
 
 ${avoidList}
 
