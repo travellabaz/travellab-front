@@ -2,6 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { getCategories, getCalendar } from '../api/offers';
 import AvailabilityCalendar from './AvailabilityCalendar';
 import CountrySelect from './CountrySelect';
+import { TOUR_SEARCH_COUNTRIES } from '../data/tourSearchCountries';
+
+// Kompas's destinations endpoint only returns Russian names (see
+// tourSearchCountries.js) — reuse that same nameRu->nameAz map here so the
+// dropdown itself is in Azerbaijani too, not just the per-country pages.
+// Falls back to the raw Kompas name for any destination not yet in that
+// list, rather than hiding it.
+const COUNTRY_NAME_AZ = new Map(TOUR_SEARCH_COUNTRIES.map((c) => [c.nameRu, c.nameAz]));
+function destinationLabel(name) {
+  return COUNTRY_NAME_AZ.get(name) || name;
+}
 
 const STAR_OPTIONS = [2, 3, 4, 5];
 
@@ -175,7 +186,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
           value={state}
           onChange={setState}
           placeholder="Ölkə seçin…"
-          options={destinations.map((d) => ({ value: String(d.state), label: d.name }))}
+          options={destinations.map((d) => ({ value: String(d.state), label: destinationLabel(d.name) }))}
         />
 
         <AvailabilityCalendar
