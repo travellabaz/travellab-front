@@ -37,20 +37,20 @@ export default function usePageMeta() {
     const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
     const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
     const page = post
-      ? { title: `${post.title} — Travellab`, desc: post.excerpt }
+      ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour
         ? { title: `${tour.title} — Travellab`, desc: truncate(tour.description, 160) }
         : vizaCountry
           ? {
-              title: `${vizaCountry.name} vizası — Travellab`,
-              desc: `Travellab ilə ${vizaCountry.name} vizasını asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq.`,
+              title: `${vizaCountry.name} Vizası - Sənədlər və Şərtlər | Travellab`,
+              desc: `${vizaCountry.name} vizası üçün lazımi sənədlər, müddət və qiymət. Travellab ilə sürətli və etibarlı viza xidməti. İndi müraciət edin!`,
             }
           : tourSearchCountry
             ? {
                 title: `${tourSearchCountry.nameAz} turları — canlı qiymətlər — Travellab`,
                 desc: `${tourSearchCountry.nameAz} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.`,
               }
-            : PAGE_META[path] || PAGE_META['/'];
+            : PAGE_META[path] || (path === '/' ? PAGE_META['/'] : { title: 'Səhifə tapılmadı — Travellab', desc: 'Axtardığınız səhifə mövcud deyil.' });
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
     const image = post

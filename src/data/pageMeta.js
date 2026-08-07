@@ -9,23 +9,23 @@ export const BASE_URL = 'https://www.travellab.az';
 // generic default.
 export const PAGE_META = {
   '/': {
-    title: 'Travellab — Bilet və Otel',
-    desc: 'Yüzlərlə travel saytını bir anda axtarıb sizin üçün ən ucuz uçuşları tapırıq.',
+    title: 'Səyahət Agentliyi Bakı - Aviabilet, Otel, Tur | Travellab',
+    desc: 'Səyahət agentliyi Travellab ilə aviabilet, otel bron və tur paketlərini bir yerdə tapın. Viza xidməti, Labpoint bonusları. İndi bron edin!',
     image: '/images/hero/mosque-og.jpg',
   },
   '/search': {
-    title: 'Travellab — Bilet və Otel axtarışı',
-    desc: 'Yüzlərlə travel saytını bir anda axtarıb sizin üçün ən ucuz uçuş biletlərini tapırıq. Travellab ilə asanlıqla tap, sürətlə bron et.',
+    title: 'Aviabilet Axtarışı və Bron - Sərfəli Uçuşlar | Travellab',
+    desc: 'Bakıdan bütün dünyaya sərfəli aviabilet axtarın və bron edin. Yüzlərlə aviaşirkət arasından ən əlverişli qiyməti tapın. Sürətli və etibarlı bron.',
     image: '/images/hero/plane-wing-og.jpg',
   },
   '/hotels': {
-    title: 'Otellər — Travellab',
-    desc: 'Dünyanın 220-dən çox ölkəsində 2,6 milyondan artıq oteli müqayisə edin və Travellab ilə ən sərfəli qiymətə bron edin.',
+    title: 'Otel Bron - Onlayn Otel Axtarışı | Travellab',
+    desc: 'Dünyanın istənilən nöqtəsində otel axtarın və onlayn bron edin. Sərfəli qiymətlər, sürətli təsdiq, Labpoint bonusları ilə otel rezervasiyası.',
     image: '/images/hero/aurora.jpg',
   },
   '/tours': {
-    title: 'Turlar — Travellab',
-    desc: 'Travellab ilə dünyanın bütün bölgələrinə hazır tur paketləri: Avropa, Asiya, Balkanlar, Baltik, Şimali Amerika və Okeaniya.',
+    title: 'Tur Paketləri - Sərfəli Turlar Bakıdan | Travellab',
+    desc: 'Dubay, Türkiyə, Gürcüstan və digər istiqamətlərə hazır tur paketləri. Aviabilet, otel və transfer daxil, sərfəli qiymətlərlə. İndi seçin!',
     image: '/images/hero/balloons.jpg',
   },
   '/labpoint': {
@@ -41,18 +41,18 @@ export const PAGE_META = {
     image: '/images/hero/mosque-og.jpg',
   },
   '/blog': {
-    title: 'Blog — Travellab',
-    desc: 'Səyahət məsləhətləri, viza məlumatları və Travellab komandasından faydalı bloq yazıları.',
+    title: 'Bloq - Səyahət Məsləhətləri və Xəbərlər | Travellab',
+    desc: 'Səyahət məsləhətləri, viza təlimatları, ölkə icmalları və tur tövsiyələri. Travellab bloqunda faydalı məlumatlar tapın.',
   },
   '/events': {
-    title: 'Konsert və Tədbir Biletləri — Travellab',
-    desc: 'Travellab ilə dünya üzrə konsert, şou və idman tədbirlərinin biletlərini tapın — axtarın, seçin, biletmaster üzərindən bron edin.',
+    title: 'Tədbir Biletləri - Konsert, Şou, Festival | Travellab',
+    desc: 'Bakıda və digər şəhərlərdə konsert, şou və tədbir biletlərini onlayn əldə edin. Sürətli və etibarlı bilet alışı Travellab ilə.',
     // Free Pexels stock photo (concert crowd) — no in-house concert photo.
     image: 'https://images.pexels.com/photos/30215324/pexels-photo-30215324.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },
   '/viza': {
-    title: 'Turistik Viza — Travellab',
-    desc: 'Travellab ilə vizanızı asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq — sorğunuza qısa müddətdə cavab veririk.',
+    title: 'Viza Xidmətləri - Sürətli və Etibarlı | Travellab',
+    desc: 'Türkiyə, Şengen, Dubay və digər ölkələr üçün viza xidməti. Sənəd hazırlığından təhvilə qədər tam dəstək. Sürətli və etibarlı proses.',
     // Free Pexels stock photo (passports + travel documents).
     image: 'https://images.pexels.com/photos/33497885/pexels-photo-33497885.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },

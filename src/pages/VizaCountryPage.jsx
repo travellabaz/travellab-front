@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import VizaSection from '../sections/VizaSection';
 import FaqSection from '../components/FaqSection';
 import Breadcrumb from '../components/Breadcrumb';
-import { VIZA_FAQ } from '../data/vizaFaq';
+import { getVizaCountryFaq } from '../data/vizaFaq';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 
 export default function VizaCountryPage() {
@@ -40,7 +40,11 @@ export default function VizaCountryPage() {
         </div>
       </section>
       <VizaSection initialCountry={country.name} />
-      <FaqSection tag="Suallar" title={`${country.name} vizası ilə bağlı tez-tez verilən suallar`} items={VIZA_FAQ} />
+      <FaqSection
+        tag="Suallar"
+        title={`${country.name} Vizası Haqqında Nə Bilmək Lazımdır?`}
+        items={getVizaCountryFaq(country.name)}
+      />
     </main>
   );
 }

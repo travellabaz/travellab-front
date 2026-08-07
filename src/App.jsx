@@ -7,6 +7,7 @@ import AttributionFooter from './components/AttributionFooter';
 import CookieBanner from './components/CookieBanner';
 import HeroSearch from './sections/HeroSearch';
 import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
 import SearchPage from './pages/SearchPage';
 import HotelsPage from './pages/HotelsPage';
 import ToursPage from './pages/ToursPage';
@@ -67,7 +68,7 @@ export default function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/r/:code" element={<ReferralRedirect />} />
-        <Route path="*" element={<HomePage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
       <AttributionFooter />

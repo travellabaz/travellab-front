@@ -11,7 +11,7 @@ export default function VizaPage() {
         <div className="tl-section-header">
           <div>
             <div className="tl-tag">Ölkələr</div>
-            <h2 className="tl-title">Ölkəyə görə viza</h2>
+            <h1 className="tl-title">Viza Xidmətləri</h1>
           </div>
         </div>
         <div className="tl-blog-filter">

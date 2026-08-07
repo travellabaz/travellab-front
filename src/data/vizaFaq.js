@@ -32,3 +32,28 @@ export const VIZA_FAQ = [
     a: 'Bəzi ölkələr üçün təcili (expedited) müraciət seçimi mövcuddur, əlavə rəsmi haqq ilə. Formda tarixi qeyd edin, mütəxəssisimiz bu seçimin mümkün olub-olmadığını sizə bildirəcək.',
   },
 ];
+
+// Per-country FAQ (VizaCountryPage.jsx) — 3 fixed questions per the
+// {ölkə} template, not a 24-country hand-authored set. The first two
+// deliberately don't state a specific processing time or document list:
+// those vary by country/consulate/season and change often, and getting
+// them wrong on a visa page is the kind of mistake that actually costs a
+// customer money/time — so, same as the generic VIZA_FAQ above, they point
+// to "ask our specialist" rather than a fabricated number. Swap in real
+// per-country answers here once that data exists.
+export function getVizaCountryFaq(countryName) {
+  return [
+    {
+      q: `${countryName} vizası neçə günə çıxır?`,
+      a: `Müddət ölkənin konsulluğundan, mövsümdən və müraciət növündən asılı olaraq dəyişir. ${countryName} üçün dəqiq müddəti formu göndərdikdən sonra mütəxəssisimiz sizə bildirəcək.`,
+    },
+    {
+      q: `${countryName} vizası üçün hansı sənədlər lazımdır?`,
+      a: `Tələb olunan sənədlər səyahətin məqsədindən (turist, iş, qohum ziyarəti və s.) asılı olaraq fərqlənir. Ölkəni seçib formu göndərdikdən sonra mütəxəssisimiz sizə ${countryName} üçün tam sənəd siyahısını göndərəcək.`,
+    },
+    {
+      q: `Travellab ${countryName} vizası üçün necə kömək edir?`,
+      a: `Travellab səyahət agentliyi olaraq, ${countryName} vizası üçün sənəd hazırlığından müraciətə qədər tam dəstək göstəririk — lazımi sənədlərin siyahısını hazırlayır, formların doldurulmasında kömək edir və konsulluqla əlaqəni asanlaşdırırıq.`,
+    },
+  ];
+}

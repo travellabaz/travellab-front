@@ -17,7 +17,12 @@ function formatEventDate(dateStr) {
 // provider's API key secret). "Bilet al" opens the provider's own site in
 // a new tab to complete the purchase — browsing/search only, real in-site
 // checkout needs a separate Partner API.
-export default function EventsSection() {
+//
+// asH1: true when this is the whole content of its own dedicated page
+// (EventsPage.jsx) rather than a teaser embedded on HomePage.jsx — see the
+// identical convention on HotelsSection.jsx.
+export default function EventsSection({ asH1 = false }) {
+  const Heading = asH1 ? 'h1' : 'h2';
   const [query, setQuery] = useState('');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +64,7 @@ export default function EventsSection() {
         <div className="tl-section-header">
           <div>
             <div className="tl-tag">Tədbirlər</div>
-            <h2 className="tl-title">Konsert və Tədbir Biletləri</h2>
+            <Heading className="tl-title">Tədbir Biletləri</Heading>
           </div>
         </div>
 

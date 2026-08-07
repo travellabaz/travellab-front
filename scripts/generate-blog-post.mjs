@@ -161,7 +161,7 @@ function buildPrompt(existing, category) {
     ? `Bu mövzular artıq işlənib, onları TƏKRARLAMA:\n${existing.map((p) => `- ${p.title}`).join('\n')}`
     : '';
 
-  return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət/turizm platforması) üçün SEO üzrə ekspert bloq yazıçısısan. Məqsəd — Google-da yaxşı sıralanan, oxucuya real dəyər verən, DƏRİN və ƏTRAFLI bir bloq yazısı yazmaqdır. Səthi, ümumi cümlələrlə dolu qısa mətnlər yazma.
+  return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət agentliyi) üçün SEO üzrə ekspert bloq yazıçısısan. Travellab PLATFORMA yox, SƏYAHƏT AGENTLİYİDİR — bunu ton və mətndə əks etdir. Məqsəd — Google-da yaxşı sıralanan, oxucuya real dəyər verən, DƏRİN və ƏTRAFLI bir bloq yazısı yazmaqdır. Səthi, ümumi cümlələrlə dolu qısa mətnlər yazma.
 
 Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur TƏQRIBƏN belə olmalıdır (dəqiq bənd sayını özün seç, hər yazıda eyni qəlibi TƏKRARLAMA):
 - Giriş abzası (mövzunu təqdim edir, oxucuya faydasını izah edir, əsas açar sözü ilk 1-2 cümlədə keçir)
@@ -175,20 +175,23 @@ Bu yazının kateqoriyası MÜTLƏQ **${category}**dir — mövzunu bu kateqoriy
 SEO tələbləri:
 - Bir əsas açar söz ifadəsi seç (məsələn "ucuz bilet tapmaq", "ailəvi səyahət məsləhətləri") və onu başlıqda, girişdə, ən azı iki alt başlıqda və excerpt-də təbii şəkildə istifadə et.
 - title 45-65 simvol arası, cəlbedici və açar sözlü olsun.
-- excerpt 140-160 simvol arası, açar sözlü, Google axtarış nəticəsində göstəriləcək qədər cəlbedici olsun (bu sahə həm də meta description kimi istifadə olunur).
+- excerpt 140-160 simvol arası, məqalənin başında oxucuya görünən, cəlbedici bir giriş cümləsi olsun.
+- metaDescription 150-160 simvol arası — excerpt-dən FƏRQLİ formalaşdırılmış, açar sözü önə çıxaran, Google axtarış nəticəsində göstəriləcək qısa təsvir (oxucu üçün deyil, axtarış motoru üçün yazılır).
 - Mətn daxilində münasib yerlərdə Travellab-ın xidmətlərinə (uçuş/otel axtarışı, turlar, LabPoint bal proqramı) 1-2 dəfə təbii keçid ver, amma reklam kimi səslənməsin.
 - Boş, ümumi cümlələr əvəzinə konkret nümunələr, siyahılar və praktiki addımlar istifadə et.
 
 ${avoidList}
 
-Bundan əlavə, yazının mövzusuna uyğun stok fotoları tapmaq üçün 2-3 sadə İNGİLİSCƏ axtarış ifadəsi ver (məsələn mövzu "ucuz bilet tapmaq" olarsa: "airport departure board", "backpacker with suitcase", "budget flight booking laptop"). Hər ifadə konkret, vizual şəkildə təsvir edilə bilən bir səhnə olmalıdır — mövzunun ümumi adı yox (məs. "cheap flights" YOX, "airport check-in counter" BƏLİ).
+Bundan əlavə, yazının mövzusuna uyğun stok fotoları tapmaq üçün 2-3 sadə İNGİLİSCƏ axtarış ifadəsi ver (məsələn mövzu "ucuz bilet tapmaq" olarsa: "airport departure board", "backpacker with suitcase", "budget flight booking laptop"). Hər ifadə konkret, vizual şəkildə təsvir edilə bilən bir səhnə olmalıdır — mövzunun ümumi adı yox (məs. "cheap flights" YOX, "airport check-in counter" BƏLİ). Hər axtarış ifadəsi üçün, sonda o foto faktiki əlavə olunarsa istifadə ediləcək bir Azərbaycan dilində alt-mətn də yaz (şəkildə nəyin göründüyünü real təsvir edən, SEO üçün faydalı qısa cümlə — "şəkil", "foto" kimi sözlər olmadan).
 
 Cavabı YALNIZ aşağıdakı JSON formatında ver, başqa heç nə yazma (izah, markdown fence və ya əlavə mətn olmasın):
 
 {
   "title": "45-65 simvol, açar sözlü, cəlbedici başlıq",
-  "excerpt": "140-160 simvollu, açar sözlü, cəlbedici təsvir",
+  "excerpt": "140-160 simvollu, cəlbedici giriş cümləsi",
+  "metaDescription": "150-160 simvollu, açar söz önə çıxan axtarış motoru təsviri",
   "imageQueries": ["specific visual scene 1", "specific visual scene 2", "specific visual scene 3"],
+  "imageAltTexts": ["1-ci foto üçün Azərbaycan dilində alt-mətn", "2-ci foto üçün", "3-cü foto üçün"],
   "body": [
     { "type": "p", "text": "..." },
     { "type": "h2", "text": "..." },
@@ -272,10 +275,14 @@ async function main() {
   const dayIndex = new Date(today).getUTCDate();
 
   const queries = Array.isArray(draft.imageQueries) ? draft.imageQueries.slice(0, 3) : [];
+  // Model-written AZ alt text per query index — not just zipped 1:1 with
+  // `photos` below, since a query can return zero Pexels results and get
+  // skipped, which would otherwise shift every alt text after it out of sync.
+  const altTexts = Array.isArray(draft.imageAltTexts) ? draft.imageAltTexts : [];
   const photos = [];
-  for (const query of queries) {
-    const [photo] = await fetchPexelsPhotos(query, 1);
-    if (photo) photos.push(photo);
+  for (let i = 0; i < queries.length; i++) {
+    const [photo] = await fetchPexelsPhotos(queries[i], 1);
+    if (photo) photos.push({ ...photo, alt: altTexts[i] || photo.alt });
   }
   const [coverPhoto, ...inlinePhotos] = photos;
 
@@ -283,6 +290,9 @@ async function main() {
     slug,
     title: draft.title,
     excerpt: draft.excerpt,
+    // Falls back to excerpt if the model omits this — a slightly-too-long
+    // meta description beats none at all.
+    metaDescription: draft.metaDescription || draft.excerpt,
     category,
     categoryClass: CATEGORIES[category].class,
     // Shown on the article so it doesn't read as anonymous/unattributed —

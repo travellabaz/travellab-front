@@ -107,7 +107,7 @@ async function main() {
   const template = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
   const blogPosts = loadBlogPosts();
   const blogRouteMeta = Object.fromEntries(
-    Object.entries(blogPosts).map(([route, post]) => [route, { title: `${post.title} — Travellab`, desc: post.excerpt }])
+    Object.entries(blogPosts).map(([route, post]) => [route, { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }])
   );
   // Unlike tours (a live Instagram feed, fetched at build time only for the
   // sitemap below), the country list is static data already in the repo —
@@ -116,8 +116,8 @@ async function main() {
     VIZA_COUNTRIES.map((c) => [
       `/viza/${c.slug}`,
       {
-        title: `${c.name} vizası — Travellab`,
-        desc: `Travellab ilə ${c.name} vizasını asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq.`,
+        title: `${c.name} Vizası - Sənədlər və Şərtlər | Travellab`,
+        desc: `${c.name} vizası üçün lazımi sənədlər, müddət və qiymət. Travellab ilə sürətli və etibarlı viza xidməti. İndi müraciət edin!`,
       },
     ])
   );

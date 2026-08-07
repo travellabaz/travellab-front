@@ -80,7 +80,7 @@ export default function Footer() {
             <a href="/" className="tl-logo" style={{ marginBottom: 0 }}>
               <LogoFull style={{ height: 24, width: 'auto' }} />
             </a>
-            <p>Azərbaycanın aparıcı travel platforması. Biletlər, otellər, turlar — hamısı bir yerdə.</p>
+            <p>Azərbaycanın etibarlı səyahət agentliyi. Biletlər, otellər, turlar — hamısı bir yerdə.</p>
             <div className="tl-footer-membership">
               <span className="tl-footer-membership-label">Üzvüyük:</span>
               <a href="https://ataa.az/" target="_blank" rel="noopener noreferrer" aria-label="Azərbaycan Turizm Agentlikləri Assosiasiyası">

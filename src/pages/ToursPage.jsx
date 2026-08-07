@@ -53,7 +53,7 @@ export default function ToursPage() {
           <div className="tl-section-header">
             <div>
               <div className="tl-tag">Xüsusi Təkliflər</div>
-              <h2 className="tl-title">Turlarımız</h2>
+              <h1 className="tl-title">Tur Paketləri — Hazır Turlar</h1>
             </div>
           </div>
 
@@ -145,6 +145,24 @@ export default function ToursPage() {
       </section>
 
       <ReviewsSection />
+
+      <section>
+        <div className="tl-section">
+          <div className="tl-article-body" style={{ maxWidth: 760, margin: '0 auto' }}>
+            <h2>Travellab Tur Paketləri Haqqında</h2>
+            <p>
+              Travellab səyahət agentliyi Dubay, Türkiyə, Gürcüstan və digər populyar istiqamətlərə hazır tur
+              paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli
+              qiymətlərlə, əlavə xərc olmadan.
+            </p>
+            <p>
+              Tur paketlərimiz həm fərdi, həm qrup səyahətləri üçün uyğundur. Hər tur alışında Labpoint bonus
+              xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <FaqSection tag="Suallar" title="Turlarla bağlı tez-tez verilən suallar" items={TOURS_FAQ} />
     </main>
   );

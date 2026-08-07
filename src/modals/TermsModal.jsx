@@ -94,7 +94,7 @@ export default function TermsModal() {
           İstifadə Şərtləri və Qaydalar – Travellab
         </h2>
         <p style={{ fontSize: 13, color: 'rgba(29,41,57,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
-          Bu İstifadə Şərtləri və Qaydalar ("Şərtlər") Travellab platformasından (
+          Bu İstifadə Şərtləri və Qaydalar ("Şərtlər") Travellab saytından (
           <a href="https://www.travellab.az" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--tl-green)' }}>
             www.travellab.az
           </a>
@@ -106,7 +106,7 @@ export default function TermsModal() {
         <div className="pv-section">
           <div className="pv-h">1. Ümumi Qaydalar</div>
           <ul className="pv-ul">
-            <li>Travellab, istifadəçilərə uçuş, otel, tur və digər səyahət xidmətlərinə dair axtarış və məlumat təqdim edən platformadır.</li>
+            <li>Travellab, istifadəçilərə uçuş, otel, tur və digər səyahət xidmətlərini təqdim edən səyahət agentliyidir.</li>
             <li>Saytdakı bütün məzmun və funksiyalar yalnız qanuni məqsədlərlə istifadə edilə bilər.</li>
             <li>İstifadəçi təqdim etdiyi bütün məlumatların düzgün və doğru olduğunu təsdiqləyir.</li>
           </ul>

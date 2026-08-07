@@ -4,14 +4,19 @@ export const HOTELS_URL = 'https://backend.travellab-point.az/site-backend/v1/go
 // frame-ancestors headers that block being embedded in an iframe from
 // another origin. That can't be worked around from this page, so we link
 // out to the White Label site directly instead of iframing it.
-export default function HotelsSection() {
+// asH1: true when this is the whole content of its own dedicated page
+// (HotelsPage.jsx) rather than a teaser embedded on HomePage.jsx — a real
+// page needs exactly one <h1>, but HomePage already has its own from
+// HeroSearch, so the embedded copy here has to stay an <h2>.
+export default function HotelsSection({ asH1 = false }) {
+  const Heading = asH1 ? 'h1' : 'h2';
   return (
     <section id="hotels" className="tl-page-top">
       <div className="tl-section">
         <div className="tl-section-header" style={{ marginBottom: 20 }}>
           <div>
             <div className="tl-tag">Otel Bron</div>
-            <h2 className="tl-title">Dünya üzrə Otellər</h2>
+            <Heading className="tl-title">Otel Bron — Onlayn Otel Axtarışı</Heading>
           </div>
           <a href={HOTELS_URL} className="tl-viewall">Tam ekranda aç →</a>
         </div>
@@ -35,7 +40,7 @@ export default function HotelsSection() {
             <div className="tl-hotel-visual-emoji">🏨</div>
             <div className="tl-hotel-visual-title">Travellab Hotels</div>
             <div className="tl-hotel-visual-sub">
-              White Label platforması ilə işləyir — Travellab brendi altında, beynəlxalq inventar üzərində.
+              White Label texnologiyası ilə işləyir — Travellab brendi altında, beynəlxalq inventar üzərində.
             </div>
             <div className="tl-hotel-stats">
               <div className="tl-hotel-stat">

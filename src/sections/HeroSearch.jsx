@@ -109,7 +109,7 @@ export default function HeroSearch() {
         </div>
         <div className="tl-float tl-float-2">Hər tur alışında +10% Labpoint</div>
         <div className="tl-hero-content">
-          <div className="tl-hero-badge">✈ Azərbaycanın rəsmi travel platforması</div>
+          <div className="tl-hero-badge">✈ Azərbaycanın etibarlı səyahət agentliyi</div>
           <h1>
             Asanlıqla tap,<br />
             <span className="acc">sürətlə bron et</span>

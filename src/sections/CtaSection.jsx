@@ -6,7 +6,7 @@ export default function CtaSection() {
       <div className="tl-cta">
         <div className="tl-cta-text">
           <h2>Növbəti səyahətinizi indi planlaşdırın</h2>
-          <p>Bilet, otel və tur — hamısı bir platformada. Labpoint ilə hər sifarişdən bonus qazanın.</p>
+          <p>Bilet, otel və tur — hamısı bir yerdə, bir səyahət agentliyində. Labpoint ilə hər sifarişdən bonus qazanın.</p>
           <div className="tl-cta-tags">
             <span className="tl-cta-tag">✈ Uçuş biletləri</span>
             <span className="tl-cta-tag">🏨 Otellər</span>
