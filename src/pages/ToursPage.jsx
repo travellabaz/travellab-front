@@ -5,6 +5,7 @@ import TourCard from '../components/TourCard';
 import ReviewsSection from '../sections/ReviewsSection';
 import FaqSection from '../components/FaqSection';
 import { TOURS_FAQ } from '../data/toursFaq';
+import { paginationItems } from '../utils/pagination';
 
 const TOURS_PER_PAGE = 12;
 
@@ -119,17 +120,21 @@ export default function ToursPage() {
                 ← Əvvəlki
               </button>
               <div className="tl-pagination-pages">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button
-                    type="button"
-                    key={n}
-                    className={`tl-pagination-page${n === page ? ' active' : ''}`}
-                    onClick={() => goToPage(n)}
-                    aria-current={n === page ? 'page' : undefined}
-                  >
-                    {n}
-                  </button>
-                ))}
+                {paginationItems(page, totalPages).map((n, i) =>
+                  n === '…' ? (
+                    <span key={`ellipsis-${i}`} className="tl-pagination-ellipsis">…</span>
+                  ) : (
+                    <button
+                      type="button"
+                      key={n}
+                      className={`tl-pagination-page${n === page ? ' active' : ''}`}
+                      onClick={() => goToPage(n)}
+                      aria-current={n === page ? 'page' : undefined}
+                    >
+                      {n}
+                    </button>
+                  )
+                )}
               </div>
               <button
                 type="button"

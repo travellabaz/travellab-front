@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { BLOG_POSTS } from '../data/blog';
 import { BLOG_CATEGORIES } from '../data/blog/categories';
 import { formatDateAz } from '../utils/date';
+import { paginationItems } from '../utils/pagination';
 
 const POSTS_PER_PAGE = 8;
 
@@ -129,17 +130,21 @@ export default function BlogPage() {
                 ← Əvvəlki
               </button>
               <div className="tl-pagination-pages">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button
-                    type="button"
-                    key={n}
-                    className={`tl-pagination-page${n === page ? ' active' : ''}`}
-                    onClick={() => goToPage(n)}
-                    aria-current={n === page ? 'page' : undefined}
-                  >
-                    {n}
-                  </button>
-                ))}
+                {paginationItems(page, totalPages).map((n, i) =>
+                  n === '…' ? (
+                    <span key={`ellipsis-${i}`} className="tl-pagination-ellipsis">…</span>
+                  ) : (
+                    <button
+                      type="button"
+                      key={n}
+                      className={`tl-pagination-page${n === page ? ' active' : ''}`}
+                      onClick={() => goToPage(n)}
+                      aria-current={n === page ? 'page' : undefined}
+                    >
+                      {n}
+                    </button>
+                  )
+                )}
               </div>
               <button
                 type="button"

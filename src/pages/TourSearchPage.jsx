@@ -9,6 +9,7 @@ import { TOUR_SEARCH_COUNTRIES } from '../data/tourSearchCountries';
 import { getDestinations, searchOffers } from '../api/offers';
 import { getDestinationPhotos } from '../api/photos';
 import { photoQueryForCountry } from '../utils/destinationPhotos';
+import { paginationItems } from '../utils/pagination';
 
 const RESULTS_PER_PAGE = 12;
 
@@ -154,17 +155,21 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
                 ← Əvvəlki
               </button>
               <div className="tl-pagination-pages">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button
-                    type="button"
-                    key={n}
-                    className={`tl-pagination-page${n === page ? ' active' : ''}`}
-                    onClick={() => goToPage(n)}
-                    aria-current={n === page ? 'page' : undefined}
-                  >
-                    {n}
-                  </button>
-                ))}
+                {paginationItems(page, totalPages).map((n, i) =>
+                  n === '…' ? (
+                    <span key={`ellipsis-${i}`} className="tl-pagination-ellipsis">…</span>
+                  ) : (
+                    <button
+                      type="button"
+                      key={n}
+                      className={`tl-pagination-page${n === page ? ' active' : ''}`}
+                      onClick={() => goToPage(n)}
+                      aria-current={n === page ? 'page' : undefined}
+                    >
+                      {n}
+                    </button>
+                  )
+                )}
               </div>
               <button type="button" className="tl-pagination-btn" onClick={() => goToPage(page + 1)} disabled={page === totalPages}>
                 Növbəti →

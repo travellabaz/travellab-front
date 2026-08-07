@@ -2820,6 +2820,16 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-white);
 }
 
+.tl-pagination-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  color: var(--tl-gray-400);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 /* ── BLOG ARTICLE (single post) ── */
 .tl-article-layout {
   max-width: 1180px;
