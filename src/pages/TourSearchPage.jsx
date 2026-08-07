@@ -7,13 +7,29 @@ import { photoQueryForCountry } from '../utils/destinationPhotos';
 
 const RESULTS_PER_PAGE = 12;
 
+// Same photo set/rotation approach as HeroSearch.jsx's homepage hero and
+// BlogPage.jsx's — picked client-side after hydration so prerendered/JS-less
+// crawlers get a stable fallback instead of whatever Math.random() picked
+// at build time.
+const HERO_PHOTOS = [
+  '/images/hero/aurora.jpg',
+  '/images/hero/balloons.jpg',
+  '/images/hero/plane-wing.jpg',
+  '/images/hero/mosque.jpg',
+];
+
 export default function TourSearchPage() {
+  const [heroPhoto, setHeroPhoto] = useState(HERO_PHOTOS[0]);
   const [destinations, setDestinations] = useState([]);
   const [offers, setOffers] = useState(null); // null = no search run yet
   const [photos, setPhotos] = useState([]); // real destination photos for the last search's country
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setHeroPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
+  }, []);
 
   useEffect(() => {
     getDestinations()
@@ -62,15 +78,18 @@ export default function TourSearchPage() {
 
   return (
     <main className="tpwl-main">
-      <section id="tour-search" className="tl-page-top">
-        <div className="tl-section">
-          <div className="tl-section-header">
-            <div>
-              <div className="tl-tag">Canlı Axtarış</div>
-              <h2 className="tl-title">Tur axtarışı</h2>
-            </div>
-          </div>
+      <section className="tl-blog-hero tl-page-top">
+        <div className="tl-blog-hero-photo" style={{ backgroundImage: `url('${heroPhoto}')` }} />
+        <div className="tl-blog-hero-bg" />
+        <div className="tl-blog-hero-content">
+          <div className="tl-hero-badge">🔍 Canlı Axtarış</div>
+          <h1>Ən sərfəli təklifi tap</h1>
+          <p>Kompas ilə canlı qiymətlər — istiqamət, tarix, gecə sayı və ulduza görə axtar, ən uyğun oteli seç.</p>
+        </div>
+      </section>
 
+      <section id="tour-search">
+        <div className="tl-section">
           <OfferSearchFilters destinations={destinations} onSearch={runSearch} loading={loading} />
 
           {loading && (
