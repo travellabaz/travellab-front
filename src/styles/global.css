@@ -3109,6 +3109,11 @@ body:not(.tl-subpage) .tl-about-extra {
   overflow: hidden;
 }
 
+.tl-seo-body-text.expanded {
+  max-height: none;
+  overflow: visible;
+}
+
 .tl-seo-body-text p {
   font-size: 15px;
   color: var(--tl-gray-600);
