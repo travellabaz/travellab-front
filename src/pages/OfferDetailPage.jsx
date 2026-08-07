@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
 import { formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
-import { offerGradient } from '../utils/offerVisual';
+import { offerGradient, bookingSearchUrl } from '../utils/offerVisual';
 import { formatOfferDate, offerContactShape } from '../components/OfferCard';
 import Breadcrumb from '../components/Breadcrumb';
 
@@ -140,6 +140,15 @@ export default function OfferDetailPage() {
                     Otel haqqında
                   </a>
                 )}
+                <a
+                  href={bookingSearchUrl(offer)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tl-btn-book"
+                  style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)', padding: '13px 26px' }}
+                >
+                  Booking.com-da bax
+                </a>
               </div>
               <div style={{ marginTop: 10, fontSize: 12, color: 'var(--tl-gray-400)' }}>
                 Menecer: {manager.name} — {formatManagerNumber(manager.number)}
