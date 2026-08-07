@@ -74,10 +74,32 @@ export default function OfferCard({ offer, photos }) {
       <div className="tl-pkg-body">
         <h3 className="tl-pkg-name">{offer.hotelName}</h3>
         <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
-          {[offer.tourTitle, offer.nights ? `${offer.nights} gecə` : '', offer.meal, formatOfferDate(offer.checkIn)]
-            .filter(Boolean)
-            .join(' · ')}
+          {[offer.tourTitle, offer.nights ? `${offer.nights} gecə` : '', offer.meal].filter(Boolean).join(' · ')}
         </div>
+        {(offer.checkIn || offer.checkOut) && (
+          <div className="tl-pkg-dates">
+            {offer.checkIn && (
+              <div className="tl-pkg-dates-item">
+                <svg className="tl-pkg-dates-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
+                  <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                <div>
+                  <span className="tl-pkg-dates-label">Giriş</span>
+                  <span className="tl-pkg-dates-value">{formatOfferDate(offer.checkIn)}</span>
+                </div>
+              </div>
+            )}
+            {offer.checkOut && (
+              <div className="tl-pkg-dates-item">
+                <div>
+                  <span className="tl-pkg-dates-label">Çıxış</span>
+                  <span className="tl-pkg-dates-value">{formatOfferDate(offer.checkOut)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         {price && (
           <div className="tl-pkg-price" style={{ display: 'block' }}>
             <span className="tl-price-now">{formatPrice(price.amount, price.currency)}</span>

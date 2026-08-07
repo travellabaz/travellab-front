@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
-import { isTourExpired } from '../utils/tourDate';
+import { isTourExpired, extractTourDateRange, formatTourDate } from '../utils/tourDate';
 
 export default function TourCard({ tour }) {
   const { isAuthenticated, profile } = useAuth();
@@ -12,6 +12,7 @@ export default function TourCard({ tour }) {
   const reward = price ? calcReward(price) : null;
   const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
   const expired = isTourExpired(tour.description);
+  const dateRange = extractTourDateRange(tour.description);
 
   return (
     <div
@@ -49,6 +50,26 @@ export default function TourCard({ tour }) {
         <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
           {truncate(tour.description, 110)}
         </div>
+        {dateRange && (
+          <div className="tl-pkg-dates">
+            <div className="tl-pkg-dates-item">
+              <svg className="tl-pkg-dates-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
+                <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <div>
+                <span className="tl-pkg-dates-label">Giriş</span>
+                <span className="tl-pkg-dates-value">{formatTourDate(dateRange.checkIn)}</span>
+              </div>
+            </div>
+            <div className="tl-pkg-dates-item">
+              <div>
+                <span className="tl-pkg-dates-label">Çıxış</span>
+                <span className="tl-pkg-dates-value">{formatTourDate(dateRange.checkOut)}</span>
+              </div>
+            </div>
+          </div>
+        )}
         {price && (
           <div className="tl-pkg-price" style={{ display: 'block' }}>
             <span className="tl-price-now">{formatPrice(price.amount, price.currency)}</span>

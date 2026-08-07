@@ -1194,6 +1194,46 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 10px;
 }
 
+.tl-pkg-dates {
+  display: flex;
+  gap: 18px;
+  background: var(--tl-gray-100);
+  border-radius: 10px;
+  padding: 9px 12px;
+  margin-bottom: 12px;
+}
+
+.tl-pkg-dates-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tl-pkg-dates-icon {
+  color: var(--tl-green);
+  flex-shrink: 0;
+}
+
+.tl-pkg-dates-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tl-pkg-dates-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--tl-gray-400);
+}
+
+.tl-pkg-dates-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-navy);
+}
+
 .tl-pkg-price {
   display: flex;
   align-items: baseline;
