@@ -84,7 +84,7 @@ export default function TourSearchPage() {
         <div className="tl-blog-hero-content">
           <div className="tl-hero-badge">🔍 Canlı Axtarış</div>
           <h1>Ən sərfəli təklifi tap</h1>
-          <p>Kompas ilə canlı qiymətlər — istiqamət, tarix, gecə sayı və ulduza görə axtar, ən uyğun oteli seç.</p>
+          <p>Canlı qiymətlər — istiqamət, tarix, gecə sayı və ulduza görə axtar, ən uyğun oteli seç.</p>
         </div>
       </section>
 
