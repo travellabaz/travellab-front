@@ -139,13 +139,6 @@ export default function AvailabilityCalendar({ label, value, onChange, available
               );
             })}
           </div>
-
-          {hasAvailabilityData && (
-            <div className="tl-cal-legend">
-              <span><span className="tl-cal-legend-dot tl-cal-legend-dot-available" />Yerlər var</span>
-              <span><span className="tl-cal-legend-dot tl-cal-legend-dot-unavailable" />Yer yoxdur</span>
-            </div>
-          )}
         </div>
       )}
     </div>

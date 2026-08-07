@@ -1123,8 +1123,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-pkg-badges {
   position: absolute;
   top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 12px;
   z-index: 1;
   display: flex;
   gap: 6px;
@@ -4640,37 +4639,6 @@ body:not(.tl-subpage) .tl-about-extra {
   background: transparent;
   color: var(--tl-gray-200);
   cursor: not-allowed;
-}
-
-.tl-cal-legend {
-  display: flex;
-  gap: 14px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--tl-gray-100);
-  font-size: 11px;
-  color: var(--tl-gray-400);
-}
-
-.tl-cal-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.tl-cal-legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.tl-cal-legend-dot-available {
-  background: var(--tl-green);
-}
-
-.tl-cal-legend-dot-unavailable {
-  background: var(--tl-gray-200);
 }
 
 .tl-country-popover {

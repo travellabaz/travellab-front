@@ -250,11 +250,13 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
         </div>
         <div className="tl-searchbar-extra-group tl-searchbar-extra-group-meal">
           <span className="tl-searchbar-extra-label">Qidalanma:</span>
-          <select className="tl-searchbar-meal tl-select-plain" value={meal} onChange={(e) => setMeal(e.target.value)} aria-label="Qidalanma">
-            {MEAL_OPTIONS.map((m) => (
-              <option key={m.value} value={m.value}>{m.label}</option>
-            ))}
-          </select>
+          <CountrySelect
+            value={meal}
+            onChange={setMeal}
+            options={MEAL_OPTIONS}
+            fieldClassName="tl-searchbar-meal-field"
+            triggerClassName="tl-searchbar-meal"
+          />
         </div>
       </div>
     </div>
