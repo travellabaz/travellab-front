@@ -171,11 +171,12 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
   return (
     <div className="tl-searchbar">
       <div className="tl-searchbar-currency">
-        <select className="tl-select-plain" value={currency} onChange={(e) => setCurrency(e.target.value)} aria-label="Valyuta">
-          {CURRENCY_OPTIONS.map((c) => (
-            <option key={c.value} value={c.value}>{c.label}</option>
-          ))}
-        </select>
+        <CountrySelect
+          value={currency}
+          onChange={setCurrency}
+          options={CURRENCY_OPTIONS}
+          triggerClassName="tl-searchbar-currency-trigger"
+        />
       </div>
 
       {error && <div className="am-msg er show" style={{ marginBottom: 10 }}>{error}</div>}
