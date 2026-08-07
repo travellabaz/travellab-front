@@ -73,7 +73,7 @@ export default function OfferCard({ offer, photos }) {
       </div>
       <div className="tl-pkg-body">
         <h3 className="tl-pkg-name">{offer.hotelName}</h3>
-        <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14 }}>
+        <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14, minHeight: 33 }}>
           {[offer.tourTitle, offer.nights ? `${offer.nights} gecə` : '', offer.meal].filter(Boolean).join(' · ')}
         </div>
         {(offer.checkIn || offer.checkOut) && (
