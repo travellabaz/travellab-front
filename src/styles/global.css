@@ -1123,8 +1123,11 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-pkg-badges {
   position: absolute;
   top: 12px;
-  left: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1;
+  display: flex;
+  gap: 6px;
 }
 
 .tl-badge {
@@ -4499,6 +4502,19 @@ body:not(.tl-subpage) .tl-about-extra {
   cursor: not-allowed;
 }
 
+/* Same trigger button, styled to sit inside a bordered form field (Viza
+   lead form) instead of the search bar's borderless inline fields. */
+.tl-cal-trigger-viza {
+  text-align: left;
+  cursor: pointer;
+  display: block;
+}
+
+.tl-cal-trigger-viza:disabled {
+  color: var(--tl-gray-400);
+  cursor: not-allowed;
+}
+
 .tl-cal-popover {
   position: absolute;
   top: calc(100% + 10px);
@@ -4627,6 +4643,86 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-cal-legend-dot-unavailable {
   background: var(--tl-gray-200);
+}
+
+.tl-country-popover {
+  width: 260px;
+  padding: 10px;
+  max-height: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tl-country-search {
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  outline: none;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.tl-country-search:focus {
+  border-color: var(--tl-green);
+}
+
+.tl-country-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tl-country-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tl-country-group + .tl-country-group {
+  margin-top: 8px;
+}
+
+.tl-country-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--tl-gray-400);
+  padding: 6px 10px 4px;
+}
+
+.tl-country-option {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+}
+
+.tl-country-option:hover {
+  background: var(--tl-gray-100);
+}
+
+.tl-country-option.active {
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-country-empty {
+  padding: 12px 10px;
+  font-size: 13px;
+  color: var(--tl-gray-400);
+  text-align: center;
 }
 
 @media (max-width: 900px) {

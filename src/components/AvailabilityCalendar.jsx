@@ -41,9 +41,9 @@ function todayIso() {
 // flat list of valid checkin dates with no per-date quantity signal, so we
 // don't fabricate a "yellow" severity we have no data for (see
 // KompasCheckinResponse.java on the backend for the full reasoning).
-export default function AvailabilityCalendar({ label, value, onChange, availableDates, loading, disabled }) {
+export default function AvailabilityCalendar({ label, value, onChange, availableDates, loading, disabled, minDate, fieldClassName, triggerClassName }) {
   const [open, setOpen] = useState(false);
-  const initial = parseIso(value || todayIso());
+  const initial = parseIso(value || minDate || todayIso());
   const [viewY, setViewY] = useState(initial.y);
   const [viewM, setViewM] = useState(initial.m);
   const rootRef = useRef(null);
@@ -66,10 +66,10 @@ export default function AvailabilityCalendar({ label, value, onChange, available
 
   const availableSet = new Set(availableDates || []);
   const hasAvailabilityData = availableSet.size > 0;
-  const today = todayIso();
-  const now = new Date();
+  const floor = minDate || todayIso();
+  const floorParts = parseIso(floor);
 
-  const canGoPrev = !(viewY === now.getFullYear() && viewM === now.getMonth());
+  const canGoPrev = !(viewY === floorParts.y && viewM === floorParts.m);
 
   const goPrev = () => {
     if (!canGoPrev) return;
@@ -91,11 +91,11 @@ export default function AvailabilityCalendar({ label, value, onChange, available
   };
 
   return (
-    <div className="tl-searchbar-field tl-cal-field" ref={rootRef}>
+    <div className={`${fieldClassName || 'tl-searchbar-field'} tl-cal-field`} ref={rootRef}>
       <label>{label}</label>
       <button
         type="button"
-        className="tl-cal-trigger"
+        className={triggerClassName || 'tl-cal-trigger'}
         onClick={() => !disabled && setOpen((o) => !o)}
         disabled={disabled}
       >
@@ -121,7 +121,7 @@ export default function AvailabilityCalendar({ label, value, onChange, available
               if (d === null) return <span key={i} className="tl-cal-cell tl-cal-cell-blank" />;
               const iso = toIso(viewY, viewM, d);
               const kompas = isoToKompas(iso);
-              const isPast = iso < today;
+              const isPast = iso < floor;
               const isAvailable = hasAvailabilityData && availableSet.has(kompas);
               const isKnownUnavailable = hasAvailabilityData && !availableSet.has(kompas);
               const isSelected = value === iso;

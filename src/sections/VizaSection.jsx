@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { pickManager, formatManagerNumber } from '../utils/managers';
 import { VIZA_COUNTRIES_SCHENGEN, VIZA_COUNTRIES_OTHER } from '../data/vizaCountries';
+import CountrySelect from '../components/CountrySelect';
+import AvailabilityCalendar from '../components/AvailabilityCalendar';
+
+const VIZA_COUNTRY_GROUPS = [
+  { label: 'Şengen', options: VIZA_COUNTRIES_SCHENGEN.map((c) => ({ value: c.name, label: c.name })) },
+  { label: 'Digər ölkələr', options: VIZA_COUNTRIES_OTHER.map((c) => ({ value: c.name, label: c.name })) },
+];
+const VIZA_COUNTRY_OTHER_OPTION = { value: 'Digər', label: 'Siyahıda yoxdur' };
 
 // initialCountry: pre-selects the dropdown when arriving from a
 // per-country page (VizaCountryPage.jsx) — the visa request itself still
@@ -98,21 +106,16 @@ export default function VizaSection({ initialCountry = '' }) {
 
             {view === 'form' ? (
               <div>
-                <div className="tl-viza-field">
-                  <label htmlFor="viza-country">
-                    Hansı ölkəyə viza almaq istəyirsiniz? <span className="tl-viza-req">*</span>
-                  </label>
-                  <select id="viza-country" className="tl-viza-input" value={form.country} onChange={setField('country')}>
-                    <option value="">Ölkə seçin…</option>
-                    <optgroup label="Şengen">
-                      {VIZA_COUNTRIES_SCHENGEN.map((c) => <option key={c.name}>{c.name}</option>)}
-                    </optgroup>
-                    <optgroup label="Digər ölkələr">
-                      {VIZA_COUNTRIES_OTHER.map((c) => <option key={c.name}>{c.name}</option>)}
-                    </optgroup>
-                    <option value="Digər">Siyahıda yoxdur</option>
-                  </select>
-                </div>
+                <CountrySelect
+                  label={<>Hansı ölkəyə viza almaq istəyirsiniz? <span className="tl-viza-req">*</span></>}
+                  value={form.country}
+                  onChange={(v) => setForm((f) => ({ ...f, country: v }))}
+                  placeholder="Ölkə seçin…"
+                  groups={VIZA_COUNTRY_GROUPS}
+                  extraOption={VIZA_COUNTRY_OTHER_OPTION}
+                  fieldClassName="tl-viza-field"
+                  triggerClassName="tl-viza-input tl-cal-trigger-viza"
+                />
 
                 <div className="tl-viza-row">
                   <div className="tl-viza-field">
@@ -131,10 +134,13 @@ export default function VizaSection({ initialCountry = '' }) {
                 </div>
 
                 <div className="tl-viza-row">
-                  <div className="tl-viza-field">
-                    <label htmlFor="viza-date">Təxmini gediş tarixi</label>
-                    <input id="viza-date" className="tl-viza-input" type="date" value={form.date} onChange={setField('date')} />
-                  </div>
+                  <AvailabilityCalendar
+                    label="Təxmini gediş tarixi"
+                    value={form.date}
+                    onChange={(v) => setForm((f) => ({ ...f, date: v }))}
+                    fieldClassName="tl-viza-field"
+                    triggerClassName="tl-viza-input tl-cal-trigger-viza"
+                  />
                   <div className="tl-viza-field">
                     <label htmlFor="viza-pax">Nəfər sayı</label>
                     <div className="tl-viza-count">

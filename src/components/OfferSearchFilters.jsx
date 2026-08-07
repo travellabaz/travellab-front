@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getCategories, getCalendar } from '../api/offers';
 import AvailabilityCalendar from './AvailabilityCalendar';
+import CountrySelect from './CountrySelect';
 
 const STAR_OPTIONS = [2, 3, 4, 5];
 
@@ -169,15 +170,13 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
       {error && <div className="am-msg er show" style={{ marginBottom: 10 }}>{error}</div>}
 
       <div className="tl-searchbar-row">
-        <div className="tl-searchbar-field">
-          <label htmlFor="offer-state">İstiqamət</label>
-          <select id="offer-state" value={state} onChange={(e) => setState(e.target.value)}>
-            <option value="">Ölkə seçin…</option>
-            {destinations.map((d) => (
-              <option key={d.state} value={d.state}>{d.name}</option>
-            ))}
-          </select>
-        </div>
+        <CountrySelect
+          label="İstiqamət"
+          value={state}
+          onChange={setState}
+          placeholder="Ölkə seçin…"
+          options={destinations.map((d) => ({ value: String(d.state), label: d.name }))}
+        />
 
         <AvailabilityCalendar
           label="Tarixdən"
@@ -188,10 +187,13 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
           disabled={!state}
         />
 
-        <div className="tl-searchbar-field">
-          <label htmlFor="offer-checkin-to">Tarixə qədər</label>
-          <input id="offer-checkin-to" type="date" value={checkinTo} onChange={(e) => setCheckinTo(e.target.value)} />
-        </div>
+        <AvailabilityCalendar
+          label="Tarixə qədər"
+          value={checkinTo}
+          onChange={setCheckinTo}
+          minDate={checkinFrom}
+          disabled={!state}
+        />
 
         <Stepper label="Gecə" value={nights} min={1} max={30} onChange={setNights} />
         <Stepper label="Böyük" value={adults} min={1} max={10} onChange={setAdults} />
