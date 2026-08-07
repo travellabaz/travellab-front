@@ -39,7 +39,7 @@ export default function usePageMeta() {
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour
-        ? { title: `${tour.title} — Travellab`, desc: truncate(tour.description, 160) }
+        ? { title: tour.metaTitle || `${tour.title} — Travellab`, desc: tour.metaDescription || truncate(tour.description, 160) }
         : vizaCountry
           ? {
               title: `${vizaCountry.name} Vizası - Sənədlər və Şərtlər | Travellab`,
