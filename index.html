@@ -218,40 +218,50 @@
 
         function checkFlightSearchParam() {
           const hasFlightSearch = /flightSearch=\w+/.test(window.location.href);
-
-          if (hasFlightSearch && 'scrollBehavior' in document.documentElement.style) {
-            scrollToResults();
-          }
-
+          const canSmoothScroll = 'scrollBehavior' in document.documentElement.style;
           const widgetsBlock = document.querySelector('.tpwl-widgets__wrapper');
-          if (!widgetsBlock) return;
 
-          if (hasFlightSearch) {
-            const resultsBlock = document.getElementById('tpwl-tickets');
-            if (!resultsBlock) {
-              widgetsBlock.style.display = 'none';
-              return;
-            }
-
-            const checkInterval = setInterval(function () {
-              const height = resultsBlock.offsetHeight;
-              if (height > 0) {
-                widgetsBlock.style.display = 'none';
-                clearInterval(checkInterval);
-              }
-            }, 100);
-
-            setTimeout(function () {
-              clearInterval(checkInterval);
-            }, 10000);
-
-            if (resultsBlock.offsetHeight > 0) {
-              widgetsBlock.style.display = 'none';
-              clearInterval(checkInterval);
-            }
-          } else {
-            widgetsBlock.style.display = 'flex';
+          if (!hasFlightSearch) {
+            if (widgetsBlock) widgetsBlock.style.display = 'flex';
+            return;
           }
+
+          // hiding widgetsBlock removes its height from the page, shifting
+          // #tpwl-tickets (and the scroll target) upward — if the scroll ran
+          // first, that shift lands the viewport past the results instead of
+          // at their top, hence the "scrolls too far down" mobile bug.
+          // Hiding it before scrolling keeps the two in sync.
+          function settle() {
+            if (widgetsBlock) widgetsBlock.style.display = 'none';
+            if (canSmoothScroll) scrollToResults();
+          }
+
+          if (!widgetsBlock) {
+            if (canSmoothScroll) scrollToResults();
+            return;
+          }
+
+          const resultsBlock = document.getElementById('tpwl-tickets');
+          if (!resultsBlock) {
+            widgetsBlock.style.display = 'none';
+            return;
+          }
+
+          if (resultsBlock.offsetHeight > 0) {
+            settle();
+            return;
+          }
+
+          const checkInterval = setInterval(function () {
+            if (resultsBlock.offsetHeight > 0) {
+              settle();
+              clearInterval(checkInterval);
+            }
+          }, 100);
+
+          setTimeout(function () {
+            clearInterval(checkInterval);
+          }, 10000);
         }
 
         window.addEventListener('load', function () {
