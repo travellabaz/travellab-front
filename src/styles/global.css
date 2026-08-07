@@ -4300,10 +4300,21 @@ body:not(.tl-subpage) .tl-about-extra {
 
 /* Anchor the popover to the trigger's right edge instead of its left —
    this sits in the search card's top-right corner, so a left-anchored
-   popover would grow off the edge of the card. */
+   popover would grow off the edge of the card. Sized down from
+   CountrySelect's default 260px — three short currency codes don't need
+   anywhere near that width. */
 .tl-searchbar-currency .tl-cal-popover {
   left: auto;
   right: 0;
+  width: auto;
+  min-width: 90px;
+  padding: 6px;
+}
+
+.tl-searchbar-currency .tl-country-option {
+  padding: 7px 10px;
+  font-size: 13px;
+  text-align: center;
 }
 
 .tl-searchbar-currency select {
