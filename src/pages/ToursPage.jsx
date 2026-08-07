@@ -12,7 +12,7 @@ import { extractLatestTourDate } from '../utils/tourDate';
 const TOURS_PER_PAGE = 12;
 
 const SORT_OPTIONS = [
-  { value: '', label: 'Defolt' },
+  { value: '', label: 'Hamısı' },
   { value: 'price_asc', label: 'Ən ucuz' },
   { value: 'price_desc', label: 'Ən bahalı' },
   { value: 'date_asc', label: 'Tarixə görə' },
