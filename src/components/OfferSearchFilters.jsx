@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { getCategories, getCalendar } from '../api/offers';
+import AvailabilityCalendar from './AvailabilityCalendar';
 
 const STAR_OPTIONS = [2, 3, 4, 5];
 
@@ -22,6 +24,13 @@ const MEAL_OPTIONS = [
   { value: 'AI', label: 'Hər şey daxil (AI)' },
   { value: 'UAI', label: 'Ultra hər şey daxil (UAI)' },
 ];
+
+// Same heuristic as the backend's KompasSearchService.isGds — only used
+// here to style the pill, the actual include/exclude decision is the
+// backend's (category=="" already excludes GDS results server-side).
+function isGdsCategory(category) {
+  return category.toUpperCase().includes('GDS');
+}
 
 function toIsoDate(date) {
   return date.toISOString().slice(0, 10);
@@ -70,18 +79,56 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
   const [stars, setStars] = useState([]);
   const [meal, setMeal] = useState('');
   const [currency, setCurrency] = useState('2');
+  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [calendarLoading, setCalendarLoading] = useState(false);
   const [error, setError] = useState('');
 
   const toggleStar = (star) => {
     setStars((s) => (s.includes(star) ? s.filter((x) => x !== star) : [...s, star]));
   };
 
+  // Categories are per-destination (a tour's `type` only means something
+  // in the context of that destination's own tour list) — refetch whenever
+  // the destination changes, and drop any category picked for the previous
+  // destination since it likely doesn't exist for this one.
+  useEffect(() => {
+    if (!state) {
+      setCategories([]);
+      return;
+    }
+    setCategory('');
+    let cancelled = false;
+    getCategories(state)
+      .then((cats) => { if (!cancelled) setCategories(cats); })
+      .catch(() => { if (!cancelled) setCategories([]); });
+    return () => { cancelled = true; };
+  }, [state]);
+
+  // Recomputed whenever the destination or category changes — same
+  // filterTours scope as /results server-side, so the calendar's greens
+  // never disagree with what a search actually returns.
+  useEffect(() => {
+    if (!state) {
+      setAvailableDates([]);
+      return;
+    }
+    setCalendarLoading(true);
+    let cancelled = false;
+    getCalendar(state, category)
+      .then((dates) => { if (!cancelled) setAvailableDates(dates); })
+      .catch(() => { if (!cancelled) setAvailableDates([]); })
+      .finally(() => { if (!cancelled) setCalendarLoading(false); });
+    return () => { cancelled = true; };
+  }, [state, category]);
+
   const submit = () => {
     setError('');
     if (!state) return setError('İstiqaməti seçin.');
     if (!checkinFrom || !checkinTo) return setError('Tarixləri seçin.');
     if (checkinTo < checkinFrom) return setError('Tarixlər düzgün deyil.');
-    onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency });
+    onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency, category });
   };
 
   // Per-country pages (TourSearchCountryPage.jsx) pass initialState once
@@ -93,7 +140,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
     if (initialState && !autoSearchedRef.current) {
       autoSearchedRef.current = true;
       setState(initialState);
-      onSearch({ state: initialState, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency });
+      onSearch({ state: initialState, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency, category: '' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialState]);
@@ -121,10 +168,14 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
           </select>
         </div>
 
-        <div className="tl-searchbar-field">
-          <label htmlFor="offer-checkin-from">Tarixdən</label>
-          <input id="offer-checkin-from" type="date" value={checkinFrom} onChange={(e) => setCheckinFrom(e.target.value)} />
-        </div>
+        <AvailabilityCalendar
+          label="Tarixdən"
+          value={checkinFrom}
+          onChange={setCheckinFrom}
+          availableDates={availableDates}
+          loading={calendarLoading}
+          disabled={!state}
+        />
 
         <div className="tl-searchbar-field">
           <label htmlFor="offer-checkin-to">Tarixə qədər</label>
@@ -142,6 +193,32 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
       </div>
 
       <div className="tl-searchbar-extra">
+        {categories.length > 0 && (
+          <div className="tl-searchbar-extra-group">
+            <span className="tl-searchbar-extra-label">Kateqoriya:</span>
+            <div className="tl-searchbar-stars">
+              <button
+                type="button"
+                className={`tl-blog-filter-pill${category === '' ? ' active' : ''}`}
+                onClick={() => setCategory('')}
+                aria-pressed={category === ''}
+              >
+                Hamısı
+              </button>
+              {categories.map((cat) => (
+                <button
+                  type="button"
+                  key={cat}
+                  className={`tl-blog-filter-pill${isGdsCategory(cat) ? ' tl-blog-filter-pill-gds' : ''}${category === cat ? ' active' : ''}`}
+                  onClick={() => setCategory(cat)}
+                  aria-pressed={category === cat}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="tl-searchbar-extra-group">
           <span className="tl-searchbar-extra-label">Ulduz:</span>
           <div className="tl-searchbar-stars">
