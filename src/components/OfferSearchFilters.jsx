@@ -160,7 +160,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
   return (
     <div className="tl-searchbar">
       <div className="tl-searchbar-currency">
-        <select value={currency} onChange={(e) => setCurrency(e.target.value)} aria-label="Valyuta">
+        <select className="tl-select-plain" value={currency} onChange={(e) => setCurrency(e.target.value)} aria-label="Valyuta">
           {CURRENCY_OPTIONS.map((c) => (
             <option key={c.value} value={c.value}>{c.label}</option>
           ))}
@@ -250,7 +250,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
         </div>
         <div className="tl-searchbar-extra-group tl-searchbar-extra-group-meal">
           <span className="tl-searchbar-extra-label">Qidalanma:</span>
-          <select className="tl-searchbar-meal" value={meal} onChange={(e) => setMeal(e.target.value)} aria-label="Qidalanma">
+          <select className="tl-searchbar-meal tl-select-plain" value={meal} onChange={(e) => setMeal(e.target.value)} aria-label="Qidalanma">
             {MEAL_OPTIONS.map((m) => (
               <option key={m.value} value={m.value}>{m.label}</option>
             ))}

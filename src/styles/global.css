@@ -4300,6 +4300,19 @@ body:not(.tl-subpage) .tl-about-extra {
   outline: none;
 }
 
+/* Custom chevron replacing each browser's own default select arrow, so
+   these plain <select> fields (few enough options that a full popover like
+   CountrySelect would be overkill) still match the rest of the search
+   bar's styling instead of looking like default OS chrome. */
+.tl-select-plain {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999CA0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+  padding-right: 16px;
+}
+
 .tl-searchbar-row {
   display: flex;
   align-items: stretch;
@@ -4477,6 +4490,21 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-white);
   outline: none;
   cursor: pointer;
+}
+
+.tl-searchbar-meal.tl-select-plain {
+  padding-right: 32px;
+  background-color: var(--tl-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999CA0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.tl-searchbar-currency select.tl-select-plain {
+  padding-right: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23999CA0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
 }
 
 .tl-cal-field {
