@@ -4413,10 +4413,27 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 16px;
   margin-top: 14px;
   padding-top: 12px;
   border-top: 1px solid var(--tl-gray-100);
+}
+
+.tl-searchbar-extra-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tl-searchbar-extra-group-meal {
+  margin-left: auto;
+}
+
+.tl-searchbar-stars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tl-searchbar-extra-label {
@@ -4424,6 +4441,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 600;
   color: var(--tl-gray-400);
   margin-right: 2px;
+  flex-shrink: 0;
 }
 
 .tl-searchbar-meal {
@@ -4437,7 +4455,6 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-white);
   outline: none;
   cursor: pointer;
-  margin-left: auto;
 }
 
 @media (max-width: 900px) {
@@ -4462,8 +4479,19 @@ body:not(.tl-subpage) .tl-about-extra {
     width: 100%;
   }
 
-  .tl-searchbar-meal {
+  .tl-searchbar-extra {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .tl-searchbar-extra-group-meal {
     margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tl-searchbar-meal {
     width: 100%;
   }
 }

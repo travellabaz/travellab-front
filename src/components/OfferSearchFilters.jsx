@@ -142,23 +142,30 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
       </div>
 
       <div className="tl-searchbar-extra">
-        <span className="tl-searchbar-extra-label">Ulduz:</span>
-        {STAR_OPTIONS.map((star) => (
-          <button
-            type="button"
-            key={star}
-            className={`tl-blog-filter-pill${stars.includes(star) ? ' active' : ''}`}
-            onClick={() => toggleStar(star)}
-            aria-pressed={stars.includes(star)}
-          >
-            {star}★
-          </button>
-        ))}
-        <select className="tl-searchbar-meal" value={meal} onChange={(e) => setMeal(e.target.value)} aria-label="Qidalanma">
-          {MEAL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
+        <div className="tl-searchbar-extra-group">
+          <span className="tl-searchbar-extra-label">Ulduz:</span>
+          <div className="tl-searchbar-stars">
+            {STAR_OPTIONS.map((star) => (
+              <button
+                type="button"
+                key={star}
+                className={`tl-blog-filter-pill${stars.includes(star) ? ' active' : ''}`}
+                onClick={() => toggleStar(star)}
+                aria-pressed={stars.includes(star)}
+              >
+                {star}★
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="tl-searchbar-extra-group tl-searchbar-extra-group-meal">
+          <span className="tl-searchbar-extra-label">Qidalanma:</span>
+          <select className="tl-searchbar-meal" value={meal} onChange={(e) => setMeal(e.target.value)} aria-label="Qidalanma">
+            {MEAL_OPTIONS.map((m) => (
+              <option key={m.value} value={m.value}>{m.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
