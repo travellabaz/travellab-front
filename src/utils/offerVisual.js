@@ -18,11 +18,3 @@ export function offerGradient(seed) {
   for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
   return GRADIENTS[hash % GRADIENTS.length];
 }
-
-// Kompas gives no Booking.com hotel ID, so this is a search link (hotel
-// name + resort town) rather than a direct listing page — still lands the
-// visitor on the right hotel in Booking's own results almost every time.
-export function bookingSearchUrl(offer) {
-  const query = [offer?.hotelName, offer?.resortTown].filter(Boolean).join(' ');
-  return 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(query);
-}
