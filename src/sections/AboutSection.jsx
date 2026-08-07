@@ -1,4 +1,5 @@
 import LogoMark from '../components/LogoMark';
+import SeoBodyText from '../components/SeoBodyText';
 
 const PHOTOS = [
   { seed: 'tl-ab1', rotate: -7, alt: 'Travellab müştərisinin səyahət anı — səhra' },
@@ -34,7 +35,7 @@ export default function AboutSection() {
     <section id="about" className="tl-section-full tl-about-bg tl-page-top">
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '60px 32px' }}>
         <div className="tl-tag">Biz kimik?</div>
-        <h2 className="tl-title" style={{ marginBottom: 24 }}>Travellab – Səyahətinizi biz yaradaq!</h2>
+        <h1 className="tl-title" style={{ marginBottom: 24 }}>Travellab Haqqında</h1>
 
         <div className="tl-about-card">
           <LogoMark className="tl-about-logo-mark" />
@@ -87,6 +88,24 @@ export default function AboutSection() {
             <span>📍</span> 40 Cəfər Cabbarlı küçəsi, Caspian Business Center, Bakı
           </div>
         </div>
+
+        <SeoBodyText>
+          <p>
+            Travellab, Bakıda, Caspian Business Center-də yerləşən tam xidmətli səyahət agentliyidir. Azərbaycan
+            Turizm Agentlikləri Assosiasiyasının (ATAA) üzvü olaraq, fərdi, korporativ və VIP müştərilərə
+            aviabilet, otel bron, hazır tur paketləri, viza xidməti və tibbi turizm sahələrində xidmət göstəririk.
+          </p>
+          <p>
+            Travellab haqqında ən çox soruşulan sual — nə üçün bizi seçməlisiniz? Cavab sadədir: şəffaf
+            qiymətləndirmə, sürətli dəstək və hər sifarişdə Labpoint bonus proqramı. Komandamız hava
+            limanından otelə transfer, kruiz və tur paketləri, səyahət sığortası kimi əlavə xidmətləri də təmin
+            edir.
+          </p>
+          <p>
+            Etibarlı səyahət agentliyi axtaranlar üçün Travellab, illərdir Azərbaycan bazarında fəaliyyət
+            göstərən, real müştəri rəyləri ilə təsdiqlənmiş bir tərəfdaşdır.
+          </p>
+        </SeoBodyText>
       </div>
     </section>
   );

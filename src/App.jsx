@@ -43,13 +43,23 @@ export default function App() {
   // avoids React Router unmounting it on navigation and killing the
   // widget on the way back to "/" or "/search".
   const showHero = location.pathname === '/' || location.pathname === '/search';
+  // HeroSearch's own default covers "/" — only override for "/search",
+  // matching SEO Paketi v2's per-route H1 (HeroSearch itself keeps a
+  // single persistent DOM instance regardless, see the comment above).
+  const heroTitle =
+    location.pathname === '/search' ? (
+      <>
+        Aviabilet Axtarışı —<br />
+        <span className="acc">Bakıdan Sərfəli Uçuşlar</span>
+      </>
+    ) : undefined;
 
   return (
     <>
       <Nav />
       <MobileTabBar />
       <div className="tpwl-main" style={showHero ? undefined : { display: 'none' }}>
-        <HeroSearch />
+        <HeroSearch title={heroTitle} />
       </div>
       <Routes>
         <Route path="/" element={<HomePage />} />

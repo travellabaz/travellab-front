@@ -29,20 +29,20 @@ export const PAGE_META = {
     image: '/images/hero/balloons.jpg',
   },
   '/labpoint': {
-    title: 'Labpoint — Travellab',
-    desc: 'Hər səyahətdən Labpoint qazanın və qazandığınız xalları növbəti bilet, otel və ya tur bronunda endirim kimi istifadə edin.',
+    title: 'Labpoint - Səyahət Bonus Proqramı | Travellab',
+    desc: 'Labpoint loyallıq proqramı ilə hər aviabilet, otel və tur alışından bonus xal qazanın. Bonusları növbəti səyahətinizdə istifadə edin!',
     // Free Pexels stock photo (travel rewards cards + passport) — none of
     // the site's own hero photos depict a loyalty/points program.
     image: 'https://images.pexels.com/photos/32642485/pexels-photo-32642485.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },
   '/about': {
-    title: 'Haqqımızda — Travellab',
-    desc: 'Travellab — Azərbaycanın aparıcı turizm şirkətlərindən biri. Biz kimik, nə təklif edirik və etibarlı partnyorlarımızla tanış olun.',
+    title: 'Haqqımızda - Travellab Səyahət Agentliyi | Bakı',
+    desc: 'Travellab — Bakıda fəaliyyət göstərən etibarlı səyahət agentliyi. ATAA üzvü, aviabilet, otel, tur və viza xidmətləri. Bizi tanıyın!',
     image: '/images/hero/mosque-og.jpg',
   },
   '/blog': {
-    title: 'Bloq - Səyahət Məsləhətləri və Xəbərlər | Travellab',
-    desc: 'Səyahət məsləhətləri, viza təlimatları, ölkə icmalları və tur tövsiyələri. Travellab bloqunda faydalı məlumatlar tapın.',
+    title: 'Səyahət Bələdçisi və Məsləhətlər - Bloq | Travellab',
+    desc: 'Şəhər bələdçiləri, viza təlimatları, macəra hekayələri və səyahət xəbərləri. Travellab bloqunda faydalı məlumatlar tapın.',
   },
   '/events': {
     title: 'Tədbir Biletləri - Konsert, Şou, Festival | Travellab',

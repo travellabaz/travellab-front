@@ -1,4 +1,5 @@
 import HotelsSection from '../sections/HotelsSection';
+import SeoBodyText from '../components/SeoBodyText';
 
 export default function HotelsPage() {
   return (
@@ -7,8 +8,7 @@ export default function HotelsPage() {
 
       <section>
         <div className="tl-section">
-          <div className="tl-article-body" style={{ maxWidth: 760, margin: '0 auto' }}>
-            <h2>Travellab ilə Otel Bron Etmək</h2>
+          <SeoBodyText>
             <p>
               Travellab səyahət agentliyi 220-dən çox ölkədə 2.6 milyondan artıq otel seçimini bir yerdə təqdim
               edir. Otel bron edərkən, büdcənizə uyğun ən sərfəli qiyməti seçə, ani təsdiq ala bilərsiniz.
@@ -17,7 +17,7 @@ export default function HotelsPage() {
               Onlayn otel axtarışı təhlükəsiz ödəniş sistemi ilə həyata keçirilir. Hər otel bron zamanı Labpoint
               bonus xalları qazanaraq növbəti səyahətinizdə istifadə edə bilərsiniz.
             </p>
-          </div>
+          </SeoBodyText>
         </div>
       </section>
     </main>

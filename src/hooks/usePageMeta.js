@@ -6,6 +6,7 @@ import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
+import { getTourCategoryMeta } from '../data/tourCategoryMeta';
 
 // Matches the default set in index.html — reused here to reset og:image/
 // twitter:image back to it when navigating off a blog post (an SPA route
@@ -36,6 +37,12 @@ export default function usePageMeta() {
     const vizaCountry = vizaCountryMatch ? getVizaCountryBySlug(vizaCountryMatch[1]) : null;
     const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
     const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
+    // Query-param-driven, not path-driven — prerender.mjs only produces one
+    // static file for "/tours" regardless of ?category=, so this switch
+    // only reaches JS-executing crawlers/visitors, same limitation every
+    // other query-param view on this site already has.
+    const isToursList = path === '/tours';
+    const category = isToursList ? new URLSearchParams(location.search).get('category') || '' : null;
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour
@@ -50,7 +57,9 @@ export default function usePageMeta() {
                 title: `${tourSearchCountry.nameAz} turları — canlı qiymətlər — Travellab`,
                 desc: `${tourSearchCountry.nameAz} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.`,
               }
-            : PAGE_META[path] || (path === '/' ? PAGE_META['/'] : { title: 'Səhifə tapılmadı — Travellab', desc: 'Axtardığınız səhifə mövcud deyil.' });
+            : isToursList
+              ? getTourCategoryMeta(category)
+              : PAGE_META[path] || (path === '/' ? PAGE_META['/'] : { title: 'Səhifə tapılmadı — Travellab', desc: 'Axtardığınız səhifə mövcud deyil.' });
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
     const image = post
@@ -135,6 +144,7 @@ export default function usePageMeta() {
     }
     // tours: re-run once the async fetch in ToursContext resolves, so a
     // /tours/:id visit gets the real title/image instead of staying on
-    // the generic fallback it started with.
-  }, [location.pathname, tours]);
+    // the generic fallback it started with. location.search: so switching
+    // /tours category pills (no pathname change) updates the meta too.
+  }, [location.pathname, location.search, tours]);
 }

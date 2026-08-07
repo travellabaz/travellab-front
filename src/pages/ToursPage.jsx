@@ -8,6 +8,8 @@ import { TOURS_FAQ } from '../data/toursFaq';
 import { paginationItems } from '../utils/pagination';
 import { extractMinPrice } from '../utils/price';
 import { extractLatestTourDate } from '../utils/tourDate';
+import SeoBodyText from '../components/SeoBodyText';
+import { getTourCategoryMeta } from '../data/tourCategoryMeta';
 
 const TOURS_PER_PAGE = 12;
 
@@ -57,6 +59,7 @@ export default function ToursPage() {
     (c) => c.name.toLocaleLowerCase('az') === categoryParam.toLocaleLowerCase('az')
   );
   const category = matchedCategory ? matchedCategory.name : '';
+  const categoryMeta = getTourCategoryMeta(category);
   const filteredTours = matchedCategory ? tours.filter((t) => getTourCategory(t).name === matchedCategory.name) : tours;
 
   const sort = searchParams.get('sort') || '';
@@ -219,24 +222,17 @@ export default function ToursPage() {
 
       <ReviewsSection />
 
+      <FaqSection tag="Suallar" title="Turlarla bağlı tez-tez verilən suallar" items={TOURS_FAQ} />
+
       <section>
         <div className="tl-section">
-          <div className="tl-article-body" style={{ maxWidth: 760, margin: '0 auto' }}>
-            <h2>Travellab Tur Paketləri Haqqında</h2>
-            <p>
-              Travellab səyahət agentliyi Dubay, Türkiyə, Gürcüstan və digər populyar istiqamətlərə hazır tur
-              paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli
-              qiymətlərlə, əlavə xərc olmadan.
-            </p>
-            <p>
-              Tur paketlərimiz həm fərdi, həm qrup səyahətləri üçün uyğundur. Hər tur alışında Labpoint bonus
-              xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz.
-            </p>
-          </div>
+          <SeoBodyText key={category}>
+            {categoryMeta.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </SeoBodyText>
         </div>
       </section>
-
-      <FaqSection tag="Suallar" title="Turlarla bağlı tez-tez verilən suallar" items={TOURS_FAQ} />
     </main>
   );
 }

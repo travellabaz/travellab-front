@@ -21,7 +21,18 @@ const HERO_PHOTOS = [
 // Picking it client-side in an effect (after hydration) instead keeps
 // the original "changes on every visit" behaviour for real visitors;
 // prerendered/JS-less crawlers just get the first photo as a fallback.
-export default function HeroSearch() {
+// title: JSX for the <h1> — defaults to the homepage's own copy. HeroSearch
+// stays a single persistent instance across routes (see App.jsx for why),
+// so per-route H1 text has to come in as a prop rather than the component
+// being remounted with different content.
+export default function HeroSearch({
+  title = (
+    <>
+      Səyahət Agentliyi Travellab —<br />
+      <span className="acc">Aviabilet, Otel və Tur Bir Yerdə</span>
+    </>
+  ),
+}) {
   const [photo, setPhoto] = useState(HERO_PHOTOS[0]);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
@@ -110,10 +121,7 @@ export default function HeroSearch() {
         <div className="tl-float tl-float-2">Hər tur alışında +10% Labpoint</div>
         <div className="tl-hero-content">
           <div className="tl-hero-badge">✈ Azərbaycanın etibarlı səyahət agentliyi</div>
-          <h1>
-            Asanlıqla tap,<br />
-            <span className="acc">sürətlə bron et</span>
-          </h1>
+          <h1>{title}</h1>
           <p>Biletlər, otellər, turlar və transferlər — hamısı bir yerdə. Labpoint ilə hər səyahətdən qazanın.</p>
         </div>
         {/* Quick-search-type switcher — pinned to the bottom-left of the

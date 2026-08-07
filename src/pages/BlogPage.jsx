@@ -60,7 +60,7 @@ export default function BlogPage() {
         <div className="tl-blog-hero-bg" />
         <div className="tl-blog-hero-content">
           <div className="tl-hero-badge">✈ Travellab Bloqu</div>
-          <h1>Səyahət ilhamı burada</h1>
+          <h1>Səyahət Bələdçisi və Məsləhətlər</h1>
           <p>Faydalı məsləhətlər, şəhər bələdçiləri, macəra hekayələri və son xəbərlər — bir yerdə.</p>
 
           <div className="tl-blog-filter" role="tablist" aria-label="Bloq kateqoriyaları">

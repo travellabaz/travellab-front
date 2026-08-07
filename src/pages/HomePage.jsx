@@ -4,6 +4,7 @@ import CtaSection from '../sections/CtaSection';
 import EventsSection from '../sections/EventsSection';
 import LabpointSection from '../sections/LabpointSection';
 import PartnersSection from '../sections/PartnersSection';
+import SeoBodyText from '../components/SeoBodyText';
 
 // HeroSearch (the Travelpayouts search widget) is mounted persistently in
 // App.jsx instead of here — see the comment there for why.
@@ -21,8 +22,7 @@ export default function HomePage() {
 
       <section>
         <div className="tl-section" style={{ paddingTop: 0 }}>
-          <div className="tl-article-body" style={{ maxWidth: 760, margin: '0 auto' }}>
-            <h2>Travellab — Etibarlı Səyahət Agentliyi</h2>
+          <SeoBodyText>
             <p>
               Travellab, Bakıda fəaliyyət göstərən tam xidmətli səyahət agentliyi olaraq, müştərilərinə aviabilet,
               otel bron, hazır tur paketləri, viza xidmətləri və tədbir biletlərini tək bir məkanda təqdim edir.
@@ -46,7 +46,7 @@ export default function HomePage() {
               səyahətinizdə istifadə edə bilərsiniz. Səyahət agentliyi olaraq Travellab, müştəri məmnuniyyətini ön
               planda tutaraq, hər bir səyahətinizi rahat və unudulmaz etmək üçün buradadır.
             </p>
-          </div>
+          </SeoBodyText>
         </div>
       </section>
     </main>

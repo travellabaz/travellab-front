@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import SeoBodyText from '../components/SeoBodyText';
 
 const DEMO_POINTS = '2 500';
 const DEMO_AZN = '2500';
 
-export default function LabpointSection() {
+// asH1: true when this is the whole content of its own dedicated page
+// (LabpointPage.jsx) — same pattern as HotelsSection/EventsSection, since
+// this section is also embedded on HomePage, which already has its own H1.
+export default function LabpointSection({ asH1 = false }) {
   const { isAuthenticated, profile } = useAuth();
   const [copied, setCopied] = useState(false);
+  const Heading = asH1 ? 'h1' : 'h2';
 
   const points = isAuthenticated ? Number(profile.points || 0).toLocaleString('en-US').replace(/,/g, ' ') : DEMO_POINTS;
   const azn = isAuthenticated ? profile.azn : DEMO_AZN;
@@ -24,7 +29,7 @@ export default function LabpointSection() {
         <div className="tl-lp-card">
           <div>
             <div className="tl-lp-logo">LabPoint by Travellab</div>
-            <h2 className="tl-lp-headline">Səyahət edin və bonus qazanın!</h2>
+            <Heading className="tl-lp-headline">Labpoint — Səyahət Edin, Bonus Qazanın</Heading>
             <p className="tl-lp-desc">
               Səfərləriniz zamanı pointlər qazanın və bonuslardan yararlanın. İndi LabPoint ilə daha çox
               səyahət edin!
@@ -82,6 +87,21 @@ export default function LabpointSection() {
             </div>
           </div>
         </div>
+
+        {asH1 && (
+          <SeoBodyText>
+            <p>
+              Labpoint, Travellab səyahət agentliyinin loyallıq proqramıdır. Hər aviabilet, otel bron və ya tur
+              alışında avtomatik olaraq bonus xallar qazanırsınız. Toplanan Labpoint balansını növbəti
+              səyahətinizdə endirim kimi istifadə edə bilərsiniz.
+            </p>
+            <p>
+              Loyallıq proqramına qoşulmaq üçün sadəcə Travellab hesabı yaratmaq kifayətdir. Hər sifarişdən sonra
+              bonus xallar balansınıza avtomatik əlavə olunur — əlavə addım tələb olunmur. Səyahət agentliyi
+              olaraq Travellab, müştərilərini hər səyahətdə mükafatlandırmağı hədəf qoyur.
+            </p>
+          </SeoBodyText>
+        )}
       </div>
     </section>
   );

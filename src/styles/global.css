@@ -3094,6 +3094,51 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 0 16px;
 }
 
+.tl-seo-body {
+  max-width: 760px;
+  margin: 40px auto 0;
+}
+
+.tl-seo-body-text {
+  position: relative;
+  max-height: 84px;
+  overflow: hidden;
+}
+
+.tl-seo-body-text p {
+  font-size: 15px;
+  color: var(--tl-gray-600);
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+
+.tl-seo-body-text:not(.expanded)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--tl-white));
+}
+
+.tl-seo-body-toggle {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--tl-green);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tl-seo-body-toggle:hover {
+  color: var(--tl-green-dark);
+}
+
 @media (max-width: 560px) {
   .tl-article {
     padding: 32px 20px 60px;
