@@ -4232,27 +4232,147 @@ body:not(.tl-subpage) .tl-about-extra {
 
 /* ── TOUR SEARCH (TourSearchPage.jsx / OfferSearchFilters.jsx / OfferCard.jsx) ── */
 
-.tl-offer-filters {
+/* Single-row search bar matching HeroSearch.jsx's flight-search widget
+   look — borderless inline fields with dividers, currency in the top-right
+   corner, green submit button on the right. Pulled up to overlap the hero
+   banner's bottom edge, same seam trick as the real flight widget. */
+.tl-searchbar {
   background: var(--tl-white);
-  border-radius: var(--tl-r-xl);
-  padding: 32px;
-  border: 1px solid var(--tl-gray-200);
-  box-shadow: var(--tl-shadow);
-  max-width: 640px;
-  margin: 0 auto 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  border-radius: 22px;
+  box-shadow: var(--tl-shadow-lg);
+  padding: 20px 28px 16px;
+  max-width: 1100px;
+  margin: -36px auto 32px;
+  position: relative;
+  z-index: 3;
 }
 
-.tl-offer-submit {
+.tl-searchbar-currency {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+}
+
+.tl-searchbar-currency select {
+  border: none;
+  background: transparent;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-gray-600);
+  cursor: pointer;
+  outline: none;
+}
+
+.tl-searchbar-row {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.tl-searchbar-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6px 20px;
+  border-right: 1px solid var(--tl-gray-200);
+  min-width: 130px;
+}
+
+.tl-searchbar-field:first-child {
+  padding-left: 0;
+}
+
+.tl-searchbar-field-compact {
+  min-width: 78px;
+}
+
+.tl-searchbar-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tl-gray-400);
+  margin-bottom: 4px;
+}
+
+.tl-searchbar-field select,
+.tl-searchbar-field input[type="date"] {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  width: 100%;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tl-navy);
+}
+
+.tl-searchbar-stepper {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tl-searchbar-stepper button {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-green);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.tl-searchbar-stepper button:hover {
+  background: var(--tl-gray-100);
+}
+
+.tl-searchbar-stepper span {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  min-width: 12px;
+  text-align: center;
+}
+
+.tl-searchbar-submit {
+  margin-left: auto;
+  align-self: center;
+  background: var(--tl-green);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 15px 30px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  white-space: nowrap;
+  transition: background .18s;
 }
 
-.tl-offer-submit .sp {
+.tl-searchbar-submit:hover {
+  background: var(--tl-green-dark);
+}
+
+.tl-searchbar-submit:disabled {
+  opacity: .75;
+  cursor: not-allowed;
+}
+
+.tl-searchbar-submit .sp {
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, .3);
@@ -4262,17 +4382,71 @@ body:not(.tl-subpage) .tl-about-extra {
   display: none;
 }
 
-.tl-offer-submit.ld .sp {
+.tl-searchbar-submit.ld .sp {
   display: block;
 }
 
-.tl-offer-submit.ld .bt {
+.tl-searchbar-submit.ld .bt {
   opacity: 0;
 }
 
-.tl-offer-submit:disabled {
-  opacity: .75;
-  cursor: not-allowed;
+.tl-searchbar-extra {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tl-gray-100);
+}
+
+.tl-searchbar-extra-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tl-gray-400);
+  margin-right: 2px;
+}
+
+.tl-searchbar-meal {
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: 100px;
+  padding: 8px 14px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  background: var(--tl-white);
+  outline: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+@media (max-width: 900px) {
+  .tl-searchbar {
+    margin-top: -20px;
+    padding: 18px 18px 14px;
+  }
+
+  .tl-searchbar-row {
+    flex-direction: column;
+  }
+
+  .tl-searchbar-field {
+    border-right: none;
+    border-bottom: 1px solid var(--tl-gray-200);
+    padding: 10px 0;
+  }
+
+  .tl-searchbar-submit {
+    margin-left: 0;
+    margin-top: 12px;
+    width: 100%;
+  }
+
+  .tl-searchbar-meal {
+    margin-left: 0;
+    width: 100%;
+  }
 }
 
 /* Kompas offers reuse TourCard's .tl-pkg-* classes directly (see

@@ -41,6 +41,25 @@ function defaultCheckinTo() {
   return toIsoDate(d);
 }
 
+function Stepper({ label, value, min, max, onChange }) {
+  return (
+    <div className="tl-searchbar-field tl-searchbar-field-compact">
+      <label>{label}</label>
+      <div className="tl-searchbar-stepper">
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} aria-label="Azalt">−</button>
+        <span>{value}</span>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} aria-label="Artır">+</button>
+      </div>
+    </div>
+  );
+}
+
+// Single-row search bar matching the flight-search widget's visual
+// language (HeroSearch.jsx's Travelpayouts embed) — borderless inline
+// fields separated by dividers, currency tucked in the top-right corner,
+// a green submit button on the right. Star rating / meal plan don't have
+// an equivalent in a flight search, so they sit in a slim secondary row
+// below the main bar instead of crowding it.
 export default function OfferSearchFilters({ destinations, onSearch, loading }) {
   const [state, setState] = useState('');
   const [checkinFrom, setCheckinFrom] = useState(defaultCheckinFrom);
@@ -52,10 +71,6 @@ export default function OfferSearchFilters({ destinations, onSearch, loading }) 
   const [meal, setMeal] = useState('');
   const [currency, setCurrency] = useState('2');
   const [error, setError] = useState('');
-
-  const changeNights = (delta) => setNights((n) => Math.max(1, Math.min(30, n + delta)));
-  const changeAdults = (delta) => setAdults((n) => Math.max(1, Math.min(10, n + delta)));
-  const changeChildren = (delta) => setChildren((n) => Math.max(0, Math.min(10, n + delta)));
 
   const toggleStar = (star) => {
     setStars((s) => (s.includes(star) ? s.filter((x) => x !== star) : [...s, star]));
@@ -70,100 +85,67 @@ export default function OfferSearchFilters({ destinations, onSearch, loading }) 
   };
 
   return (
-    <div className="tl-offer-filters">
-      {error && <div className="am-msg er show">{error}</div>}
-
-      <div className="tl-viza-field">
-        <label htmlFor="offer-state">
-          İstiqamət <span className="tl-viza-req">*</span>
-        </label>
-        <select id="offer-state" className="tl-viza-input" value={state} onChange={(e) => setState(e.target.value)}>
-          <option value="">Ölkə seçin…</option>
-          {destinations.map((d) => (
-            <option key={d.state} value={d.state}>{d.name}</option>
+    <div className="tl-searchbar">
+      <div className="tl-searchbar-currency">
+        <select value={currency} onChange={(e) => setCurrency(e.target.value)} aria-label="Valyuta">
+          {CURRENCY_OPTIONS.map((c) => (
+            <option key={c.value} value={c.value}>{c.label}</option>
           ))}
         </select>
       </div>
 
-      <div className="tl-viza-row">
-        <div className="tl-viza-field">
+      {error && <div className="am-msg er show" style={{ marginBottom: 10 }}>{error}</div>}
+
+      <div className="tl-searchbar-row">
+        <div className="tl-searchbar-field">
+          <label htmlFor="offer-state">İstiqamət</label>
+          <select id="offer-state" value={state} onChange={(e) => setState(e.target.value)}>
+            <option value="">Ölkə seçin…</option>
+            {destinations.map((d) => (
+              <option key={d.state} value={d.state}>{d.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="tl-searchbar-field">
           <label htmlFor="offer-checkin-from">Tarixdən</label>
-          <input id="offer-checkin-from" className="tl-viza-input" type="date" value={checkinFrom} onChange={(e) => setCheckinFrom(e.target.value)} />
+          <input id="offer-checkin-from" type="date" value={checkinFrom} onChange={(e) => setCheckinFrom(e.target.value)} />
         </div>
-        <div className="tl-viza-field">
+
+        <div className="tl-searchbar-field">
           <label htmlFor="offer-checkin-to">Tarixə qədər</label>
-          <input id="offer-checkin-to" className="tl-viza-input" type="date" value={checkinTo} onChange={(e) => setCheckinTo(e.target.value)} />
+          <input id="offer-checkin-to" type="date" value={checkinTo} onChange={(e) => setCheckinTo(e.target.value)} />
         </div>
+
+        <Stepper label="Gecə" value={nights} min={1} max={30} onChange={setNights} />
+        <Stepper label="Böyük" value={adults} min={1} max={10} onChange={setAdults} />
+        <Stepper label="Uşaq" value={children} min={0} max={10} onChange={setChildren} />
+
+        <button className={`tl-searchbar-submit${loading ? ' ld' : ''}`} type="button" onClick={submit} disabled={loading}>
+          <span className="sp" />
+          <span className="bt">Axtar</span>
+        </button>
       </div>
 
-      <div className="tl-viza-row">
-        <div className="tl-viza-field">
-          <label htmlFor="offer-nights">Gecə sayı</label>
-          <div className="tl-viza-count">
-            <button type="button" onClick={() => changeNights(-1)} aria-label="Azalt">−</button>
-            <span id="offer-nights">{nights}</span>
-            <button type="button" onClick={() => changeNights(1)} aria-label="Artır">+</button>
-          </div>
-        </div>
-        <div className="tl-viza-field">
-          <label htmlFor="offer-adults">Böyüklər</label>
-          <div className="tl-viza-count">
-            <button type="button" onClick={() => changeAdults(-1)} aria-label="Azalt">−</button>
-            <span id="offer-adults">{adults}</span>
-            <button type="button" onClick={() => changeAdults(1)} aria-label="Artır">+</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="tl-viza-field">
-        <label htmlFor="offer-children">Uşaqlar</label>
-        <div className="tl-viza-count">
-          <button type="button" onClick={() => changeChildren(-1)} aria-label="Azalt">−</button>
-          <span id="offer-children">{children}</span>
-          <button type="button" onClick={() => changeChildren(1)} aria-label="Artır">+</button>
-        </div>
-      </div>
-
-      <div className="tl-viza-field">
-        <label>Ulduz</label>
-        <div className="tl-blog-filter" role="group" aria-label="Ulduz sayı">
-          {STAR_OPTIONS.map((star) => (
-            <button
-              type="button"
-              key={star}
-              className={`tl-blog-filter-pill${stars.includes(star) ? ' active' : ''}`}
-              onClick={() => toggleStar(star)}
-              aria-pressed={stars.includes(star)}
-            >
-              {star}★
-            </button>
+      <div className="tl-searchbar-extra">
+        <span className="tl-searchbar-extra-label">Ulduz:</span>
+        {STAR_OPTIONS.map((star) => (
+          <button
+            type="button"
+            key={star}
+            className={`tl-blog-filter-pill${stars.includes(star) ? ' active' : ''}`}
+            onClick={() => toggleStar(star)}
+            aria-pressed={stars.includes(star)}
+          >
+            {star}★
+          </button>
+        ))}
+        <select className="tl-searchbar-meal" value={meal} onChange={(e) => setMeal(e.target.value)} aria-label="Qidalanma">
+          {MEAL_OPTIONS.map((m) => (
+            <option key={m.value} value={m.value}>{m.label}</option>
           ))}
-        </div>
+        </select>
       </div>
-
-      <div className="tl-viza-row">
-        <div className="tl-viza-field">
-          <label htmlFor="offer-meal">Qidalanma</label>
-          <select id="offer-meal" className="tl-viza-input" value={meal} onChange={(e) => setMeal(e.target.value)}>
-            {MEAL_OPTIONS.map((m) => (
-              <option key={m.value} value={m.value}>{m.label}</option>
-            ))}
-          </select>
-        </div>
-        <div className="tl-viza-field">
-          <label htmlFor="offer-currency">Valyuta</label>
-          <select id="offer-currency" className="tl-viza-input" value={currency} onChange={(e) => setCurrency(e.target.value)}>
-            {CURRENCY_OPTIONS.map((c) => (
-              <option key={c.value} value={c.value}>{c.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <button className={`tl-viza-submit tl-offer-submit${loading ? ' ld' : ''}`} type="button" onClick={submit} disabled={loading}>
-        <span className="sp" />
-        <span className="bt">Axtar</span>
-      </button>
     </div>
   );
 }
