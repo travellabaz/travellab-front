@@ -97,7 +97,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
     <main className="tpwl-main">
       <section className="tl-blog-hero tl-page-top">
         <div className="tl-blog-hero-photo" style={{ backgroundImage: `url('${heroPhoto}')` }} />
-        <div className="tl-blog-hero-bg" />
+        <div className="tl-blog-hero-bg tl-search-hero-bg" />
         <div className="tl-blog-hero-content">
           {countryLabel && (
             <div style={{ marginBottom: 10 }}>

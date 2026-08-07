@@ -2566,6 +2566,20 @@ body:not(.tl-subpage) .tl-about-extra {
           linear-gradient(180deg, rgba(252, 177, 72, 0.32) 0%, rgba(230, 140, 20, 0.22) 50%, rgba(230, 140, 20, 0.4) 100%);
 }
 
+/* Adds the same "solid orange footer band" HeroSearch.jsx's .tl-hero-bg
+   has and .tl-blog-hero-bg doesn't — fades the photo into a flat orange
+   band right where the search bar sits, so the hero merges into it
+   seamlessly instead of the photo running all the way to the bottom edge.
+   Applied alongside .tl-blog-hero-bg (which sets the base vignette/wash);
+   this fully overrides `background` rather than layering onto it, so it
+   repeats those same two gradients plus the new band on top. */
+.tl-search-hero-bg {
+  background:
+          linear-gradient(180deg, transparent 0%, transparent 80%, var(--tl-hero-orange) 100%),
+          radial-gradient(ellipse 65% 85% at 50% 48%, rgba(10, 25, 35, 0.6) 0%, rgba(10, 25, 35, 0.28) 55%, transparent 78%),
+          linear-gradient(180deg, rgba(252, 177, 72, 0.32) 0%, rgba(230, 140, 20, 0.22) 50%, rgba(230, 140, 20, 0.4) 100%);
+}
+
 .tl-blog-hero-content {
   position: relative;
   z-index: 2;
