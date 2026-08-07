@@ -38,7 +38,7 @@ function isGdsCategory(category) {
 // rather than hiding an unrecognized category.
 function categoryLabel(category) {
   const upper = category.toUpperCase();
-  if (upper.includes('GDS')) return 'GDS turları';
+  if (upper.includes('GDS')) return 'GDS';
   if (upper === 'BEACH') return 'Çarter turları';
   return category;
 }
