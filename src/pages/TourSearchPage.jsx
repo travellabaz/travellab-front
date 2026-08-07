@@ -13,6 +13,30 @@ import { paginationItems } from '../utils/pagination';
 
 const RESULTS_PER_PAGE = 12;
 
+const SORT_OPTIONS = [
+  { value: 'price_asc', label: 'Ən ucuz' },
+  { value: 'price_desc', label: 'Ən bahalı' },
+  { value: 'star_desc', label: 'Ulduza görə' },
+  { value: 'checkin_asc', label: 'Tarixə görə' },
+];
+
+// Results already come back price-ascending from the backend (see
+// KompasSearchService.search) — this only re-sorts the already-fetched
+// list client-side for the other options, no extra request needed.
+function sortOffers(offers, sort) {
+  const sorted = [...offers];
+  if (sort === 'price_desc') {
+    sorted.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+  } else if (sort === 'star_desc') {
+    sorted.sort((a, b) => (b.star ?? 0) - (a.star ?? 0));
+  } else if (sort === 'checkin_asc') {
+    sorted.sort((a, b) => (a.checkIn ?? '').localeCompare(b.checkIn ?? ''));
+  } else {
+    sorted.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+  }
+  return sorted;
+}
+
 // Same photo set/rotation approach as HeroSearch.jsx's homepage hero and
 // BlogPage.jsx's — picked client-side after hydration so prerendered/JS-less
 // crawlers get a stable fallback instead of whatever Math.random() picked
@@ -38,6 +62,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [page, setPage] = useState(1);
+  const [sort, setSort] = useState('price_asc');
 
   useEffect(() => {
     setHeroPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
@@ -86,12 +111,18 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
     ? destinations.find((d) => d.name === initialCountryName)?.state
     : undefined;
 
-  const totalPages = offers ? Math.max(1, Math.ceil(offers.length / RESULTS_PER_PAGE)) : 1;
-  const pageOffers = offers ? offers.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE) : [];
+  const sortedOffers = offers ? sortOffers(offers, sort) : null;
+  const totalPages = sortedOffers ? Math.max(1, Math.ceil(sortedOffers.length / RESULTS_PER_PAGE)) : 1;
+  const pageOffers = sortedOffers ? sortedOffers.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE) : [];
 
   const goToPage = (n) => {
     setPage(n);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const selectSort = (value) => {
+    setSort(value);
+    setPage(1);
   };
 
   return (
@@ -138,6 +169,23 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
           {!loading && !failed && offers && offers.length === 0 && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
               Bu filtrlərə uyğun təklif tapılmadı.
+            </div>
+          )}
+
+          {!loading && pageOffers.length > 0 && (
+            <div className="tl-searchbar-extra-group" style={{ marginBottom: 20 }}>
+              <span className="tl-searchbar-extra-label">Sırala:</span>
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  type="button"
+                  key={opt.value}
+                  className={`tl-blog-filter-pill${sort === opt.value ? ' active' : ''}`}
+                  onClick={() => selectSort(opt.value)}
+                  aria-pressed={sort === opt.value}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           )}
 

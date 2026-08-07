@@ -6,8 +6,45 @@ import ReviewsSection from '../sections/ReviewsSection';
 import FaqSection from '../components/FaqSection';
 import { TOURS_FAQ } from '../data/toursFaq';
 import { paginationItems } from '../utils/pagination';
+import { extractMinPrice } from '../utils/price';
+import { extractLatestTourDate } from '../utils/tourDate';
 
 const TOURS_PER_PAGE = 12;
+
+const SORT_OPTIONS = [
+  { value: '', label: 'Defolt' },
+  { value: 'price_asc', label: 'Ən ucuz' },
+  { value: 'price_desc', label: 'Ən bahalı' },
+  { value: 'date_asc', label: 'Tarixə görə' },
+];
+
+// Price/date aren't structured fields (see utils/price.js and
+// utils/tourDate.js — both mined out of free-form Instagram captions), so
+// sorting re-parses the caption per comparison rather than caching a sort
+// key — tour counts here are small (dozens, not thousands), so the extra
+// regex work per compare is cheap. Tours with no parseable date sink to
+// the bottom of a date sort instead of clustering unpredictably.
+function sortTours(tours, sort) {
+  if (!sort) return tours;
+  const sorted = [...tours];
+  if (sort === 'price_asc' || sort === 'price_desc') {
+    sorted.sort((a, b) => {
+      const pa = extractMinPrice(a.description)?.amount ?? 0;
+      const pb = extractMinPrice(b.description)?.amount ?? 0;
+      return sort === 'price_asc' ? pa - pb : pb - pa;
+    });
+  } else if (sort === 'date_asc') {
+    sorted.sort((a, b) => {
+      const da = extractLatestTourDate(a.description);
+      const db = extractLatestTourDate(b.description);
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return da - db;
+    });
+  }
+  return sorted;
+}
 
 export default function ToursPage() {
   const { tours, loading, empty } = useTours();
@@ -22,9 +59,12 @@ export default function ToursPage() {
   const category = matchedCategory ? matchedCategory.name : '';
   const filteredTours = matchedCategory ? tours.filter((t) => getTourCategory(t).name === matchedCategory.name) : tours;
 
-  const totalPages = Math.max(1, Math.ceil(filteredTours.length / TOURS_PER_PAGE));
+  const sort = searchParams.get('sort') || '';
+  const sortedTours = sortTours(filteredTours, sort);
+
+  const totalPages = Math.max(1, Math.ceil(sortedTours.length / TOURS_PER_PAGE));
   const page = Math.min(totalPages, Math.max(1, parseInt(searchParams.get('page'), 10) || 1));
-  const pageTours = filteredTours.slice((page - 1) * TOURS_PER_PAGE, page * TOURS_PER_PAGE);
+  const pageTours = sortedTours.slice((page - 1) * TOURS_PER_PAGE, page * TOURS_PER_PAGE);
 
   const goToPage = (n) => {
     if (n === 1) {
@@ -42,6 +82,17 @@ export default function ToursPage() {
       next.set('category', name);
     } else {
       next.delete('category');
+    }
+    next.delete('page');
+    setSearchParams(next);
+  };
+
+  const selectSort = (value) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) {
+      next.set('sort', value);
+    } else {
+      next.delete('sort');
     }
     next.delete('page');
     setSearchParams(next);
@@ -86,6 +137,23 @@ export default function ToursPage() {
               Canlı qiymətlərlə axtar
             </Link>
           </div>
+
+          {!loading && !empty && (
+            <div className="tl-searchbar-extra-group" style={{ marginBottom: 20 }}>
+              <span className="tl-searchbar-extra-label">Sırala:</span>
+              {SORT_OPTIONS.map((opt) => (
+                <button
+                  type="button"
+                  key={opt.value}
+                  className={`tl-blog-filter-pill${sort === opt.value ? ' active' : ''}`}
+                  onClick={() => selectSort(opt.value)}
+                  aria-pressed={sort === opt.value}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           {loading && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
