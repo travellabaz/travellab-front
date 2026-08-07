@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const STAR_OPTIONS = [2, 3, 4, 5];
 
@@ -60,7 +60,7 @@ function Stepper({ label, value, min, max, onChange }) {
 // a green submit button on the right. Star rating / meal plan don't have
 // an equivalent in a flight search, so they sit in a slim secondary row
 // below the main bar instead of crowding it.
-export default function OfferSearchFilters({ destinations, onSearch, loading }) {
+export default function OfferSearchFilters({ destinations, onSearch, loading, initialState }) {
   const [state, setState] = useState('');
   const [checkinFrom, setCheckinFrom] = useState(defaultCheckinFrom);
   const [checkinTo, setCheckinTo] = useState(defaultCheckinTo);
@@ -83,6 +83,20 @@ export default function OfferSearchFilters({ destinations, onSearch, loading }) 
     if (checkinTo < checkinFrom) return setError('Tarixlər düzgün deyil.');
     onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency });
   };
+
+  // Per-country pages (TourSearchCountryPage.jsx) pass initialState once
+  // it's resolved from the live destinations list — auto-run the search
+  // once, straight from the prop rather than waiting on setState(state) to
+  // flush, so the visitor lands on real results instead of an empty form.
+  const autoSearchedRef = useRef(false);
+  useEffect(() => {
+    if (initialState && !autoSearchedRef.current) {
+      autoSearchedRef.current = true;
+      setState(initialState);
+      onSearch({ state: initialState, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialState]);
 
   return (
     <div className="tl-searchbar">

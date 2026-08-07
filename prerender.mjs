@@ -12,6 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
 import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
+import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -120,7 +121,20 @@ async function main() {
       },
     ])
   );
-  const allRouteMeta = { ...PAGE_META, ...blogRouteMeta, ...vizaRouteMeta };
+  // Same reasoning as vizaRouteMeta: the country LIST is static/known at
+  // build time even though the actual search results (live Kompas prices)
+  // aren't — these pages get the full prerender treatment (title/meta/
+  // breadcrumb + the search form's static shell), not live offer data.
+  const tourSearchRouteMeta = Object.fromEntries(
+    TOUR_SEARCH_COUNTRIES.map((c) => [
+      `/tours/search/${c.slug}`,
+      {
+        title: `${c.nameAz} turları — canlı qiymətlər — Travellab`,
+        desc: `${c.nameAz} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.`,
+      },
+    ])
+  );
+  const allRouteMeta = { ...PAGE_META, ...blogRouteMeta, ...vizaRouteMeta, ...tourSearchRouteMeta };
 
   for (const routePath of Object.keys(allRouteMeta)) {
     const meta = allRouteMeta[routePath];
@@ -128,6 +142,7 @@ async function main() {
     const pageUrl = BASE_URL + (isHome ? '/' : routePath);
     const post = blogPosts[routePath];
     const vizaCountry = VIZA_COUNTRIES.find((c) => `/viza/${c.slug}` === routePath);
+    const tourSearchCountry = TOUR_SEARCH_COUNTRIES.find((c) => `/tours/search/${c.slug}` === routePath);
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`)
       : meta.image
@@ -152,6 +167,11 @@ async function main() {
       breadcrumbItems.push({ name: 'Bloq', url: `${BASE_URL}/blog` }, { name: post.title, url: pageUrl });
     } else if (vizaCountry) {
       breadcrumbItems.push({ name: 'Viza', url: `${BASE_URL}/viza` }, { name: `${vizaCountry.name} vizası`, url: pageUrl });
+    } else if (tourSearchCountry) {
+      breadcrumbItems.push(
+        { name: 'Tur axtarışı', url: `${BASE_URL}/tours/search` },
+        { name: `${tourSearchCountry.nameAz} turları`, url: pageUrl }
+      );
     } else if (!isHome) {
       breadcrumbItems.push({ name: meta.title.split(' — ')[0], url: pageUrl });
     }

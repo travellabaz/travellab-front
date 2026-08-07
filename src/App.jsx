@@ -12,6 +12,7 @@ import HotelsPage from './pages/HotelsPage';
 import ToursPage from './pages/ToursPage';
 import TourDetailPage from './pages/TourDetailPage';
 import TourSearchPage from './pages/TourSearchPage';
+import TourSearchCountryPage from './pages/TourSearchCountryPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/tours" element={<ToursPage />} />
         <Route path="/tours/search" element={<TourSearchPage />} />
         <Route path="/tours/search/offer" element={<OfferDetailPage />} />
+        <Route path="/tours/search/:country" element={<TourSearchCountryPage />} />
         <Route path="/tours/:id" element={<TourDetailPage />} />
         <Route path="/labpoint" element={<LabpointPage />} />
         <Route path="/events" element={<EventsPage />} />

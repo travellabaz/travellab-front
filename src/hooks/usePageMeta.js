@@ -5,6 +5,7 @@ import { getPostBySlug } from '../data/blog';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
+import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
 
 // Matches the default set in index.html — reused here to reset og:image/
 // twitter:image back to it when navigating off a blog post (an SPA route
@@ -33,6 +34,8 @@ export default function usePageMeta() {
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
     const vizaCountryMatch = /^\/viza\/([^/]+)$/.exec(path);
     const vizaCountry = vizaCountryMatch ? getVizaCountryBySlug(vizaCountryMatch[1]) : null;
+    const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
+    const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.excerpt }
       : tour
@@ -42,7 +45,12 @@ export default function usePageMeta() {
               title: `${vizaCountry.name} vizası — Travellab`,
               desc: `Travellab ilə ${vizaCountry.name} vizasını asanlıqla alın. Sənədləri, müraciəti və görüşü biz aparırıq.`,
             }
-          : PAGE_META[path] || PAGE_META['/'];
+          : tourSearchCountry
+            ? {
+                title: `${tourSearchCountry.nameAz} turları — canlı qiymətlər — Travellab`,
+                desc: `${tourSearchCountry.nameAz} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.`,
+              }
+            : PAGE_META[path] || PAGE_META['/'];
     const isHome = path === '/';
     const pageUrl = BASE_URL + (isHome ? '/' : path);
     const image = post
@@ -79,6 +87,11 @@ export default function usePageMeta() {
         items.push({ name: 'Turlar', url: BASE_URL + '/tours' }, { name: tour.title, url: pageUrl });
       } else if (vizaCountry) {
         items.push({ name: 'Viza', url: BASE_URL + '/viza' }, { name: `${vizaCountry.name} vizası`, url: pageUrl });
+      } else if (tourSearchCountry) {
+        items.push(
+          { name: 'Tur axtarışı', url: BASE_URL + '/tours/search' },
+          { name: `${tourSearchCountry.nameAz} turları`, url: pageUrl }
+        );
       } else if (!isHome) {
         items.push({ name: page.title.split(' — ')[0], url: pageUrl });
       }

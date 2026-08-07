@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import OfferSearchFilters from '../components/OfferSearchFilters';
 import OfferCard from '../components/OfferCard';
+import Breadcrumb from '../components/Breadcrumb';
+import FaqSection from '../components/FaqSection';
+import { TOURS_FAQ } from '../data/toursFaq';
+import { TOUR_SEARCH_COUNTRIES } from '../data/tourSearchCountries';
 import { getDestinations, searchOffers } from '../api/offers';
 import { getDestinationPhotos } from '../api/photos';
 import { photoQueryForCountry } from '../utils/destinationPhotos';
@@ -18,7 +23,13 @@ const HERO_PHOTOS = [
   '/images/hero/mosque.jpg',
 ];
 
-export default function TourSearchPage() {
+// Rendered both standalone (/tours/search) and embedded by
+// TourSearchCountryPage.jsx (/tours/search/:country) — `countryLabel` (the
+// AZ display name) switches the hero copy/breadcrumb/FAQ to the
+// country-specific version instead of duplicating this whole page per
+// country. `initialCountryName` is the matching Russian name, Kompas's own
+// join key against the live destinations list (see OfferSearchFilters.jsx).
+export default function TourSearchPage({ initialCountryName, countryLabel }) {
   const [heroPhoto, setHeroPhoto] = useState(HERO_PHOTOS[0]);
   const [destinations, setDestinations] = useState([]);
   const [offers, setOffers] = useState(null); // null = no search run yet
@@ -68,6 +79,12 @@ export default function TourSearchPage() {
     }
   };
 
+  // Resolved once `destinations` loads — the country page (TourSearchCountryPage.jsx)
+  // only knows the Russian name (Kompas's own join key), not the numeric id.
+  const initialState = initialCountryName
+    ? destinations.find((d) => d.name === initialCountryName)?.state
+    : undefined;
+
   const totalPages = offers ? Math.max(1, Math.ceil(offers.length / RESULTS_PER_PAGE)) : 1;
   const pageOffers = offers ? offers.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE) : [];
 
@@ -82,15 +99,30 @@ export default function TourSearchPage() {
         <div className="tl-blog-hero-photo" style={{ backgroundImage: `url('${heroPhoto}')` }} />
         <div className="tl-blog-hero-bg" />
         <div className="tl-blog-hero-content">
-          <div className="tl-hero-badge">🔍 Canlı Axtarış</div>
-          <h1>Ən sərfəli təklifi tap</h1>
-          <p>Canlı qiymətlər — istiqamət, tarix, gecə sayı və ulduza görə axtar, ən uyğun oteli seç.</p>
+          {countryLabel && (
+            <div style={{ marginBottom: 10 }}>
+              <Breadcrumb
+                items={[
+                  { name: 'Ana səhifə', to: '/' },
+                  { name: 'Tur axtarışı', to: '/tours/search' },
+                  { name: `${countryLabel} turları` },
+                ]}
+              />
+            </div>
+          )}
+          <div className="tl-hero-badge">🔍 {countryLabel ? countryLabel : 'Canlı Axtarış'}</div>
+          <h1>{countryLabel ? `${countryLabel} turları` : 'Ən sərfəli təklifi tap'}</h1>
+          <p>
+            {countryLabel
+              ? `${countryLabel} üçün canlı otel qiymətləri — tarix, gecə sayı və ulduza görə axtar, ən uyğun təklifi seç.`
+              : 'Canlı qiymətlər — istiqamət, tarix, gecə sayı və ulduza görə axtar, ən uyğun oteli seç.'}
+          </p>
         </div>
       </section>
 
       <section id="tour-search">
         <div className="tl-section">
-          <OfferSearchFilters destinations={destinations} onSearch={runSearch} loading={loading} />
+          <OfferSearchFilters destinations={destinations} onSearch={runSearch} loading={loading} initialState={initialState} />
 
           {loading && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
@@ -139,8 +171,26 @@ export default function TourSearchPage() {
               </button>
             </nav>
           )}
+
+          {/* Crawlable links into every per-country page — sitemap.xml lists
+              them too, but a real link path matters for discovery/PageRank,
+              not just inclusion in the sitemap. */}
+          <div style={{ marginTop: 40 }}>
+            <div className="tl-searchbar-extra-label" style={{ marginBottom: 10 }}>Populyar istiqamətlər</div>
+            <div className="tl-blog-filter" role="list" aria-label="Ölkəyə görə turlar">
+              {TOUR_SEARCH_COUNTRIES.map((c) => (
+                <Link key={c.slug} to={`/tours/search/${c.slug}`} className="tl-blog-filter-pill">
+                  {c.nameAz}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
+
+      {countryLabel && (
+        <FaqSection tag="Suallar" title={`${countryLabel} turları ilə bağlı tez-tez verilən suallar`} items={TOURS_FAQ} />
+      )}
     </main>
   );
 }
