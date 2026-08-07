@@ -4268,6 +4268,11 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   align-items: stretch;
   flex-wrap: wrap;
+  /* The currency selector is absolutely positioned in the card's top-right
+     corner (out of flow, so it doesn't push this row down on its own) —
+     without this, the row's right-aligned submit button sits directly
+     underneath it and the two visually collide. */
+  padding-top: 26px;
 }
 
 .tl-searchbar-field {
