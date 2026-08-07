@@ -25,11 +25,22 @@ const MEAL_OPTIONS = [
   { value: 'UAI', label: 'Ultra hər şey daxil (UAI)' },
 ];
 
-// Same heuristic as the backend's KompasSearchService.isGds — only used
-// here to style the pill, the actual include/exclude decision is the
-// backend's (category=="" already excludes GDS results server-side).
+// Purely a styling hint (purple pill) — filtering itself is the backend's
+// job (KompasSearchService.filterTours), this only decides how the pill
+// looks.
 function isGdsCategory(category) {
   return category.toUpperCase().includes('GDS');
+}
+
+// Kompas's own `type` values come back as raw internal strings ("BEACH",
+// "GDS тур") — not fit for customer-facing AZ copy, so translate the ones
+// we've actually seen live and fall back to the raw value for anything new
+// rather than hiding an unrecognized category.
+function categoryLabel(category) {
+  const upper = category.toUpperCase();
+  if (upper.includes('GDS')) return 'GDS turları';
+  if (upper === 'BEACH') return 'Çarter turları';
+  return category;
 }
 
 function toIsoDate(date) {
@@ -213,7 +224,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
                   onClick={() => setCategory(cat)}
                   aria-pressed={category === cat}
                 >
-                  {cat}
+                  {categoryLabel(cat)}
                 </button>
               ))}
             </div>
