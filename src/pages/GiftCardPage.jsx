@@ -5,6 +5,7 @@ import { MANAGERS, formatManagerNumber } from '../utils/managers';
 
 const AMOUNT_PRESETS = [100, 200, 300, 500, 1000];
 const MESSAGE_MAX = 200;
+const MAX_AMOUNT = 1000000;
 
 // Gift cards go through one specific person, not the round-robin pool the
 // rest of the site uses (see utils/managers.js) — Travellab handles these
@@ -51,7 +52,8 @@ export default function GiftCardPage() {
   };
 
   const changeCustomAmount = (e) => {
-    const value = e.target.value.replace(/\D/g, '');
+    const digits = e.target.value.replace(/\D/g, '');
+    const value = digits && Number(digits) > MAX_AMOUNT ? String(MAX_AMOUNT) : digits;
     setCustomAmount(value);
     if (value) setAmount(Number(value));
   };
