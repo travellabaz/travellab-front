@@ -11,14 +11,36 @@ const MESSAGE_MAX = 200;
 // manually rather than via a real checkout, so there's one owner for it.
 const GIFT_CARD_MANAGER = MANAGERS.find((m) => m.name === 'Xəyalə') || MANAGERS[0];
 
-function GiftCardVisual({ amount }) {
+// Static illustration, not tied to form state — same graphic used at both
+// hero size and the small "Kart önizləməsi" size, scaled purely by its
+// container via cqw units (see .tl-gift-visual-stage) rather than two
+// separate size variants.
+function GiftCardVisual() {
   return (
     <div className="tl-gift-visual" aria-hidden="true">
-      <div className="tl-gift-visual-card">
-        <span className="tl-gift-visual-brand">travellab</span>
-        <span className="tl-gift-visual-label">Hədiyyə Kartı</span>
-        <span className="tl-gift-visual-amount">{amount} ₼</span>
-        <span className="tl-gift-visual-ribbon" />
+      <div className="tl-gift-visual-stage">
+        <span className="tl-gift-doodle tl-gift-doodle-1">✦</span>
+        <span className="tl-gift-doodle tl-gift-doodle-2">✈</span>
+        <span className="tl-gift-doodle tl-gift-doodle-3">〜</span>
+        <span className="tl-gift-doodle tl-gift-doodle-4">✦</span>
+        <span className="tl-gift-doodle tl-gift-doodle-5">〜</span>
+
+        <div className="tl-gift-card-back">
+          <span className="tl-gift-ribbon-bow">🎀</span>
+          <span className="tl-gift-card-back-text">Hədiyyə<br />Kartı</span>
+          <span className="tl-gift-card-back-tag">travellab</span>
+        </div>
+
+        <div className="tl-gift-card-front">
+          <span className="tl-gift-card-front-brand">travellab</span>
+          <span className="tl-gift-ribbon-cross tl-gift-ribbon-cross-a" />
+          <span className="tl-gift-ribbon-cross tl-gift-ribbon-cross-b" />
+          <span className="tl-gift-card-front-code">GFT-2031000</span>
+        </div>
+
+        <div className="tl-gift-badge">
+          <span>❤️</span> Sevdiklərinizə ən gözəl səyahət hədiyyəsi!
+        </div>
       </div>
     </div>
   );
@@ -31,7 +53,6 @@ export default function GiftCardPage() {
   const [recipientName, setRecipientName] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
-  const [delivery, setDelivery] = useState('email'); // 'email' | 'physical'
   const [error, setError] = useState('');
   const [view, setView] = useState('form'); // 'form' | 'done'
   const [lead, setLead] = useState(null);
@@ -57,8 +78,7 @@ export default function GiftCardPage() {
       'Məbləğ: ' + lead.amount + ' ₼\n' +
       'Göndərən: ' + lead.senderName + '\n' +
       'Qəbul edən: ' + lead.recipientName + '\n' +
-      'Telefon: ' + lead.phone + '\n' +
-      'Çatdırılma: ' + (lead.delivery === 'email' ? 'E-poçt ilə' : 'Fiziki kartla') +
+      'Telefon: ' + lead.phone +
       (lead.message ? '\nMesaj: ' + lead.message : '');
     const win = window.open('https://wa.me/' + GIFT_CARD_MANAGER.number + '?text=' + encodeURIComponent(msg), '_blank');
     const opened = !!win;
@@ -79,7 +99,6 @@ export default function GiftCardPage() {
       recipientName: recipientName.trim(),
       phone: phone.trim(),
       message: message.trim(),
-      delivery,
     };
 
     setLead(newLead);
@@ -96,7 +115,6 @@ export default function GiftCardPage() {
         ['Göndərən', lead.senderName],
         ['Qəbul edən', lead.recipientName],
         ['Telefon', lead.phone],
-        ['Çatdırılma', lead.delivery === 'email' ? 'E-poçt ilə' : 'Fiziki kartla'],
         ...(lead.message ? [['Mesaj', lead.message]] : []),
       ]
     : null;
@@ -137,12 +155,12 @@ export default function GiftCardPage() {
                   <p>WhatsApp ilə sürətli müraciət</p>
                 </div>
                 <div className="tl-gift-feature">
-                  <span>📮</span>
-                  <p>E-poçt və ya fiziki kartla çatdırılma</p>
+                  <span>📞</span>
+                  <p>Menecerimiz sizinlə əlaqə saxlayır</p>
                 </div>
               </div>
             </div>
-            <GiftCardVisual amount={amount || 100} />
+            <GiftCardVisual />
           </div>
 
           <div className="tl-gift-form-card">
@@ -202,25 +220,13 @@ export default function GiftCardPage() {
                     <div className="tl-gift-char-count">{message.length}/{MESSAGE_MAX}</div>
                   </div>
 
-                  <div className="tl-viza-field">
-                    <label>Çatdırılma üsulu</label>
-                    <div className="tl-gift-delivery">
-                      <button type="button" className={'tl-gift-delivery-opt' + (delivery === 'email' ? ' active' : '')} onClick={() => setDelivery('email')}>
-                        ✉️ E-poçt ilə
-                      </button>
-                      <button type="button" className={'tl-gift-delivery-opt' + (delivery === 'physical' ? ' active' : '')} onClick={() => setDelivery('physical')}>
-                        💳 Fiziki kartla
-                      </button>
-                    </div>
-                  </div>
-
                   <button className="tl-viza-submit" type="button" onClick={submit}>Sorğunu WhatsApp-a göndər</button>
-                  <p className="tl-viza-note">Onlayn ödəniş hələ mövcud deyil — sorğunuz WhatsApp vasitəsilə menecerimizə çatır, ödəniş və çatdırılmanı birlikdə tamamlayırıq.</p>
+                  <p className="tl-viza-note">Onlayn ödəniş hələ mövcud deyil — sorğunuz WhatsApp vasitəsilə menecerimizə çatır, detalları birlikdə razılaşdırırıq.</p>
                 </div>
 
                 <div className="tl-gift-preview">
                   <div className="tl-gift-preview-title">Kart önizləməsi</div>
-                  <GiftCardVisual amount={amount || 100} />
+                  <GiftCardVisual />
                 </div>
               </div>
             ) : (
@@ -274,8 +280,7 @@ export default function GiftCardPage() {
             <p>
               Hədiyyə kartı sifarişi hazırda onlayn ödəniş sistemi ilə deyil, WhatsApp üzərindən şəxsi əlaqə ilə
               tamamlanır: yuxarıdakı formu doldurduqdan sonra sorğunuz birbaşa menecerimizə göndərilir, ödəniş və
-              çatdırılma detalları birlikdə razılaşdırılır. Kart 1 il müddətinə etibarlıdır və istəyə görə e-poçt
-              vasitəsilə rəqəmsal, ya da fiziki kart şəklində təqdim edilə bilər.
+              digər detallar birlikdə razılaşdırılır. Kart 1 il müddətinə etibarlıdır.
             </p>
           </SeoBodyText>
         </div>
