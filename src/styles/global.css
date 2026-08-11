@@ -3506,9 +3506,11 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 900px) {
-  /* All 4 hero pills in one row, no wrapping to a second line — there
+  /* Remaining hero pills in one row, no wrapping to a second line — there
      isn't room to fit them all at a readable size, so the row scrolls
-     horizontally instead of shrinking the text further. */
+     horizontally instead of shrinking the text further. Gift card pill
+     dropped entirely here — no room for a 5th pill on mobile, and it's
+     already reachable via the footer link. */
   .tl-hero-mode-pills {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -3528,6 +3530,10 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-hero-pill {
     flex-shrink: 0;
     white-space: nowrap;
+  }
+
+  .tl-hero-pill-gift {
+    display: none;
   }
 
   .tl-nav-links {
