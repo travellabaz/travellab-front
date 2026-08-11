@@ -117,7 +117,7 @@ export default function GiftCardPage() {
       </section>
 
       <section>
-        <div className="tl-section">
+        <div className="tl-section" style={{ paddingTop: 12 }}>
           <div className="tl-gift-hero">
             <div>
               <div className="tl-tag">Hədiyyə edin, xatirə qazandırın!</div>
