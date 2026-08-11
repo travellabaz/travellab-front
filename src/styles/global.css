@@ -5347,6 +5347,21 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-green-dark);
 }
 
+.tl-gift-amount-custom {
+  width: 128px;
+  text-align: center;
+  outline: none;
+}
+
+.tl-gift-amount-custom::placeholder {
+  color: var(--tl-gray-400);
+  font-weight: 600;
+}
+
+.tl-gift-amount-custom:focus {
+  border-color: var(--tl-green);
+}
+
 .tl-gift-char-count {
   text-align: right;
   font-size: 11px;

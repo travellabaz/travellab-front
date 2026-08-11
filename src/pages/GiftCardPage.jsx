@@ -182,6 +182,15 @@ export default function GiftCardPage() {
                           {value} ₼
                         </button>
                       ))}
+                      <input
+                        className={'tl-gift-amount-pill tl-gift-amount-custom' + (customAmount ? ' active' : '')}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="Digər məbləğ"
+                        aria-label="Digər məbləğ"
+                        value={customAmount}
+                        onChange={changeCustomAmount}
+                      />
                     </div>
                   </div>
 
@@ -196,15 +205,9 @@ export default function GiftCardPage() {
                     </div>
                   </div>
 
-                  <div className="tl-viza-row">
-                    <div className="tl-viza-field">
-                      <label htmlFor="gift-phone">Telefon <span className="tl-viza-req">*</span></label>
-                      <input id="gift-phone" className="tl-viza-input" type="tel" placeholder="+994 50 123 45 67" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                    </div>
-                    <div className="tl-viza-field">
-                      <label htmlFor="gift-amount-custom">Digər məbləğ</label>
-                      <input id="gift-amount-custom" className="tl-viza-input" type="text" inputMode="numeric" placeholder="Məbləğ daxil edin" value={customAmount} onChange={changeCustomAmount} />
-                    </div>
+                  <div className="tl-viza-field">
+                    <label htmlFor="gift-phone">Telefon <span className="tl-viza-req">*</span></label>
+                    <input id="gift-phone" className="tl-viza-input" type="tel" placeholder="+994 50 123 45 67" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                   </div>
 
                   <div className="tl-viza-field">
@@ -221,7 +224,6 @@ export default function GiftCardPage() {
                   </div>
 
                   <button className="tl-viza-submit" type="button" onClick={submit}>Sorğunu WhatsApp-a göndər</button>
-                  <p className="tl-viza-note">Onlayn ödəniş hələ mövcud deyil — sorğunuz WhatsApp vasitəsilə menecerimizə çatır, detalları birlikdə razılaşdırırıq.</p>
                 </div>
 
                 <div className="tl-gift-preview">
