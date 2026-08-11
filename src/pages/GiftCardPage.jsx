@@ -11,37 +11,21 @@ const MESSAGE_MAX = 200;
 // manually rather than via a real checkout, so there's one owner for it.
 const GIFT_CARD_MANAGER = MANAGERS.find((m) => m.name === 'Xəyalə') || MANAGERS[0];
 
-// Static illustration, not tied to form state — same graphic used at both
-// hero size and the small "Kart önizləməsi" size, scaled purely by its
-// container via cqw units (see .tl-gift-visual-stage) rather than two
-// separate size variants.
-function GiftCardVisual() {
+// Real designed assets (not a CSS approximation) — the two-card scene for
+// the big hero spot, the single-card crop for the small "Kart önizləməsi"
+// box, matching what each is actually sized for.
+function GiftCardHeroImage() {
   return (
-    <div className="tl-gift-visual" aria-hidden="true">
-      <div className="tl-gift-visual-stage">
-        <span className="tl-gift-doodle tl-gift-doodle-1">✦</span>
-        <span className="tl-gift-doodle tl-gift-doodle-2">✈</span>
-        <span className="tl-gift-doodle tl-gift-doodle-3">〜</span>
-        <span className="tl-gift-doodle tl-gift-doodle-4">✦</span>
-        <span className="tl-gift-doodle tl-gift-doodle-5">〜</span>
+    <div className="tl-gift-visual">
+      <img src="/images/gift-card/hero.png" alt="Travellab Hədiyyə Kartı" />
+    </div>
+  );
+}
 
-        <div className="tl-gift-card-back">
-          <span className="tl-gift-ribbon-bow">🎀</span>
-          <span className="tl-gift-card-back-text">Hədiyyə<br />Kartı</span>
-          <span className="tl-gift-card-back-tag">travellab</span>
-        </div>
-
-        <div className="tl-gift-card-front">
-          <span className="tl-gift-card-front-brand">travellab</span>
-          <span className="tl-gift-ribbon-cross tl-gift-ribbon-cross-a" />
-          <span className="tl-gift-ribbon-cross tl-gift-ribbon-cross-b" />
-          <span className="tl-gift-card-front-code">GFT-2031000</span>
-        </div>
-
-        <div className="tl-gift-badge">
-          <span>❤️</span> Sevdiklərinizə ən gözəl səyahət hədiyyəsi!
-        </div>
-      </div>
+function GiftCardPreviewImage() {
+  return (
+    <div className="tl-gift-visual tl-gift-visual-preview">
+      <img src="/images/gift-card/preview.png" alt="Travellab Hədiyyə Kartı" />
     </div>
   );
 }
@@ -160,7 +144,7 @@ export default function GiftCardPage() {
                 </div>
               </div>
             </div>
-            <GiftCardVisual />
+            <GiftCardHeroImage />
           </div>
 
           <div className="tl-gift-form-card">
@@ -201,7 +185,7 @@ export default function GiftCardPage() {
                     </div>
                     <div className="tl-viza-field">
                       <label htmlFor="gift-recipient">Qəbul edən adı <span className="tl-viza-req">*</span></label>
-                      <input id="gift-recipient" className="tl-viza-input" type="text" placeholder="Məs: Ləyla" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
+                      <input id="gift-recipient" className="tl-viza-input" type="text" placeholder="Məs: Leyla" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
                     </div>
                   </div>
 
@@ -228,7 +212,7 @@ export default function GiftCardPage() {
 
                 <div className="tl-gift-preview">
                   <div className="tl-gift-preview-title">Kart önizləməsi</div>
-                  <GiftCardVisual />
+                  <GiftCardPreviewImage />
                 </div>
               </div>
             ) : (
