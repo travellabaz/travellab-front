@@ -3506,11 +3506,9 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 900px) {
-  /* Remaining hero pills in one row, no wrapping to a second line — there
+  /* All hero pills in one row, no wrapping to a second line — there
      isn't room to fit them all at a readable size, so the row scrolls
-     horizontally instead of shrinking the text further. Gift card pill
-     dropped entirely here — no room for a 5th pill on mobile, and it's
-     already reachable via the footer link. */
+     horizontally instead of shrinking the text further. */
   .tl-hero-mode-pills {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -3530,10 +3528,6 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-hero-pill {
     flex-shrink: 0;
     white-space: nowrap;
-  }
-
-  .tl-hero-pill-gift {
-    display: none;
   }
 
   .tl-nav-links {
@@ -3634,10 +3628,12 @@ body:not(.tl-subpage) .tl-about-extra {
     height: 23px !important;
   }
 
-  /* No room next to the logo + burger button at this width — mobile gets
-     its own gift card entry point instead (see .tl-hero-pill-gift). */
-  .tl-nav-divider,
-  .tl-nav-gift-btn {
+  /* No room next to the logo + burger button at this width. Not
+     .tl-nav-gift-btn — its own hide rule lives with its base styles
+     further down the file; putting it here got silently overridden by
+     that later same-specificity rule (classic media-query-vs-source-order
+     gotcha, since @media doesn't add specificity). */
+  .tl-nav-divider {
     display: none;
   }
 
@@ -5310,6 +5306,12 @@ body:not(.tl-subpage) .tl-about-extra {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(245, 56, 78, .35);
   text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .tl-nav-gift-btn {
+    display: none;
+  }
 }
 
 .tl-hero-pill-gift {
