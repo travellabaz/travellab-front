@@ -140,6 +140,7 @@ export default function HeroSearch({
           )}
           <Link to="/tours" className="tl-hero-pill">Turlar</Link>
           <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">Qrup Turlar</Link>
+          <Link to="/hediyye-karti" className="tl-hero-pill tl-hero-pill-gift">🎁 Hədiyyə Kartı</Link>
         </div>
       </section>
 

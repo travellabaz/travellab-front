@@ -252,13 +252,6 @@ html {
   background: var(--tl-gray-200);
 }
 
-.tl-nav-membership-logo {
-  height: 29px;
-  width: auto;
-  border-radius: 4px;
-  display: block;
-}
-
 .tl-logo-icon {
   width: 32px;
   height: 32px;
@@ -3635,9 +3628,10 @@ body:not(.tl-subpage) .tl-about-extra {
     height: 23px !important;
   }
 
-  /* No room next to the logo + burger button at this width. */
+  /* No room next to the logo + burger button at this width — mobile gets
+     its own gift card entry point instead (see .tl-hero-pill-gift). */
   .tl-nav-divider,
-  .tl-nav-membership-logo {
+  .tl-nav-gift-btn {
     display: none;
   }
 
@@ -5104,4 +5098,285 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-search-cta:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 22px rgba(245, 56, 78, .4);
+}
+
+/* ── GIFT CARD PAGE (GiftCardPage.jsx) ── */
+.tl-gift-hero {
+  background: var(--tl-white);
+  border-radius: var(--tl-r-xl);
+  padding: 44px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 24px;
+  border: 1px solid var(--tl-gray-200);
+  box-shadow: var(--tl-shadow);
+}
+
+.tl-gift-hero-sub {
+  font-size: 14.5px;
+  color: var(--tl-gray-600);
+  line-height: 1.7;
+  max-width: 460px;
+  margin: 4px 0 24px;
+}
+
+.tl-gift-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 16px;
+}
+
+.tl-gift-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tl-gift-feature span {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--tl-green-light);
+  font-size: 15px;
+}
+
+.tl-gift-feature p {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  line-height: 1.35;
+}
+
+.tl-gift-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-gift-visual-card {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 16/10;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #FF7A45, #F5384E);
+  box-shadow: 0 20px 40px rgba(245, 56, 78, .28);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  color: #fff;
+}
+
+.tl-gift-visual-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .16) 1.5px, transparent 1.5px);
+  background-size: 16px 16px;
+  opacity: .5;
+}
+
+.tl-gift-visual-card::after {
+  content: '✈';
+  position: absolute;
+  right: -8px;
+  bottom: -14px;
+  font-size: 88px;
+  color: rgba(255, 255, 255, .14);
+  transform: rotate(-18deg);
+}
+
+.tl-gift-visual-brand {
+  position: relative;
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: .2px;
+}
+
+.tl-gift-visual-label {
+  position: relative;
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.tl-gift-visual-amount {
+  position: relative;
+  align-self: flex-end;
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  background: rgba(255, 255, 255, .18);
+  padding: 4px 14px;
+  border-radius: 100px;
+  backdrop-filter: blur(2px);
+}
+
+.tl-gift-visual-ribbon {
+  display: none;
+}
+
+.tl-gift-form-card {
+  background: var(--tl-white);
+  border-radius: var(--tl-r-xl);
+  padding: 40px;
+  border: 1px solid var(--tl-gray-200);
+  box-shadow: var(--tl-shadow);
+  margin-bottom: 32px;
+}
+
+.tl-gift-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 36px;
+  align-items: start;
+}
+
+.tl-gift-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tl-gift-amount-pill {
+  padding: 10px 18px;
+  border-radius: 11px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.tl-gift-amount-pill:hover {
+  border-color: var(--tl-green);
+}
+
+.tl-gift-amount-pill.active {
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-gift-char-count {
+  text-align: right;
+  font-size: 11px;
+  color: var(--tl-gray-400);
+  margin-top: 4px;
+}
+
+.tl-gift-delivery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tl-gift-delivery-opt {
+  padding: 12px;
+  border-radius: 11px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.tl-gift-delivery-opt.active {
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-gift-preview {
+  background: var(--tl-gray-100);
+  border-radius: var(--tl-r-lg);
+  padding: 24px;
+  text-align: center;
+  position: sticky;
+  top: 90px;
+}
+
+.tl-gift-preview-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  margin-bottom: 18px;
+}
+
+@media (max-width: 900px) {
+  .tl-gift-hero,
+  .tl-gift-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tl-gift-hero {
+    padding: 28px;
+  }
+
+  .tl-gift-form-card {
+    padding: 24px;
+  }
+
+  .tl-gift-preview {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .tl-gift-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── NAV GIFT CARD BUTTON (replaces the ATAA badge slot, desktop only —
+   matches its old display:none-on-mobile breakpoint; mobile gets its own
+   entry point instead, see .tl-hero-pill-gift) ── */
+.tl-nav-gift-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #FF7A45, #F5384E);
+  color: #fff;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 100px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(245, 56, 78, .25);
+  transition: transform .18s, box-shadow .18s;
+}
+
+.tl-nav-gift-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 56, 78, .35);
+  text-decoration: none;
+}
+
+.tl-hero-pill-gift {
+  background: linear-gradient(135deg, #FF7A45, #F5384E);
+  border-color: transparent;
+}
+
+.tl-hero-pill-gift:hover {
+  background: linear-gradient(135deg, #F5384E, #FF7A45);
 }

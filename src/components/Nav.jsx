@@ -45,13 +45,9 @@ export default function Nav() {
         ))}
       </ul>
       <div className="tl-nav-right">
-        <a href="https://ataa.az/" target="_blank" rel="noopener noreferrer" aria-label="Azərbaycan Turizm Agentlikləri Assosiasiyası">
-          <img
-            src="/images/partners/aztaa-logo.jpeg"
-            alt="Azərbaycan Turizm Agentlikləri Assosiasiyası üzvü"
-            className="tl-nav-membership-logo"
-          />
-        </a>
+        <Link to="/hediyye-karti" className="tl-nav-gift-btn">
+          🎁 Hədiyyə Kartı
+        </Link>
         <span className="tl-nav-divider" aria-hidden="true" />
         <button
           type="button"

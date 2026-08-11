@@ -22,6 +22,7 @@ import VizaCountryPage from './pages/VizaCountryPage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
+import GiftCardPage from './pages/GiftCardPage';
 import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
 import PrivacyModal from './modals/PrivacyModal';
@@ -77,6 +78,7 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/hediyye-karti" element={<GiftCardPage />} />
         <Route path="/r/:code" element={<ReferralRedirect />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

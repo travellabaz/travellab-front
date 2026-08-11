@@ -56,4 +56,8 @@ export const PAGE_META = {
     // Free Pexels stock photo (passports + travel documents).
     image: 'https://images.pexels.com/photos/33497885/pexels-photo-33497885.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
   },
+  '/hediyye-karti': {
+    title: 'Hədiyyə Kartı - Səyahət Hədiyyə Edin | Travellab',
+    desc: 'Travellab Hədiyyə Kartı ilə sevdiklərinizə səyahət hədiyyə edin. Aviabilet, otel və turlarda keçərli, 1 il müddətinə etibarlıdır.',
+  },
 };

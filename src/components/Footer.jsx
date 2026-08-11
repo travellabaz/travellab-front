@@ -114,6 +114,7 @@ export default function Footer() {
               <Link to="/about">Haqqımızda</Link>
               <Link to="/blog?category=X%C9%99b%C9%99rl%C9%99r">Xəbərlər</Link>
               <Link to="/blog">Bloqlar</Link>
+              <Link to="/hediyye-karti">Hədiyyə Kartı</Link>
             </div>
             <div className="tl-footer-col">
               <div className="tl-footer-col-title">Hesab</div>
