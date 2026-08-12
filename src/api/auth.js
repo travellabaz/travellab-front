@@ -1,5 +1,14 @@
 import { API_BASE, authFetch } from './client';
 import { getReferralId } from '../utils/referral';
+import { getLocaleFromPathname } from '../utils/locale';
+
+// Backend error/response messages (e.g. "Yanlış telefon və ya şifrə")
+// are localized server-side by Accept-Language — read straight from the
+// URL rather than threaded through every call site as a parameter, same
+// self-computing pattern as LocalizedLink.
+function acceptLanguageHeader() {
+  return { 'Accept-Language': getLocaleFromPathname(window.location.pathname) };
+}
 
 export function toApiPhone(localDigits) {
   return '994' + localDigits.replace(/\D/g, '');
@@ -8,7 +17,7 @@ export function toApiPhone(localDigits) {
 export async function register({ name, surname, phone, mail, password, passwordConfirm }) {
   const res = await fetch(API_BASE + '/auth/register', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() },
     body: JSON.stringify({
       name,
       surname,
@@ -27,7 +36,7 @@ export async function register({ name, surname, phone, mail, password, passwordC
 export async function login({ phone, password }) {
   const res = await fetch(API_BASE + '/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() },
     body: JSON.stringify({ username: toApiPhone(phone), password }),
   });
   const data = await res.json();
@@ -43,7 +52,7 @@ export async function login({ phone, password }) {
 export async function googleLogin(idToken) {
   const res = await fetch(API_BASE + '/auth/google', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() },
     body: JSON.stringify({ idToken, referralId: getReferralId() }),
   });
   const data = await res.json();
@@ -53,7 +62,7 @@ export async function googleLogin(idToken) {
 export async function otpCheck(sessionId, otp) {
   const res = await fetch(API_BASE + '/auth/otp/check', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'session-id': sessionId },
+    headers: { 'Content-Type': 'application/json', 'session-id': sessionId, ...acceptLanguageHeader() },
     body: JSON.stringify({ otp }),
   });
   const data = await res.json().catch(() => ({}));
@@ -64,7 +73,7 @@ export async function resendOtp(sessionId) {
   try {
     await fetch(API_BASE + '/auth/otp/resend', {
       method: 'POST',
-      headers: { 'session-id': sessionId },
+      headers: { 'session-id': sessionId, ...acceptLanguageHeader() },
     });
   } catch {
     /* best-effort, matches original behaviour */
@@ -74,7 +83,7 @@ export async function resendOtp(sessionId) {
 export async function forgotPassword(phone) {
   const res = await fetch(API_BASE + '/auth/change-password', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() },
     body: JSON.stringify({ phone: toApiPhone(phone) }),
   });
   const data = await res.json();
@@ -84,7 +93,7 @@ export async function forgotPassword(phone) {
 export async function setPassword({ phone, password, passwordConfirm }) {
   const res = await fetch(API_BASE + '/auth/set-password', {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() },
     body: JSON.stringify({ phone, password, passwordConfirm }),
   });
   const data = await res.json().catch(() => ({}));
@@ -93,8 +102,8 @@ export async function setPassword({ phone, password, passwordConfirm }) {
 
 export async function fetchProfile(onSessionExpired) {
   const [cardsRes, detailsRes] = await Promise.all([
-    authFetch('/lab-cards', { headers: { 'Content-Type': 'application/json' } }, onSessionExpired),
-    authFetch('/clients/details', {}, onSessionExpired),
+    authFetch('/lab-cards', { headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() } }, onSessionExpired),
+    authFetch('/clients/details', { headers: acceptLanguageHeader() }, onSessionExpired),
   ]);
   let cards = {};
   let details = {};

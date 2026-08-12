@@ -271,6 +271,13 @@ html {
   padding: 0;
 }
 
+/* Only meant for the mobile dropdown (see the @media block further down,
+   which shows it again) — .tl-nav-right already has its own switcher for
+   desktop, this would otherwise duplicate it inline in the links row. */
+.tl-nav-links-lang {
+  display: none;
+}
+
 .tl-nav-links a {
   display: flex;
   align-items: center;
@@ -3567,6 +3574,12 @@ body:not(.tl-subpage) .tl-about-extra {
     border-bottom: none;
   }
 
+  .tl-nav-links.tl-nav-open .tl-nav-links-lang {
+    display: flex;
+    justify-content: center;
+    padding: 14px 8px 4px;
+  }
+
   .tl-pkg-grid,
   .tl-idea-grid,
   .tl-blog-grid {
@@ -5321,4 +5334,46 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-hero-pill-gift:hover {
   background: linear-gradient(135deg, #F5384E, #FF7A45);
+}
+
+/* ── LANGUAGE SWITCHER (LanguageSwitcher.jsx) ── */
+.tl-lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--tl-gray-100);
+  border-radius: 100px;
+  padding: 3px;
+}
+
+.tl-lang-switcher-opt {
+  padding: 5px 10px;
+  border-radius: 100px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tl-gray-600);
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.tl-lang-switcher-opt:hover {
+  color: var(--tl-navy);
+  text-decoration: none;
+}
+
+.tl-lang-switcher-opt.active {
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  box-shadow: 0 1px 3px rgba(10, 30, 25, 0.12);
+}
+
+.tl-footer-lang-switcher {
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .tl-nav-lang-switcher {
+    display: none;
+  }
 }

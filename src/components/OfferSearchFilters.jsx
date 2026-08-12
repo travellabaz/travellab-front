@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getCategories, getCalendar } from '../api/offers';
 import AvailabilityCalendar from './AvailabilityCalendar';
 import CountrySelect from './CountrySelect';
@@ -10,7 +11,7 @@ import { TOUR_SEARCH_COUNTRIES } from '../data/tourSearchCountries';
 // Falls back to the raw Kompas name for any destination not yet in that
 // list, rather than hiding it.
 const COUNTRY_NAME_AZ = new Map(TOUR_SEARCH_COUNTRIES.map((c) => [c.nameRu, c.nameAz]));
-function destinationLabel(name) {
+function destinationName(name) {
   return COUNTRY_NAME_AZ.get(name) || name;
 }
 
@@ -24,19 +25,6 @@ const CURRENCY_OPTIONS = [
   { value: '13', label: 'AZN' },
 ];
 
-// Standard hotel meal-plan abbreviations — sent as-is to the backend, which
-// compares them directly against Kompas's own "meal" field (also one of
-// these abbreviations, e.g. "AI", "BB").
-const MEAL_OPTIONS = [
-  { value: '', label: 'Hamısı' },
-  { value: 'RO', label: 'Yalnız otaq (RO)' },
-  { value: 'BB', label: 'Səhər yeməyi (BB)' },
-  { value: 'HB', label: 'Yarım pansion (HB)' },
-  { value: 'FB', label: 'Tam pansion (FB)' },
-  { value: 'AI', label: 'Hər şey daxil (AI)' },
-  { value: 'UAI', label: 'Ultra hər şey daxil (UAI)' },
-];
-
 // Purely a styling hint (purple pill) — filtering itself is the backend's
 // job (KompasSearchService.filterTours), this only decides how the pill
 // looks.
@@ -45,13 +33,13 @@ function isGdsCategory(category) {
 }
 
 // Kompas's own `type` values come back as raw internal strings ("BEACH",
-// "GDS тур") — not fit for customer-facing AZ copy, so translate the ones
+// "GDS тур") — not fit for customer-facing copy, so translate the ones
 // we've actually seen live and fall back to the raw value for anything new
 // rather than hiding an unrecognized category.
-function categoryLabel(category) {
+function categoryLabel(category, t) {
   const upper = category.toUpperCase();
   if (upper.includes('GDS')) return 'GDS';
-  if (upper === 'BEACH') return 'Çarter turları';
+  if (upper === 'BEACH') return t('offerSearchFilters.categoryBeach');
   return category;
 }
 
@@ -73,14 +61,14 @@ function defaultCheckinTo() {
   return toIsoDate(d);
 }
 
-function Stepper({ label, value, min, max, onChange }) {
+function Stepper({ label, value, min, max, onChange, t }) {
   return (
     <div className="tl-searchbar-field tl-searchbar-field-compact">
       <label>{label}</label>
       <div className="tl-searchbar-stepper">
-        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} aria-label="Azalt">−</button>
+        <button type="button" onClick={() => onChange(Math.max(min, value - 1))} aria-label={t('offerSearchFilters.decrease')}>−</button>
         <span>{value}</span>
-        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} aria-label="Artır">+</button>
+        <button type="button" onClick={() => onChange(Math.min(max, value + 1))} aria-label={t('offerSearchFilters.increase')}>+</button>
       </div>
     </div>
   );
@@ -93,6 +81,17 @@ function Stepper({ label, value, min, max, onChange }) {
 // an equivalent in a flight search, so they sit in a slim secondary row
 // below the main bar instead of crowding it.
 export default function OfferSearchFilters({ destinations, onSearch, loading, initialState }) {
+  const { t } = useTranslation();
+  const MEAL_OPTIONS = [
+    { value: '', label: t('offerSearchFilters.mealAll') },
+    { value: 'RO', label: t('offerSearchFilters.mealRoomOnly') },
+    { value: 'BB', label: t('offerSearchFilters.mealBreakfast') },
+    { value: 'HB', label: t('offerSearchFilters.mealHalfBoard') },
+    { value: 'FB', label: t('offerSearchFilters.mealFullBoard') },
+    { value: 'AI', label: t('offerSearchFilters.mealAllInclusive') },
+    { value: 'UAI', label: t('offerSearchFilters.mealUltraAllInclusive') },
+  ];
+
   const [state, setState] = useState('');
   const [checkinFrom, setCheckinFrom] = useState(defaultCheckinFrom);
   const [checkinTo, setCheckinTo] = useState(defaultCheckinTo);
@@ -148,9 +147,9 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
 
   const submit = () => {
     setError('');
-    if (!state) return setError('İstiqaməti seçin.');
-    if (!checkinFrom || !checkinTo) return setError('Tarixləri seçin.');
-    if (checkinTo < checkinFrom) return setError('Tarixlər düzgün deyil.');
+    if (!state) return setError(t('offerSearchFilters.errorDestination'));
+    if (!checkinFrom || !checkinTo) return setError(t('offerSearchFilters.errorDates'));
+    if (checkinTo < checkinFrom) return setError(t('offerSearchFilters.errorDateOrder'));
     onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency, category });
   };
 
@@ -183,15 +182,15 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
 
       <div className="tl-searchbar-row">
         <CountrySelect
-          label="İstiqamət"
+          label={t('offerSearchFilters.destination')}
           value={state}
           onChange={setState}
-          placeholder="Ölkə seçin…"
-          options={destinations.map((d) => ({ value: String(d.state), label: destinationLabel(d.name) }))}
+          placeholder={t('offerSearchFilters.destinationPlaceholder')}
+          options={destinations.map((d) => ({ value: String(d.state), label: t(`countries.${destinationName(d.name)}`, destinationName(d.name)) }))}
         />
 
         <AvailabilityCalendar
-          label="Tarixdən"
+          label={t('offerSearchFilters.checkinFrom')}
           value={checkinFrom}
           onChange={setCheckinFrom}
           availableDates={availableDates}
@@ -200,27 +199,27 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
         />
 
         <AvailabilityCalendar
-          label="Tarixə qədər"
+          label={t('offerSearchFilters.checkinTo')}
           value={checkinTo}
           onChange={setCheckinTo}
           minDate={checkinFrom}
           disabled={!state}
         />
 
-        <Stepper label="Gecə" value={nights} min={1} max={30} onChange={setNights} />
-        <Stepper label="Böyük" value={adults} min={1} max={10} onChange={setAdults} />
-        <Stepper label="Uşaq" value={children} min={0} max={10} onChange={setChildren} />
+        <Stepper t={t} label={t('offerSearchFilters.nights')} value={nights} min={1} max={30} onChange={setNights} />
+        <Stepper t={t} label={t('offerSearchFilters.adults')} value={adults} min={1} max={10} onChange={setAdults} />
+        <Stepper t={t} label={t('offerSearchFilters.children')} value={children} min={0} max={10} onChange={setChildren} />
 
         <button className={`tl-searchbar-submit${loading ? ' ld' : ''}`} type="button" onClick={submit} disabled={loading}>
           <span className="sp" />
-          <span className="bt">Axtar</span>
+          <span className="bt">{t('offerSearchFilters.search')}</span>
         </button>
       </div>
 
       <div className="tl-searchbar-extra">
         {categories.length > 0 && (
           <div className="tl-searchbar-extra-group">
-            <span className="tl-searchbar-extra-label">Kateqoriya:</span>
+            <span className="tl-searchbar-extra-label">{t('offerSearchFilters.category')}</span>
             <div className="tl-searchbar-stars">
               <button
                 type="button"
@@ -228,7 +227,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
                 onClick={() => setCategory('')}
                 aria-pressed={category === ''}
               >
-                Hamısı
+                {t('offerSearchFilters.categoryAll')}
               </button>
               {categories.map((cat) => (
                 <button
@@ -238,14 +237,14 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
                   onClick={() => setCategory(cat)}
                   aria-pressed={category === cat}
                 >
-                  {categoryLabel(cat)}
+                  {categoryLabel(cat, t)}
                 </button>
               ))}
             </div>
           </div>
         )}
         <div className="tl-searchbar-extra-group">
-          <span className="tl-searchbar-extra-label">Ulduz:</span>
+          <span className="tl-searchbar-extra-label">{t('offerSearchFilters.stars')}</span>
           <div className="tl-searchbar-stars">
             {STAR_OPTIONS.map((star) => (
               <button
@@ -261,7 +260,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
           </div>
         </div>
         <div className="tl-searchbar-extra-group tl-searchbar-extra-group-meal">
-          <span className="tl-searchbar-extra-label">Qidalanma:</span>
+          <span className="tl-searchbar-extra-label">{t('offerSearchFilters.meal')}</span>
           <CountrySelect
             value={meal}
             onChange={setMeal}

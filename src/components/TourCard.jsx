@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link, { useLocalizedNavigate } from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
@@ -6,8 +7,9 @@ import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDisc
 import { isTourExpired } from '../utils/tourDate';
 
 export default function TourCard({ tour }) {
+  const { t } = useTranslation();
   const { isAuthenticated, profile } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useLocalizedNavigate();
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
   const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
@@ -32,13 +34,13 @@ export default function TourCard({ tour }) {
         {(expired || reward) && (
           <div className="tl-pkg-badges">
             {expired ? (
-              <span className="tl-badge tl-badge-off">Bitib</span>
+              <span className="tl-badge tl-badge-off">{t('tourCard.expired')}</span>
             ) : (
               <span className="tl-badge tl-badge-lp">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
                 </svg>
-                +{formatPoints(reward.points)} Lab Point
+                +{formatPoints(reward.points)} {t('tourCard.labPoint')}
               </span>
             )}
           </div>
@@ -54,7 +56,7 @@ export default function TourCard({ tour }) {
             <span className="tl-price-now">{formatPrice(price.amount, price.currency)}</span>
             {balanceDiscount && balanceDiscount.discountAzn > 0 && (
               <div className="tl-price-inst">
-                <span>Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}</span>
+                <span>{t('tourCard.labPointDiscount', { discount: formatPrice(balanceDiscount.discountAzn, 'AZN'), final: formatPrice(balanceDiscount.finalAzn, 'AZN') })}</span>
                 <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -69,16 +71,16 @@ export default function TourCard({ tour }) {
             style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             onClick={(e) => e.stopPropagation()}
           >
-            Ətraflı
+            {t('tourCard.more')}
           </Link>
           {!expired && (
             <button
               type="button"
               className="tl-btn-book"
               style={{ border: 'none', cursor: 'pointer' }}
-              onClick={(e) => { e.stopPropagation(); contactManager(tour); }}
+              onClick={(e) => { e.stopPropagation(); contactManager(tour, t); }}
             >
-              {managerLabel()}
+              {managerLabel(t)}
             </button>
           )}
         </div>

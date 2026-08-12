@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import ToursSection from '../sections/ToursSection';
 import HotelsSection from '../sections/HotelsSection';
 import CtaSection from '../sections/CtaSection';
@@ -11,6 +12,7 @@ import SeoBodyText from '../components/SeoBodyText';
 // About and Blog stay reachable via their own dedicated pages/nav links,
 // just not flattened into the homepage scroll.
 export default function HomePage() {
+  const { t } = useTranslation();
   return (
     <main className="tpwl-main">
       <ToursSection />
@@ -23,29 +25,10 @@ export default function HomePage() {
       <section>
         <div className="tl-section" style={{ paddingTop: 0 }}>
           <SeoBodyText>
-            <p>
-              Travellab, Bakıda fəaliyyət göstərən tam xidmətli səyahət agentliyi olaraq, müştərilərinə aviabilet,
-              otel bron, hazır tur paketləri, viza xidmətləri və tədbir biletlərini tək bir məkanda təqdim edir.
-              Şirkətimiz Azərbaycan Turizm Agentlikləri Assosiasiyasının (ATAA) üzvüdür və illərdir fərdi,
-              korporativ və VIP müştərilərə etibarlı xidmət göstərir.
-            </p>
-            <p>
-              Səyahət agentliyi kimi əsas məqsədimiz — müştərilərimizə vaxt itirmədən, etibarlı və rahat şəkildə
-              aviabilet, otel bron etmək imkanı yaratmaqdır. Aviabilet axtarışında yüzlərlə aviaşirkətin
-              təkliflərini müqayisə edərək, sizə ən uyğun qiymət və uçuş vaxtını təklif edirik. Otel bron
-              xidmətimiz vasitəsilə dünyanın istənilən nöqtəsində, büdcənizə uyğun otel seçimləri edə bilərsiniz.
-            </p>
-            <p>
-              Hazır tur paketlərimiz Dubay, Türkiyə, Gürcüstan və digər populyar istiqamətləri əhatə edir —
-              aviabilet, otel və transfer daxil olmaqla sərfəli qiymətlərlə. Viza xidmətimiz vasitəsilə
-              səyahətinizin sənədləşmə prosesini asanlaşdırırıq. Tibbi turizm sahəsində də xarici müştərilərə
-              dəstək göstəririk.
-            </p>
-            <p>
-              Labpoint loyallıq proqramımız vasitəsilə hər bron zamanı bonus xallar qazanır və növbəti
-              səyahətinizdə istifadə edə bilərsiniz. Səyahət agentliyi olaraq Travellab, müştəri məmnuniyyətini ön
-              planda tutaraq, hər bir səyahətinizi rahat və unudulmaz etmək üçün buradadır.
-            </p>
+            <p>{t('home.seoP1')}</p>
+            <p>{t('home.seoP2')}</p>
+            <p>{t('home.seoP3')}</p>
+            <p>{t('home.seoP4')}</p>
           </SeoBodyText>
         </div>
       </section>

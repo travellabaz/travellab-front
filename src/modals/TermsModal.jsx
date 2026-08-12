@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useModals } from '../context/ModalContext';
 
 export default function TermsModal() {
+  const { t } = useTranslation();
   const { termsOpen, closeTerms } = useModals();
 
   useEffect(() => {
@@ -88,101 +90,98 @@ export default function TermsModal() {
             marginBottom: 16,
           }}
         >
-          İstifadə Şərtləri
+          {t('terms.badge')}
         </div>
         <h2 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 24, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 6, letterSpacing: '-0.5px' }}>
-          İstifadə Şərtləri və Qaydalar – Travellab
+          {t('terms.title')}
         </h2>
         <p style={{ fontSize: 13, color: 'rgba(29,41,57,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
-          Bu İstifadə Şərtləri və Qaydalar ("Şərtlər") Travellab saytından (
-          <a href="https://www.travellab.az" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--tl-green)' }}>
-            www.travellab.az
-          </a>
-          ) və onun xidmətlərindən istifadəni tənzimləyir. Saytımıza daxil olaraq və ya xidmətlərimizdən istifadə
-          edərək, bu şərtləri qəbul etmiş sayılırsınız. Əgər bu şərtlərlə razı deyilsinizsə, xahiş edirik saytdan
-          istifadə etməyin.
+          <Trans
+            i18nKey="terms.intro"
+            components={{ 1: <a href="https://www.travellab.az" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--tl-green)' }} /> }}
+          />
         </p>
 
         <div className="pv-section">
-          <div className="pv-h">1. Ümumi Qaydalar</div>
+          <div className="pv-h">{t('terms.s1Title')}</div>
           <ul className="pv-ul">
-            <li>Travellab, istifadəçilərə uçuş, otel, tur və digər səyahət xidmətlərini təqdim edən səyahət agentliyidir.</li>
-            <li>Saytdakı bütün məzmun və funksiyalar yalnız qanuni məqsədlərlə istifadə edilə bilər.</li>
-            <li>İstifadəçi təqdim etdiyi bütün məlumatların düzgün və doğru olduğunu təsdiqləyir.</li>
+            <li>{t('terms.s1i1')}</li>
+            <li>{t('terms.s1i2')}</li>
+            <li>{t('terms.s1i3')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">2. İstifadəçi Qeydiyyatı və Hesablar</div>
+          <div className="pv-h">{t('terms.s2Title')}</div>
           <ul className="pv-ul">
-            <li>Bəzi xidmətlərə giriş üçün qeydiyyat tələb oluna bilər.</li>
-            <li>Qeydiyyat zamanı təqdim edilən məlumatlar doğru və güncəl olmalıdır.</li>
-            <li>Hesabınızın təhlükəsizliyindən siz məsulsunuz. Şifrə və giriş məlumatlarını üçüncü şəxslərlə paylaşmaq qadağandır.</li>
+            <li>{t('terms.s2i1')}</li>
+            <li>{t('terms.s2i2')}</li>
+            <li>{t('terms.s2i3')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">3. Məxfilik və Məlumatların Qorunması</div>
+          <div className="pv-h">{t('terms.s3Title')}</div>
           <ul className="pv-ul">
-            <li>İstifadəçilər tərəfindən təqdim edilən şəxsi məlumatlar Gizlilik Siyasəti çərçivəsində qorunur.</li>
-            <li>Travellab, şəxsi məlumatları yalnız xidmətlərin göstərilməsi və təkmilləşdirilməsi məqsədi ilə istifadə edir.</li>
+            <li>{t('terms.s3i1')}</li>
+            <li>{t('terms.s3i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">4. Xidmətlərin İstifadəsi</div>
+          <div className="pv-h">{t('terms.s4Title')}</div>
           <ul className="pv-ul">
-            <li>Saytda yerləşdirilən qiymət və məlumatlar arayış xarakterlidir, son qiymət ödəniş anında təsdiqlənir.</li>
-            <li>Xidmətlərdən sui-istifadə halları (spam, zərərli proqram yaymaq, sistemə müdaxilə və s.) qəti şəkildə qadağandır.</li>
+            <li>{t('terms.s4i1')}</li>
+            <li>{t('terms.s4i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">5. Mülkiyyət Hüquqları</div>
+          <div className="pv-h">{t('terms.s5Title')}</div>
           <ul className="pv-ul">
-            <li>Saytdakı bütün məzmun (mətnlər, loqolar, dizayn, proqram təminatı və s.) Travellab və ya onun tərəfdaşlarına məxsusdur.</li>
-            <li>Heç bir məzmun yazılı icazə olmadan kopyalana, yayıla və ya dəyişdirilə bilməz.</li>
+            <li>{t('terms.s5i1')}</li>
+            <li>{t('terms.s5i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">6. Məsuliyyətin Məhdudlaşdırılması</div>
+          <div className="pv-h">{t('terms.s6Title')}</div>
           <ul className="pv-ul">
-            <li>Travellab, xidmətlərdən istifadə nəticəsində yaranan birbaşa və ya dolayı zərərlərə görə məsuliyyət daşımır.</li>
-            <li>Texniki nasazlıq, məlumat itkisi və ya saytın mövcud olmaması hallarında Travellab məsuliyyət qəbul etmir.</li>
+            <li>{t('terms.s6i1')}</li>
+            <li>{t('terms.s6i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">7. Üçüncü Tərəf Linkləri</div>
+          <div className="pv-h">{t('terms.s7Title')}</div>
           <ul className="pv-ul">
-            <li>Saytımızda digər vebsaytlara (o cümlədən tərəfdaş axtarış/bron xidmətlərinə) keçidlər ola bilər. Bu saytların məzmununa və siyasətlərinə görə Travellab məsuliyyət daşımır.</li>
-            <li>Bu linklər yalnız istifadəçi rahatlığı üçün təqdim olunur.</li>
+            <li>{t('terms.s7i1')}</li>
+            <li>{t('terms.s7i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">8. Dəyişikliklər</div>
+          <div className="pv-h">{t('terms.s8Title')}</div>
           <ul className="pv-ul">
-            <li>Travellab bu şərtləri istənilən vaxt dəyişmək hüququnu özündə saxlayır.</li>
-            <li>Dəyişikliklər saytımızda yerləşdirildiyi andan etibarən qüvvəyə minir. İstifadənin davam etdirilməsi bu dəyişikliklərin qəbul edildiyi anlamına gəlir.</li>
+            <li>{t('terms.s8i1')}</li>
+            <li>{t('terms.s8i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">9. Qanunvericilik və Yurisdiksiya</div>
+          <div className="pv-h">{t('terms.s9Title')}</div>
           <ul className="pv-ul">
-            <li>Bu şərtlər Azərbaycan Respublikasının qanunvericiliyinə uyğun olaraq tənzimlənir.</li>
-            <li>İstənilən mübahisə Azərbaycan məhkəmələri tərəfindən həll ediləcəkdir.</li>
+            <li>{t('terms.s9i1')}</li>
+            <li>{t('terms.s9i2')}</li>
           </ul>
         </div>
 
         <div className="pv-section" style={{ marginBottom: 0 }}>
-          <div className="pv-h">10. Əlaqə</div>
+          <div className="pv-h">{t('terms.s10Title')}</div>
           <div className="pv-contact">
             <span style={{ fontSize: 20 }}>📧</span>
             <div>
-              <div style={{ fontSize: 12, color: 'rgba(29,41,57,0.5)', marginBottom: 2 }}>İstifadə şərtləri ilə bağlı sual və ya təklifləriniz üçün:</div>
+              <div style={{ fontSize: 12, color: 'rgba(29,41,57,0.5)', marginBottom: 2 }}>{t('terms.s10Desc')}</div>
               <a href="mailto:info@travellab.az">info@travellab.az</a>
             </div>
           </div>

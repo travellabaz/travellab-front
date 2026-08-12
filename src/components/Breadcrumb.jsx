@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from './LocalizedLink';
 
 // Visible breadcrumb trail — separate from (but rendered alongside) the
 // BreadcrumbList JSON-LD that usePageMeta.js/prerender.mjs already build

@@ -1,10 +1,12 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Nav from './components/Nav';
 import MobileTabBar from './components/MobileTabBar';
 import GoogleOneTap from './components/GoogleOneTap';
 import Footer from './components/Footer';
 import AttributionFooter from './components/AttributionFooter';
 import CookieBanner from './components/CookieBanner';
+import LocaleFrame from './components/LocaleFrame';
 import HeroSearch from './sections/HeroSearch';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -30,12 +32,45 @@ import TermsModal from './modals/TermsModal';
 import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
+import { stripLocalePrefix } from './utils/locale';
+
+// One shared route list mounted under three parent layout routes (AZ
+// unprefixed/default, /ru/*, /en/*) instead of tripling this JSX — see
+// LocaleFrame.jsx. Paths here are relative (no leading slash) since
+// they're nested under each locale branch's own "/*" parent. Keyed
+// because this array gets reused as children across three separate
+// parents, not because of any normal list-rendering need.
+function localeRouteChildren() {
+  return [
+    <Route key="home" index element={<HomePage />} />,
+    <Route key="search" path="search" element={<SearchPage />} />,
+    <Route key="hotels" path="hotels" element={<HotelsPage />} />,
+    <Route key="tours" path="tours" element={<ToursPage />} />,
+    <Route key="tours-search" path="tours/search" element={<TourSearchPage />} />,
+    <Route key="tours-search-offer" path="tours/search/offer" element={<OfferDetailPage />} />,
+    <Route key="tours-search-country" path="tours/search/:country" element={<TourSearchCountryPage />} />,
+    <Route key="tours-id" path="tours/:id" element={<TourDetailPage />} />,
+    <Route key="labpoint" path="labpoint" element={<LabpointPage />} />,
+    <Route key="events" path="events" element={<EventsPage />} />,
+    <Route key="viza" path="viza" element={<VizaPage />} />,
+    <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
+    <Route key="about" path="about" element={<AboutPage />} />,
+    <Route key="blog" path="blog" element={<BlogPage />} />,
+    <Route key="blog-slug" path="blog/:slug" element={<BlogPostPage />} />,
+    <Route key="gift-card" path="hediyye-karti" element={<GiftCardPage />} />,
+    <Route key="not-found" path="*" element={<NotFoundPage />} />,
+  ];
+}
 
 export default function App() {
   usePageMeta();
   useSubpageClass();
   useScrollTopOnRouteChange();
   const location = useLocation();
+  const { t } = useTranslation();
+
+  // Locale-prefix-aware: /ru and /en both count as "home" too, same as /.
+  const barePath = stripLocalePrefix(location.pathname);
 
   // The Travelpayouts search widget (#tpwl-search / #tpwl-tickets) only
   // initializes once and never re-detects a remounted DOM node. Keeping
@@ -43,15 +78,15 @@ export default function App() {
   // same display:none trick the original single-page version used)
   // avoids React Router unmounting it on navigation and killing the
   // widget on the way back to "/" or "/search".
-  const showHero = location.pathname === '/' || location.pathname === '/search';
+  const showHero = barePath === '/' || barePath === '/search';
   // HeroSearch's own default covers "/" — only override for "/search",
   // matching SEO Paketi v2's per-route H1 (HeroSearch itself keeps a
   // single persistent DOM instance regardless, see the comment above).
   const heroTitle =
-    location.pathname === '/search' ? (
+    barePath === '/search' ? (
       <>
-        Aviabilet Axtarışı —<br />
-        <span className="acc">Bakıdan Sərfəli Uçuşlar</span>
+        {t('hero.searchTitlePlain')}<br />
+        <span className="acc">{t('hero.searchTitleAccent')}</span>
       </>
     ) : undefined;
 
@@ -63,24 +98,16 @@ export default function App() {
         <HeroSearch title={heroTitle} />
       </div>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/hotels" element={<HotelsPage />} />
-        <Route path="/tours" element={<ToursPage />} />
-        <Route path="/tours/search" element={<TourSearchPage />} />
-        <Route path="/tours/search/offer" element={<OfferDetailPage />} />
-        <Route path="/tours/search/:country" element={<TourSearchCountryPage />} />
-        <Route path="/tours/:id" element={<TourDetailPage />} />
-        <Route path="/labpoint" element={<LabpointPage />} />
-        <Route path="/events" element={<EventsPage />} />
-        <Route path="/viza" element={<VizaPage />} />
-        <Route path="/viza/:country" element={<VizaCountryPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:slug" element={<BlogPostPage />} />
-        <Route path="/hediyye-karti" element={<GiftCardPage />} />
+        <Route path="/ru/*" element={<LocaleFrame lang="ru" />}>
+          {localeRouteChildren()}
+        </Route>
+        <Route path="/en/*" element={<LocaleFrame lang="en" />}>
+          {localeRouteChildren()}
+        </Route>
         <Route path="/r/:code" element={<ReferralRedirect />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/*" element={<LocaleFrame lang="az" />}>
+          {localeRouteChildren()}
+        </Route>
       </Routes>
       <Footer />
       <AttributionFooter />

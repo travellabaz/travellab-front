@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { truncate } from '../utils/text';
 
 const API_BASE = 'https://backend.travellab-point.az/site-backend/v1';
-const DEFAULT_EMPTY_TEXT = 'Hazırda göstəriləcək tədbir tapılmadı. Başqa şəhər və ya sənətçi ilə axtarın.';
 const MONTHS = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'İyun', 'İyul', 'Avq', 'Sen', 'Okt', 'Noy', 'Dek'];
 
 function formatEventDate(dateStr) {
@@ -22,11 +22,12 @@ function formatEventDate(dateStr) {
 // (EventsPage.jsx) rather than a teaser embedded on HomePage.jsx — see the
 // identical convention on HotelsSection.jsx.
 export default function EventsSection({ asH1 = false }) {
+  const { t } = useTranslation();
   const Heading = asH1 ? 'h1' : 'h2';
   const [query, setQuery] = useState('');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [emptyText, setEmptyText] = useState(DEFAULT_EMPTY_TEXT);
+  const [errored, setErrored] = useState(false);
 
   const fetchEvents = (keyword) => {
     setLoading(true);
@@ -41,13 +42,13 @@ export default function EventsSection({ asH1 = false }) {
       })
       .then((data) => {
         setEvents(data || []);
-        setEmptyText(DEFAULT_EMPTY_TEXT);
+        setErrored(false);
         setLoading(false);
       })
       .catch((err) => {
         console.error('ActionLog.events.fetchFailed', err);
         setLoading(false);
-        setEmptyText('Tədbirlər yüklənərkən xəta baş verdi. Bir az sonra yenidən cəhd edin.');
+        setErrored(true);
       });
   };
 
@@ -63,8 +64,8 @@ export default function EventsSection({ asH1 = false }) {
       <div className="tl-section">
         <div className="tl-section-header">
           <div>
-            <div className="tl-tag">Tədbirlər</div>
-            <Heading className="tl-title">Tədbir Biletləri</Heading>
+            <div className="tl-tag">{t('events.tag')}</div>
+            <Heading className="tl-title">{t('events.title')}</Heading>
           </div>
         </div>
 
@@ -79,7 +80,7 @@ export default function EventsSection({ asH1 = false }) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Şəhər və ya sənətçi axtar (məs. İstanbul, Dubai)"
+            placeholder={t('events.searchPlaceholder')}
             style={{
               flex: 1,
               minWidth: 220,
@@ -94,17 +95,19 @@ export default function EventsSection({ asH1 = false }) {
             }}
           />
           <button type="submit" className="tl-fbtn active" style={{ border: 'none', cursor: 'pointer' }}>
-            Axtar
+            {t('events.search')}
           </button>
         </form>
 
         {loading && (
           <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-            Tədbirlər yüklənir...
+            {t('events.loading')}
           </div>
         )}
         {empty && (
-          <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>{emptyText}</div>
+          <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
+            {errored ? t('events.emptyError') : t('events.emptyDefault')}
+          </div>
         )}
 
         {!loading && !empty && (
@@ -160,7 +163,7 @@ export default function EventsSection({ asH1 = false }) {
                           justifyContent: 'center',
                         }}
                       >
-                        Bilet al →
+                        {t('events.buyTicket')}
                       </a>
                     </div>
                   </div>

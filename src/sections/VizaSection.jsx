@@ -1,19 +1,15 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { pickManager, formatManagerNumber } from '../utils/managers';
 import { VIZA_COUNTRIES_SCHENGEN, VIZA_COUNTRIES_OTHER } from '../data/vizaCountries';
 import CountrySelect from '../components/CountrySelect';
 import AvailabilityCalendar from '../components/AvailabilityCalendar';
 
-const VIZA_COUNTRY_GROUPS = [
-  { label: 'Şengen', options: VIZA_COUNTRIES_SCHENGEN.map((c) => ({ value: c.name, label: c.name })) },
-  { label: 'Digər ölkələr', options: VIZA_COUNTRIES_OTHER.map((c) => ({ value: c.name, label: c.name })) },
-];
-const VIZA_COUNTRY_OTHER_OPTION = { value: 'Digər', label: 'Siyahıda yoxdur' };
-
 // initialCountry: pre-selects the dropdown when arriving from a
 // per-country page (VizaCountryPage.jsx) — the visa request itself still
 // works exactly the same either way, this just saves a click.
 export default function VizaSection({ initialCountry = '' }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ country: initialCountry, name: '', surname: '', phone: '', date: '', note: '' });
   const [pax, setPax] = useState(1);
   const [error, setError] = useState('');
@@ -26,18 +22,20 @@ export default function VizaSection({ initialCountry = '' }) {
   // window.open actually succeeded and show an honest state either way.
   const [waOpened, setWaOpened] = useState(null); // null | true | false
 
+  const VIZA_COUNTRY_GROUPS = [
+    { label: t('viza.schengenGroup'), options: VIZA_COUNTRIES_SCHENGEN.map((c) => ({ value: c.name, label: t(`countries.${c.name}`) })) },
+    { label: t('viza.otherGroup'), options: VIZA_COUNTRIES_OTHER.map((c) => ({ value: c.name, label: t(`countries.${c.name}`) })) },
+  ];
+  const VIZA_COUNTRY_OTHER_OPTION = { value: 'Digər', label: t('viza.countryOther') };
+
   const setField = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
   const changePax = (delta) => setPax((p) => Math.max(1, Math.min(10, p + delta)));
 
   const openWhatsApp = (lead) => {
     const manager = lead.manager;
     const msg =
-      'Salam! ' + (lead.country || '') + ' vizası ilə bağlı müraciət etdim.\n' +
-      'Ad: ' + (lead.name || '') + ' ' + (lead.surname || '') + '\n' +
-      'Telefon: ' + (lead.phone || '') + '\n' +
-      'Nəfər sayı: ' + (lead.pax || 1) + '\n' +
-      'Gediş tarixi: ' + (lead.date || 'Dəqiqləşdirilməyib') +
-      (lead.note ? '\nQeyd: ' + lead.note : '');
+      t('viza.waMessage', { country: lead.country || '', name: lead.name || '', surname: lead.surname || '', phone: lead.phone || '', pax: lead.pax || 1, date: lead.date || t('viza.dateUnspecified') }) +
+      (lead.note ? t('viza.waMessageNote', { note: lead.note }) : '');
     const win = window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(msg), '_blank');
     const opened = !!win;
     setWaOpened(opened);
@@ -48,12 +46,12 @@ export default function VizaSection({ initialCountry = '' }) {
     setError('');
     const { country, name, surname, phone, date, note } = form;
 
-    if (!country) return setError('Ölkəni seçin.');
-    if (!name.trim()) return setError('Adınızı yazın.');
-    if (!surname.trim()) return setError('Soyadınızı yazın.');
-    if (phone.replace(/\D/g, '').length < 9) return setError('Telefon nömrəsini düzgün yazın.');
+    if (!country) return setError(t('viza.errorCountry'));
+    if (!name.trim()) return setError(t('viza.errorName'));
+    if (!surname.trim()) return setError(t('viza.errorSurname'));
+    if (phone.replace(/\D/g, '').length < 9) return setError(t('viza.errorPhone'));
 
-    const dateText = date ? new Date(date).toLocaleDateString('az-AZ') : 'Dəqiqləşdirilməyib';
+    const dateText = date ? new Date(date).toLocaleDateString('az-AZ') : t('viza.dateUnspecified');
     const manager = pickManager();
 
     const newLead = { country, name, surname, phone: phone.trim(), pax, date: dateText, note: note.trim(), manager };
@@ -73,13 +71,13 @@ export default function VizaSection({ initialCountry = '' }) {
 
   const recap = lead
     ? [
-        ['Ölkə', lead.country],
-        ['Ad, soyad', `${lead.name} ${lead.surname}`],
-        ['Telefon', lead.phone],
-        ['Nəfər sayı', String(lead.pax)],
-        ['Gediş tarixi', lead.date],
-        ...(lead.note ? [['Qeyd', lead.note]] : []),
-        ['Menecer', `${lead.manager.name} — ${formatManagerNumber(lead.manager.number)}`],
+        [t('viza.recapCountry'), t(`countries.${lead.country}`, lead.country)],
+        [t('viza.recapName'), `${lead.name} ${lead.surname}`],
+        [t('viza.recapPhone'), lead.phone],
+        [t('viza.recapPax'), String(lead.pax)],
+        [t('viza.recapDate'), lead.date],
+        ...(lead.note ? [[t('viza.recapNote'), lead.note]] : []),
+        [t('viza.recapManager'), `${lead.manager.name} — ${formatManagerNumber(lead.manager.number)}`],
       ]
     : null;
 
@@ -92,12 +90,12 @@ export default function VizaSection({ initialCountry = '' }) {
       <div className="tl-section">
         <div className="tl-section-header">
           <div>
-            <div className="tl-tag">Turistik Viza</div>
-            <h2 className="tl-title">Vizanı Asanlıqla Alın</h2>
+            <div className="tl-tag">{t('viza.tag')}</div>
+            <h2 className="tl-title">{t('viza.title')}</h2>
           </div>
         </div>
         <p style={{ color: 'var(--tl-gray-600)', fontSize: 14, maxWidth: 600, margin: '-16px 0 28px', lineHeight: 1.6 }}>
-          Sənədləri, müraciəti və görüşü biz aparırıq. Sorğunuza qısa müddətdə cavab veririk.
+          {t('viza.subtitle')}
         </p>
 
         <div className="tl-viza-card">
@@ -107,10 +105,10 @@ export default function VizaSection({ initialCountry = '' }) {
             {view === 'form' ? (
               <div>
                 <CountrySelect
-                  label={<>Hansı ölkəyə viza almaq istəyirsiniz? <span className="tl-viza-req">*</span></>}
+                  label={<>{t('viza.countryLabel')} <span className="tl-viza-req">*</span></>}
                   value={form.country}
                   onChange={(v) => setForm((f) => ({ ...f, country: v }))}
-                  placeholder="Ölkə seçin…"
+                  placeholder={t('viza.countryPlaceholder')}
                   groups={VIZA_COUNTRY_GROUPS}
                   extraOption={VIZA_COUNTRY_OTHER_OPTION}
                   fieldClassName="tl-viza-field"
@@ -119,51 +117,51 @@ export default function VizaSection({ initialCountry = '' }) {
 
                 <div className="tl-viza-row">
                   <div className="tl-viza-field">
-                    <label htmlFor="viza-name">Ad <span className="tl-viza-req">*</span></label>
-                    <input id="viza-name" className="tl-viza-input" type="text" placeholder="Adınız" autoComplete="given-name" value={form.name} onChange={setField('name')} />
+                    <label htmlFor="viza-name">{t('viza.name')} <span className="tl-viza-req">*</span></label>
+                    <input id="viza-name" className="tl-viza-input" type="text" placeholder={t('viza.namePlaceholder')} autoComplete="given-name" value={form.name} onChange={setField('name')} />
                   </div>
                   <div className="tl-viza-field">
-                    <label htmlFor="viza-surname">Soyad <span className="tl-viza-req">*</span></label>
-                    <input id="viza-surname" className="tl-viza-input" type="text" placeholder="Soyadınız" autoComplete="family-name" value={form.surname} onChange={setField('surname')} />
+                    <label htmlFor="viza-surname">{t('viza.surname')} <span className="tl-viza-req">*</span></label>
+                    <input id="viza-surname" className="tl-viza-input" type="text" placeholder={t('viza.surnamePlaceholder')} autoComplete="family-name" value={form.surname} onChange={setField('surname')} />
                   </div>
                 </div>
 
                 <div className="tl-viza-field">
-                  <label htmlFor="viza-phone">Telefon <span className="tl-viza-req">*</span></label>
-                  <input id="viza-phone" className="tl-viza-input" type="tel" placeholder="+994 50 123 45 67" autoComplete="tel" value={form.phone} onChange={setField('phone')} />
+                  <label htmlFor="viza-phone">{t('viza.phone')} <span className="tl-viza-req">*</span></label>
+                  <input id="viza-phone" className="tl-viza-input" type="tel" placeholder={t('viza.phonePlaceholder')} autoComplete="tel" value={form.phone} onChange={setField('phone')} />
                 </div>
 
                 <div className="tl-viza-row">
                   <AvailabilityCalendar
-                    label="Təxmini gediş tarixi"
+                    label={t('viza.date')}
                     value={form.date}
                     onChange={(v) => setForm((f) => ({ ...f, date: v }))}
                     fieldClassName="tl-viza-field"
                     triggerClassName="tl-viza-input tl-cal-trigger-viza"
                   />
                   <div className="tl-viza-field">
-                    <label htmlFor="viza-pax">Nəfər sayı</label>
+                    <label htmlFor="viza-pax">{t('viza.pax')}</label>
                     <div className="tl-viza-count">
-                      <button type="button" onClick={() => changePax(-1)} aria-label="Azalt">−</button>
+                      <button type="button" onClick={() => changePax(-1)} aria-label="-">−</button>
                       <span id="viza-pax">{pax}</span>
-                      <button type="button" onClick={() => changePax(1)} aria-label="Artır">+</button>
+                      <button type="button" onClick={() => changePax(1)} aria-label="+">+</button>
                     </div>
                   </div>
                 </div>
 
                 <div className="tl-viza-field">
-                  <label htmlFor="viza-note">Əlavə qeyd</label>
+                  <label htmlFor="viza-note">{t('viza.note')}</label>
                   <textarea
                     id="viza-note"
                     className="tl-viza-input tl-viza-textarea"
-                    placeholder="Əvvəl viza rədd olunub, uşaqla səyahət, təcili lazımdır…"
+                    placeholder={t('viza.notePlaceholder')}
                     value={form.note}
                     onChange={setField('note')}
                   />
                 </div>
 
-                <button className="tl-viza-submit" type="button" onClick={submit}>Sorğu göndər</button>
-                <p className="tl-viza-note">Ödəniş tələb olunmur · Mütəxəssisimiz qısa müddətdə sizinlə əlaqə saxlayır</p>
+                <button className="tl-viza-submit" type="button" onClick={submit}>{t('viza.submit')}</button>
+                <p className="tl-viza-note">{t('viza.submitNote')}</p>
               </div>
             ) : (
               <div style={{ textAlign: 'center' }}>
@@ -171,20 +169,20 @@ export default function VizaSection({ initialCountry = '' }) {
                   <>
                     <div className="tl-viza-done-ico tl-viza-done-ico-warn">!</div>
                     <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
-                      WhatsApp avtomatik açılmadı
+                      {t('viza.waNotOpened')}
                     </h3>
                     <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
-                      Brauzeriniz pəncərəni blokladı — müraciətiniz hələ bizə çatmayıb. Aşağıdakı düyməni klikləyib mesajı özünüz göndərin.
+                      {t('viza.waNotOpenedDesc')}
                     </p>
                   </>
                 ) : (
                   <>
                     <div className="tl-viza-done-ico">✓</div>
                     <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
-                      Mesajınız WhatsApp-da hazırdır
+                      {t('viza.waReady')}
                     </h3>
                     <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
-                      Müraciətinizin bizə çatması üçün açılan WhatsApp söhbətində <b>&quot;Göndər&quot;</b> düyməsini basmağı unutmayın.
+                      {t('viza.waReadyDesc')}
                     </p>
                   </>
                 )}
@@ -197,43 +195,43 @@ export default function VizaSection({ initialCountry = '' }) {
                   ))}
                 </div>
                 <button className="tl-viza-wa" type="button" onClick={() => lead && openWhatsApp(lead)}>
-                  {waOpened === false ? 'WhatsApp-ı aç və göndər' : 'WhatsApp-ı yenidən aç'}
+                  {waOpened === false ? t('viza.waOpen') : t('viza.waReopen')}
                 </button>
               </div>
             )}
           </div>
 
           <div className="tl-viza-visual">
-            <h3>Necə işləyir?</h3>
+            <h3>{t('viza.howItWorks')}</h3>
             <div className="tl-viza-step">
               <div className="tl-viza-step-n">1</div>
               <div>
-                <h4>Müraciət edirsiniz</h4>
-                <p>Formu doldurun — bir dəqiqədən az vaxt aparır.</p>
+                <h4>{t('viza.step1Title')}</h4>
+                <p>{t('viza.step1Desc')}</p>
               </div>
             </div>
             <div className="tl-viza-step">
               <div className="tl-viza-step-n">2</div>
               <div>
-                <h4>Mütəxəssis sizinlə danışır</h4>
-                <p>WhatsApp və ya zəng ilə əlaqə saxlayır, ölkəyə uyğun şərtləri və qiyməti izah edir.</p>
+                <h4>{t('viza.step2Title')}</h4>
+                <p>{t('viza.step2Desc')}</p>
               </div>
             </div>
             <div className="tl-viza-step">
               <div className="tl-viza-step-n">3</div>
               <div>
-                <h4>Vizanı alırsınız</h4>
-                <p>Sənədləri birlikdə hazırlayırıq, müraciəti biz aparırıq.</p>
+                <h4>{t('viza.step3Title')}</h4>
+                <p>{t('viza.step3Desc')}</p>
               </div>
             </div>
             <div className="tl-viza-stats">
               <div className="tl-viza-stat">
                 <div className="tl-viza-stat-n">10 000+</div>
-                <div className="tl-viza-stat-l">Uğurlu viza</div>
+                <div className="tl-viza-stat-l">{t('viza.statSuccess')}</div>
               </div>
               <div className="tl-viza-stat">
                 <div className="tl-viza-stat-n">50+</div>
-                <div className="tl-viza-stat-l">Ölkə</div>
+                <div className="tl-viza-stat-l">{t('viza.statCountries')}</div>
               </div>
             </div>
           </div>

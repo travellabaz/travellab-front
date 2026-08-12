@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
 
 // Wired to App.jsx's catch-all route ("*") — previously any unknown URL
 // silently rendered HomePage, so a broken/mistyped link looked like a real
@@ -8,20 +9,20 @@ import { Link } from 'react-router-dom';
 // return a real 404 status from) — this fixes what the visitor/crawler
 // *sees*, not the HTTP status code.
 export default function NotFoundPage() {
+  const { t } = useTranslation();
   return (
     <main className="tpwl-main">
       <section className="tl-page-top">
         <div className="tl-section" style={{ textAlign: 'center', padding: '80px 20px' }}>
           <div className="tl-tag">404</div>
           <h1 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 28, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 10 }}>
-            Bu səhifə tapılmadı
+            {t('notFound.title')}
           </h1>
           <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', marginBottom: 24 }}>
-            Axtardığınız səhifə silinmiş və ya köçürülmüş ola bilər. Ana səhifəyə qayıdın və ya axtardığınızı
-            başqa yerdən tapın.
+            {t('notFound.desc')}
           </p>
           <Link to="/" className="tl-btn-book" style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}>
-            Ana səhifəyə qayıt
+            {t('notFound.backHome')}
           </Link>
         </div>
       </section>

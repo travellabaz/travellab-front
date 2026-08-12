@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Same idea as Kompas's own agent widget's hotel picker (a searchable
 // checkbox list narrowing an already-fetched result set) — built entirely
 // client-side from whatever hotel names are actually present in the
 // current search results, no separate hotels API call needed.
 export default function HotelFilter({ hotels, selected, onChange }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const rootRef = useRef(null);
@@ -28,7 +30,7 @@ export default function HotelFilter({ hotels, selected, onChange }) {
 
   const filtered = hotels.filter((h) => h.toLowerCase().includes(query.trim().toLowerCase()));
 
-  const label = selected.length === 0 ? 'Bütün otellər' : `${selected.length} otel seçildi`;
+  const label = selected.length === 0 ? t('hotelFilter.allHotels') : t('hotelFilter.selected', { n: selected.length });
 
   return (
     <div className="tl-cal-field tl-country-field" ref={rootRef}>
@@ -42,7 +44,7 @@ export default function HotelFilter({ hotels, selected, onChange }) {
             ref={searchRef}
             type="text"
             className="tl-country-search"
-            placeholder="Otel adı ilə axtar…"
+            placeholder={t('hotelFilter.searchPlaceholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -53,11 +55,11 @@ export default function HotelFilter({ hotels, selected, onChange }) {
                 {h}
               </label>
             ))}
-            {filtered.length === 0 && <div className="tl-country-empty">Nəticə tapılmadı</div>}
+            {filtered.length === 0 && <div className="tl-country-empty">{t('hotelFilter.noResults')}</div>}
           </div>
           {selected.length > 0 && (
             <button type="button" className="tl-hotel-filter-clear" onClick={() => onChange([])}>
-              Təmizlə ({selected.length})
+              {t('hotelFilter.clear', { n: selected.length })}
             </button>
           )}
         </div>

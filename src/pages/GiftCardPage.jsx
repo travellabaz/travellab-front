@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
 import SeoBodyText from '../components/SeoBodyText';
 import { MANAGERS, formatManagerNumber } from '../utils/managers';
@@ -18,7 +19,7 @@ const GIFT_CARD_MANAGER = MANAGERS.find((m) => m.name === 'Xəyalə') || MANAGER
 function GiftCardHeroImage() {
   return (
     <div className="tl-gift-visual">
-      <img src="/images/gift-card/hero.png" alt="Travellab Hədiyyə Kartı" />
+      <img src="/images/gift-card/hero.png" alt="Travellab" />
     </div>
   );
 }
@@ -26,12 +27,13 @@ function GiftCardHeroImage() {
 function GiftCardPreviewImage() {
   return (
     <div className="tl-gift-visual tl-gift-visual-preview">
-      <img src="/images/gift-card/preview.png" alt="Travellab Hədiyyə Kartı" />
+      <img src="/images/gift-card/preview.png" alt="Travellab" />
     </div>
   );
 }
 
 export default function GiftCardPage() {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState(100);
   const [customAmount, setCustomAmount] = useState('');
   const [senderName, setSenderName] = useState('');
@@ -60,12 +62,8 @@ export default function GiftCardPage() {
 
   const openWhatsApp = (lead) => {
     const msg =
-      'Salam! Travellab Hədiyyə Kartı sifariş etmək istəyirəm.\n' +
-      'Məbləğ: ' + lead.amount + ' ₼\n' +
-      'Göndərən: ' + lead.senderName + '\n' +
-      'Qəbul edən: ' + lead.recipientName + '\n' +
-      'Telefon: ' + lead.phone +
-      (lead.message ? '\nMesaj: ' + lead.message : '');
+      t('giftCard.waMessage', { amount: lead.amount, sender: lead.senderName, recipient: lead.recipientName, phone: lead.phone }) +
+      (lead.message ? t('giftCard.waMessageNote', { message: lead.message }) : '');
     const win = window.open('https://wa.me/' + GIFT_CARD_MANAGER.number + '?text=' + encodeURIComponent(msg), '_blank');
     const opened = !!win;
     setWaOpened(opened);
@@ -74,10 +72,10 @@ export default function GiftCardPage() {
 
   const submit = () => {
     setError('');
-    if (!amount || amount <= 0) return setError('Məbləği seçin.');
-    if (!senderName.trim()) return setError('Göndərən adını yazın.');
-    if (!recipientName.trim()) return setError('Qəbul edən adını yazın.');
-    if (phone.replace(/\D/g, '').length < 9) return setError('Telefon nömrəsini düzgün yazın.');
+    if (!amount || amount <= 0) return setError(t('giftCard.errorAmount'));
+    if (!senderName.trim()) return setError(t('giftCard.errorSender'));
+    if (!recipientName.trim()) return setError(t('giftCard.errorRecipient'));
+    if (phone.replace(/\D/g, '').length < 9) return setError(t('giftCard.errorPhone'));
 
     const newLead = {
       amount,
@@ -97,11 +95,11 @@ export default function GiftCardPage() {
 
   const recap = lead
     ? [
-        ['Məbləğ', `${lead.amount} ₼`],
-        ['Göndərən', lead.senderName],
-        ['Qəbul edən', lead.recipientName],
-        ['Telefon', lead.phone],
-        ...(lead.message ? [['Mesaj', lead.message]] : []),
+        [t('giftCard.recapAmount'), `${lead.amount} ₼`],
+        [t('giftCard.recapSender'), lead.senderName],
+        [t('giftCard.recapRecipient'), lead.recipientName],
+        [t('giftCard.recapPhone'), lead.phone],
+        ...(lead.message ? [[t('giftCard.recapMessage'), lead.message]] : []),
       ]
     : null;
 
@@ -111,8 +109,8 @@ export default function GiftCardPage() {
         <div className="tl-section" style={{ paddingBottom: 0 }}>
           <Breadcrumb
             items={[
-              { name: 'Ana səhifə', to: '/' },
-              { name: 'Hədiyyə Kartı' },
+              { name: t('breadcrumb.home'), to: '/' },
+              { name: t('giftCard.breadcrumb') },
             ]}
           />
         </div>
@@ -122,27 +120,25 @@ export default function GiftCardPage() {
         <div className="tl-section" style={{ paddingTop: 12 }}>
           <div className="tl-gift-hero">
             <div>
-              <div className="tl-tag">Hədiyyə edin, xatirə qazandırın!</div>
-              <h1 className="tl-title">Travellab Hədiyyə Kartı</h1>
-              <p className="tl-gift-hero-sub">
-                Sevdiklərinizə səyahət azadlığı hədiyyə edin. Uçuş, otel, tur və daha çox xidmət üçün keçərlidir.
-              </p>
+              <div className="tl-tag">{t('giftCard.tag')}</div>
+              <h1 className="tl-title">{t('giftCard.title')}</h1>
+              <p className="tl-gift-hero-sub">{t('giftCard.subtitle')}</p>
               <div className="tl-gift-features">
                 <div className="tl-gift-feature">
                   <span>🎁</span>
-                  <p>Bütün xidmətlər üçün keçərlidir</p>
+                  <p>{t('giftCard.feat1')}</p>
                 </div>
                 <div className="tl-gift-feature">
                   <span>⏳</span>
-                  <p>1 il müddətinə etibarlıdır</p>
+                  <p>{t('giftCard.feat2')}</p>
                 </div>
                 <div className="tl-gift-feature">
                   <span>💬</span>
-                  <p>WhatsApp ilə sürətli müraciət</p>
+                  <p>{t('giftCard.feat3')}</p>
                 </div>
                 <div className="tl-gift-feature">
                   <span>📞</span>
-                  <p>Menecerimiz sizinlə əlaqə saxlayır</p>
+                  <p>{t('giftCard.feat4')}</p>
                 </div>
               </div>
             </div>
@@ -156,7 +152,7 @@ export default function GiftCardPage() {
               <div className="tl-gift-form-grid">
                 <div>
                   <div className="tl-viza-field">
-                    <label>Məbləğ seçin</label>
+                    <label>{t('giftCard.amountLabel')}</label>
                     <div className="tl-gift-amounts">
                       {AMOUNT_PRESETS.map((value) => (
                         <button
@@ -172,8 +168,8 @@ export default function GiftCardPage() {
                         className={'tl-gift-amount-pill tl-gift-amount-custom' + (customAmount ? ' active' : '')}
                         type="text"
                         inputMode="numeric"
-                        placeholder="Digər məbləğ"
-                        aria-label="Digər məbləğ"
+                        placeholder={t('giftCard.customAmount')}
+                        aria-label={t('giftCard.customAmount')}
                         value={customAmount}
                         onChange={changeCustomAmount}
                       />
@@ -182,26 +178,26 @@ export default function GiftCardPage() {
 
                   <div className="tl-viza-row">
                     <div className="tl-viza-field">
-                      <label htmlFor="gift-sender">Göndərən adı <span className="tl-viza-req">*</span></label>
-                      <input id="gift-sender" className="tl-viza-input" type="text" placeholder="Məs: Elnur" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
+                      <label htmlFor="gift-sender">{t('giftCard.senderLabel')} <span className="tl-viza-req">*</span></label>
+                      <input id="gift-sender" className="tl-viza-input" type="text" placeholder={t('giftCard.senderPlaceholder')} value={senderName} onChange={(e) => setSenderName(e.target.value)} />
                     </div>
                     <div className="tl-viza-field">
-                      <label htmlFor="gift-recipient">Qəbul edən adı <span className="tl-viza-req">*</span></label>
-                      <input id="gift-recipient" className="tl-viza-input" type="text" placeholder="Məs: Leyla" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
+                      <label htmlFor="gift-recipient">{t('giftCard.recipientLabel')} <span className="tl-viza-req">*</span></label>
+                      <input id="gift-recipient" className="tl-viza-input" type="text" placeholder={t('giftCard.recipientPlaceholder')} value={recipientName} onChange={(e) => setRecipientName(e.target.value)} />
                     </div>
                   </div>
 
                   <div className="tl-viza-field">
-                    <label htmlFor="gift-phone">Telefon <span className="tl-viza-req">*</span></label>
-                    <input id="gift-phone" className="tl-viza-input" type="tel" placeholder="+994 50 123 45 67" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    <label htmlFor="gift-phone">{t('giftCard.phoneLabel')} <span className="tl-viza-req">*</span></label>
+                    <input id="gift-phone" className="tl-viza-input" type="tel" placeholder={t('giftCard.phonePlaceholder')} autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                   </div>
 
                   <div className="tl-viza-field">
-                    <label htmlFor="gift-message">Mesajınız</label>
+                    <label htmlFor="gift-message">{t('giftCard.messageLabel')}</label>
                     <textarea
                       id="gift-message"
                       className="tl-viza-input tl-viza-textarea"
-                      placeholder="Mesajınızı yazın…"
+                      placeholder={t('giftCard.messagePlaceholder')}
                       value={message}
                       maxLength={MESSAGE_MAX}
                       onChange={(e) => setMessage(e.target.value)}
@@ -209,11 +205,11 @@ export default function GiftCardPage() {
                     <div className="tl-gift-char-count">{message.length}/{MESSAGE_MAX}</div>
                   </div>
 
-                  <button className="tl-viza-submit" type="button" onClick={submit}>Sorğunu WhatsApp-a göndər</button>
+                  <button className="tl-viza-submit" type="button" onClick={submit}>{t('giftCard.submit')}</button>
                 </div>
 
                 <div className="tl-gift-preview">
-                  <div className="tl-gift-preview-title">Kart önizləməsi</div>
+                  <div className="tl-gift-preview-title">{t('giftCard.previewTitle')}</div>
                   <GiftCardPreviewImage />
                 </div>
               </div>
@@ -223,20 +219,20 @@ export default function GiftCardPage() {
                   <>
                     <div className="tl-viza-done-ico tl-viza-done-ico-warn">!</div>
                     <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
-                      WhatsApp avtomatik açılmadı
+                      {t('giftCard.waNotOpened')}
                     </h3>
                     <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
-                      Brauzeriniz pəncərəni blokladı — sorğunuz hələ bizə çatmayıb. Aşağıdakı düyməni klikləyib mesajı özünüz göndərin.
+                      {t('giftCard.waNotOpenedDesc')}
                     </p>
                   </>
                 ) : (
                   <>
                     <div className="tl-viza-done-ico">✓</div>
                     <h3 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 18, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 8 }}>
-                      Mesajınız WhatsApp-da hazırdır
+                      {t('giftCard.waReady')}
                     </h3>
                     <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
-                      Sorğunuzun bizə çatması üçün açılan WhatsApp söhbətində <b>&quot;Göndər&quot;</b> düyməsini basmağı unutmayın.
+                      {t('giftCard.waReadyDesc')}
                     </p>
                   </>
                 )}
@@ -248,28 +244,20 @@ export default function GiftCardPage() {
                     </div>
                   ))}
                   <div>
-                    <i>Menecer</i>
+                    <i>{t('giftCard.recapManager')}</i>
                     <b>{GIFT_CARD_MANAGER.name} — {formatManagerNumber(GIFT_CARD_MANAGER.number)}</b>
                   </div>
                 </div>
                 <button className="tl-viza-wa" type="button" onClick={() => lead && openWhatsApp(lead)}>
-                  {waOpened === false ? 'WhatsApp-ı aç və göndər' : 'WhatsApp-ı yenidən aç'}
+                  {waOpened === false ? t('giftCard.waOpen') : t('giftCard.waReopen')}
                 </button>
               </div>
             )}
           </div>
 
           <SeoBodyText>
-            <p>
-              Travellab Hədiyyə Kartı sevdiklərinizə səyahət azadlığı bəxş etməyin ən asan yoludur. Kartda yığılan
-              məbləğ Travellab-ın bütün xidmətlərində — aviabilet, otel bron, hazır tur paketləri və viza xidmətində —
-              keçərlidir, beləliklə hədiyyəni alan şəxs özü hara və necə səyahət edəcəyini seçir.
-            </p>
-            <p>
-              Hədiyyə kartı sifarişi hazırda onlayn ödəniş sistemi ilə deyil, WhatsApp üzərindən şəxsi əlaqə ilə
-              tamamlanır: yuxarıdakı formu doldurduqdan sonra sorğunuz birbaşa menecerimizə göndərilir, ödəniş və
-              digər detallar birlikdə razılaşdırılır. Kart 1 il müddətinə etibarlıdır.
-            </p>
+            <p>{t('giftCard.seoP1')}</p>
+            <p>{t('giftCard.seoP2')}</p>
           </SeoBodyText>
         </div>
       </section>

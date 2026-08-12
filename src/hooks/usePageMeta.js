@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
-import { getPostBySlug } from '../data/blog';
+import { getPostBySlug, isPostAvailableInLocale, BLOG_POSTS } from '../data/blog';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
-import { getTourCategoryMeta } from '../data/tourCategoryMeta';
+import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../i18n';
+import { getLocaleFromPathname, stripLocalePrefix, buildLocalizedPath } from '../utils/locale';
 
 // Matches the default set in index.html — reused here to reset og:image/
 // twitter:image back to it when navigating off a blog post (an SPA route
@@ -14,11 +16,30 @@ import { getTourCategoryMeta } from '../data/tourCategoryMeta';
 // post's cover image would linger on every page after it).
 const DEFAULT_OG_IMAGE = BASE_URL + '/images/hero/balloons.jpg';
 
+// Static-route path -> seo.* translation namespace key. Everything else
+// (blog posts, tours, viza/tour-search countries) builds its title/desc
+// from the actual entity instead of a fixed table.
+const SEO_KEY_BY_PATH = {
+  '/': 'home',
+  '/search': 'search',
+  '/hotels': 'hotels',
+  '/tours': 'tours',
+  '/labpoint': 'labpoint',
+  '/about': 'about',
+  '/blog': 'blog',
+  '/events': 'events',
+  '/viza': 'viza',
+  '/hediyye-karti': 'giftCard',
+};
+
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/
 // breadcrumb-JSON-LD updates, driven by the router location instead of
-// location.hash.
+// location.hash. Locale-prefix-aware throughout: every lookup matches
+// against the bare (unprefixed) path, and hreflang alternates are added
+// for the other two languages.
 export default function usePageMeta() {
   const location = useLocation();
+  const { t, i18n } = useTranslation();
   // Tours aren't known at build time (fetched from Instagram, see
   // ToursContext) — can't be a PAGE_META entry like the fixed routes.
   // Unlike blog posts they also can't be prerendered per-URL for the same
@@ -28,49 +49,57 @@ export default function usePageMeta() {
   const { tours } = useTours();
 
   useEffect(() => {
-    const path = location.pathname === '/' ? '/' : location.pathname.replace(/\/$/, '');
+    const lang = getLocaleFromPathname(location.pathname);
+    const rawPath = stripLocalePrefix(location.pathname);
+    const path = rawPath === '/' ? '/' : rawPath.replace(/\/$/, '');
     const postSlug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : null;
-    const post = postSlug ? getPostBySlug(postSlug) : null;
+    const post = postSlug ? getPostBySlug(postSlug, lang) : null;
     const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
     const vizaCountryMatch = /^\/viza\/([^/]+)$/.exec(path);
     const vizaCountry = vizaCountryMatch ? getVizaCountryBySlug(vizaCountryMatch[1]) : null;
+    const vizaCountryName = vizaCountry ? t(`countries.${vizaCountry.name}`, vizaCountry.name) : null;
     const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
     const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
+    const tourSearchCountryName = tourSearchCountry ? t(`countries.${tourSearchCountry.nameAz}`, tourSearchCountry.nameAz) : null;
     // Query-param-driven, not path-driven — prerender.mjs only produces one
     // static file for "/tours" regardless of ?category=, so this switch
     // only reaches JS-executing crawlers/visitors, same limitation every
     // other query-param view on this site already has.
     const isToursList = path === '/tours';
     const category = isToursList ? new URLSearchParams(location.search).get('category') || '' : null;
+    const categoryMetaKey = category || 'all';
+
+    const seoKey = SEO_KEY_BY_PATH[path];
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour
         ? { title: tour.metaTitle || `${tour.title} — Travellab`, desc: tour.metaDescription || truncate(tour.description, 160) }
         : vizaCountry
-          ? {
-              title: `${vizaCountry.name} Vizası - Sənədlər və Şərtlər | Travellab`,
-              desc: `${vizaCountry.name} vizası üçün lazımi sənədlər, müddət və qiymət. Travellab ilə sürətli və etibarlı viza xidməti. İndi müraciət edin!`,
-            }
+          ? { title: t('seo.vizaCountryTitle', { country: vizaCountryName, defaultValue: `${vizaCountryName} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryName, defaultValue: '' }) }
           : tourSearchCountry
-            ? {
-                title: `${tourSearchCountry.nameAz} turları — canlı qiymətlər — Travellab`,
-                desc: `${tourSearchCountry.nameAz} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.`,
-              }
+            ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
             : isToursList
-              ? getTourCategoryMeta(category)
-              : PAGE_META[path] || (path === '/' ? PAGE_META['/'] : { title: 'Səhifə tapılmadı — Travellab', desc: 'Axtardığınız səhifə mövcud deyil.' });
+              ? { title: t(`tourCategoryMeta.${categoryMetaKey}.title`), desc: t(`tourCategoryMeta.${categoryMetaKey}.desc`) }
+              : seoKey
+                ? { title: t(`seo.${seoKey}.title`), desc: t(`seo.${seoKey}.desc`) }
+                : { title: t('notFound.title') + ' — Travellab', desc: t('notFound.desc') };
+
+    const pageImage = seoKey ? PAGE_META[path === '/' ? '/' : path]?.image : undefined;
+
     const isHome = path === '/';
-    const pageUrl = BASE_URL + (isHome ? '/' : path);
+    const localizedPath = buildLocalizedPath(path, lang) + (isToursList ? location.search : '');
+    const pageUrl = BASE_URL + (localizedPath === '' ? '/' : localizedPath);
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
       : tour && tour.imageUrl
         ? tour.imageUrl
-        : page.image
-          ? (page.image.startsWith('http') ? page.image : BASE_URL + page.image)
+        : pageImage
+          ? (pageImage.startsWith('http') ? pageImage : BASE_URL + pageImage)
           : DEFAULT_OG_IMAGE;
 
     document.title = page.title;
+    document.documentElement.lang = lang;
 
     const setMeta = (id, attr, value) => {
       const el = document.getElementById(id);
@@ -82,24 +111,56 @@ export default function usePageMeta() {
     setMeta('og-desc', 'content', page.desc);
     setMeta('og-url', 'content', pageUrl);
     setMeta('og-image', 'content', image);
+    setMeta('og-locale', 'content', lang === 'az' ? 'az_AZ' : lang === 'ru' ? 'ru_RU' : 'en_US');
     setMeta('twitter-title', 'content', page.title);
     setMeta('twitter-desc', 'content', page.desc);
     setMeta('twitter-image', 'content', image);
     setMeta('canonical', 'href', pageUrl);
 
+    // hreflang alternates — one per supported language pointing at the
+    // equivalent page, plus x-default (-> AZ, the unprefixed default).
+    // Blog posts only get alternates for languages that post actually has
+    // (see data/blog/index.js) — no old AZ-only post pretends to have a
+    // RU/EN version.
+    const availableLangs = post
+      ? SUPPORTED_LANGUAGES.filter((l) => {
+          const raw = BLOG_POSTS.find((p) => p.slug === postSlug);
+          return raw && isPostAvailableInLocale(raw, l);
+        })
+      : SUPPORTED_LANGUAGES;
+    document.querySelectorAll('link[data-hreflang]').forEach((el) => el.remove());
+    availableLangs.forEach((l) => {
+      const href = BASE_URL + (buildLocalizedPath(path, l) || '/') + (isToursList ? location.search : '');
+      const link = document.createElement('link');
+      link.rel = 'alternate';
+      link.hreflang = l;
+      link.href = href;
+      link.setAttribute('data-hreflang', l);
+      document.head.appendChild(link);
+    });
+    if (availableLangs.includes(DEFAULT_LANGUAGE)) {
+      const defaultLink = document.createElement('link');
+      defaultLink.rel = 'alternate';
+      defaultLink.hreflang = 'x-default';
+      defaultLink.href = BASE_URL + (path || '/') + (isToursList ? location.search : '');
+      defaultLink.setAttribute('data-hreflang', 'x-default');
+      document.head.appendChild(defaultLink);
+    }
+
     const breadcrumb = document.getElementById('breadcrumb-ld');
     if (breadcrumb) {
-      const items = [{ name: 'Ana səhifə', url: BASE_URL + '/' }];
+      const homeHref = BASE_URL + (buildLocalizedPath('/', lang) || '/');
+      const items = [{ name: t('breadcrumb.home'), url: homeHref }];
       if (post) {
-        items.push({ name: 'Bloq', url: BASE_URL + '/blog' }, { name: post.title, url: pageUrl });
+        items.push({ name: t('footer.blog'), url: BASE_URL + buildLocalizedPath('/blog', lang) }, { name: post.title, url: pageUrl });
       } else if (tour) {
-        items.push({ name: 'Turlar', url: BASE_URL + '/tours' }, { name: tour.title, url: pageUrl });
+        items.push({ name: t('nav.tours'), url: BASE_URL + buildLocalizedPath('/tours', lang) }, { name: tour.title, url: pageUrl });
       } else if (vizaCountry) {
-        items.push({ name: 'Viza', url: BASE_URL + '/viza' }, { name: `${vizaCountry.name} vizası`, url: pageUrl });
+        items.push({ name: t('nav.viza'), url: BASE_URL + buildLocalizedPath('/viza', lang) }, { name: t('viza.countryPageBreadcrumb', { country: vizaCountryName }), url: pageUrl });
       } else if (tourSearchCountry) {
         items.push(
-          { name: 'Tur axtarışı', url: BASE_URL + '/tours/search' },
-          { name: `${tourSearchCountry.nameAz} turları`, url: pageUrl }
+          { name: t('tourSearch.tourSearchCrumb'), url: BASE_URL + buildLocalizedPath('/tours/search', lang) },
+          { name: t('tourSearch.countryTitle', { country: tourSearchCountryName }), url: pageUrl }
         );
       } else if (!isHome) {
         items.push({ name: page.title.split(' — ')[0], url: pageUrl });
@@ -131,6 +192,7 @@ export default function usePageMeta() {
           logo: { '@type': 'ImageObject', url: `${BASE_URL}/favicon.svg` },
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+        inLanguage: lang,
       });
       if (!articleLd) {
         articleLd = document.createElement('script');
@@ -146,5 +208,8 @@ export default function usePageMeta() {
     // /tours/:id visit gets the real title/image instead of staying on
     // the generic fallback it started with. location.search: so switching
     // /tours category pills (no pathname change) updates the meta too.
-  }, [location.pathname, location.search, tours]);
+    // i18n.language: so a client-side language switch (no pathname change
+    // for the AZ<->AZ case is impossible, but query/hash-only navigations
+    // could theoretically leave path unchanged) always re-evaluates.
+  }, [location.pathname, location.search, tours, t, i18n.language]);
 }

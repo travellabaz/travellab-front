@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from './LocalizedLink';
 import LogoFull from './LogoFull';
+import LanguageSwitcher from './LanguageSwitcher';
 import { useModals } from '../context/ModalContext';
 
 // Decorative footer icons — exact paths from the Figma footer (provided
@@ -70,6 +72,7 @@ const FOOTER_ICONS = [FlowerIcon, NavyWaveIcon, GreenLinesIcon, BlueWaveIcon, Na
 
 export default function Footer() {
   const { openPrivacy, openTerms, openAuth } = useModals();
+  const { t } = useTranslation();
   const year = new Date().getFullYear();
 
   return (
@@ -77,12 +80,12 @@ export default function Footer() {
       <div className="tl-footer-inner">
         <div className="tl-footer-top">
           <div className="tl-footer-brand">
-            <a href="/" className="tl-logo" style={{ marginBottom: 0 }}>
+            <Link to="/" className="tl-logo" style={{ marginBottom: 0 }}>
               <LogoFull style={{ height: 24, width: 'auto' }} />
-            </a>
-            <p>Azərbaycanın etibarlı səyahət agentliyi. Biletlər, otellər, turlar — hamısı bir yerdə.</p>
+            </Link>
+            <p>{t('footer.tagline')}</p>
             <div className="tl-footer-membership">
-              <span className="tl-footer-membership-label">Üzvüyük:</span>
+              <span className="tl-footer-membership-label">{t('footer.member')}</span>
               <a href="https://ataa.az/" target="_blank" rel="noopener noreferrer" aria-label="Azərbaycan Turizm Agentlikləri Assosiasiyası">
                 <img
                   src="/images/partners/aztaa-logo.jpeg"
@@ -110,39 +113,41 @@ export default function Footer() {
 
           <div className="tl-footer-cols">
             <div className="tl-footer-col">
-              <div className="tl-footer-col-title">Şirkət</div>
-              <Link to="/about">Haqqımızda</Link>
-              <Link to="/blog?category=X%C9%99b%C9%99rl%C9%99r">Xəbərlər</Link>
-              <Link to="/blog">Bloqlar</Link>
-              <Link to="/hediyye-karti">Hədiyyə Kartı</Link>
+              <div className="tl-footer-col-title">{t('footer.company')}</div>
+              <Link to="/about">{t('footer.about')}</Link>
+              <Link to="/blog?category=X%C9%99b%C9%99rl%C9%99r">{t('footer.news')}</Link>
+              <Link to="/blog">{t('footer.blog')}</Link>
+              <Link to="/hediyye-karti">{t('footer.giftCard')}</Link>
             </div>
             <div className="tl-footer-col">
-              <div className="tl-footer-col-title">Hesab</div>
-              <a href="#" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>Daxil ol</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>Qeydiyyat</a>
+              <div className="tl-footer-col-title">{t('footer.account')}</div>
+              <a href="#" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>{t('footer.login')}</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>{t('footer.register')}</a>
             </div>
             <div className="tl-footer-col">
-              <div className="tl-footer-col-title">Hüquqi</div>
-              <a href="#" onClick={(e) => { e.preventDefault(); openPrivacy(); }}>Məxfilik Siyasəti</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); openTerms(); }}>Şərtlər və Qaydalar</a>
-              <a href="mailto:info@travellab.az">Əlaqə</a>
+              <div className="tl-footer-col-title">{t('footer.legal')}</div>
+              <a href="#" onClick={(e) => { e.preventDefault(); openPrivacy(); }}>{t('footer.privacy')}</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); openTerms(); }}>{t('footer.terms')}</a>
+              <a href="mailto:info@travellab.az">{t('footer.contact')}</a>
             </div>
           </div>
         </div>
 
+        <LanguageSwitcher className="tl-footer-lang-switcher" />
+
         <div className="tl-footer-contact">
           <div>
-            <div className="tl-footer-contact-label">Mail ünvanı</div>
+            <div className="tl-footer-contact-label">{t('footer.mailAddress')}</div>
             <div className="tl-footer-contact-value">
               <a href="mailto:info@travellab.az">info@travellab.az</a>
             </div>
           </div>
           <div>
-            <div className="tl-footer-contact-label">Ünvan</div>
-            <div className="tl-footer-contact-value">40 Cəfər Cabbarlı küçəsi, Bakı</div>
+            <div className="tl-footer-contact-label">{t('footer.address')}</div>
+            <div className="tl-footer-contact-value">{t('footer.addressValue')}</div>
           </div>
           <div>
-            <div className="tl-footer-contact-label">Sosial şəbəkələr</div>
+            <div className="tl-footer-contact-label">{t('footer.socialNetworks')}</div>
             <div className="tl-footer-social">
               <a href="https://www.facebook.com/travellab.az/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14C17.17 2.1 15.95 2 14.66 2 11.98 2 10 3.66 10 6.7v2.8H7v4h3V22h4v-8.5z" /></svg>
@@ -176,8 +181,8 @@ export default function Footer() {
         </div>
 
         <div className="tl-footer-bottom">
-          <span>© {year} Travellab. Bütün hüquqlar qorunur.</span>
-          <span>🇦🇿 Bakı, Azərbaycan</span>
+          <span>© {year} Travellab. {t('footer.rights')}</span>
+          <span>🇦🇿 {t('footer.city')}</span>
         </div>
       </div>
     </footer>

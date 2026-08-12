@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { BLOG_POSTS, getPostBySlug } from '../data/blog';
+import { useParams, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
+import { BLOG_POSTS, getPostBySlug, getPostsForLocale } from '../data/blog';
 import { BLOG_CATEGORIES } from '../data/blog/categories';
 import { CATEGORY_SERVICE_LINKS } from '../data/blog/categoryServiceLinks';
 import { formatDateAz } from '../utils/date';
 import { slugify } from '../utils/slugify';
+import { getLocaleFromPathname } from '../utils/locale';
 import Breadcrumb from '../components/Breadcrumb';
 
 const TOC_MIN_WORDS = 800;
@@ -34,8 +37,16 @@ function renderParagraph(text) {
 }
 
 export default function BlogPostPage() {
+  const { t } = useTranslation();
   const { slug } = useParams();
-  const post = getPostBySlug(slug);
+  const location = useLocation();
+  const lang = getLocaleFromPathname(location.pathname);
+  const post = getPostBySlug(slug, lang);
+  // Distinguishes "doesn't exist at all" from "exists, just not in this
+  // language yet" (an older AZ-only post visited via /ru or /en) — the
+  // second case gets an honest message + a link to the AZ version instead
+  // of a generic 404.
+  const existsInOtherLocale = !post && BLOG_POSTS.some((p) => p.slug === slug);
 
   // Picking a category in the sidebar filters "Əlaqəli Bloqlar" in place —
   // it doesn't navigate away. Resets to the current post's own category
@@ -50,14 +61,16 @@ export default function BlogPostPage() {
     return (
       <main className="tpwl-main">
         <div className="tl-section" style={{ textAlign: 'center', padding: '80px 32px' }}>
-          <h1 className="tl-title">Yazı tapılmadı</h1>
-          <Link to="/blog" className="tl-viewall">← Bütün bloqlara qayıt</Link>
+          <h1 className="tl-title">{t('blog.notFoundTitle')}</h1>
+          {existsInOtherLocale && <p style={{ color: 'var(--tl-gray-600)', marginTop: 8 }}>{t('blog.notAvailableInLanguage')}</p>}
+          <Link to="/blog" className="tl-viewall">{t('blog.backToAll')}</Link>
         </div>
       </main>
     );
   }
 
-  const relatedPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug && p.category === relatedCategory).slice(0, 3);
+  const localePosts = getPostsForLocale(lang);
+  const relatedPosts = localePosts.filter((p) => p.slug !== post.slug && p.category === relatedCategory).slice(0, 3);
 
   const wordCount = post.body
     .filter((b) => b.type === 'p')
@@ -70,7 +83,7 @@ export default function BlogPostPage() {
     .filter(Boolean);
   const showToc = wordCount >= TOC_MIN_WORDS && headings.length > 1;
 
-  const endCardPosts = BLOG_POSTS.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 2);
+  const endCardPosts = localePosts.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 2);
   const endServiceLink = CATEGORY_SERVICE_LINKS[post.category];
 
   // Plain <a href="#id"> doesn't reliably trigger the browser's native
@@ -89,13 +102,13 @@ export default function BlogPostPage() {
           <div className="tl-article-head">
             <Breadcrumb
               items={[
-                { name: 'Ana səhifə', to: '/' },
-                { name: 'Bloq', to: '/blog' },
+                { name: t('breadcrumb.home'), to: '/' },
+                { name: t('footer.blog'), to: '/blog' },
                 { name: post.title },
               ]}
             />
             <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
-            <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab Komandası'}</div>
+            <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab'}</div>
             <h1 className="tl-article-title">{post.title}</h1>
             <p className="tl-article-lead">{post.excerpt}</p>
           </div>
@@ -111,8 +124,8 @@ export default function BlogPostPage() {
             </div>
           )}
           {showToc && (
-            <nav className="tl-article-toc" aria-label="Məzmun">
-              <div className="tl-article-toc-title">Məzmun</div>
+            <nav className="tl-article-toc" aria-label={t('blog.tableOfContents')}>
+              <div className="tl-article-toc-title">{t('blog.tableOfContents')}</div>
               <ol>
                 {headings.map((h) => (
                   <li key={h.id}>
@@ -143,7 +156,7 @@ export default function BlogPostPage() {
 
           {(endCardPosts.length > 0 || endServiceLink) && (
             <div className="tl-end-related">
-              <h3 className="tl-end-related-title">Əlaqəli məzmun</h3>
+              <h3 className="tl-end-related-title">{t('blog.relatedContentTitle')}</h3>
               <div className="tl-end-related-grid">
                 {endCardPosts.map((related) => (
                   <Link to={`/blog/${related.slug}`} key={related.slug} className="tl-related-card">
@@ -162,7 +175,7 @@ export default function BlogPostPage() {
                 ))}
                 {endServiceLink && (
                   <Link to={endServiceLink.to} className="tl-end-service-card">
-                    <span className="tl-end-service-label">Xidmət</span>
+                    <span className="tl-end-service-label">{t('blog.serviceLabel')}</span>
                     <span className="tl-end-service-cta">{endServiceLink.label} →</span>
                   </Link>
                 )}
@@ -173,7 +186,7 @@ export default function BlogPostPage() {
 
         <aside className="tl-article-sidebar">
           <div className="tl-sidebar-block">
-            <label className="tl-sidebar-label" htmlFor="blog-category-select">Kateqoriya</label>
+            <label className="tl-sidebar-label" htmlFor="blog-category-select">{t('blog.category')}</label>
             <select
               id="blog-category-select"
               className="tl-sidebar-select"
@@ -187,10 +200,10 @@ export default function BlogPostPage() {
           </div>
 
           <div className="tl-sidebar-block">
-            <h3 className="tl-sidebar-title">Əlaqəli Bloqlar</h3>
-            <p className="tl-sidebar-subtitle">Bu mövzu ilə bağlı digər yazılar.</p>
+            <h3 className="tl-sidebar-title">{t('blog.relatedTitle')}</h3>
+            <p className="tl-sidebar-subtitle">{t('blog.relatedSubtitle')}</p>
             {relatedPosts.length === 0 ? (
-              <p className="tl-blog-empty" style={{ padding: 0 }}>Bu kateqoriyada başqa yazı yoxdur.</p>
+              <p className="tl-blog-empty" style={{ padding: 0 }}>{t('blog.emptyRelated')}</p>
             ) : (
               <div className="tl-related-list">
                 {relatedPosts.map((related) => (

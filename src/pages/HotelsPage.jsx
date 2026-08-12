@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import HotelsSection from '../sections/HotelsSection';
 import SeoBodyText from '../components/SeoBodyText';
 
 export default function HotelsPage() {
+  const { t } = useTranslation();
   return (
     <main className="tpwl-main">
       <HotelsSection asH1 />
@@ -9,14 +11,8 @@ export default function HotelsPage() {
       <section>
         <div className="tl-section">
           <SeoBodyText>
-            <p>
-              Travellab səyahət agentliyi 220-dən çox ölkədə 2.6 milyondan artıq otel seçimini bir yerdə təqdim
-              edir. Otel bron edərkən, büdcənizə uyğun ən sərfəli qiyməti seçə, ani təsdiq ala bilərsiniz.
-            </p>
-            <p>
-              Onlayn otel axtarışı təhlükəsiz ödəniş sistemi ilə həyata keçirilir. Hər otel bron zamanı Labpoint
-              bonus xalları qazanaraq növbəti səyahətinizdə istifadə edə bilərsiniz.
-            </p>
+            <p>{t('hotels.seoP1')}</p>
+            <p>{t('hotels.seoP2')}</p>
           </SeoBodyText>
         </div>
       </section>

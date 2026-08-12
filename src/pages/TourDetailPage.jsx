@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
 import { useAuth } from '../context/AuthContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
@@ -8,6 +10,7 @@ import { isTourExpired } from '../utils/tourDate';
 import Breadcrumb from '../components/Breadcrumb';
 
 export default function TourDetailPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { tours, loading } = useTours();
   const { isAuthenticated, profile } = useAuth();
@@ -24,7 +27,7 @@ export default function TourDetailPage() {
       <main className="tpwl-main">
         <section className="tl-page-top">
           <div className="tl-section" style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-            Yüklənir...
+            {t('common.loading')}
           </div>
         </section>
       </main>
@@ -37,13 +40,13 @@ export default function TourDetailPage() {
         <section className="tl-page-top">
           <div className="tl-section" style={{ textAlign: 'center', padding: '48px 20px' }}>
             <h1 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 10 }}>
-              Bu tur artıq mövcud deyil
+              {t('tourDetail.notFoundTitle')}
             </h1>
             <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', marginBottom: 20 }}>
-              Təklif dəyişmiş və ya vaxtı keçmiş ola bilər. Digər turlarımıza baxa bilərsiniz.
+              {t('tourDetail.notFoundDesc')}
             </p>
             <Link to="/tours" className="tl-btn-book" style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff' }}>
-              Bütün turlara bax
+              {t('tourDetail.backToAll')}
             </Link>
           </div>
         </section>
@@ -51,7 +54,7 @@ export default function TourDetailPage() {
     );
   }
 
-  const link = managerLink(tour, manager);
+  const link = managerLink(tour, manager, t);
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
   const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
@@ -63,8 +66,8 @@ export default function TourDetailPage() {
         <div className="tl-section">
           <Breadcrumb
             items={[
-              { name: 'Ana səhifə', to: '/' },
-              { name: 'Turlar', to: '/tours' },
+              { name: t('tourDetail.home'), to: '/' },
+              { name: t('tourDetail.tours'), to: '/tours' },
               { name: tour.title },
             ]}
           />
@@ -79,13 +82,13 @@ export default function TourDetailPage() {
               {(expired || reward) && (
                 <div className="tl-pkg-badges">
                   {expired ? (
-                    <span className="tl-badge tl-badge-off">Bitib</span>
+                    <span className="tl-badge tl-badge-off">{t('tourCard.expired')}</span>
                   ) : (
                     <span className="tl-badge tl-badge-lp">
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
                       </svg>
-                      +{formatPoints(reward.points)} Lab Point
+                      +{formatPoints(reward.points)} {t('tourCard.labPoint')}
                     </span>
                   )}
                 </div>
@@ -103,7 +106,7 @@ export default function TourDetailPage() {
                   </span>
                   {balanceDiscount && balanceDiscount.discountAzn > 0 && (
                     <div className="tl-price-inst">
-                      <span>Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}</span>
+                      <span>{t('tourCard.labPointDiscount', { discount: formatPrice(balanceDiscount.discountAzn, 'AZN'), final: formatPrice(balanceDiscount.finalAzn, 'AZN') })}</span>
                       <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -120,11 +123,11 @@ export default function TourDetailPage() {
                   className="tl-btn-book"
                   style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
                 >
-                  {managerLabel()} →
+                  {managerLabel(t)} →
                 </a>
               )}
               <div style={{ marginTop: 10, fontSize: 12, color: 'var(--tl-gray-400)' }}>
-                Menecer: {manager.name} — {formatManagerNumber(manager.number)}
+                {t('common.manager')}: {manager.name} — {formatManagerNumber(manager.number)}
               </div>
             </div>
           </div>

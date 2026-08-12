@@ -1,15 +1,17 @@
-// Build-time SSG step: renders every route to a real HTML string (via
-// src/entry-server.jsx) and bakes it into its own dist/<route>/index.html,
-// with the same per-page <title>/meta/canonical/breadcrumb values the
-// client-side usePageMeta hook would otherwise only set after JS runs.
-// This is what actually fixes indexing/link-preview for crawlers and bots
-// that don't execute JavaScript (Yandex, WhatsApp, Telegram, Facebook…).
+// Build-time SSG step: renders every route, in every supported language,
+// to a real HTML string (via src/entry-server.jsx) and bakes it into its
+// own dist/<lang-prefix><route>/index.html, with the same per-page
+// <title>/meta/canonical/hreflang/breadcrumb values the client-side
+// usePageMeta hook would otherwise only set after JS runs. This is what
+// actually fixes indexing/link-preview for crawlers and bots that don't
+// execute JavaScript (Yandex, WhatsApp, Telegram, Facebook…).
 //
 // Run after `vite build` (client) and `vite build --ssr` (server) have
 // both produced their output — see the "build" script in package.json.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import i18next from 'i18next';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
 import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
 import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
@@ -19,6 +21,50 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
 const ssrDir = path.join(__dirname, 'dist-server');
 const postsDir = path.join(__dirname, 'src/data/blog/posts');
+const localesDir = path.join(__dirname, 'src/i18n/locales');
+
+const LANGUAGES = ['az', 'ru', 'en'];
+const DEFAULT_LANGUAGE = 'az';
+
+// Static-route path -> seo.* translation namespace key — mirrors
+// src/hooks/usePageMeta.js's SEO_KEY_BY_PATH exactly.
+const SEO_KEY_BY_PATH = {
+  '/': 'home',
+  '/search': 'search',
+  '/hotels': 'hotels',
+  '/tours': 'tours',
+  '/labpoint': 'labpoint',
+  '/about': 'about',
+  '/blog': 'blog',
+  '/events': 'events',
+  '/viza': 'viza',
+  '/hediyye-karti': 'giftCard',
+};
+
+// Reads the JSON translation files straight off disk (not `import ... json`)
+// — this script runs under plain `node`, not through Vite, and JSON import
+// attribute syntax support varies by Node version; avoiding it entirely
+// sidesteps that. Builds one i18next instance per language via the same
+// `i18next` package the app itself uses, so title/desc strings here can
+// never drift from what the client-side hook produces for the same route.
+function loadTranslators() {
+  const resources = {};
+  for (const lang of LANGUAGES) {
+    resources[lang] = { translation: JSON.parse(fs.readFileSync(path.join(localesDir, `${lang}.json`), 'utf-8')) };
+  }
+  const translators = {};
+  for (const lang of LANGUAGES) {
+    const instance = i18next.createInstance();
+    instance.init({ resources, lng: lang, fallbackLng: DEFAULT_LANGUAGE, interpolation: { escapeValue: false }, initImmediate: false });
+    translators[lang] = instance.getFixedT(lang);
+  }
+  return translators;
+}
+
+function buildLocalizedPath(bareRoutePath, lang) {
+  if (lang === DEFAULT_LANGUAGE) return bareRoutePath;
+  return bareRoutePath === '/' ? `/${lang}` : `/${lang}${bareRoutePath}`;
+}
 
 // Matches the default set in index.html and src/hooks/usePageMeta.js
 // (the client-side equivalent of this file, for post-hydration route
@@ -66,30 +112,46 @@ async function fetchInactiveTourIds() {
 // Prepends a 301 -> /tours rule for every inactive tour above the existing
 // SPA catch-all (public/_redirects, already copied into dist/_redirects by
 // vite build) — Netlify matches _redirects top to bottom, first rule wins.
+// One rule per language prefix, so a stale /ru/tours/<id> bookmark also
+// redirects correctly instead of falling through to the SPA catch-all.
 function writeRedirects(inactiveTourIds) {
   const redirectsPath = path.join(distDir, '_redirects');
   const existing = fs.existsSync(redirectsPath) ? fs.readFileSync(redirectsPath, 'utf-8') : '';
-  const inactiveLines = inactiveTourIds.map((id) => `/tours/${id}  /tours  301`).join('\n');
+  const inactiveLines = inactiveTourIds.flatMap((id) =>
+    LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`)
+  ).join('\n');
   fs.writeFileSync(redirectsPath, inactiveLines ? `${inactiveLines}\n${existing}` : existing);
-  console.log(`wrote ${inactiveTourIds.length} inactive-tour redirects to dist/_redirects`);
+  console.log(`wrote ${inactiveTourIds.length * LANGUAGES.length} inactive-tour redirects to dist/_redirects`);
 }
 
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
 // JSON file per post, so the route list has to be built from whatever
-// files exist at build time instead of being hardcoded. Keyed by route path
-// so the main loop can also pull the full post (image/date/excerpt) to
-// build the BlogPosting JSON-LD below.
+// files exist at build time instead of being hardcoded.
 function loadBlogPosts() {
-  const postsByRoute = {};
-  for (const file of fs.readdirSync(postsDir)) {
-    if (!file.endsWith('.json')) continue;
-    const post = JSON.parse(fs.readFileSync(path.join(postsDir, file), 'utf-8'));
-    postsByRoute[`/blog/${post.slug}`] = post;
-  }
-  return postsByRoute;
+  return fs
+    .readdirSync(postsDir)
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => JSON.parse(fs.readFileSync(path.join(postsDir, f), 'utf-8')));
 }
 
-function buildArticleJson(post, pageUrl) {
+// Two post shapes: older AZ-only flat posts, newer posts with an az/ru/en
+// key each — mirrors src/data/blog/index.js exactly (duplicated here since
+// that file also imports React-y things prerender.mjs shouldn't need).
+function hasLocaleVariants(post) {
+  return !!(post.az || post.ru || post.en);
+}
+
+function isPostAvailableInLocale(post, lang) {
+  if (!hasLocaleVariants(post)) return lang === DEFAULT_LANGUAGE;
+  return !!post[lang];
+}
+
+function localizePost(post, lang) {
+  if (!hasLocaleVariants(post)) return post;
+  return { ...post, ...(post[lang] || post.az) };
+}
+
+function buildArticleJson(post, pageUrl, lang) {
   return JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -105,6 +167,7 @@ function buildArticleJson(post, pageUrl) {
       logo: { '@type': 'ImageObject', url: `${BASE_URL}/favicon.svg` },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+    inLanguage: lang,
   });
 }
 
@@ -129,125 +192,177 @@ function buildBreadcrumbJson(items) {
   });
 }
 
+// hreflang alternates for a route: one per language the route actually
+// exists in (see availableLangs per-entry below), plus x-default -> AZ.
+function buildHreflangTags(bareRoutePath, availableLangs, extraQuery = '') {
+  const tags = availableLangs.map(
+    (lang) => `<link rel="alternate" hreflang="${lang}" href="${BASE_URL}${buildLocalizedPath(bareRoutePath, lang)}${extraQuery}" />`
+  );
+  if (availableLangs.includes(DEFAULT_LANGUAGE)) {
+    tags.push(`<link rel="alternate" hreflang="x-default" href="${BASE_URL}${bareRoutePath}${extraQuery}" />`);
+  }
+  return tags.join('\n  ');
+}
+
 async function main() {
   const { render } = await import(path.join(ssrDir, 'entry-server.js'));
   const template = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
+  const translators = loadTranslators();
+
   const blogPosts = loadBlogPosts();
-  const blogRouteMeta = Object.fromEntries(
-    Object.entries(blogPosts).map(([route, post]) => [route, { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }])
-  );
-  // Unlike tours (a live Instagram feed, fetched at build time only for the
-  // sitemap below), the country list is static data already in the repo —
-  // these pages get the full prerender treatment, same as blog posts.
-  const vizaRouteMeta = Object.fromEntries(
-    VIZA_COUNTRIES.map((c) => [
-      `/viza/${c.slug}`,
-      {
-        title: `${c.name} Vizası - Sənədlər və Şərtlər | Travellab`,
-        desc: `${c.name} vizası üçün lazımi sənədlər, müddət və qiymət. Travellab ilə sürətli və etibarlı viza xidməti. İndi müraciət edin!`,
-      },
-    ])
-  );
-  // Same reasoning as vizaRouteMeta: the country LIST is static/known at
-  // build time even though the actual search results (live Kompas prices)
-  // aren't — these pages get the full prerender treatment (title/meta/
-  // breadcrumb + the search form's static shell), not live offer data.
-  const tourSearchRouteMeta = Object.fromEntries(
-    TOUR_SEARCH_COUNTRIES.map((c) => [
-      `/tours/search/${c.slug}`,
-      {
-        title: `${c.nameAz} turları — canlı qiymətlər — Travellab`,
-        desc: `${c.nameAz} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.`,
-      },
-    ])
-  );
-  // Active Instagram-sourced tours, now DB-backed (site-backend's
-  // TourSyncJob) — real content, so these get the full prerender treatment
-  // like blog posts, falling back to the tour's own title/description
-  // when Claude hasn't generated metaTitle/metaDescription yet.
+  const blogPostBySlug = Object.fromEntries(blogPosts.map((p) => [p.slug, p]));
+
   const activeTours = await fetchActiveTours();
-  const toursByRoute = Object.fromEntries(activeTours.map((t) => [`/tours/${t.id}`, t]));
-  const tourRouteMeta = Object.fromEntries(
-    activeTours.map((t) => [
-      `/tours/${t.id}`,
-      {
-        title: t.metaTitle || `${t.title} — Travellab`,
-        desc: t.metaDescription || truncate(t.description, 160) || 'Travellab-da tur təklifi.',
-      },
-    ])
-  );
-  const allRouteMeta = { ...PAGE_META, ...blogRouteMeta, ...vizaRouteMeta, ...tourSearchRouteMeta, ...tourRouteMeta };
+  const toursById = Object.fromEntries(activeTours.map((t) => [String(t.id), t]));
 
-  for (const routePath of Object.keys(allRouteMeta)) {
-    const meta = allRouteMeta[routePath];
-    const isHome = routePath === '/';
-    const pageUrl = BASE_URL + (isHome ? '/' : routePath);
-    const post = blogPosts[routePath];
-    const tour = toursByRoute[routePath];
-    const vizaCountry = VIZA_COUNTRIES.find((c) => `/viza/${c.slug}` === routePath);
-    const tourSearchCountry = TOUR_SEARCH_COUNTRIES.find((c) => `/tours/search/${c.slug}` === routePath);
-    const image = post
-      ? (post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`)
-      : tour && tour.imageUrl
-        ? tour.imageUrl
-        : meta.image
-          ? (meta.image.startsWith('http') ? meta.image : `${BASE_URL}${meta.image}`)
-          : DEFAULT_OG_IMAGE;
-    const appHtml = render(routePath);
+  // One entry per bare (AZ) route path, describing what kind of page it is
+  // and which languages it should be generated for. Built once, then the
+  // actual per-language render loop below just reads from these.
+  const routeEntries = [];
 
-    let html = template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
-    html = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(meta.title)}</title>`);
-    html = setAttrById(html, 'meta-desc', 'content', meta.desc);
-    html = setAttrById(html, 'canonical', 'href', pageUrl);
-    html = setAttrById(html, 'og-title', 'content', meta.title);
-    html = setAttrById(html, 'og-desc', 'content', meta.desc);
-    html = setAttrById(html, 'og-url', 'content', pageUrl);
-    html = setAttrById(html, 'og-image', 'content', image);
-    html = setAttrById(html, 'twitter-title', 'content', meta.title);
-    html = setAttrById(html, 'twitter-desc', 'content', meta.desc);
-    html = setAttrById(html, 'twitter-image', 'content', image);
-
-    const breadcrumbItems = [{ name: 'Ana səhifə', url: `${BASE_URL}/` }];
-    if (post) {
-      breadcrumbItems.push({ name: 'Bloq', url: `${BASE_URL}/blog` }, { name: post.title, url: pageUrl });
-    } else if (tour) {
-      breadcrumbItems.push({ name: 'Turlar', url: `${BASE_URL}/tours` }, { name: tour.title, url: pageUrl });
-    } else if (vizaCountry) {
-      breadcrumbItems.push({ name: 'Viza', url: `${BASE_URL}/viza` }, { name: `${vizaCountry.name} vizası`, url: pageUrl });
-    } else if (tourSearchCountry) {
-      breadcrumbItems.push(
-        { name: 'Tur axtarışı', url: `${BASE_URL}/tours/search` },
-        { name: `${tourSearchCountry.nameAz} turları`, url: pageUrl }
-      );
-    } else if (!isHome) {
-      breadcrumbItems.push({ name: meta.title.split(' — ')[0], url: pageUrl });
-    }
-    html = html.replace(
-      /(<script type="application\/ld\+json" id="breadcrumb-ld">)[\s\S]*?(<\/script>)/i,
-      (_, open, close) => `${open}${buildBreadcrumbJson(breadcrumbItems)}${close}`
-    );
-
-    if (blogPosts[routePath]) {
-      const articleJson = buildArticleJson(blogPosts[routePath], pageUrl);
-      html = html.replace('</head>', `<script type="application/ld+json" id="article-ld">${articleJson}</script>\n  </head>`);
-    }
-
-    const outDir = isHome ? distDir : path.join(distDir, routePath);
-    fs.mkdirSync(outDir, { recursive: true });
-    fs.writeFileSync(path.join(outDir, 'index.html'), html);
-    console.log(`prerendered ${routePath} -> ${path.relative(__dirname, path.join(outDir, 'index.html'))}`);
+  for (const bareRoutePath of Object.keys(PAGE_META)) {
+    routeEntries.push({ bareRoutePath, kind: 'static', langs: LANGUAGES });
+  }
+  for (const post of blogPosts) {
+    const langs = LANGUAGES.filter((l) => isPostAvailableInLocale(post, l));
+    routeEntries.push({ bareRoutePath: `/blog/${post.slug}`, kind: 'blog', slug: post.slug, langs });
+  }
+  for (const country of VIZA_COUNTRIES) {
+    routeEntries.push({ bareRoutePath: `/viza/${country.slug}`, kind: 'vizaCountry', country, langs: LANGUAGES });
+  }
+  for (const country of TOUR_SEARCH_COUNTRIES) {
+    routeEntries.push({ bareRoutePath: `/tours/search/${country.slug}`, kind: 'tourSearchCountry', country, langs: LANGUAGES });
+  }
+  for (const tour of activeTours) {
+    routeEntries.push({ bareRoutePath: `/tours/${tour.id}`, kind: 'tour', tourId: String(tour.id), langs: LANGUAGES });
   }
 
-  // allRouteMeta already includes one entry per active tour (tourRouteMeta,
-  // merged in above), so the sitemap naturally only lists active tours —
-  // no separate tour fetch needed here.
+  let renderCount = 0;
+  for (const entry of routeEntries) {
+    const { bareRoutePath, kind, langs } = entry;
+
+    for (const lang of langs) {
+      const t = translators[lang];
+      const localizedRoutePath = buildLocalizedPath(bareRoutePath, lang);
+      const isHome = localizedRoutePath === '' || localizedRoutePath === '/';
+      const pageUrl = BASE_URL + (isHome ? '/' : localizedRoutePath);
+
+      let title;
+      let desc;
+      let image;
+      let post = null;
+      let tour = null;
+
+      if (kind === 'static') {
+        const seoKey = SEO_KEY_BY_PATH[bareRoutePath];
+        title = t(`seo.${seoKey}.title`);
+        desc = t(`seo.${seoKey}.desc`);
+        const staticImage = PAGE_META[bareRoutePath]?.image;
+        image = staticImage ? (staticImage.startsWith('http') ? staticImage : `${BASE_URL}${staticImage}`) : DEFAULT_OG_IMAGE;
+      } else if (kind === 'blog') {
+        post = localizePost(blogPostBySlug[entry.slug], lang);
+        title = `${post.title} — Travellab`;
+        desc = post.metaDescription || post.excerpt;
+        image = post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`;
+      } else if (kind === 'vizaCountry') {
+        const countryName = t(`countries.${entry.country.name}`, entry.country.name);
+        title = t('seo.vizaCountryTitle', { country: countryName });
+        desc = t('seo.vizaCountryDesc', { country: countryName });
+        image = DEFAULT_OG_IMAGE;
+      } else if (kind === 'tourSearchCountry') {
+        const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);
+        title = t('seo.tourSearchCountryTitle', { country: countryName });
+        desc = t('seo.tourSearchCountryDesc', { country: countryName });
+        image = DEFAULT_OG_IMAGE;
+      } else if (kind === 'tour') {
+        tour = toursById[entry.tourId];
+        title = tour.metaTitle || `${tour.title} — Travellab`;
+        desc = tour.metaDescription || truncate(tour.description, 160) || t(`seo.tours.desc`);
+        image = tour.imageUrl || DEFAULT_OG_IMAGE;
+      }
+
+      const appHtml = render(localizedRoutePath || '/');
+
+      let html = template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`);
+      html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang}"`);
+      html = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(title)}</title>`);
+      html = setAttrById(html, 'meta-desc', 'content', desc);
+      html = setAttrById(html, 'canonical', 'href', pageUrl);
+      html = setAttrById(html, 'og-title', 'content', title);
+      html = setAttrById(html, 'og-desc', 'content', desc);
+      html = setAttrById(html, 'og-url', 'content', pageUrl);
+      html = setAttrById(html, 'og-image', 'content', image);
+      html = setAttrById(html, 'og-locale', 'content', lang === 'az' ? 'az_AZ' : lang === 'ru' ? 'ru_RU' : 'en_US');
+      html = setAttrById(html, 'twitter-title', 'content', title);
+      html = setAttrById(html, 'twitter-desc', 'content', desc);
+      html = setAttrById(html, 'twitter-image', 'content', image);
+
+      const hreflangTags = buildHreflangTags(bareRoutePath, langs);
+      html = html.replace('</head>', `  ${hreflangTags}\n  </head>`);
+
+      const homeHref = BASE_URL + (buildLocalizedPath('/', lang) || '/');
+      const breadcrumbItems = [{ name: t('breadcrumb.home'), url: homeHref }];
+      if (kind === 'blog') {
+        breadcrumbItems.push({ name: t('footer.blog'), url: `${BASE_URL}${buildLocalizedPath('/blog', lang)}` }, { name: post.title, url: pageUrl });
+      } else if (kind === 'tour') {
+        breadcrumbItems.push({ name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` }, { name: tour.title, url: pageUrl });
+      } else if (kind === 'vizaCountry') {
+        const countryName = t(`countries.${entry.country.name}`, entry.country.name);
+        breadcrumbItems.push(
+          { name: t('nav.viza'), url: `${BASE_URL}${buildLocalizedPath('/viza', lang)}` },
+          { name: t('viza.countryPageBreadcrumb', { country: countryName }), url: pageUrl }
+        );
+      } else if (kind === 'tourSearchCountry') {
+        const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);
+        breadcrumbItems.push(
+          { name: t('tourSearch.tourSearchCrumb'), url: `${BASE_URL}${buildLocalizedPath('/tours/search', lang)}` },
+          { name: t('tourSearch.countryTitle', { country: countryName }), url: pageUrl }
+        );
+      } else if (!isHome) {
+        breadcrumbItems.push({ name: title.split(' — ')[0], url: pageUrl });
+      }
+      html = html.replace(
+        /(<script type="application\/ld\+json" id="breadcrumb-ld">)[\s\S]*?(<\/script>)/i,
+        (_, open, close) => `${open}${buildBreadcrumbJson(breadcrumbItems)}${close}`
+      );
+
+      if (kind === 'blog') {
+        const articleJson = buildArticleJson(post, pageUrl, lang);
+        html = html.replace('</head>', `<script type="application/ld+json" id="article-ld">${articleJson}</script>\n  </head>`);
+      }
+
+      const outDir = isHome ? distDir : path.join(distDir, localizedRoutePath);
+      fs.mkdirSync(outDir, { recursive: true });
+      fs.writeFileSync(path.join(outDir, 'index.html'), html);
+      renderCount += 1;
+    }
+  }
+  console.log(`prerendered ${renderCount} pages across ${routeEntries.length} routes x up to ${LANGUAGES.length} languages`);
+
+  // Sitemap: one <url> per language variant of every route, each carrying
+  // its own hreflang alternate entries (Google's documented multi-language
+  // sitemap format) — blog posts only list the languages they actually
+  // have, same rule as the prerender loop above.
+  const urlEntries = routeEntries.flatMap(({ bareRoutePath, langs }) =>
+    langs.map((lang) => {
+      const localizedRoutePath = buildLocalizedPath(bareRoutePath, lang);
+      const loc = `${BASE_URL}${localizedRoutePath || '/'}`;
+      const alternates = langs
+        .map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${BASE_URL}${buildLocalizedPath(bareRoutePath, l) || '/'}" />`)
+        .join('\n');
+      const defaultAlternate = langs.includes(DEFAULT_LANGUAGE)
+        ? `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}${bareRoutePath}" />`
+        : '';
+      return `  <url>\n    <loc>${loc}</loc>\n${alternates}${defaultAlternate}\n  </url>`;
+    })
+  );
   const sitemap =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    Object.keys(allRouteMeta).map((routePath) => `  <url><loc>${BASE_URL}${routePath === '/' ? '/' : routePath}</loc></url>`).join('\n') +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
+    urlEntries.join('\n') +
     `\n</urlset>\n`;
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap);
-  console.log(`wrote dist/sitemap.xml (${activeTours.length} tour URLs)`);
+  console.log(`wrote dist/sitemap.xml (${urlEntries.length} URL entries, ${activeTours.length} live tours)`);
 
   const inactiveTourIds = await fetchInactiveTourIds();
   writeRedirects(inactiveTourIds);

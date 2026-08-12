@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 
 function HomeIcon() {
   return (
@@ -54,30 +56,36 @@ function UserIcon() {
 // generic reference icon set; the hamburger menu still holds the full
 // link list (Tədbirlər, Viza, Bloq) for anything not promoted here.
 const TABS = [
-  { to: '/', label: 'Ana səhifə', Icon: HomeIcon, end: true },
-  { to: '/hotels', label: 'Otellər', Icon: HotelIcon },
-  { to: '/tours', label: 'Turlar', Icon: TourIcon },
-  { to: '/labpoint', label: 'Labpoint', Icon: LabpointIcon },
+  { path: '/', key: 'home', Icon: HomeIcon, end: true },
+  { path: '/hotels', key: 'hotels', Icon: HotelIcon },
+  { path: '/tours', key: 'tours', Icon: TourIcon },
+  { path: '/labpoint', key: 'labpoint', Icon: LabpointIcon },
 ];
 
+// Same "outside the Route tree" reasoning as Nav.jsx — paths built via
+// buildLocalizedPath rather than relative Links.
 export default function MobileTabBar() {
   const { isAuthenticated, profile, logout } = useAuth();
   const { openAuth } = useModals();
+  const { t } = useTranslation();
+  const location = useLocation();
   const [accountOpen, setAccountOpen] = useState(false);
+  const lang = getLocaleFromPathname(location.pathname);
+  const localize = (path) => buildLocalizedPath(path, lang);
 
   return (
     <>
       <nav className="tl-tabbar" aria-label="Mobil naviqasiya">
-        {TABS.map(({ to, label, Icon, end }) => (
+        {TABS.map(({ path, key, Icon, end }) => (
           <NavLink
-            key={to}
-            to={to}
+            key={path}
+            to={localize(path)}
             end={end}
             className={({ isActive }) => 'tl-tabbar-item' + (isActive ? ' active' : '')}
             onClick={() => setAccountOpen(false)}
           >
             <Icon />
-            <span>{label}</span>
+            <span>{t(`mobileTabBar.${key}`)}</span>
           </NavLink>
         ))}
         <button
@@ -86,7 +94,7 @@ export default function MobileTabBar() {
           onClick={() => (isAuthenticated ? setAccountOpen((o) => !o) : openAuth('login'))}
         >
           {isAuthenticated ? <span className="tl-tabbar-avatar">{profile.initials}</span> : <UserIcon />}
-          <span>{isAuthenticated ? 'Hesab' : 'Daxil ol'}</span>
+          <span>{isAuthenticated ? t('mobileTabBar.account') : t('mobileTabBar.login')}</span>
         </button>
       </nav>
 
@@ -96,7 +104,7 @@ export default function MobileTabBar() {
           <div className="tl-tabbar-sheet">
             <div className="tl-tabbar-sheet-name">{profile.name} {profile.surname}</div>
             <div className="tl-tabbar-sheet-lp">
-              <span>Labpoint balansı</span>
+              <span>{t('mobileTabBar.balanceLabel')}</span>
               <strong>{profile.points} LP</strong>
             </div>
             <a
@@ -108,7 +116,7 @@ export default function MobileTabBar() {
                 logout();
               }}
             >
-              🚪 Çıxış et
+              🚪 {t('mobileTabBar.logout')}
             </a>
           </div>
         </>

@@ -22,23 +22,26 @@ export function formatManagerNumber(number) {
   return '+' + number.slice(0, 3) + ' ' + number.slice(3, 5) + ' ' + number.slice(5, 8) + ' ' + number.slice(8, 10) + ' ' + number.slice(10, 12);
 }
 
-export function managerLink(tour, manager) {
+// `t` is the i18next translate function from the calling component's
+// useTranslation() — these are plain utils, not hooks, so the already-
+// localized message text is built by the caller and passed through.
+export function managerLink(tour, manager, t) {
   if (isMobile()) {
     const title = tour?.title || 'tur';
     const link = tour?.permalink || '';
-    const text = 'Salam! "' + title + '" turu ilə maraqlanıram.' + (link ? ' ' + link : '');
+    const text = t('common.tourInterestMessage', { title }) + (link ? ' ' + link : '');
     return 'https://wa.me/' + manager.number + '?text=' + encodeURIComponent(text);
   }
   return 'tel:+' + manager.number;
 }
 
-export function managerLabel() {
-  return isMobile() ? 'WhatsApp yaz' : 'Zəng et';
+export function managerLabel(t) {
+  return isMobile() ? t('common.waWrite') : t('common.call');
 }
 
-export function contactManager(tour) {
+export function contactManager(tour, t) {
   const manager = pickManager();
-  const url = managerLink(tour, manager);
+  const url = managerLink(tour, manager, t);
   if (url.indexOf('tel:') === 0) {
     window.location.href = url;
   } else {

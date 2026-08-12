@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
 import { HOTELS_URL } from './HotelsSection';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
@@ -21,22 +22,25 @@ const HERO_PHOTOS = [
 // Picking it client-side in an effect (after hydration) instead keeps
 // the original "changes on every visit" behaviour for real visitors;
 // prerendered/JS-less crawlers just get the first photo as a fallback.
-// title: JSX for the <h1> — defaults to the homepage's own copy. HeroSearch
-// stays a single persistent instance across routes (see App.jsx for why),
-// so per-route H1 text has to come in as a prop rather than the component
-// being remounted with different content.
-export default function HeroSearch({
-  title = (
-    <>
-      Səyahət Agentliyi Travellab —<br />
-      <span className="acc">Aviabilet, Otel və Tur Bir Yerdə</span>
-    </>
-  ),
-}) {
+// title: JSX for the <h1> — defaults to the homepage's own copy (built
+// from the current locale below, since a hook-based default can't live
+// in the parameter list). HeroSearch stays a single persistent instance
+// across routes (see App.jsx for why), so per-route H1 text has to come
+// in as a prop rather than the component being remounted with different
+// content.
+export default function HeroSearch({ title }) {
   const [photo, setPhoto] = useState(HERO_PHOTOS[0]);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
+  const { t } = useTranslation();
   const pillsRef = useRef(null);
+
+  const heroTitle = title ?? (
+    <>
+      {t('hero.homeTitlePlain')}<br />
+      <span className="acc">{t('hero.homeTitleAccent')}</span>
+    </>
+  );
 
   useEffect(() => {
     setPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
@@ -120,27 +124,27 @@ export default function HeroSearch({
         </div>
         <div className="tl-float tl-float-2">Hər tur alışında +10% Labpoint</div>
         <div className="tl-hero-content">
-          <div className="tl-hero-badge">✈ Azərbaycanın etibarlı səyahət agentliyi</div>
-          <h1>{title}</h1>
-          <p>Biletlər, otellər, turlar və transferlər — hamısı bir yerdə. Labpoint ilə hər səyahətdən qazanın.</p>
+          <div className="tl-hero-badge">{t('hero.badge')}</div>
+          <h1>{heroTitle}</h1>
+          <p>{t('hero.subtitle')}</p>
         </div>
         {/* Quick-search-type switcher — pinned to the bottom-left of the
             hero, right above the search form. More get added here as they
             go live (next up: "Yanan Turlar" once that integration lands). */}
         <div className="tl-hero-mode-pills" ref={pillsRef}>
-          <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">Otellər</a>
+          <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">{t('hero.pillHotels')}</a>
           {/* Signup bait: only shown to visitors who aren't logged in yet —
               disappears the moment they are, since the point is to nudge
               them toward registering, not to advertise a real discounts
               page. */}
           {!isAuthenticated && (
             <button type="button" className="tl-hero-pill tl-hero-pill-deal" onClick={() => openAuth('register')}>
-              Endirimlər 🔥
+              {t('hero.pillDeals')}
             </button>
           )}
-          <Link to="/tours" className="tl-hero-pill">Turlar</Link>
-          <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">Qrup Turlar</Link>
-          <Link to="/hediyye-karti" className="tl-hero-pill tl-hero-pill-gift">🎁 Hədiyyə Kartı</Link>
+          <Link to="/tours" className="tl-hero-pill">{t('hero.pillTours')}</Link>
+          <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">{t('hero.pillGroupTours')}</Link>
+          <Link to="/hediyye-karti" className="tl-hero-pill tl-hero-pill-gift">{t('hero.pillGiftCard')}</Link>
         </div>
       </section>
 

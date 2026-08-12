@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useModals } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
@@ -33,6 +34,7 @@ function useCountdown() {
 const emptyOtp = () => Array(6).fill('');
 
 export default function AuthModal() {
+  const { t, i18n } = useTranslation();
   const { authOpen, authTab, closeAuth, openTerms } = useModals();
   const { loginSuccess } = useAuth();
 
@@ -106,14 +108,14 @@ export default function AuthModal() {
     try {
       const { ok, data } = await authApi.googleLogin(response.credential);
       if (!ok) {
-        const msg = data.message || 'Google ilə daxil olarkən xəta baş verdi.';
+        const msg = data.message || t('auth.errorGoogleLogin');
         (tab === 'register' ? setRegMsg : setLoginMsg)(msg);
         return;
       }
       closeAuth();
       await loginSuccess(data.tokens.accessToken, data.tokens.refreshToken);
     } catch {
-      (tab === 'register' ? setRegMsg : setLoginMsg)('Şəbəkə xətası.');
+      (tab === 'register' ? setRegMsg : setLoginMsg)(t('common.networkError'));
     }
   };
 
@@ -140,7 +142,7 @@ export default function AuthModal() {
           // screen size instead.
           width: Math.min(400, googleBtnRef.current.offsetWidth || 380),
           text: 'continue_with',
-          locale: 'az',
+          locale: i18n.language,
         });
       } else if (attempts < 25) {
         attempts += 1;
@@ -153,7 +155,7 @@ export default function AuthModal() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authOpen, page, tab]);
+  }, [authOpen, page, tab, i18n.language]);
 
   if (!authOpen) return null;
 
@@ -170,24 +172,24 @@ export default function AuthModal() {
   const submitRegister = async () => {
     setRegMsg('');
     const { name, surname, phone, mail, pw, pw2, terms } = reg;
-    if (!name || !surname || !phone || !mail || !pw) return setRegMsg('Bütün xanaları doldurun.');
-    if (pw !== pw2) return setRegMsg('Şifrələr uyğun gəlmir.');
-    if (pw.length < 8) return setRegMsg('Şifrə ən az 8 simvol olmalıdır.');
-    if (!terms) return setRegMsg('Davam etmək üçün Qaydalar və Şərtlərlə razılaşmalısınız.');
+    if (!name || !surname || !phone || !mail || !pw) return setRegMsg(t('auth.errorFillAll'));
+    if (pw !== pw2) return setRegMsg(t('auth.errorPasswordMismatch'));
+    if (pw.length < 8) return setRegMsg(t('auth.errorPasswordLength'));
+    if (!terms) return setRegMsg(t('auth.errorTermsRequired'));
 
     setRegLoading(true);
     try {
       const { ok, data } = await authApi.register({ name, surname, phone, mail, password: pw, passwordConfirm: pw2 });
-      if (!ok) return setRegMsg(data.message || 'Xəta baş verdi.');
+      if (!ok) return setRegMsg(data.message || t('auth.errorGeneric'));
       goOtp({
         sessionId: data.sessionId,
         phone: authApi.toApiPhone(phone),
         flow: 'reg',
-        description: `+994${phone} nömrəsinə WhatsApp OTP göndərildi.`,
+        description: t('auth.otpDescRegister', { phone }),
         backTarget: 'main',
       });
     } catch {
-      setRegMsg('Şəbəkə xətası.');
+      setRegMsg(t('common.networkError'));
     } finally {
       setRegLoading(false);
     }
@@ -196,16 +198,16 @@ export default function AuthModal() {
   const submitLogin = async () => {
     setLoginMsg('');
     const { phone, pw } = login;
-    if (!phone || !pw) return setLoginMsg('Bütün xanaları doldurun.');
+    if (!phone || !pw) return setLoginMsg(t('auth.errorFillAll'));
 
     setLoginLoading(true);
     try {
       const { ok, data } = await authApi.login({ phone, password: pw });
-      if (!ok) return setLoginMsg(data.message || 'Yanlış telefon və ya şifrə.');
+      if (!ok) return setLoginMsg(data.message || t('auth.errorWrongCredentials'));
       closeAuth();
       await loginSuccess(data.tokens.accessToken, data.tokens.refreshToken);
     } catch {
-      setLoginMsg('Şəbəkə xətası.');
+      setLoginMsg(t('common.networkError'));
     } finally {
       setLoginLoading(false);
     }
@@ -213,7 +215,7 @@ export default function AuthModal() {
 
   const submitOtp = async () => {
     const code = otpDigits.join('');
-    if (code.length < 6) return setOtpMsg('6 rəqəmli kodu daxil edin.');
+    if (code.length < 6) return setOtpMsg(t('auth.errorOtpLength'));
     setOtpMsg('');
     setOtpLoading(true);
     try {
@@ -221,7 +223,7 @@ export default function AuthModal() {
       if (ok) {
         countdown.start(0);
         if (sessionRef.current.flow === 'reg') {
-          setSuccessMsg('Qeydiyyatınız uğurla tamamlanmışdır!');
+          setSuccessMsg(t('auth.successRegisterMsg'));
           setSuccessAction(() => () => {
             setTab('login');
             setPage('main');
@@ -231,12 +233,12 @@ export default function AuthModal() {
           setPage('sp');
         }
       } else {
-        setOtpMsg(data.message || 'Kod yanlışdır.');
+        setOtpMsg(data.message || t('auth.errorOtpWrong'));
         setOtpDigits(emptyOtp());
         otpRefs.current[0]?.focus();
       }
     } catch {
-      setOtpMsg('Şəbəkə xətası.');
+      setOtpMsg(t('common.networkError'));
     } finally {
       setOtpLoading(false);
     }
@@ -244,20 +246,20 @@ export default function AuthModal() {
 
   const submitForgot = async () => {
     setForgotMsg('');
-    if (!forgotPhone) return setForgotMsg('Telefon nömrəsini daxil edin.');
+    if (!forgotPhone) return setForgotMsg(t('auth.errorPhoneRequired'));
     setForgotLoading(true);
     try {
       const { ok, data } = await authApi.forgotPassword(forgotPhone);
-      if (!ok) return setForgotMsg(data.message || 'Xəta baş verdi.');
+      if (!ok) return setForgotMsg(data.message || t('auth.errorGeneric'));
       goOtp({
         sessionId: data.sessionId,
         phone: authApi.toApiPhone(forgotPhone),
         flow: 'fg',
-        description: `+994${forgotPhone} nömrəsinə WhatsApp OTP göndərildi.`,
+        description: t('auth.otpDescForgot', { phone: forgotPhone }),
         backTarget: 'fg',
       });
     } catch {
-      setForgotMsg('Şəbəkə xətası.');
+      setForgotMsg(t('common.networkError'));
     } finally {
       setForgotLoading(false);
     }
@@ -266,25 +268,25 @@ export default function AuthModal() {
   const submitSetPassword = async () => {
     setSetPwMsg('');
     const { pw, pw2 } = newPw;
-    if (!pw || !pw2) return setSetPwMsg('Bütün xanaları doldurun.');
-    if (pw !== pw2) return setSetPwMsg('Şifrələr uyğun gəlmir.');
-    if (pw.length < 8) return setSetPwMsg('Şifrə ən az 8 simvol olmalıdır.');
+    if (!pw || !pw2) return setSetPwMsg(t('auth.errorFillAll'));
+    if (pw !== pw2) return setSetPwMsg(t('auth.errorPasswordMismatch'));
+    if (pw.length < 8) return setSetPwMsg(t('auth.errorPasswordLength'));
 
     setSetPwLoading(true);
     try {
       const { ok, data } = await authApi.setPassword({ phone: sessionRef.current.phone, password: pw, passwordConfirm: pw2 });
       if (ok) {
-        setSuccessMsg('Şifrəniz uğurla yeniləndi!');
+        setSuccessMsg(t('auth.successPasswordMsg'));
         setSuccessAction(() => () => {
           setTab('login');
           setPage('main');
         });
         setPage('sc');
       } else {
-        setSetPwMsg(data.message || 'Xəta baş verdi.');
+        setSetPwMsg(data.message || t('auth.errorGeneric'));
       }
     } catch {
-      setSetPwMsg('Şəbəkə xətası.');
+      setSetPwMsg(t('common.networkError'));
     } finally {
       setSetPwLoading(false);
     }
@@ -372,47 +374,47 @@ export default function AuthModal() {
         {page === 'main' && (
           <div className="am-page active">
             <div className="am-tabs">
-              <button className={'am-tab' + (tab === 'register' ? ' active' : '')} onClick={() => setTab('register')}>Qeydiyyat</button>
-              <button className={'am-tab' + (tab === 'login' ? ' active' : '')} onClick={() => setTab('login')}>Daxil ol</button>
+              <button className={'am-tab' + (tab === 'register' ? ' active' : '')} onClick={() => setTab('register')}>{t('auth.register')}</button>
+              <button className={'am-tab' + (tab === 'login' ? ' active' : '')} onClick={() => setTab('login')}>{t('auth.login')}</button>
             </div>
 
             {tab === 'register' ? (
               <div>
-                <div className="am-title">Hesab yaradın</div>
-                <div className="am-sub">Travellab ailəsinə qoşulun — pulsuz</div>
+                <div className="am-title">{t('auth.registerTitle')}</div>
+                <div className="am-sub">{t('auth.registerSubtitle')}</div>
                 {regMsg && <div className="am-msg er show">{regMsg}</div>}
                 <div className="am-row">
                   <div className="am-group">
-                    <label className="am-label">Ad</label>
-                    <input className="am-input" type="text" placeholder="Leyla" value={reg.name} onChange={(e) => setReg((r) => ({ ...r, name: e.target.value }))} />
+                    <label className="am-label">{t('auth.name')}</label>
+                    <input className="am-input" type="text" placeholder={t('auth.namePlaceholder')} value={reg.name} onChange={(e) => setReg((r) => ({ ...r, name: e.target.value }))} />
                   </div>
                   <div className="am-group">
-                    <label className="am-label">Soyad</label>
-                    <input className="am-input" type="text" placeholder="Məmmədova" value={reg.surname} onChange={(e) => setReg((r) => ({ ...r, surname: e.target.value }))} />
+                    <label className="am-label">{t('auth.surname')}</label>
+                    <input className="am-input" type="text" placeholder={t('auth.surnamePlaceholder')} value={reg.surname} onChange={(e) => setReg((r) => ({ ...r, surname: e.target.value }))} />
                   </div>
                 </div>
                 <div className="am-group">
-                  <label className="am-label">Mobil Nömrə (Whatsapp aktiv olan nömrə)</label>
+                  <label className="am-label">{t('auth.phoneWhatsapp')}</label>
                   <div className="am-ph-row">
                     <div className="am-prefix">🇦🇿 +994</div>
-                    <input className="am-input" type="tel" placeholder="50 XXX XX XX" maxLength={9} value={reg.phone} onChange={(e) => setReg((r) => ({ ...r, phone: e.target.value }))} />
+                    <input className="am-input" type="tel" placeholder={t('auth.phonePlaceholder')} maxLength={9} value={reg.phone} onChange={(e) => setReg((r) => ({ ...r, phone: e.target.value }))} />
                   </div>
                 </div>
                 <div className="am-group">
-                  <label className="am-label">E-poçt</label>
-                  <input className="am-input" type="email" placeholder="leyla@example.com" value={reg.mail} onChange={(e) => setReg((r) => ({ ...r, mail: e.target.value }))} />
+                  <label className="am-label">{t('auth.email')}</label>
+                  <input className="am-input" type="email" placeholder={t('auth.emailPlaceholder')} value={reg.mail} onChange={(e) => setReg((r) => ({ ...r, mail: e.target.value }))} />
                 </div>
                 <div className="am-group">
-                  <label className="am-label">Şifrə</label>
+                  <label className="am-label">{t('auth.password')}</label>
                   <div className="am-pw-wrap">
-                    <input className="am-input" type={showRegPw ? 'text' : 'password'} placeholder="Ən az 8 simvol" value={reg.pw} onChange={(e) => setReg((r) => ({ ...r, pw: e.target.value }))} />
+                    <input className="am-input" type={showRegPw ? 'text' : 'password'} placeholder={t('auth.passwordPlaceholder')} value={reg.pw} onChange={(e) => setReg((r) => ({ ...r, pw: e.target.value }))} />
                     <button type="button" className="am-toggle" onClick={() => setShowRegPw((v) => !v)}>{showRegPw ? '🙈' : '👁'}</button>
                   </div>
                 </div>
                 <div className="am-group">
-                  <label className="am-label">Şifrəni təkrarlayın</label>
+                  <label className="am-label">{t('auth.passwordRepeat')}</label>
                   <div className="am-pw-wrap">
-                    <input className="am-input" type={showRegPw2 ? 'text' : 'password'} placeholder="Şifrəni təkrarlayın" value={reg.pw2} onChange={(e) => setReg((r) => ({ ...r, pw2: e.target.value }))} />
+                    <input className="am-input" type={showRegPw2 ? 'text' : 'password'} placeholder={t('auth.passwordRepeat')} value={reg.pw2} onChange={(e) => setReg((r) => ({ ...r, pw2: e.target.value }))} />
                     <button type="button" className="am-toggle" onClick={() => setShowRegPw2((v) => !v)}>{showRegPw2 ? '🙈' : '👁'}</button>
                   </div>
                 </div>
@@ -424,56 +426,57 @@ export default function AuthModal() {
                     style={{ width: 18, height: 18, marginTop: 1, accentColor: 'var(--tl-green)', flexShrink: 0, cursor: 'pointer' }}
                   />
                   <span style={{ fontSize: 12, color: 'rgba(29,41,57,.6)', lineHeight: 1.5 }}>
+                    {t('auth.agreeTermsPrefix')}{' '}
                     <a
                       href="#"
                       onClick={(e) => { e.preventDefault(); openTerms(); }}
                       style={{ color: 'var(--tl-green)', fontWeight: 600, textDecoration: 'underline' }}
                     >
-                      Qaydalar və Şərtlərlə
+                      {t('auth.agreeTermsLink')}
                     </a>{' '}
-                    razıyam
+                    {t('auth.agreeTermsSuffix')}
                   </span>
                 </label>
                 <button className={'am-btn' + (regLoading ? ' ld' : '')} disabled={regLoading} onClick={submitRegister}>
-                  <span className="bt">Davam et</span>
+                  <span className="bt">{t('auth.continue')}</span>
                   <div className="sp" />
                 </button>
                 {GOOGLE_CLIENT_ID && (
                   <>
-                    <div className="am-divider"><span>və ya</span></div>
+                    <div className="am-divider"><span>{t('auth.or')}</span></div>
                     <div ref={googleBtnRef} style={{ display: 'flex', justifyContent: 'center' }} />
                   </>
                 )}
               </div>
             ) : (
               <div>
-                <div className="am-title">Xoş gəldiniz</div>
-                <div className="am-sub">Hesabınıza daxil olun</div>
+                <div className="am-title">{t('auth.loginTitle')}</div>
+                <div className="am-sub">{t('auth.loginSubtitle')}</div>
                 {loginMsg && <div className="am-msg er show">{loginMsg}</div>}
                 <div className="am-group">
-                  <label className="am-label">Mobil Nömrə</label>
+                  <label className="am-label">{t('auth.phone')}</label>
                   <div className="am-ph-row">
                     <div className="am-prefix">🇦🇿 +994</div>
-                    <input className="am-input" type="tel" placeholder="50 XXX XX XX" maxLength={9} value={login.phone} onChange={(e) => setLogin((l) => ({ ...l, phone: e.target.value }))} />
+                    <input className="am-input" type="tel" placeholder={t('auth.phonePlaceholder')} maxLength={9} value={login.phone} onChange={(e) => setLogin((l) => ({ ...l, phone: e.target.value }))} />
                   </div>
                 </div>
                 <div className="am-group">
-                  <label className="am-label">Şifrə</label>
+                  <label className="am-label">{t('auth.password')}</label>
                   <div className="am-pw-wrap">
-                    <input className="am-input" type={showLoginPw ? 'text' : 'password'} placeholder="Şifrənizi daxil edin" value={login.pw} onChange={(e) => setLogin((l) => ({ ...l, pw: e.target.value }))} />
+                    <input className="am-input" type={showLoginPw ? 'text' : 'password'} placeholder={t('auth.password')} value={login.pw} onChange={(e) => setLogin((l) => ({ ...l, pw: e.target.value }))} />
                     <button type="button" className="am-toggle" onClick={() => setShowLoginPw((v) => !v)}>{showLoginPw ? '🙈' : '👁'}</button>
                   </div>
                 </div>
                 <div style={{ textAlign: 'right', marginBottom: 11 }}>
-                  <button className="am-link" onClick={() => setPage('fg')}>Şifrəmi unutdum</button>
+                  <button className="am-link" onClick={() => setPage('fg')}>{t('auth.forgotPassword')}</button>
                 </div>
                 <button className={'am-btn' + (loginLoading ? ' ld' : '')} disabled={loginLoading} onClick={submitLogin}>
-                  <span className="bt">Daxil ol</span>
+                  <span className="bt">{t('auth.login')}</span>
                   <div className="sp" />
                 </button>
                 {GOOGLE_CLIENT_ID && (
                   <>
-                    <div className="am-divider"><span>və ya</span></div>
+                    <div className="am-divider"><span>{t('auth.or')}</span></div>
                     <div ref={googleBtnRef} style={{ display: 'flex', justifyContent: 'center' }} />
                   </>
                 )}
@@ -484,8 +487,8 @@ export default function AuthModal() {
 
         {page === 'otp' && (
           <div className="am-page active">
-            <button className="am-back" onClick={() => setPage(otpBackTarget)}>← Geri</button>
-            <div className="am-title">OTP Kodu</div>
+            <button className="am-back" onClick={() => setPage(otpBackTarget)}>{t('auth.back')}</button>
+            <div className="am-title">{t('auth.otpTitle')}</div>
             <div className="am-sub">{otpDesc}</div>
             {otpMsg && <div className="am-msg er show">{otpMsg}</div>}
             <div className="am-otp-row">
@@ -503,34 +506,34 @@ export default function AuthModal() {
               ))}
             </div>
             <div className="am-timer">
-              Kodun müddəti: <strong>{countdown.label}</strong>
+              {t('auth.otpTimer')} <strong>{countdown.label}</strong>
             </div>
             <button className={'am-btn' + (otpLoading ? ' ld' : '')} disabled={otpLoading} onClick={submitOtp}>
-              <span className="bt">Təsdiqlə</span>
+              <span className="bt">{t('auth.confirm')}</span>
               <div className="sp" />
             </button>
             <div style={{ textAlign: 'center', marginTop: 11 }}>
-              <span style={{ fontSize: 12, color: 'rgba(29,41,57,.45)' }}>Kod gəlmədi? </span>
-              <button className="am-link" disabled={countdown.secondsLeft > 0} onClick={resend}>Yenidən göndər</button>
+              <span style={{ fontSize: 12, color: 'rgba(29,41,57,.45)' }}>{t('auth.otpNotReceived')} </span>
+              <button className="am-link" disabled={countdown.secondsLeft > 0} onClick={resend}>{t('auth.resend')}</button>
             </div>
           </div>
         )}
 
         {page === 'fg' && (
           <div className="am-page active">
-            <button className="am-back" onClick={() => setPage('main')}>← Geri</button>
-            <div className="am-title">Şifrəni yenilə</div>
-            <div className="am-sub">Şifrəni yeniləmək üçün ilk öncə qeydiyyatda olan mobil nömrənizi daxil edin.</div>
+            <button className="am-back" onClick={() => setPage('main')}>{t('auth.back')}</button>
+            <div className="am-title">{t('auth.resetPasswordTitle')}</div>
+            <div className="am-sub">{t('auth.resetPasswordDesc')}</div>
             {forgotMsg && <div className="am-msg er show">{forgotMsg}</div>}
             <div className="am-group">
-              <label className="am-label">Mobil Nömrə (Whatsapp aktiv olan nömrə)</label>
+              <label className="am-label">{t('auth.phoneWhatsapp')}</label>
               <div className="am-ph-row">
                 <div className="am-prefix">🇦🇿 +994</div>
-                <input className="am-input" type="tel" placeholder="50 XXX XX XX" maxLength={9} value={forgotPhone} onChange={(e) => setForgotPhone(e.target.value)} />
+                <input className="am-input" type="tel" placeholder={t('auth.phonePlaceholder')} maxLength={9} value={forgotPhone} onChange={(e) => setForgotPhone(e.target.value)} />
               </div>
             </div>
             <button className={'am-btn' + (forgotLoading ? ' ld' : '')} disabled={forgotLoading} onClick={submitForgot}>
-              <span className="bt">Davam et</span>
+              <span className="bt">{t('auth.continue')}</span>
               <div className="sp" />
             </button>
           </div>
@@ -538,26 +541,26 @@ export default function AuthModal() {
 
         {page === 'sp' && (
           <div className="am-page active">
-            <button className="am-back" onClick={() => setPage('otp')}>← Geri</button>
-            <div className="am-title">Yeni şifrə</div>
-            <div className="am-sub">Güclü şifrə seçin.</div>
+            <button className="am-back" onClick={() => setPage('otp')}>{t('auth.back')}</button>
+            <div className="am-title">{t('auth.newPasswordTitle')}</div>
+            <div className="am-sub">{t('auth.newPasswordDesc')}</div>
             {setPwMsg && <div className="am-msg er show">{setPwMsg}</div>}
             <div className="am-group">
-              <label className="am-label">Yeni şifrə</label>
+              <label className="am-label">{t('auth.newPassword')}</label>
               <div className="am-pw-wrap">
-                <input className="am-input" type={showNewPw ? 'text' : 'password'} placeholder="Ən az 8 simvol" value={newPw.pw} onChange={(e) => setNewPw((p) => ({ ...p, pw: e.target.value }))} />
+                <input className="am-input" type={showNewPw ? 'text' : 'password'} placeholder={t('auth.passwordPlaceholder')} value={newPw.pw} onChange={(e) => setNewPw((p) => ({ ...p, pw: e.target.value }))} />
                 <button type="button" className="am-toggle" onClick={() => setShowNewPw((v) => !v)}>{showNewPw ? '🙈' : '👁'}</button>
               </div>
             </div>
             <div className="am-group">
-              <label className="am-label">Şifrəni təkrarlayın</label>
+              <label className="am-label">{t('auth.passwordRepeat')}</label>
               <div className="am-pw-wrap">
-                <input className="am-input" type={showNewPw2 ? 'text' : 'password'} placeholder="Şifrəni təkrarlayın" value={newPw.pw2} onChange={(e) => setNewPw((p) => ({ ...p, pw2: e.target.value }))} />
+                <input className="am-input" type={showNewPw2 ? 'text' : 'password'} placeholder={t('auth.passwordRepeat')} value={newPw.pw2} onChange={(e) => setNewPw((p) => ({ ...p, pw2: e.target.value }))} />
                 <button type="button" className="am-toggle" onClick={() => setShowNewPw2((v) => !v)}>{showNewPw2 ? '🙈' : '👁'}</button>
               </div>
             </div>
             <button className={'am-btn' + (setPwLoading ? ' ld' : '')} disabled={setPwLoading} onClick={submitSetPassword}>
-              <span className="bt">Şifrəni yenilə</span>
+              <span className="bt">{t('auth.updatePassword')}</span>
               <div className="sp" />
             </button>
           </div>
@@ -567,10 +570,10 @@ export default function AuthModal() {
           <div className="am-page active">
             <div style={{ textAlign: 'center', padding: '10px 0' }}>
               <div className="am-si">✓</div>
-              <div className="am-title" style={{ textAlign: 'center' }}>Uğurlu!</div>
+              <div className="am-title" style={{ textAlign: 'center' }}>{t('auth.successTitle')}</div>
               <p className="am-sub" style={{ textAlign: 'center', marginBottom: 22 }}>{successMsg}</p>
               <button className="am-btn" onClick={successAction}>
-                <span className="bt">Daxil ol →</span>
+                <span className="bt">{t('auth.successLoginBtn')}</span>
               </button>
             </div>
           </div>

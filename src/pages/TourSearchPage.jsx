@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
 import OfferSearchFilters from '../components/OfferSearchFilters';
 import OfferCard from '../components/OfferCard';
 import Breadcrumb from '../components/Breadcrumb';
 import FaqSection from '../components/FaqSection';
-import { TOURS_FAQ } from '../data/toursFaq';
 import { TOUR_SEARCH_COUNTRIES } from '../data/tourSearchCountries';
 import { getDestinations, searchOffers } from '../api/offers';
 import { getDestinationPhotos } from '../api/photos';
@@ -13,13 +13,6 @@ import { paginationItems } from '../utils/pagination';
 import HotelFilter from '../components/HotelFilter';
 
 const RESULTS_PER_PAGE = 12;
-
-const SORT_OPTIONS = [
-  { value: 'price_asc', label: 'Ən ucuz' },
-  { value: 'price_desc', label: 'Ən bahalı' },
-  { value: 'star_desc', label: 'Ulduza görə' },
-  { value: 'checkin_asc', label: 'Tarixə görə' },
-];
 
 // Results already come back price-ascending from the backend (see
 // KompasSearchService.search) — this only re-sorts the already-fetched
@@ -56,6 +49,16 @@ const HERO_PHOTOS = [
 // country. `initialCountryName` is the matching Russian name, Kompas's own
 // join key against the live destinations list (see OfferSearchFilters.jsx).
 export default function TourSearchPage({ initialCountryName, countryLabel }) {
+  const { t } = useTranslation();
+  const translatedCountryLabel = countryLabel ? t(`countries.${countryLabel}`, countryLabel) : undefined;
+
+  const SORT_OPTIONS = [
+    { value: 'price_asc', label: t('tourSearch.sortCheapest') },
+    { value: 'price_desc', label: t('tourSearch.sortExpensive') },
+    { value: 'star_desc', label: t('tourSearch.sortStars') },
+    { value: 'checkin_asc', label: t('tourSearch.sortDate') },
+  ];
+
   const [heroPhoto, setHeroPhoto] = useState(HERO_PHOTOS[0]);
   const [destinations, setDestinations] = useState([]);
   const [offers, setOffers] = useState(null); // null = no search run yet
@@ -148,23 +151,23 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
         <div className="tl-blog-hero-photo" style={{ backgroundImage: `url('${heroPhoto}')` }} />
         <div className="tl-blog-hero-bg tl-search-hero-bg" />
         <div className="tl-blog-hero-content">
-          {countryLabel && (
+          {translatedCountryLabel && (
             <div style={{ marginBottom: 10 }}>
               <Breadcrumb
                 items={[
-                  { name: 'Ana səhifə', to: '/' },
-                  { name: 'Tur axtarışı', to: '/tours/search' },
-                  { name: `${countryLabel} turları` },
+                  { name: t('tourSearch.home'), to: '/' },
+                  { name: t('tourSearch.tourSearchCrumb'), to: '/tours/search' },
+                  { name: t('tourSearch.countryTitle', { country: translatedCountryLabel }) },
                 ]}
               />
             </div>
           )}
-          <div className="tl-hero-badge">🔍 {countryLabel ? countryLabel : 'Canlı Axtarış'}</div>
-          <h1>{countryLabel ? `${countryLabel} turları` : 'Ən sərfəli təklifi tap'}</h1>
+          <div className="tl-hero-badge">🔍 {translatedCountryLabel || t('tourSearch.liveSearchTag')}</div>
+          <h1>{translatedCountryLabel ? t('tourSearch.countryTitle', { country: translatedCountryLabel }) : t('tourSearch.defaultTitle')}</h1>
           <p>
-            {countryLabel
-              ? `${countryLabel} üçün canlı otel qiymətləri — tarix, gecə sayı və ulduza görə axtar, ən uyğun təklifi seç.`
-              : 'Canlı qiymətlər — istiqamət, tarix, gecə sayı və ulduza görə axtar, ən uyğun oteli seç.'}
+            {translatedCountryLabel
+              ? t('tourSearch.countryDesc', { country: translatedCountryLabel })
+              : t('tourSearch.defaultDesc')}
           </p>
         </div>
       </section>
@@ -175,23 +178,23 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
 
           {loading && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-              Axtarılır...
+              {t('tourSearch.searching')}
             </div>
           )}
           {!loading && failed && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-              Axtarış zamanı xəta baş verdi, yenidən cəhd edin.
+              {t('tourSearch.searchFailed')}
             </div>
           )}
           {!loading && !failed && offers && offers.length === 0 && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-              Bu filtrlərə uyğun təklif tapılmadı.
+              {t('tourSearch.noOffers')}
             </div>
           )}
 
           {!loading && offers && offers.length > 0 && (
             <div className="tl-searchbar-extra-group" style={{ marginBottom: 20 }}>
-              <span className="tl-searchbar-extra-label">Sırala:</span>
+              <span className="tl-searchbar-extra-label">{t('tourSearch.sortLabel')}</span>
               {SORT_OPTIONS.map((opt) => (
                 <button
                   type="button"
@@ -205,7 +208,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
               ))}
               {hotelNames.length > 1 && (
                 <>
-                  <span className="tl-searchbar-extra-label" style={{ marginLeft: 12 }}>Otel:</span>
+                  <span className="tl-searchbar-extra-label" style={{ marginLeft: 12 }}>{t('tourSearch.hotelLabel')}</span>
                   <HotelFilter hotels={hotelNames} selected={selectedHotels} onChange={selectHotels} />
                 </>
               )}
@@ -221,9 +224,9 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
           )}
 
           {totalPages > 1 && offers && offers.length > 0 && (
-            <nav className="tl-pagination" aria-label="Nəticə səhifələri">
+            <nav className="tl-pagination" aria-label="Result pages">
               <button type="button" className="tl-pagination-btn" onClick={() => goToPage(page - 1)} disabled={page === 1}>
-                ← Əvvəlki
+                {t('common.previous')}
               </button>
               <div className="tl-pagination-pages">
                 {paginationItems(page, totalPages).map((n, i) =>
@@ -243,7 +246,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
                 )}
               </div>
               <button type="button" className="tl-pagination-btn" onClick={() => goToPage(page + 1)} disabled={page === totalPages}>
-                Növbəti →
+                {t('common.next')}
               </button>
             </nav>
           )}
@@ -252,11 +255,11 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
               them too, but a real link path matters for discovery/PageRank,
               not just inclusion in the sitemap. */}
           <div style={{ marginTop: 40 }}>
-            <div className="tl-searchbar-extra-label" style={{ marginBottom: 10 }}>Populyar istiqamətlər</div>
-            <div className="tl-blog-filter" role="list" aria-label="Ölkəyə görə turlar">
+            <div className="tl-searchbar-extra-label" style={{ marginBottom: 10 }}>{t('tourSearch.popularDestinations')}</div>
+            <div className="tl-blog-filter" role="list" aria-label="Tours by country">
               {TOUR_SEARCH_COUNTRIES.map((c) => (
                 <Link key={c.slug} to={`/tours/search/${c.slug}`} className="tl-blog-filter-pill">
-                  {c.nameAz}
+                  {t(`countries.${c.nameAz}`, c.nameAz)}
                 </Link>
               ))}
             </div>
@@ -264,8 +267,8 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
         </div>
       </section>
 
-      {countryLabel && (
-        <FaqSection tag="Suallar" title={`${countryLabel} turları ilə bağlı tez-tez verilən suallar`} items={TOURS_FAQ} />
+      {translatedCountryLabel && (
+        <FaqSection tag={t('toursFaq.tag')} title={t('tourSearch.faqTitle', { country: translatedCountryLabel })} items={t('toursFaq.items', { returnObjects: true })} />
       )}
     </main>
   );

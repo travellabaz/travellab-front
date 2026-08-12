@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import SeoBodyText from '../components/SeoBodyText';
 
@@ -9,6 +10,7 @@ const DEMO_AZN = '2500';
 // (LabpointPage.jsx) — same pattern as HotelsSection/EventsSection, since
 // this section is also embedded on HomePage, which already has its own H1.
 export default function LabpointSection({ asH1 = false }) {
+  const { t } = useTranslation();
   const { isAuthenticated, profile } = useAuth();
   const [copied, setCopied] = useState(false);
   const Heading = asH1 ? 'h1' : 'h2';
@@ -28,12 +30,9 @@ export default function LabpointSection({ asH1 = false }) {
       <div className="tl-section">
         <div className="tl-lp-card">
           <div>
-            <div className="tl-lp-logo">LabPoint by Travellab</div>
-            <Heading className="tl-lp-headline">Labpoint — Səyahət Edin, Bonus Qazanın</Heading>
-            <p className="tl-lp-desc">
-              Səfərləriniz zamanı pointlər qazanın və bonuslardan yararlanın. İndi LabPoint ilə daha çox
-              səyahət edin!
-            </p>
+            <div className="tl-lp-logo">{t('labpoint.brand')}</div>
+            <Heading className="tl-lp-headline">{t('labpoint.title')}</Heading>
+            <p className="tl-lp-desc">{t('labpoint.desc')}</p>
             <div className="tl-lp-actions">
               <a
                 href="https://travellab-point.az/"
@@ -41,7 +40,7 @@ export default function LabpointSection({ asH1 = false }) {
                 rel="noopener noreferrer"
                 className="tl-lp-btn tl-lp-btn-primary"
               >
-                Kart yarat
+                {t('labpoint.createCard')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 6l6 6-6 6" />
                 </svg>
@@ -52,7 +51,7 @@ export default function LabpointSection({ asH1 = false }) {
                 rel="noopener noreferrer"
                 className="tl-lp-btn tl-lp-btn-outline"
               >
-                Ətraflı Məlumat
+                {t('labpoint.moreInfo')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 6l6 6-6 6" />
                 </svg>
@@ -73,13 +72,13 @@ export default function LabpointSection({ asH1 = false }) {
                   LabPoint<sup>™</sup>
                 </div>
                 <button type="button" className="tl-lp-cv-share" onClick={share}>
-                  {copied ? 'Kopyalandı' : 'Paylaş'}
+                  {copied ? t('labpoint.copied') : t('labpoint.share')}
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M7 17L17 7M8 7h9v9" />
                   </svg>
                 </button>
               </div>
-              <div className="tl-lp-cv-bal-l">Balansınız:</div>
+              <div className="tl-lp-cv-bal-l">{t('labpoint.balance')}</div>
               <div className="tl-lp-cv-bal">
                 {points} <span>LP</span>
               </div>
@@ -90,16 +89,8 @@ export default function LabpointSection({ asH1 = false }) {
 
         {asH1 && (
           <SeoBodyText>
-            <p>
-              Labpoint, Travellab səyahət agentliyinin loyallıq proqramıdır. Hər aviabilet, otel bron və ya tur
-              alışında avtomatik olaraq bonus xallar qazanırsınız. Toplanan Labpoint balansını növbəti
-              səyahətinizdə endirim kimi istifadə edə bilərsiniz.
-            </p>
-            <p>
-              Loyallıq proqramına qoşulmaq üçün sadəcə Travellab hesabı yaratmaq kifayətdir. Hər sifarişdən sonra
-              bonus xallar balansınıza avtomatik əlavə olunur — əlavə addım tələb olunmur. Səyahət agentliyi
-              olaraq Travellab, müştərilərini hər səyahətdə mükafatlandırmağı hədəf qoyur.
-            </p>
+            <p>{t('labpoint.seoP1')}</p>
+            <p>{t('labpoint.seoP2')}</p>
           </SeoBodyText>
         )}
       </div>

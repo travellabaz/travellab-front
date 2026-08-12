@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { BLOG_POSTS } from '../data/blog';
+import { useSearchParams, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
+import { getPostsForLocale } from '../data/blog';
 import { BLOG_CATEGORIES } from '../data/blog/categories';
 import { formatDateAz } from '../utils/date';
 import { paginationItems } from '../utils/pagination';
+import { getLocaleFromPathname } from '../utils/locale';
 
 const POSTS_PER_PAGE = 8;
 
@@ -18,6 +21,9 @@ const HERO_PHOTOS = [
 ];
 
 export default function BlogPage() {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const lang = getLocaleFromPathname(location.pathname);
   const [heroPhoto, setHeroPhoto] = useState(HERO_PHOTOS[0]);
   useEffect(() => {
     setHeroPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
@@ -26,7 +32,8 @@ export default function BlogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const category = searchParams.get('category') || '';
   const isKnownCategory = BLOG_CATEGORIES.some((c) => c.name === category);
-  const filteredPosts = isKnownCategory ? BLOG_POSTS.filter((p) => p.category === category) : BLOG_POSTS;
+  const localePosts = getPostsForLocale(lang);
+  const filteredPosts = isKnownCategory ? localePosts.filter((p) => p.category === category) : localePosts;
 
   const totalPages = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_PAGE));
   const page = Math.min(totalPages, Math.max(1, parseInt(searchParams.get('page'), 10) || 1));
@@ -59,18 +66,18 @@ export default function BlogPage() {
         <div className="tl-blog-hero-photo" style={{ backgroundImage: `url('${heroPhoto}')` }} />
         <div className="tl-blog-hero-bg" />
         <div className="tl-blog-hero-content">
-          <div className="tl-hero-badge">✈ Travellab Bloqu</div>
-          <h1>Səyahət Bələdçisi və Məsləhətlər</h1>
-          <p>Faydalı məsləhətlər, şəhər bələdçiləri, macəra hekayələri və son xəbərlər — bir yerdə.</p>
+          <div className="tl-hero-badge">{t('blog.badge')}</div>
+          <h1>{t('blog.title')}</h1>
+          <p>{t('blog.subtitle')}</p>
 
-          <div className="tl-blog-filter" role="tablist" aria-label="Bloq kateqoriyaları">
+          <div className="tl-blog-filter" role="tablist" aria-label="Blog categories">
             <button
               type="button"
               className={`tl-blog-filter-pill${category === '' ? ' active' : ''}`}
               onClick={() => selectCategory('')}
               aria-pressed={category === ''}
             >
-              Bütün Bloqlar
+              {t('blog.allPosts')}
             </button>
             {BLOG_CATEGORIES.map((c) => (
               <button
@@ -90,7 +97,7 @@ export default function BlogPage() {
       <section id="blog">
         <div className="tl-section">
           {pagePosts.length === 0 ? (
-            <p className="tl-blog-empty">Bu kateqoriyada hələ yazı yoxdur.</p>
+            <p className="tl-blog-empty">{t('blog.emptyCategory')}</p>
           ) : (
             <div className="tl-blog-grid">
               {pagePosts.map((post) => (
@@ -120,14 +127,14 @@ export default function BlogPage() {
           )}
 
           {totalPages > 1 && (
-            <nav className="tl-pagination" aria-label="Bloq səhifələri">
+            <nav className="tl-pagination" aria-label="Blog pages">
               <button
                 type="button"
                 className="tl-pagination-btn"
                 onClick={() => goToPage(page - 1)}
                 disabled={page === 1}
               >
-                ← Əvvəlki
+                {t('common.previous')}
               </button>
               <div className="tl-pagination-pages">
                 {paginationItems(page, totalPages).map((n, i) =>
@@ -152,7 +159,7 @@ export default function BlogPage() {
                 onClick={() => goToPage(page + 1)}
                 disabled={page === totalPages}
               >
-                Növbəti →
+                {t('common.next')}
               </button>
             </nav>
           )}

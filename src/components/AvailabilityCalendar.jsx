@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-
-const MONTH_NAMES_AZ = [
-  'Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'İyun',
-  'İyul', 'Avqust', 'Sentyabr', 'Oktyabr', 'Noyabr', 'Dekabr',
-];
-
-const WEEKDAY_NAMES_AZ = ['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'];
+import { useTranslation } from 'react-i18next';
 
 function toIso(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -42,6 +36,9 @@ function todayIso() {
 // don't fabricate a "yellow" severity we have no data for (see
 // KompasCheckinResponse.java on the backend for the full reasoning).
 export default function AvailabilityCalendar({ label, value, onChange, availableDates, loading, disabled, minDate, fieldClassName, triggerClassName }) {
+  const { t } = useTranslation();
+  const monthNames = t('availabilityCalendar.months', { returnObjects: true });
+  const weekdayNames = t('availabilityCalendar.weekdays', { returnObjects: true });
   const [open, setOpen] = useState(false);
   const initial = parseIso(value || minDate || todayIso());
   const [viewY, setViewY] = useState(initial.y);
@@ -99,21 +96,21 @@ export default function AvailabilityCalendar({ label, value, onChange, available
         onClick={() => !disabled && setOpen((o) => !o)}
         disabled={disabled}
       >
-        {value ? value.split('-').reverse().join('.') : 'Seçin'}
+        {value ? value.split('-').reverse().join('.') : t('availabilityCalendar.select')}
       </button>
 
       {open && (
         <div className="tl-cal-popover">
           <div className="tl-cal-header">
-            <button type="button" onClick={goPrev} disabled={!canGoPrev} aria-label="Əvvəlki ay">‹</button>
-            <span>{MONTH_NAMES_AZ[viewM]} {viewY}</span>
-            <button type="button" onClick={goNext} aria-label="Növbəti ay">›</button>
+            <button type="button" onClick={goPrev} disabled={!canGoPrev} aria-label={t('availabilityCalendar.prevMonth')}>‹</button>
+            <span>{monthNames[viewM]} {viewY}</span>
+            <button type="button" onClick={goNext} aria-label={t('availabilityCalendar.nextMonth')}>›</button>
           </div>
 
-          {loading && <div className="tl-cal-loading">Yüklənir…</div>}
+          {loading && <div className="tl-cal-loading">{t('availabilityCalendar.loading')}</div>}
 
           <div className="tl-cal-weekdays">
-            {WEEKDAY_NAMES_AZ.map((w) => <span key={w}>{w}</span>)}
+            {weekdayNames.map((w) => <span key={w}>{w}</span>)}
           </div>
 
           <div className="tl-cal-grid">

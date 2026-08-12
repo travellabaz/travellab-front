@@ -1,24 +1,17 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
 import { TOUR_CATEGORIES, getTourCategory } from '../utils/tourCategory';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../sections/ReviewsSection';
 import FaqSection from '../components/FaqSection';
-import { TOURS_FAQ } from '../data/toursFaq';
 import { paginationItems } from '../utils/pagination';
 import { extractMinPrice } from '../utils/price';
 import { extractLatestTourDate } from '../utils/tourDate';
 import SeoBodyText from '../components/SeoBodyText';
-import { getTourCategoryMeta } from '../data/tourCategoryMeta';
 
 const TOURS_PER_PAGE = 12;
-
-const SORT_OPTIONS = [
-  { value: '', label: 'Hamısı' },
-  { value: 'price_asc', label: 'Ən ucuz' },
-  { value: 'price_desc', label: 'Ən bahalı' },
-  { value: 'date_asc', label: 'Tarixə görə' },
-];
 
 // Price/date aren't structured fields (see utils/price.js and
 // utils/tourDate.js — both mined out of free-form Instagram captions), so
@@ -49,8 +42,16 @@ function sortTours(tours, sort) {
 }
 
 export default function ToursPage() {
+  const { t } = useTranslation();
   const { tours, loading, empty } = useTours();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const SORT_OPTIONS = [
+    { value: '', label: t('offerSearchFilters.categoryAll') },
+    { value: 'price_asc', label: t('toursPage.sortCheapest') },
+    { value: 'price_desc', label: t('toursPage.sortExpensive') },
+    { value: 'date_asc', label: t('toursPage.sortDate') },
+  ];
 
   const categoryParam = searchParams.get('category') || '';
   // Case-insensitive: the pill buttons always send an exact TOUR_CATEGORIES
@@ -59,7 +60,7 @@ export default function ToursPage() {
     (c) => c.name.toLocaleLowerCase('az') === categoryParam.toLocaleLowerCase('az')
   );
   const category = matchedCategory ? matchedCategory.name : '';
-  const categoryMeta = getTourCategoryMeta(category);
+  const categoryMetaKey = category || 'all';
   const filteredTours = matchedCategory ? tours.filter((t) => getTourCategory(t).name === matchedCategory.name) : tours;
 
   const sort = searchParams.get('sort') || '';
@@ -107,19 +108,19 @@ export default function ToursPage() {
         <div className="tl-section">
           <div className="tl-section-header">
             <div>
-              <div className="tl-tag">Xüsusi Təkliflər</div>
-              <h1 className="tl-title">Tur Paketləri — Hazır Turlar</h1>
+              <div className="tl-tag">{t('toursPage.tag')}</div>
+              <h1 className="tl-title">{t('toursPage.title')}</h1>
             </div>
           </div>
 
-          <div className="tl-blog-filter" role="tablist" aria-label="Tur kateqoriyaları">
+          <div className="tl-blog-filter" role="tablist" aria-label="Tour categories">
             <button
               type="button"
               className={`tl-blog-filter-pill${category === '' ? ' active' : ''}`}
               onClick={() => selectCategory('')}
               aria-pressed={category === ''}
             >
-              Bütün Turlar
+              {t('toursPage.allTours')}
             </button>
             {TOUR_CATEGORIES.map((c) => (
               <button
@@ -129,7 +130,7 @@ export default function ToursPage() {
                 onClick={() => selectCategory(c.name)}
                 aria-pressed={category === c.name}
               >
-                {c.name}
+                {t(`tourCategoryLabels.${c.name}`)}
               </button>
             ))}
             <Link to="/tours/search" className="tl-search-cta">
@@ -137,13 +138,13 @@ export default function ToursPage() {
                 <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2.2" />
                 <path d="M21 21L16.5 16.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
               </svg>
-              Canlı qiymətlərlə axtar
+              {t('toursPage.liveSearch')}
             </Link>
           </div>
 
           {!loading && !empty && (
             <div className="tl-searchbar-extra-group" style={{ marginBottom: 20 }}>
-              <span className="tl-searchbar-extra-label">Sırala:</span>
+              <span className="tl-searchbar-extra-label">{t('toursPage.sortLabel')}</span>
               {SORT_OPTIONS.map((opt) => (
                 <button
                   type="button"
@@ -160,16 +161,16 @@ export default function ToursPage() {
 
           {loading && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-              Turlar yüklənir...
+              {t('toursSection.loading')}
             </div>
           )}
           {!loading && empty && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-              Hazırda göstəriləcək tur yoxdur.
+              {t('toursSection.empty')}
             </div>
           )}
           {!loading && !empty && pageTours.length === 0 && (
-            <p className="tl-blog-empty">Bu kateqoriyada hələ tur yoxdur.</p>
+            <p className="tl-blog-empty">{t('toursPage.emptyCategory')}</p>
           )}
 
           {!loading && pageTours.length > 0 && (
@@ -181,14 +182,14 @@ export default function ToursPage() {
           )}
 
           {totalPages > 1 && (
-            <nav className="tl-pagination" aria-label="Tur səhifələri">
+            <nav className="tl-pagination" aria-label="Tour pages">
               <button
                 type="button"
                 className="tl-pagination-btn"
                 onClick={() => goToPage(page - 1)}
                 disabled={page === 1}
               >
-                ← Əvvəlki
+                {t('common.previous')}
               </button>
               <div className="tl-pagination-pages">
                 {paginationItems(page, totalPages).map((n, i) =>
@@ -213,7 +214,7 @@ export default function ToursPage() {
                 onClick={() => goToPage(page + 1)}
                 disabled={page === totalPages}
               >
-                Növbəti →
+                {t('common.next')}
               </button>
             </nav>
           )}
@@ -222,14 +223,13 @@ export default function ToursPage() {
 
       <ReviewsSection />
 
-      <FaqSection tag="Suallar" title="Turlarla bağlı tez-tez verilən suallar" items={TOURS_FAQ} />
+      <FaqSection tag={t('toursFaq.tag')} title={t('toursFaq.title')} items={t('toursFaq.items', { returnObjects: true })} />
 
       <section>
         <div className="tl-section">
           <SeoBodyText key={category}>
-            {categoryMeta.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            <p>{t(`tourCategoryMeta.${categoryMetaKey}.p1`)}</p>
+            <p>{t(`tourCategoryMeta.${categoryMetaKey}.p2`)}</p>
           </SeoBodyText>
         </div>
       </section>

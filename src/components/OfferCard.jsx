@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedNavigate } from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
 import { contactManager, managerLabel } from '../utils/managers';
 import { formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
@@ -13,9 +14,9 @@ export function formatOfferDate(yyyymmdd) {
 // managerLink()/contactManager() only read title/permalink — a live-search
 // offer isn't a "tour" post, so it's shaped into that same minimal contract
 // here rather than changing utils/managers.js.
-export function offerContactShape(offer) {
+export function offerContactShape(offer, t) {
   return {
-    title: [offer.hotelName || offer.tourTitle, offer.nights ? `${offer.nights} gecə` : '', offer.meal]
+    title: [offer.hotelName || offer.tourTitle, offer.nights ? t('offerDetail.nights', { n: offer.nights }) : '', offer.meal]
       .filter(Boolean)
       .join(' — '),
     permalink: '',
@@ -31,7 +32,8 @@ export function offerContactShape(offer) {
 // gradient (utils/offerVisual.js) fills in instead, since Kompas itself has
 // no hotel-photo API.
 export default function OfferCard({ offer, photos }) {
-  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const navigate = useLocalizedNavigate();
   const { isAuthenticated, profile } = useAuth();
   const [photoUrl, setPhotoUrl] = useState(null);
 
@@ -60,7 +62,7 @@ export default function OfferCard({ offer, photos }) {
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
               </svg>
-              +{formatPoints(reward.points)} Lab Point
+              +{formatPoints(reward.points)} {t('tourCard.labPoint')}
             </span>
           </div>
         )}
@@ -74,7 +76,7 @@ export default function OfferCard({ offer, photos }) {
       <div className="tl-pkg-body">
         <h3 className="tl-pkg-name">{offer.hotelName}</h3>
         <div className="tl-pkg-meta" style={{ display: 'block', color: 'var(--tl-gray-600)', lineHeight: 1.5, marginBottom: 14, minHeight: 33 }}>
-          {[offer.tourTitle, offer.nights ? `${offer.nights} gecə` : '', offer.meal].filter(Boolean).join(' · ')}
+          {[offer.tourTitle, offer.nights ? t('offerDetail.nights', { n: offer.nights }) : '', offer.meal].filter(Boolean).join(' · ')}
         </div>
         {(offer.checkIn || offer.checkOut) && (
           <div className="tl-pkg-dates">
@@ -85,7 +87,7 @@ export default function OfferCard({ offer, photos }) {
                   <path d="M3 10H21M8 3V6M16 3V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
                 <div>
-                  <span className="tl-pkg-dates-label">Giriş</span>
+                  <span className="tl-pkg-dates-label">{t('offerDetail.checkInLabel')}</span>
                   <span className="tl-pkg-dates-value">{formatOfferDate(offer.checkIn)}</span>
                 </div>
               </div>
@@ -93,7 +95,7 @@ export default function OfferCard({ offer, photos }) {
             {offer.checkOut && (
               <div className="tl-pkg-dates-item">
                 <div>
-                  <span className="tl-pkg-dates-label">Çıxış</span>
+                  <span className="tl-pkg-dates-label">{t('offerDetail.checkOutLabel')}</span>
                   <span className="tl-pkg-dates-value">{formatOfferDate(offer.checkOut)}</span>
                 </div>
               </div>
@@ -106,7 +108,7 @@ export default function OfferCard({ offer, photos }) {
             {balanceDiscount && balanceDiscount.discountAzn > 0 && (
               <div className="tl-price-inst">
                 <span>
-                  Lab Point ilə: -{formatPrice(balanceDiscount.discountAzn, 'AZN')} → {formatPrice(balanceDiscount.finalAzn, 'AZN')}
+                  {t('tourCard.labPointDiscount', { discount: formatPrice(balanceDiscount.discountAzn, 'AZN'), final: formatPrice(balanceDiscount.finalAzn, 'AZN') })}
                 </span>
                 <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -122,15 +124,15 @@ export default function OfferCard({ offer, photos }) {
             style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-gray-100)', color: 'var(--tl-navy)' }}
             onClick={(e) => { e.stopPropagation(); openDetail(); }}
           >
-            Ətraflı
+            {t('tourCard.more')}
           </button>
           <button
             type="button"
             className="tl-btn-book"
             style={{ border: 'none', cursor: 'pointer' }}
-            onClick={(e) => { e.stopPropagation(); contactManager(offerContactShape(offer)); }}
+            onClick={(e) => { e.stopPropagation(); contactManager(offerContactShape(offer, t), t); }}
           >
-            {managerLabel()}
+            {managerLabel(t)}
           </button>
         </div>
       </div>

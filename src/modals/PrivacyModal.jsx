@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useModals } from '../context/ModalContext';
 
 export default function PrivacyModal() {
+  const { t } = useTranslation();
   const { privacyOpen, closePrivacy } = useModals();
 
   useEffect(() => {
@@ -88,84 +90,83 @@ export default function PrivacyModal() {
             marginBottom: 16,
           }}
         >
-          Gizlilik Siyasəti
+          {t('privacy.badge')}
         </div>
         <h2 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 24, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 6, letterSpacing: '-0.5px' }}>
-          Gizlilik Siyasəti – Travellab
+          {t('privacy.title')}
         </h2>
         <p style={{ fontSize: 13, color: 'rgba(29,41,57,0.55)', marginBottom: 28, lineHeight: 1.6 }}>
-          Travellab, sizin şəxsi məlumatlarınızın məxfiliyini qorumağa sadiqdir. Bu Gizlilik Siyasəti,{' '}
-          <a href="https://www.travellab.az" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--tl-green)' }}>
-            www.travellab.az
-          </a>{' '}
-          saytına daxil olduğunuz zaman toplanan məlumatların necə istifadə edildiyi və qorunduğunu izah edir.
+          <Trans
+            i18nKey="privacy.intro"
+            components={{ 1: <a href="https://www.travellab.az" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--tl-green)' }} /> }}
+          />
         </p>
 
         <div className="pv-section">
-          <div className="pv-h">Gizlilik Öhdəliyimiz</div>
+          <div className="pv-h">{t('privacy.s1Title')}</div>
           <ul className="pv-ul">
-            <li>Müştərilərimizin bizimlə paylaşdığı məlumatları yüksək təhlükəsizlik standartlarına əsasən qoruyacağıq.</li>
-            <li>Şəxsi məlumatların toplanması yalnız xidmətlərimizi göstərmək məqsədi ilə məhdudlaşdırılacaq.</li>
-            <li>Müştəri məlumatlarına yalnız səlahiyyətli əməkdaşlarımızın çıxışı olacaq.</li>
-            <li>Müştəri məlumatlarını heç bir xarici təşkilata, əvvəlcədən xəbərdarlıq etmədən açıqlamayacağıq.</li>
-            <li>Dəstək tərəfdaşlarımızın məxfilik standartlarına riayət etmələrini təmin edəcəyik.</li>
-            <li>İstifadəçilərə öz məlumatlarına çıxış və düzəliş etmək imkanı yaradacağıq.</li>
+            <li>{t('privacy.s1i1')}</li>
+            <li>{t('privacy.s1i2')}</li>
+            <li>{t('privacy.s1i3')}</li>
+            <li>{t('privacy.s1i4')}</li>
+            <li>{t('privacy.s1i5')}</li>
+            <li>{t('privacy.s1i6')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">Topladığımız Məlumatlar</div>
-          <p className="pv-p"><strong style={{ color: 'var(--tl-navy)' }}>Şəxsi Məlumatlar:</strong></p>
+          <div className="pv-h">{t('privacy.s2Title')}</div>
+          <p className="pv-p"><strong style={{ color: 'var(--tl-navy)' }}>{t('privacy.s2Personal')}</strong></p>
           <ul className="pv-ul">
-            <li>Ad, soyad</li>
-            <li>Ünvan</li>
-            <li>Telefon nömrəsi</li>
-            <li>E-poçt ünvanı</li>
-            <li>Kompüterinizə dair texniki məlumatlar</li>
+            <li>{t('privacy.s2i1')}</li>
+            <li>{t('privacy.s2i2')}</li>
+            <li>{t('privacy.s2i3')}</li>
+            <li>{t('privacy.s2i4')}</li>
+            <li>{t('privacy.s2i5')}</li>
           </ul>
-          <div className="pv-note">⚠️ 13 yaşından kiçik uşaqlardan şəxsi məlumat toplanmır. 18 yaşdan aşağı istifadəçilərin valideyn razılığı olmadan məlumat verməsi qadağandır.</div>
+          <div className="pv-note">{t('privacy.s2Note')}</div>
           <p className="pv-p" style={{ marginTop: 12 }}>
-            <strong style={{ color: 'var(--tl-navy)' }}>Saytdan İstifadə Məlumatları:</strong> Saytımıza daxil olduğunuz zaman IP ünvanınız və vebsaytdakı davranışlarınız avtomatik toplanır.
+            <strong style={{ color: 'var(--tl-navy)' }}>{t('privacy.s2Usage')}</strong> {t('privacy.s2UsageDesc')}
           </p>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">Məlumatlardan Necə İstifadə Edirik</div>
+          <div className="pv-h">{t('privacy.s3Title')}</div>
           <ul className="pv-ul">
-            <li>Xidmətlərimizin təmin edilməsi və təkmilləşdirilməsi</li>
-            <li>Yeni məhsul və xidmətlər barədə sizə məlumat göndərmək</li>
-            <li>Saytın və reklamların fərdiləşdirilməsi</li>
-            <li>İstifadəçi təcrübəsinin təhlili və təkmilləşdirilməsi</li>
-            <li>Hüquqi tələblərə uyğun hərəkət etmək</li>
+            <li>{t('privacy.s3i1')}</li>
+            <li>{t('privacy.s3i2')}</li>
+            <li>{t('privacy.s3i3')}</li>
+            <li>{t('privacy.s3i4')}</li>
+            <li>{t('privacy.s3i5')}</li>
           </ul>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">Çərəzlər (Cookies)</div>
-          <p className="pv-p">Saytımızda çərəzlərdən istifadə olunur. Bu texnologiya istifadəçilərin təcrübəsini yaxşılaşdırmaq məqsədi daşıyır. Çərəzləri istədiyiniz zaman brauzerinizin ayarlarından deaktiv edə bilərsiniz.</p>
+          <div className="pv-h">{t('privacy.s4Title')}</div>
+          <p className="pv-p">{t('privacy.s4Desc')}</p>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">Təhlükəsizlik</div>
-          <p className="pv-p">Topladığımız şəxsi məlumatlar təhlükəsiz serverlərdə saxlanılır və icazəsiz girişə qarşı qorunur.</p>
+          <div className="pv-h">{t('privacy.s5Title')}</div>
+          <p className="pv-p">{t('privacy.s5Desc')}</p>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">Beynəlxalq Məlumat Transferi</div>
-          <p className="pv-p">İnternetin qlobal təbiətinə görə, məlumatların beynəlxalq ötürülməsi mümkündür. Saytımızdan istifadə etməklə bu cür ötürmələrə razılığınızı vermiş olursunuz.</p>
+          <div className="pv-h">{t('privacy.s6Title')}</div>
+          <p className="pv-p">{t('privacy.s6Desc')}</p>
         </div>
 
         <div className="pv-section">
-          <div className="pv-h">Gizlilik Siyasətində Dəyişikliklər</div>
-          <p className="pv-p">Bu Gizlilik Siyasəti zaman-zaman yenilənə bilər. Dəyişikliklər bu səhifədə dərc olunacaq. Əgər dəyişikliklər əvvəl təqdim etdiyiniz məlumatların istifadəsinə əhəmiyyətli təsir göstərərsə, razılığınız ayrıca alınacaq.</p>
+          <div className="pv-h">{t('privacy.s7Title')}</div>
+          <p className="pv-p">{t('privacy.s7Desc')}</p>
         </div>
 
         <div className="pv-section" style={{ marginBottom: 0 }}>
-          <div className="pv-h">Əlaqə</div>
+          <div className="pv-h">{t('privacy.s8Title')}</div>
           <div className="pv-contact">
             <span style={{ fontSize: 20 }}>📧</span>
             <div>
-              <div style={{ fontSize: 12, color: 'rgba(29,41,57,0.5)', marginBottom: 2 }}>Sual və narahatlıqlarınız üçün:</div>
+              <div style={{ fontSize: 12, color: 'rgba(29,41,57,0.5)', marginBottom: 2 }}>{t('privacy.s8Desc')}</div>
               <a href="mailto:info@travellab.az">info@travellab.az</a>
             </div>
           </div>

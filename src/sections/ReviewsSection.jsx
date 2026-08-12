@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { REVIEWS } from '../data/reviews';
 import { truncate } from '../utils/text';
 
@@ -8,7 +9,11 @@ const SECONDS_PER_CARD = 10; // mobile marquee pace, matched to desktop's ~30px/
 const RESUME_DELAY = 2000; // ms after a manual arrow click before autoplay resumes
 const MOBILE_QUERY = '(max-width: 900px)';
 
+// Review text itself is never translated (see reviews.js — real customer
+// quotes already in their original AZ/RU/EN, translating them would
+// misrepresent who wrote what), only the surrounding chrome is.
 function ReviewCard({ review, hidden }) {
+  const { t } = useTranslation();
   return (
     <div className="tl-review-card" aria-hidden={hidden || undefined}>
       <div className="tl-review-head">
@@ -17,7 +22,7 @@ function ReviewCard({ review, hidden }) {
         </div>
         <div>
           <div className="tl-review-name">{review.reviewerName}</div>
-          <div className="tl-review-stars" aria-label="5 ulduz">★★★★★</div>
+          <div className="tl-review-stars" aria-label={t('reviews.fiveStars')}>★★★★★</div>
         </div>
       </div>
       <p className="tl-review-text">{truncate(review.text, 220)}</p>
@@ -28,6 +33,7 @@ function ReviewCard({ review, hidden }) {
 // Renders nothing until real reviews are actually added to data/reviews.js
 // — no placeholder/fake testimonials shipped by default.
 export default function ReviewsSection() {
+  const { t } = useTranslation();
   const gridRef = useRef(null);
   const pausedRef = useRef(false);
   const positionRef = useRef(0);
@@ -106,8 +112,8 @@ export default function ReviewsSection() {
       <section id="reviews" className="tl-section">
         <div className="tl-section-header">
           <div>
-            <div className="tl-tag">Rəylər</div>
-            <h2 className="tl-title">Turistlərimizin Rəyləri ❤️</h2>
+            <div className="tl-tag">{t('reviews.tag')}</div>
+            <h2 className="tl-title">{t('reviews.title')}</h2>
           </div>
         </div>
 
@@ -129,13 +135,13 @@ export default function ReviewsSection() {
     <section id="reviews" className="tl-section">
       <div className="tl-section-header">
         <div>
-          <div className="tl-tag">Rəylər</div>
-          <h2 className="tl-title">Turistlərimizin Rəyləri ❤️</h2>
+          <div className="tl-tag">{t('reviews.tag')}</div>
+          <h2 className="tl-title">{t('reviews.title')}</h2>
         </div>
       </div>
 
       <div className="tl-tours-scroller">
-        <button type="button" className="tl-tours-arrow tl-tours-arrow-prev" aria-label="Əvvəlki rəylər" onClick={() => scrollBy(-SCROLL_STEP)}>
+        <button type="button" className="tl-tours-arrow tl-tours-arrow-prev" aria-label={t('reviews.prev')} onClick={() => scrollBy(-SCROLL_STEP)}>
           ‹
         </button>
         <div className="tl-review-grid" ref={gridRef}>
@@ -143,7 +149,7 @@ export default function ReviewsSection() {
             <ReviewCard key={review.id} review={review} />
           ))}
         </div>
-        <button type="button" className="tl-tours-arrow tl-tours-arrow-next" aria-label="Növbəti rəylər" onClick={() => scrollBy(SCROLL_STEP)}>
+        <button type="button" className="tl-tours-arrow tl-tours-arrow-next" aria-label={t('reviews.next')} onClick={() => scrollBy(SCROLL_STEP)}>
           ›
         </button>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Shared popover-styled dropdown for every "pick a country" field on the
 // site (tour search destination, viza country) — replaces the native
@@ -7,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 // `options` list or grouped `groups` (each { label, options }), matching
 // how VizaSection splits Şengen vs Digər ölkələr.
 export default function CountrySelect({ label, value, onChange, options, groups, extraOption, placeholder, disabled, fieldClassName, triggerClassName }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const rootRef = useRef(null);
@@ -63,7 +65,7 @@ export default function CountrySelect({ label, value, onChange, options, groups,
         onClick={() => !disabled && setOpen((o) => !o)}
         disabled={disabled}
       >
-        {selected ? selected.label : (placeholder || 'Seçin')}
+        {selected ? selected.label : (placeholder || t('countrySelect.select'))}
       </button>
 
       {open && (
@@ -73,7 +75,7 @@ export default function CountrySelect({ label, value, onChange, options, groups,
               ref={searchRef}
               type="text"
               className="tl-country-search"
-              placeholder="Axtar…"
+              placeholder={t('countrySelect.searchPlaceholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -95,7 +97,7 @@ export default function CountrySelect({ label, value, onChange, options, groups,
             )}
             {extraOption && matches(extraOption) && renderOption(extraOption)}
             {allOptions.filter(matches).length === 0 && (
-              <div className="tl-country-empty">Nəticə tapılmadı</div>
+              <div className="tl-country-empty">{t('countrySelect.noResults')}</div>
             )}
           </div>
         </div>
