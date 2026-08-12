@@ -774,6 +774,22 @@
     "tag": "Партнёры",
     "title": "Наши надёжные партнёры"
   },
+  "blogCategoryLabels": {
+    "Məsləhətlər": "Советы",
+    "Bələdçi": "Гид",
+    "Xəbərlər": "Новости",
+    "Macəra": "Приключения",
+    "Vizasız Ölkələr": "Безвизовые страны",
+    "Tibbi Turizm": "Медицинский туризм"
+  },
+  "blogServiceLinks": {
+    "Məsləhətlər": "Поиск авиабилетов",
+    "Bələdçi": "Готовые турпакеты",
+    "Xəbərlər": "Предложения на рейсы и отели",
+    "Macəra": "Экзотические туры",
+    "Vizasız Ölkələr": "Визовые услуги",
+    "Tibbi Turizm": "О Travellab"
+  },
   "navProfile": {
     "profile": "Профиль",
     "referralLink": "Реферальная ссылка другу",

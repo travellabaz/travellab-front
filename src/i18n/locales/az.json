@@ -774,6 +774,22 @@
     "tag": "Partnyorlar",
     "title": "Etibarlı Tərəfdaşlarımız"
   },
+  "blogCategoryLabels": {
+    "Məsləhətlər": "Məsləhətlər",
+    "Bələdçi": "Bələdçi",
+    "Xəbərlər": "Xəbərlər",
+    "Macəra": "Macəra",
+    "Vizasız Ölkələr": "Vizasız Ölkələr",
+    "Tibbi Turizm": "Tibbi Turizm"
+  },
+  "blogServiceLinks": {
+    "Məsləhətlər": "Aviabilet axtarışı",
+    "Bələdçi": "Hazır tur paketləri",
+    "Xəbərlər": "Uçuş və otel təklifləri",
+    "Macəra": "Ekzotik turlar",
+    "Vizasız Ölkələr": "Viza xidməti",
+    "Tibbi Turizm": "Travellab haqqında"
+  },
   "navProfile": {
     "profile": "Profil",
     "referralLink": "Dosta dəvət linki",

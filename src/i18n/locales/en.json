@@ -774,6 +774,22 @@
     "tag": "Partners",
     "title": "Our Trusted Partners"
   },
+  "blogCategoryLabels": {
+    "Məsləhətlər": "Tips",
+    "Bələdçi": "Guide",
+    "Xəbərlər": "News",
+    "Macəra": "Adventure",
+    "Vizasız Ölkələr": "Visa-Free Countries",
+    "Tibbi Turizm": "Medical Tourism"
+  },
+  "blogServiceLinks": {
+    "Məsləhətlər": "Flight search",
+    "Bələdçi": "Ready-made tour packages",
+    "Xəbərlər": "Flight and hotel deals",
+    "Macəra": "Exotic tours",
+    "Vizasız Ölkələr": "Visa service",
+    "Tibbi Turizm": "About Travellab"
+  },
   "navProfile": {
     "profile": "Profile",
     "referralLink": "Referral link for a friend",

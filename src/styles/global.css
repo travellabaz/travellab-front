@@ -229,9 +229,14 @@ html {
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--tl-gray-200);
   box-shadow: 0 2px 20px rgba(10, 30, 25, 0.05);
-  display: flex;
+  /* Grid, not flex + space-between: a true-centered middle column (the
+     nav links) needs the two side columns to never overlap it, which
+     justify-content: space-between doesn't guarantee once the outer
+     columns' widths differ — position: absolute centering had the same
+     problem, overlapping .tl-nav-right at in-between viewport widths. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 0 32px;
 }
 
@@ -244,6 +249,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
+  justify-self: start;
 }
 
 .tl-nav-divider {
@@ -269,6 +275,7 @@ html {
   list-style: none;
   margin: 0;
   padding: 0;
+  justify-self: center;
 }
 
 .tl-nav-links a {
@@ -555,6 +562,7 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   gap: 10px;
   align-items: center;
+  justify-self: end;
 }
 
 .tl-btn-login {
@@ -3628,11 +3636,7 @@ body:not(.tl-subpage) .tl-about-extra {
     height: 23px !important;
   }
 
-  /* No room next to the logo + burger button at this width. Not
-     .tl-nav-gift-btn — its own hide rule lives with its base styles
-     further down the file; putting it here got silently overridden by
-     that later same-specificity rule (classic media-query-vs-source-order
-     gotcha, since @media doesn't add specificity). */
+  /* No room next to the logo + burger button at this width. */
   .tl-nav-divider {
     display: none;
   }
@@ -5280,37 +5284,6 @@ body:not(.tl-subpage) .tl-about-extra {
 @media (max-width: 560px) {
   .tl-gift-features {
     grid-template-columns: 1fr;
-  }
-}
-
-/* ── NAV GIFT CARD BUTTON (replaces the ATAA badge slot, desktop only —
-   matches its old display:none-on-mobile breakpoint; mobile gets its own
-   entry point instead, see .tl-hero-pill-gift) ── */
-.tl-nav-gift-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #FF7A45, #F5384E);
-  color: #fff;
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 8px 16px;
-  border-radius: 100px;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(245, 56, 78, .25);
-  transition: transform .18s, box-shadow .18s;
-}
-
-.tl-nav-gift-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(245, 56, 78, .35);
-  text-decoration: none;
-}
-
-@media (max-width: 900px) {
-  .tl-nav-gift-btn {
-    display: none;
   }
 }
 

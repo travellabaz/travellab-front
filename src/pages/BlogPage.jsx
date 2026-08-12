@@ -87,7 +87,7 @@ export default function BlogPage() {
                 onClick={() => selectCategory(c.name)}
                 aria-pressed={category === c.name}
               >
-                {c.name}
+                {t(`blogCategoryLabels.${c.name}`)}
               </button>
             ))}
           </div>
@@ -115,7 +115,7 @@ export default function BlogPage() {
                       }}
                     />
                     <div className="tl-blog-body">
-                      <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
+                      <span className={`tl-blog-cat ${post.categoryClass}`}>{t(`blogCategoryLabels.${post.category}`)}</span>
                       <div className="tl-blog-date">{formatDateAz(post.date)}</div>
                       <h3 className="tl-blog-title">{post.title}</h3>
                       <div className="tl-blog-exc">{post.excerpt}</div>

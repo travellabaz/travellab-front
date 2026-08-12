@@ -107,7 +107,7 @@ export default function BlogPostPage() {
                 { name: post.title },
               ]}
             />
-            <span className={`tl-blog-cat ${post.categoryClass}`}>{post.category}</span>
+            <span className={`tl-blog-cat ${post.categoryClass}`}>{t(`blogCategoryLabels.${post.category}`)}</span>
             <div className="tl-blog-date">{formatDateAz(post.date)} · {post.author || 'Travellab'}</div>
             <h1 className="tl-article-title">{post.title}</h1>
             <p className="tl-article-lead">{post.excerpt}</p>
@@ -167,7 +167,7 @@ export default function BlogPostPage() {
                       style={{ backgroundImage: `url('${related.coverImage}')` }}
                     />
                     <div className="tl-related-body">
-                      <span className={`tl-blog-cat ${related.categoryClass}`}>{related.category}</span>
+                      <span className={`tl-blog-cat ${related.categoryClass}`}>{t(`blogCategoryLabels.${related.category}`)}</span>
                       <h4 className="tl-related-title">{related.title}</h4>
                       <p className="tl-related-exc">{related.excerpt}</p>
                     </div>
@@ -176,7 +176,7 @@ export default function BlogPostPage() {
                 {endServiceLink && (
                   <Link to={endServiceLink.to} className="tl-end-service-card">
                     <span className="tl-end-service-label">{t('blog.serviceLabel')}</span>
-                    <span className="tl-end-service-cta">{endServiceLink.label} →</span>
+                    <span className="tl-end-service-cta">{t(`blogServiceLinks.${post.category}`)} →</span>
                   </Link>
                 )}
               </div>
@@ -194,7 +194,7 @@ export default function BlogPostPage() {
               onChange={(e) => setRelatedCategory(e.target.value)}
             >
               {BLOG_CATEGORIES.map((c) => (
-                <option key={c.name} value={c.name}>{c.name}</option>
+                <option key={c.name} value={c.name}>{t(`blogCategoryLabels.${c.name}`)}</option>
               ))}
             </select>
           </div>
@@ -215,7 +215,7 @@ export default function BlogPostPage() {
                       style={{ backgroundImage: `url('${related.coverImage}')` }}
                     />
                     <div className="tl-related-body">
-                      <span className={`tl-blog-cat ${related.categoryClass}`}>{related.category}</span>
+                      <span className={`tl-blog-cat ${related.categoryClass}`}>{t(`blogCategoryLabels.${related.category}`)}</span>
                       <div className="tl-blog-date">{formatDateAz(related.date)}</div>
                       <h4 className="tl-related-title">{related.title}</h4>
                       <p className="tl-related-exc">{related.excerpt}</p>
