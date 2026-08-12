@@ -4,9 +4,13 @@ import { useTranslation } from 'react-i18next';
 import LogoFull from './LogoFull';
 import NavProfile from './NavProfile';
 import LanguageSwitcher from './LanguageSwitcher';
+import AuthMenu from './AuthMenu';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+import { SUPPORTED_LANGUAGES } from '../i18n';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
+
+const LANG_SHORT_LABEL = { az: 'AZ', ru: 'RU', en: 'EN' };
 
 const NAV_LINK_PATHS = [
   { path: '/search', key: 'flights' },
@@ -52,9 +56,26 @@ export default function Nav() {
             </NavLink>
           </li>
         ))}
+        {/* Mobile-menu-only: the top bar's own LanguageSwitcher dropdown is
+            hidden at this breakpoint (see .tl-nav-lang-switcher's media
+            rule) — nesting a second dropdown inside an already-open menu
+            reads worse than a flat AZ/RU/EN row, the usual pattern for
+            language options inside a mobile hamburger menu. */}
+        <li className="tl-nav-mobile-lang">
+          {SUPPORTED_LANGUAGES.map((l) => (
+            <Link
+              key={l}
+              to={buildLocalizedPath(location.pathname, l) + location.search}
+              className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
+              onClick={() => setMobileOpen(false)}
+            >
+              {LANG_SHORT_LABEL[l]}
+            </Link>
+          ))}
+        </li>
       </ul>
       <div className="tl-nav-right">
-        <LanguageSwitcher />
+        <LanguageSwitcher className="tl-nav-lang-switcher" />
         <span className="tl-nav-divider" aria-hidden="true" />
         <button
           type="button"
@@ -68,12 +89,15 @@ export default function Nav() {
           <NavProfile />
         ) : (
           <>
-            <a href="#" className="tl-btn-login" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>
-              {t('nav.login')}
-            </a>
-            <a href="#" className="tl-btn-cta" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>
-              {t('nav.register')}
-            </a>
+            <div className="tl-nav-auth-desktop">
+              <a href="#" className="tl-btn-login" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>
+                {t('nav.login')}
+              </a>
+              <a href="#" className="tl-btn-cta" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>
+                {t('nav.register')}
+              </a>
+            </div>
+            <AuthMenu className="tl-nav-auth-mobile" />
           </>
         )}
       </div>

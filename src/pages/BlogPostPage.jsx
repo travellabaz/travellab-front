@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
@@ -56,6 +56,19 @@ export default function BlogPostPage() {
   useEffect(() => {
     setRelatedCategory(post?.category);
   }, [slug]);
+
+  // Custom dropdown replacing a native <select> — matches the site's own
+  // trigger+popover pattern (CountrySelect.jsx) instead of the browser's
+  // default select styling.
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const categoryRef = useRef(null);
+  useEffect(() => {
+    function onDocClick(e) {
+      if (categoryRef.current && !categoryRef.current.contains(e.target)) setCategoryOpen(false);
+    }
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
 
   if (!post) {
     return (
@@ -186,17 +199,35 @@ export default function BlogPostPage() {
 
         <aside className="tl-article-sidebar">
           <div className="tl-sidebar-block">
-            <label className="tl-sidebar-label" htmlFor="blog-category-select">{t('blog.category')}</label>
-            <select
-              id="blog-category-select"
-              className="tl-sidebar-select"
-              value={relatedCategory}
-              onChange={(e) => setRelatedCategory(e.target.value)}
-            >
-              {BLOG_CATEGORIES.map((c) => (
-                <option key={c.name} value={c.name}>{t(`blogCategoryLabels.${c.name}`)}</option>
-              ))}
-            </select>
+            <label className="tl-sidebar-label" id="blog-category-label">{t('blog.category')}</label>
+            <div className="tl-sidebar-select-wrap" ref={categoryRef}>
+              <button
+                type="button"
+                className="tl-sidebar-select"
+                aria-labelledby="blog-category-label"
+                aria-expanded={categoryOpen}
+                onClick={() => setCategoryOpen((o) => !o)}
+              >
+                {t(`blogCategoryLabels.${relatedCategory}`)}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              {categoryOpen && (
+                <div className="tl-sidebar-select-popover">
+                  {BLOG_CATEGORIES.map((c) => (
+                    <button
+                      type="button"
+                      key={c.name}
+                      className={'tl-sidebar-select-option' + (c.name === relatedCategory ? ' active' : '')}
+                      onClick={() => { setRelatedCategory(c.name); setCategoryOpen(false); }}
+                    >
+                      {t(`blogCategoryLabels.${c.name}`)}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="tl-sidebar-block">

@@ -278,6 +278,13 @@ html {
   justify-self: center;
 }
 
+/* Hidden at desktop widths — .tl-nav-links itself is a plain flex row
+   there, so this <li> would otherwise show inline as a stray nav item.
+   Re-enabled inside the mobile open-menu media query further down. */
+.tl-nav-mobile-lang {
+  display: none;
+}
+
 .tl-nav-links a {
   display: flex;
   align-items: center;
@@ -563,6 +570,16 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 10px;
   align-items: center;
   justify-self: end;
+}
+
+.tl-nav-auth-desktop {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.tl-nav-auth-mobile {
+  display: none;
 }
 
 .tl-btn-login {
@@ -2938,8 +2955,16 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 8px;
 }
 
+.tl-sidebar-select-wrap {
+  position: relative;
+}
+
 .tl-sidebar-select {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -2951,6 +2976,51 @@ body:not(.tl-subpage) .tl-about-extra {
   outline: none;
   cursor: pointer;
   box-sizing: border-box;
+  text-align: left;
+}
+
+.tl-sidebar-select svg {
+  flex-shrink: 0;
+  color: var(--tl-gray-400);
+}
+
+.tl-sidebar-select-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  padding: 8px;
+}
+
+.tl-sidebar-select-option {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tl-sidebar-select-option:hover {
+  background: var(--tl-gray-100);
+}
+
+.tl-sidebar-select-option.active {
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
 }
 
 .tl-sidebar-title {
@@ -3573,6 +3643,44 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-nav-links.tl-nav-open li:last-child a {
     border-bottom: none;
+  }
+
+  .tl-nav-links.tl-nav-open .tl-nav-mobile-lang {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 8px 4px;
+  }
+
+  /* Extra-specific selector needed to beat .tl-nav-links.tl-nav-open a's
+     block/padding/border-bottom styling meant for the full-width nav
+     links above this row — these are small centered pills instead. */
+  .tl-nav-links.tl-nav-open .tl-nav-mobile-lang .tl-nav-mobile-lang-opt {
+    display: inline-flex;
+    padding: 7px 16px;
+    border: 1px solid var(--tl-gray-200);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tl-gray-600);
+  }
+
+  .tl-nav-links.tl-nav-open .tl-nav-mobile-lang .tl-nav-mobile-lang-opt.active {
+    border-color: transparent;
+    background: var(--tl-green-light);
+    color: var(--tl-green-dark);
+  }
+
+  .tl-nav-lang-switcher {
+    display: none;
+  }
+
+  .tl-nav-auth-desktop {
+    display: none;
+  }
+
+  .tl-nav-auth-mobile {
+    display: block;
   }
 
   .tl-pkg-grid,
@@ -5369,4 +5477,72 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-lang-switcher-option.active {
   background: var(--tl-green-light);
   color: var(--tl-green-dark);
+}
+
+/* ── AUTH MENU (AuthMenu.jsx, mobile-only) ── */
+.tl-auth-menu {
+  position: relative;
+}
+
+.tl-auth-menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: 100px;
+  background: var(--tl-white);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.tl-auth-menu-trigger:hover {
+  border-color: var(--tl-gray-300, #cbd5e1);
+  background: var(--tl-gray-100);
+}
+
+.tl-auth-menu-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 40;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  padding: 8px;
+}
+
+.tl-auth-menu-option {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tl-auth-menu-option:hover {
+  background: var(--tl-gray-100);
+}
+
+.tl-auth-menu-option-cta {
+  background: var(--tl-green);
+  color: var(--tl-white);
+}
+
+.tl-auth-menu-option-cta:hover {
+  background: var(--tl-green-dark);
 }

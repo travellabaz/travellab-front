@@ -27,7 +27,8 @@
     "menu": "Menyu",
     "login": "Daxil ol",
     "register": "Qeydiyyat",
-    "giftCard": "Hədiyyə Kartı"
+    "giftCard": "Hədiyyə Kartı",
+    "account": "Hesab"
   },
   "mobileTabBar": {
     "home": "Ana səhifə",

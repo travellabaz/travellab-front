@@ -27,7 +27,8 @@
     "menu": "Меню",
     "login": "Войти",
     "register": "Регистрация",
-    "giftCard": "Подарочная карта"
+    "giftCard": "Подарочная карта",
+    "account": "Аккаунт"
   },
   "mobileTabBar": {
     "home": "Главная",

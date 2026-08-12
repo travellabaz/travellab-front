@@ -27,7 +27,8 @@
     "menu": "Menu",
     "login": "Log in",
     "register": "Sign up",
-    "giftCard": "Gift Card"
+    "giftCard": "Gift Card",
+    "account": "Account"
   },
   "mobileTabBar": {
     "home": "Home",
