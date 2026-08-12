@@ -6,7 +6,7 @@ import { useModals } from '../context/ModalContext';
 // (which fit fine on desktop) into one trigger, so the top bar doesn't
 // have to fit logo + language switcher + burger + two auth buttons in a
 // few hundred px. Same trigger+popover shape as LanguageSwitcher.jsx.
-export default function AuthMenu({ className }) {
+export default function AuthMenu({ className, onOpen }) {
   const { t } = useTranslation();
   const { openAuth } = useModals();
   const [open, setOpen] = useState(false);
@@ -27,7 +27,16 @@ export default function AuthMenu({ className }) {
 
   return (
     <div className={'tl-auth-menu' + (className ? ' ' + className : '')} ref={rootRef}>
-      <button type="button" className="tl-auth-menu-trigger" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={t('nav.account')}>
+      <button
+        type="button"
+        className="tl-auth-menu-trigger"
+        onClick={() => setOpen((o) => {
+          if (!o) onOpen?.();
+          return !o;
+        })}
+        aria-expanded={open}
+        aria-label={t('nav.account')}
+      >
         👤
       </button>
 

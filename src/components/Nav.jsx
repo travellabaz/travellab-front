@@ -97,7 +97,7 @@ export default function Nav() {
                 {t('nav.register')}
               </a>
             </div>
-            <AuthMenu className="tl-nav-auth-mobile" />
+            <AuthMenu className="tl-nav-auth-mobile" onOpen={() => setMobileOpen(false)} />
           </>
         )}
       </div>

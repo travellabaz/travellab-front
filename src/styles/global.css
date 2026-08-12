@@ -5511,7 +5511,12 @@ body:not(.tl-subpage) .tl-about-extra {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  z-index: 40;
+  /* Above .tl-nav-links.tl-nav-open's z-index: 99 — both live inside
+     .tl-nav's own stacking context, so a lower value here would render
+     behind the mobile hamburger menu whenever both happened to be open
+     (AuthMenu.jsx also closes the hamburger menu on open, but this is a
+     safety net against the two ever stacking the wrong way). */
+  z-index: 110;
   width: 160px;
   display: flex;
   flex-direction: column;
