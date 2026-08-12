@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Every page-end SEO text block follows the same shape (SEO Paketi v2,
 // "Section 0"): no heading, left-aligned, collapsed to ~2-3 lines by
@@ -9,6 +10,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 // non-JS crawler still sees it, just visually clipped via CSS max-height
 // until expanded. Never conditionally unmount `children`.
 export default function SeoBodyText({ children }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   // Defaults to true (matches every server/first-paint render, before this
   // can measure anything) so the toggle never flashes in; corrected
@@ -32,7 +34,7 @@ export default function SeoBodyText({ children }) {
       </div>
       {!expanded && overflows && (
         <button type="button" className="tl-seo-body-toggle" onClick={() => setExpanded(true)}>
-          Ətraflı oxu
+          {t('common.readMore')}
         </button>
       )}
     </div>

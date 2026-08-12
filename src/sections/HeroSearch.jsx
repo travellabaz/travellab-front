@@ -8,11 +8,13 @@ import { useModals } from '../context/ModalContext';
 const PILLS_SCROLL_SPEED = 0.6; // px per animation frame
 const PILLS_END_PAUSE_MS = 900; // pause once fully revealed, before scrolling back
 
-const HERO_PHOTOS = [
-  { src: '/images/hero/aurora.jpg', alt: 'Şimal işıqları — dağlar üzərində gecə göyü' },
-  { src: '/images/hero/balloons.jpg', alt: 'Kapadokyada isti hava şarları' },
-  { src: '/images/hero/plane-wing.jpg', alt: 'Təyyarə pəncərəsindən gün batımı mənzərəsi' },
-  { src: '/images/hero/mosque.jpg', alt: 'İstanbulda məscid və Boğaz — axşam mənzərəsi' },
+// Alt text lives in the hero.photoAlts translation array (indexed the same
+// as this list) since it can't be resolved until the component has a `t`.
+const HERO_PHOTO_SRCS = [
+  '/images/hero/aurora.jpg',
+  '/images/hero/balloons.jpg',
+  '/images/hero/plane-wing.jpg',
+  '/images/hero/mosque.jpg',
 ];
 
 // This page is prerendered at build time (see prerender.mjs) and then
@@ -29,11 +31,13 @@ const HERO_PHOTOS = [
 // in as a prop rather than the component being remounted with different
 // content.
 export default function HeroSearch({ title }) {
-  const [photo, setPhoto] = useState(HERO_PHOTOS[0]);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
   const { t } = useTranslation();
   const pillsRef = useRef(null);
+  const photoAlts = t('hero.photoAlts', { returnObjects: true });
+  const photo = { src: HERO_PHOTO_SRCS[photoIndex], alt: photoAlts[photoIndex] };
 
   const heroTitle = title ?? (
     <>
@@ -43,7 +47,7 @@ export default function HeroSearch({ title }) {
   );
 
   useEffect(() => {
-    setPhoto(HERO_PHOTOS[Math.floor(Math.random() * HERO_PHOTOS.length)]);
+    setPhotoIndex(Math.floor(Math.random() * HERO_PHOTO_SRCS.length));
   }, []);
 
   // Mobile-only nudge: the pills row overflows there (see the
@@ -120,9 +124,9 @@ export default function HeroSearch({ title }) {
         <div className="tl-hero-bg" />
         <div className="tl-hero-grid" />
         <div className="tl-float tl-float-1">
-          🎫 GYD → IST <strong style={{ color: '#1DB47A' }}>$89-dan</strong>
+          🎫 GYD → IST <strong style={{ color: '#1DB47A' }}>{t('hero.floatFlightPrice')}</strong>
         </div>
-        <div className="tl-float tl-float-2">Hər tur alışında +10% Labpoint</div>
+        <div className="tl-float tl-float-2">{t('hero.floatLabpoint')}</div>
         <div className="tl-hero-content">
           <div className="tl-hero-badge">{t('hero.badge')}</div>
           <h1>{heroTitle}</h1>

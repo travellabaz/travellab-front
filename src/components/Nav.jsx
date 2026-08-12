@@ -52,12 +52,9 @@ export default function Nav() {
             </NavLink>
           </li>
         ))}
-        <li className="tl-nav-links-lang">
-          <LanguageSwitcher />
-        </li>
       </ul>
       <div className="tl-nav-right">
-        <LanguageSwitcher className="tl-nav-lang-switcher" />
+        <LanguageSwitcher />
         <Link to={localize('/hediyye-karti')} className="tl-nav-gift-btn">
           🎁 {t('nav.giftCard')}
         </Link>

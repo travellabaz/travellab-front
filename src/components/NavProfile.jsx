@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
 export default function NavProfile() {
+  const { t } = useTranslation();
   const { profile, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -27,7 +29,7 @@ export default function NavProfile() {
     <div style={{ position: 'relative' }} ref={rootRef}>
       <button type="button" className="nav-profile-btn" onClick={() => setOpen((o) => !o)}>
         <div className="nav-avatar">{profile.initials}</div>
-        <span>{profile.name || 'Profil'}</span>
+        <span>{profile.name || t('navProfile.profile')}</span>
         <span className="nav-lp-badge">{profile.points} LP</span>
       </button>
       <div className={'nav-dd' + (open ? ' open' : '')}>
@@ -46,7 +48,7 @@ export default function NavProfile() {
         {profile.referralLink && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--tl-gray-200)', marginBottom: 6 }}>
             <div style={{ fontSize: 10, color: 'rgba(29,41,57,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
-              🎁 Dosta dəvət linki
+              🎁 {t('navProfile.referralLink')}
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
               <input
@@ -82,7 +84,7 @@ export default function NavProfile() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {copied ? '✓' : 'Kopyala'}
+                {copied ? '✓' : t('navProfile.copy')}
               </button>
             </div>
           </div>
@@ -96,7 +98,7 @@ export default function NavProfile() {
             logout();
           }}
         >
-          🚪 Çıxış
+          🚪 {t('navProfile.logout')}
         </a>
       </div>
     </div>

@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Loading...",
+    "readMore": "Read more",
     "search": "Search",
     "viewAll": "View all",
     "notFoundTitle": "Page not found",
@@ -71,7 +72,15 @@
     "pillDeals": "Deals 🔥",
     "pillTours": "Tours",
     "pillGroupTours": "Group Tours",
-    "pillGiftCard": "🎁 Gift Card"
+    "pillGiftCard": "🎁 Gift Card",
+    "floatFlightPrice": "from $89",
+    "floatLabpoint": "+10% Labpoint on every tour purchase",
+    "photoAlts": [
+      "Northern lights — night sky over the mountains",
+      "Hot air balloons in Cappadocia",
+      "Sunset view from an airplane window",
+      "Mosque and the Bosphorus in Istanbul — evening view"
+    ]
   },
   "home": {
     "seoP1": "Travellab is a full-service travel agency based in Baku, offering customers flights, hotel booking, ready-made tour packages, visa services, and event tickets all in one place. We're a member of the Azerbaijan Travel Agencies Association (ATAA) and have served individual, corporate, and VIP clients reliably for years.",
@@ -535,9 +544,7 @@
     "password": "Password",
     "passwordPlaceholder": "At least 8 characters",
     "passwordRepeat": "Repeat password",
-    "agreeTermsPrefix": "I agree to the",
-    "agreeTermsLink": "Terms & Conditions",
-    "agreeTermsSuffix": "",
+    "agreeTerms": "I agree to the <1>Terms &amp; Conditions</1>",
     "continue": "Continue",
     "or": "or",
     "forgotPassword": "Forgot password",
@@ -762,5 +769,15 @@
     "Avropa": "Europe",
     "Ekzotik": "Exotic",
     "Viza": "Visa"
+  },
+  "partners": {
+    "tag": "Partners",
+    "title": "Our Trusted Partners"
+  },
+  "navProfile": {
+    "profile": "Profile",
+    "referralLink": "Referral link for a friend",
+    "copy": "Copy",
+    "logout": "Log out"
   }
 }

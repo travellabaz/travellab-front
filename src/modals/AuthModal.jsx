@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useModals } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
@@ -426,15 +426,18 @@ export default function AuthModal() {
                     style={{ width: 18, height: 18, marginTop: 1, accentColor: 'var(--tl-green)', flexShrink: 0, cursor: 'pointer' }}
                   />
                   <span style={{ fontSize: 12, color: 'rgba(29,41,57,.6)', lineHeight: 1.5 }}>
-                    {t('auth.agreeTermsPrefix')}{' '}
-                    <a
-                      href="#"
-                      onClick={(e) => { e.preventDefault(); openTerms(); }}
-                      style={{ color: 'var(--tl-green)', fontWeight: 600, textDecoration: 'underline' }}
-                    >
-                      {t('auth.agreeTermsLink')}
-                    </a>{' '}
-                    {t('auth.agreeTermsSuffix')}
+                    <Trans
+                      i18nKey="auth.agreeTerms"
+                      components={{
+                        1: (
+                          <a
+                            href="#"
+                            onClick={(e) => { e.preventDefault(); openTerms(); }}
+                            style={{ color: 'var(--tl-green)', fontWeight: 600, textDecoration: 'underline' }}
+                          />
+                        ),
+                      }}
+                    />
                   </span>
                 </label>
                 <button className={'am-btn' + (regLoading ? ' ld' : '')} disabled={regLoading} onClick={submitRegister}>

@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Yüklənir...",
+    "readMore": "Ətraflı oxu",
     "search": "Axtar",
     "viewAll": "Hamısına bax",
     "notFoundTitle": "Bu səhifə tapılmadı",
@@ -71,7 +72,15 @@
     "pillDeals": "Endirimlər 🔥",
     "pillTours": "Turlar",
     "pillGroupTours": "Qrup Turlar",
-    "pillGiftCard": "🎁 Hədiyyə Kartı"
+    "pillGiftCard": "🎁 Hədiyyə Kartı",
+    "floatFlightPrice": "$89-dan",
+    "floatLabpoint": "Hər tur alışında +10% Labpoint",
+    "photoAlts": [
+      "Şimal işıqları — dağlar üzərində gecə göyü",
+      "Kapadokyada isti hava şarları",
+      "Təyyarə pəncərəsindən gün batımı mənzərəsi",
+      "İstanbulda məscid və Boğaz — axşam mənzərəsi"
+    ]
   },
   "home": {
     "seoP1": "Travellab, Bakıda fəaliyyət göstərən tam xidmətli səyahət agentliyi olaraq, müştərilərinə aviabilet, otel bron, hazır tur paketləri, viza xidmətləri və tədbir biletlərini tək bir məkanda təqdim edir. Şirkətimiz Azərbaycan Turizm Agentlikləri Assosiasiyasının (ATAA) üzvüdür və illərdir fərdi, korporativ və VIP müştərilərə etibarlı xidmət göstərir.",
@@ -535,9 +544,7 @@
     "password": "Şifrə",
     "passwordPlaceholder": "Ən az 8 simvol",
     "passwordRepeat": "Şifrəni təkrarlayın",
-    "agreeTermsPrefix": "",
-    "agreeTermsLink": "Qaydalar və Şərtlərlə",
-    "agreeTermsSuffix": "razıyam",
+    "agreeTerms": "<1>Qaydalar və Şərtlərlə</1> razıyam",
     "continue": "Davam et",
     "or": "və ya",
     "forgotPassword": "Şifrəmi unutdum",
@@ -762,5 +769,15 @@
     "Avropa": "Avropa",
     "Ekzotik": "Ekzotik",
     "Viza": "Viza"
+  },
+  "partners": {
+    "tag": "Partnyorlar",
+    "title": "Etibarlı Tərəfdaşlarımız"
+  },
+  "navProfile": {
+    "profile": "Profil",
+    "referralLink": "Dosta dəvət linki",
+    "copy": "Kopyala",
+    "logout": "Çıxış"
   }
 }

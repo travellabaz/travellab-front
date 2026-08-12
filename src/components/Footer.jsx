@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import LogoFull from './LogoFull';
-import LanguageSwitcher from './LanguageSwitcher';
 import { useModals } from '../context/ModalContext';
 
 // Decorative footer icons — exact paths from the Figma footer (provided
@@ -132,8 +131,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        <LanguageSwitcher className="tl-footer-lang-switcher" />
 
         <div className="tl-footer-contact">
           <div>
