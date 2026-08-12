@@ -249,6 +249,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
+  grid-column: 1;
   justify-self: start;
 }
 
@@ -275,6 +276,7 @@ html {
   list-style: none;
   margin: 0;
   padding: 0;
+  grid-column: 2;
   justify-self: center;
 }
 
@@ -569,6 +571,7 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   gap: 10px;
   align-items: center;
+  grid-column: 3;
   justify-self: end;
 }
 
