@@ -60,4 +60,8 @@ export const PAGE_META = {
     title: 'Hədiyyə Kartı - Səyahət Hədiyyə Edin | Travellab',
     desc: 'Travellab Hədiyyə Kartı ilə sevdiklərinizə səyahət hədiyyə edin. Aviabilet, otel və turlarda keçərli, 1 il müddətinə etibarlıdır.',
   },
+  '/korporativ': {
+    title: 'Korporativ Səyahət Xidmətləri - Travellab Business',
+    desc: 'Şirkətiniz üçün aviabilet, otel bron, tur paketləri və viza xidməti. Fərdi menecer, çevik ödəniş və Labpoint bonusları ilə korporativ səyahət həlləri.',
+  },
 };

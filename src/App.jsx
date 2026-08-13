@@ -25,6 +25,7 @@ import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import GiftCardPage from './pages/GiftCardPage';
+import CorporatePage from './pages/CorporatePage';
 import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
 import PrivacyModal from './modals/PrivacyModal';
@@ -58,6 +59,7 @@ function localeRouteChildren() {
     <Route key="blog" path="blog" element={<BlogPage />} />,
     <Route key="blog-slug" path="blog/:slug" element={<BlogPostPage />} />,
     <Route key="gift-card" path="hediyye-karti" element={<GiftCardPage />} />,
+    <Route key="corporate" path="korporativ" element={<CorporatePage />} />,
     <Route key="not-found" path="*" element={<NotFoundPage />} />,
   ];
 }

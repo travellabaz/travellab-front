@@ -39,6 +39,7 @@ const SEO_KEY_BY_PATH = {
   '/events': 'events',
   '/viza': 'viza',
   '/hediyye-karti': 'giftCard',
+  '/korporativ': 'corporate',
 };
 
 // Reads the JSON translation files straight off disk (not `import ... json`)

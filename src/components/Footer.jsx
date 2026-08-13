@@ -117,6 +117,7 @@ export default function Footer() {
               <Link to="/blog?category=X%C9%99b%C9%99rl%C9%99r">{t('footer.news')}</Link>
               <Link to="/blog">{t('footer.blog')}</Link>
               <Link to="/hediyye-karti">{t('footer.giftCard')}</Link>
+              <Link to="/korporativ">{t('footer.corporate')}</Link>
             </div>
             <div className="tl-footer-col">
               <div className="tl-footer-col-title">{t('footer.account')}</div>
