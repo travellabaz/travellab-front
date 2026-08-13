@@ -25,14 +25,12 @@ import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import GiftCardPage from './pages/GiftCardPage';
-import CorporatePage from './pages/CorporatePage';
 import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
 import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
 import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
-import useCorporateThemeClass from './hooks/useCorporateThemeClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
 import { stripLocalePrefix } from './utils/locale';
 
@@ -60,7 +58,6 @@ function localeRouteChildren() {
     <Route key="blog" path="blog" element={<BlogPage />} />,
     <Route key="blog-slug" path="blog/:slug" element={<BlogPostPage />} />,
     <Route key="gift-card" path="hediyye-karti" element={<GiftCardPage />} />,
-    <Route key="corporate" path="korporativ" element={<CorporatePage />} />,
     <Route key="not-found" path="*" element={<NotFoundPage />} />,
   ];
 }
@@ -68,7 +65,6 @@ function localeRouteChildren() {
 export default function App() {
   usePageMeta();
   useSubpageClass();
-  useCorporateThemeClass();
   useScrollTopOnRouteChange();
   const location = useLocation();
   const { t } = useTranslation();

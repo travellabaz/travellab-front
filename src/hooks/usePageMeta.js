@@ -30,7 +30,6 @@ const SEO_KEY_BY_PATH = {
   '/events': 'events',
   '/viza': 'viza',
   '/hediyye-karti': 'giftCard',
-  '/korporativ': 'corporate',
 };
 
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/

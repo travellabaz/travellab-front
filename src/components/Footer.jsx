@@ -1,9 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
 import Link from './LocalizedLink';
 import LogoFull from './LogoFull';
 import { useModals } from '../context/ModalContext';
-import { stripLocalePrefix } from '../utils/locale';
 
 // Decorative footer icons — exact paths from the Figma footer (provided
 // directly by the user), framed via viewBox rather than re-based to 0,0
@@ -74,8 +72,6 @@ const FOOTER_ICONS = [FlowerIcon, NavyWaveIcon, GreenLinesIcon, BlueWaveIcon, Na
 export default function Footer() {
   const { openPrivacy, openTerms, openAuth } = useModals();
   const { t } = useTranslation();
-  const location = useLocation();
-  const isCorporate = stripLocalePrefix(location.pathname) === '/korporativ';
   const year = new Date().getFullYear();
 
   return (
@@ -84,7 +80,7 @@ export default function Footer() {
         <div className="tl-footer-top">
           <div className="tl-footer-brand">
             <Link to="/" className="tl-logo" style={{ marginBottom: 0 }}>
-              <LogoFull style={{ height: 24, width: 'auto' }} wordmarkColor={isCorporate ? '#fff' : undefined} />
+              <LogoFull style={{ height: 24, width: 'auto' }} />
             </Link>
             <p>{t('footer.tagline')}</p>
             <div className="tl-footer-membership">
@@ -121,7 +117,6 @@ export default function Footer() {
               <Link to="/blog?category=X%C9%99b%C9%99rl%C9%99r">{t('footer.news')}</Link>
               <Link to="/blog">{t('footer.blog')}</Link>
               <Link to="/hediyye-karti">{t('footer.giftCard')}</Link>
-              <Link to="/korporativ">{t('footer.corporate')}</Link>
             </div>
             <div className="tl-footer-col">
               <div className="tl-footer-col-title">{t('footer.account')}</div>
