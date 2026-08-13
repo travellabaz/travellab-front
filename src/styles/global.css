@@ -5575,10 +5575,21 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-corp-hero-section {
   padding-top: 12px;
-  border-radius: var(--tl-r-lg);
-  margin: 0 32px;
   overflow: hidden;
   position: relative;
+}
+
+.tl-corp-hero-section .tl-breadcrumb-current,
+.tl-corp-hero-section .tl-breadcrumb-sep {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.tl-corp-hero-section .tl-breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tl-corp-hero-section .tl-breadcrumb-item a:hover {
+  color: #fff;
 }
 
 .tl-corp-hero-section::before {
@@ -5591,18 +5602,7 @@ body:not(.tl-subpage) .tl-about-extra {
   pointer-events: none;
 }
 
-.tl-corp-value-section,
-.tl-corp-services-section,
 .tl-corp-contact-section {
-  margin: 0 32px;
-}
-
-.tl-corp-services-section {
-  border-radius: 0;
-}
-
-.tl-corp-contact-section {
-  border-radius: 0 0 var(--tl-r-lg) var(--tl-r-lg);
   padding-bottom: 8px;
 }
 
@@ -6035,13 +6035,6 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 900px) {
-  .tl-corp-hero-section,
-  .tl-corp-value-section,
-  .tl-corp-services-section,
-  .tl-corp-contact-section {
-    margin: 0 16px;
-  }
-
   .tl-corp-hero {
     grid-template-columns: 1fr;
     padding: 40px 0 32px;

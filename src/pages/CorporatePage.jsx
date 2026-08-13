@@ -80,19 +80,14 @@ export default function CorporatePage() {
 
   return (
     <main className="tpwl-main tl-corp">
-      <section className="tl-page-top">
-        <div className="tl-section" style={{ paddingBottom: 0 }}>
+      <section className="tl-corp-hero-section tl-page-top">
+        <div className="tl-section">
           <Breadcrumb
             items={[
               { name: t('breadcrumb.home'), to: '/' },
               { name: t('corporate.breadcrumb') },
             ]}
           />
-        </div>
-      </section>
-
-      <section className="tl-corp-hero-section">
-        <div className="tl-section">
           <div className="tl-corp-hero">
             <div className="tl-corp-hero-text">
               <div className="tl-corp-badge">{t('corporate.badge')}</div>
