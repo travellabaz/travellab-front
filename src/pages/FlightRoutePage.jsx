@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import Breadcrumb from '../components/Breadcrumb';
 import SeoBodyText from '../components/SeoBodyText';
+import ToursSection from '../sections/ToursSection';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { fillFlightWidgetDestination } from '../utils/flightWidgetFill';
 import { formatFlightDuration } from '../utils/flightDuration';
@@ -112,6 +113,7 @@ export default function FlightRoutePage() {
           </SeoBodyText>
         </div>
       </section>
+      <ToursSection />
     </main>
   );
 }
