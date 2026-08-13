@@ -65,6 +65,7 @@ export default function FlightRoutePage() {
           />
         </div>
       </section>
+      <ToursSection />
       <section>
         <div className="tl-section">
           <SeoBodyText key={route.slug}>
@@ -113,7 +114,6 @@ export default function FlightRoutePage() {
           </SeoBodyText>
         </div>
       </section>
-      <ToursSection />
     </main>
   );
 }
