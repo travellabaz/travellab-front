@@ -145,12 +145,27 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
     return () => { cancelled = true; };
   }, [state, category]);
 
-  const submit = () => {
+  // Category is the one filter with its own dedicated pill row sitting
+  // outside the main form (stars/meal live in the same row and still wait
+  // for the Axtar button, matching how a normal filter form behaves) — so
+  // picking GDS/Charter re-runs the search immediately instead of leaving
+  // the visitor looking at the old unfiltered results until they notice
+  // they need to press Axtar again. Takes the new category as an argument
+  // rather than reading the `category` state, since setCategory() hasn't
+  // flushed yet when this runs.
+  const runSearch = (nextCategory) => {
     setError('');
     if (!state) return setError(t('offerSearchFilters.errorDestination'));
     if (!checkinFrom || !checkinTo) return setError(t('offerSearchFilters.errorDates'));
     if (checkinTo < checkinFrom) return setError(t('offerSearchFilters.errorDateOrder'));
-    onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency, category });
+    onSearch({ state, checkinFrom, checkinTo, nights, adults, children, stars, meal, currency, category: nextCategory });
+  };
+
+  const submit = () => runSearch(category);
+
+  const selectCategory = (cat) => {
+    setCategory(cat);
+    runSearch(cat);
   };
 
   // Per-country pages (TourSearchCountryPage.jsx) pass initialState once
@@ -224,7 +239,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
               <button
                 type="button"
                 className={`tl-blog-filter-pill${category === '' ? ' active' : ''}`}
-                onClick={() => setCategory('')}
+                onClick={() => selectCategory('')}
                 aria-pressed={category === ''}
               >
                 {t('offerSearchFilters.categoryAll')}
@@ -234,7 +249,7 @@ export default function OfferSearchFilters({ destinations, onSearch, loading, in
                   type="button"
                   key={cat}
                   className={`tl-blog-filter-pill${isGdsCategory(cat) ? ' tl-blog-filter-pill-gds' : ''}${category === cat ? ' active' : ''}`}
-                  onClick={() => setCategory(cat)}
+                  onClick={() => selectCategory(cat)}
                   aria-pressed={category === cat}
                 >
                   {categoryLabel(cat, t)}
