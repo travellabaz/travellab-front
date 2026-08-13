@@ -21,6 +21,7 @@ import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
 import VizaPage from './pages/VizaPage';
 import VizaCountryPage from './pages/VizaCountryPage';
+import FlightRoutePage from './pages/FlightRoutePage';
 import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
@@ -33,6 +34,7 @@ import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
 import { stripLocalePrefix } from './utils/locale';
+import { getFlightRouteBySlug } from './data/flightRoutes';
 
 // One shared route list mounted under three parent layout routes (AZ
 // unprefixed/default, /ru/*, /en/*) instead of tripling this JSX — see
@@ -44,6 +46,7 @@ function localeRouteChildren() {
   return [
     <Route key="home" index element={<HomePage />} />,
     <Route key="search" path="search" element={<SearchPage />} />,
+    <Route key="ucuslar" path="ucuslar/:route" element={<FlightRoutePage />} />,
     <Route key="hotels" path="hotels" element={<HotelsPage />} />,
     <Route key="tours" path="tours" element={<ToursPage />} />,
     <Route key="tours-search" path="tours/search" element={<TourSearchPage />} />,
@@ -71,24 +74,37 @@ export default function App() {
 
   // Locale-prefix-aware: /ru and /en both count as "home" too, same as /.
   const barePath = stripLocalePrefix(location.pathname);
+  const flightRouteSlugMatch = /^\/ucuslar\/([^/]+)/.exec(barePath);
+  const flightRoute = flightRouteSlugMatch ? getFlightRouteBySlug(flightRouteSlugMatch[1]) : null;
 
   // The Travelpayouts search widget (#tpwl-search / #tpwl-tickets) only
   // initializes once and never re-detects a remounted DOM node. Keeping
   // HeroSearch permanently mounted and just toggling its visibility (the
   // same display:none trick the original single-page version used)
   // avoids React Router unmounting it on navigation and killing the
-  // widget on the way back to "/" or "/search".
-  const showHero = barePath === '/' || barePath === '/search';
-  // HeroSearch's own default covers "/" — only override for "/search",
-  // matching SEO Paketi v2's per-route H1 (HeroSearch itself keeps a
-  // single persistent DOM instance regardless, see the comment above).
-  const heroTitle =
-    barePath === '/search' ? (
-      <>
-        {t('hero.searchTitlePlain')}<br />
-        <span className="acc">{t('hero.searchTitleAccent')}</span>
-      </>
-    ) : undefined;
+  // widget on the way back to "/", "/search", or a /ucuslar/:route page
+  // (which pre-fills this same persistent widget — see
+  // FlightRoutePage.jsx / utils/flightWidgetFill.js).
+  const showHero = barePath === '/' || barePath === '/search' || !!flightRoute;
+  // HeroSearch's own default covers "/" — only override for "/search" and
+  // /ucuslar/:route, matching SEO Paketi v2's per-route H1 (HeroSearch
+  // itself keeps a single persistent DOM instance regardless, see the
+  // comment above).
+  const heroTitle = flightRoute ? (
+    <>
+      {t('flights.heroTitlePlain', {
+        origin: t('flights.baku'),
+        destination: t(`flightCities.${flightRoute.cityKey}`, flightRoute.cityKey),
+      })}
+      <br />
+      <span className="acc">{t('flights.heroTitleAccent')}</span>
+    </>
+  ) : barePath === '/search' ? (
+    <>
+      {t('hero.searchTitlePlain')}<br />
+      <span className="acc">{t('hero.searchTitleAccent')}</span>
+    </>
+  ) : undefined;
 
   return (
     <>

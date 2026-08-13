@@ -15,6 +15,7 @@ import i18next from 'i18next';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
 import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
 import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
+import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -233,6 +234,9 @@ async function main() {
   for (const country of TOUR_SEARCH_COUNTRIES) {
     routeEntries.push({ bareRoutePath: `/tours/search/${country.slug}`, kind: 'tourSearchCountry', country, langs: LANGUAGES });
   }
+  for (const route of FLIGHT_ROUTES) {
+    routeEntries.push({ bareRoutePath: `/ucuslar/${route.slug}`, kind: 'flightRoute', flightRoute: route, langs: LANGUAGES });
+  }
   for (const tour of activeTours) {
     routeEntries.push({ bareRoutePath: `/tours/${tour.id}`, kind: 'tour', tourId: String(tour.id), langs: LANGUAGES });
   }
@@ -273,6 +277,11 @@ async function main() {
         const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);
         title = t('seo.tourSearchCountryTitle', { country: countryName });
         desc = t('seo.tourSearchCountryDesc', { country: countryName });
+        image = DEFAULT_OG_IMAGE;
+      } else if (kind === 'flightRoute') {
+        const destinationName = t(`flightCities.${entry.flightRoute.cityKey}`, entry.flightRoute.cityKey);
+        title = t('seo.flightRouteTitle', { origin: t('flights.baku'), destination: destinationName });
+        desc = t('seo.flightRouteDesc', { destination: destinationName });
         image = DEFAULT_OG_IMAGE;
       } else if (kind === 'tour') {
         tour = toursById[entry.tourId];
@@ -317,6 +326,12 @@ async function main() {
         breadcrumbItems.push(
           { name: t('tourSearch.tourSearchCrumb'), url: `${BASE_URL}${buildLocalizedPath('/tours/search', lang)}` },
           { name: t('tourSearch.countryTitle', { country: countryName }), url: pageUrl }
+        );
+      } else if (kind === 'flightRoute') {
+        const destinationName = t(`flightCities.${entry.flightRoute.cityKey}`, entry.flightRoute.cityKey);
+        breadcrumbItems.push(
+          { name: t('nav.flights'), url: `${BASE_URL}${buildLocalizedPath('/search', lang)}` },
+          { name: t('flights.routeBreadcrumb', { origin: t('flights.baku'), destination: destinationName }), url: pageUrl }
         );
       } else if (!isHome) {
         breadcrumbItems.push({ name: title.split(' — ')[0], url: pageUrl });

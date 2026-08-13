@@ -7,6 +7,7 @@ import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
+import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../i18n';
 import { getLocaleFromPathname, stripLocalePrefix, buildLocalizedPath } from '../utils/locale';
 
@@ -69,6 +70,9 @@ export default function usePageMeta() {
     const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
     const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
     const tourSearchCountryName = tourSearchCountry ? t(`countries.${tourSearchCountry.nameAz}`, tourSearchCountry.nameAz) : null;
+    const flightRouteMatch = /^\/ucuslar\/([^/]+)$/.exec(path);
+    const flightRoute = flightRouteMatch ? getFlightRouteBySlug(flightRouteMatch[1]) : null;
+    const flightRouteDestination = flightRoute ? t(`flightCities.${flightRoute.cityKey}`, flightRoute.cityKey) : null;
     // Query-param-driven, not path-driven — prerender.mjs only produces one
     // static file for "/tours" regardless of ?category=, so this switch
     // only reaches JS-executing crawlers/visitors, same limitation every
@@ -86,11 +90,13 @@ export default function usePageMeta() {
           ? { title: t('seo.vizaCountryTitle', { country: vizaCountryName, defaultValue: `${vizaCountryName} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryName, defaultValue: '' }) }
           : tourSearchCountry
             ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
-            : isToursList
-              ? { title: t(`tourCategoryMeta.${categoryMetaKey}.title`), desc: t(`tourCategoryMeta.${categoryMetaKey}.desc`) }
-              : seoKey
-                ? { title: t(`seo.${seoKey}.title`), desc: t(`seo.${seoKey}.desc`) }
-                : { title: t('notFound.title') + ' — Travellab', desc: t('notFound.desc') };
+            : flightRoute
+              ? { title: t('seo.flightRouteTitle', { origin: t('flights.baku'), destination: flightRouteDestination, defaultValue: `${flightRouteDestination} — Travellab` }), desc: t('seo.flightRouteDesc', { destination: flightRouteDestination, defaultValue: '' }) }
+              : isToursList
+                ? { title: t(`tourCategoryMeta.${categoryMetaKey}.title`), desc: t(`tourCategoryMeta.${categoryMetaKey}.desc`) }
+                : seoKey
+                  ? { title: t(`seo.${seoKey}.title`), desc: t(`seo.${seoKey}.desc`) }
+                  : { title: t('notFound.title') + ' — Travellab', desc: t('notFound.desc') };
 
     const pageImage = seoKey ? PAGE_META[path === '/' ? '/' : path]?.image : undefined;
 
@@ -169,6 +175,11 @@ export default function usePageMeta() {
         items.push(
           { name: t('tourSearch.tourSearchCrumb'), url: BASE_URL + buildLocalizedPath('/tours/search', lang) },
           { name: t('tourSearch.countryTitle', { country: tourSearchCountryName }), url: pageUrl }
+        );
+      } else if (flightRoute) {
+        items.push(
+          { name: t('nav.flights'), url: BASE_URL + buildLocalizedPath('/search', lang) },
+          { name: t('flights.routeBreadcrumb', { origin: t('flights.baku'), destination: flightRouteDestination }), url: pageUrl }
         );
       } else if (!isHome) {
         items.push({ name: page.title.split(' — ')[0], url: pageUrl });
