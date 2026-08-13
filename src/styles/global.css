@@ -379,11 +379,15 @@ body.tl-subpage .tl-page-top > .tl-section {
   padding-top: 0;
 }
 
-/* Tours: homepage shows a compact horizontal-scroll preview + a "see
-   all" button; the dedicated Turlar page (#tours, opened in its own
-   tab) keeps the full grid exactly as before and hides that button
-   since it's already showing everything. */
-body:not(.tl-subpage) #tl-tours-grid {
+/* Tours: ToursSection (its #tl-tours-grid id) is the compact
+   horizontal-scroll preview + "see all" button, used on the homepage
+   and reused as-is at the bottom of other pages (e.g. flight-route
+   landing pages); the dedicated Turlar page (/tours) renders its own
+   separate .tl-pkg-grid (no id) with the full wrapped grid instead —
+   the id alone is enough to scope this, no body.tl-subpage gate
+   needed (that gate broke the moment #tl-tours-grid started appearing
+   on subpages too). */
+#tl-tours-grid {
   display: flex;
   align-items: stretch;
   overflow-x: auto;
@@ -394,7 +398,7 @@ body:not(.tl-subpage) #tl-tours-grid {
   -webkit-overflow-scrolling: touch;
 }
 
-body:not(.tl-subpage) #tl-tours-grid .tl-pkg-card {
+#tl-tours-grid .tl-pkg-card {
   flex: 0 0 260px;
   /* .tl-pkg-card has height:100% for the grid layout below; that
      defined (non-auto) value blocks align-items:stretch from
@@ -554,13 +558,18 @@ body:not(.tl-subpage) #tl-tours-grid .tl-pkg-card {
   right: -56px;
 }
 
-/* Arrows only make sense in the horizontal-scroll homepage preview. */
+/* .tl-tours-arrow is shared with ReviewsSection's own scroller (only
+   ever mounted on the /tours subpage, where it stays arrow-less by
+   design) — hidden by default on any subpage, then re-enabled
+   specifically for ToursSection's own scroller (id="tours", unique to
+   it) below, since that component is now reused on subpages too
+   (flight-route landing pages) and still needs its arrows there. */
 body.tl-subpage .tl-tours-arrow {
   display: none;
 }
 
-body.tl-subpage .tl-tours-viewall-row {
-  display: none;
+#tours .tl-tours-arrow {
+  display: flex;
 }
 
 /* About: stats/services/address only show on the dedicated Haqqımızda
