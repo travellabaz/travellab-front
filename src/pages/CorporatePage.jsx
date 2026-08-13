@@ -4,7 +4,13 @@ import Breadcrumb from '../components/Breadcrumb';
 import { MANAGERS, formatManagerNumber } from '../utils/managers';
 
 const TEAM_SIZES = ['under10', '10to30', '30to100', 'over100'];
-const HERO_PHOTOS = ['/images/hero/aurora.jpg', '/images/hero/balloons.jpg', '/images/hero/mosque.jpg', '/images/hero/plane-wing.jpg'];
+const HERO_PHOTOS = [
+  '/images/corporate/hero-1.jpg',
+  '/images/corporate/hero-2.jpg',
+  '/images/corporate/hero-3.jpg',
+  '/images/corporate/hero-4.jpg',
+  '/images/corporate/hero-5.jpg',
+];
 const SERVICE_KEYS = ['flights', 'hotels', 'tours', 'visa', 'events', 'support'];
 const SERVICE_ICONS = { flights: '✈️', hotels: '🏨', tours: '🧳', visa: '🛂', events: '🎤', support: '💬' };
 const MESSAGE_MAX = 300;
