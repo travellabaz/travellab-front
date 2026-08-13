@@ -32,6 +32,7 @@ import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
 import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
+import useCorporateThemeClass from './hooks/useCorporateThemeClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
 import { stripLocalePrefix } from './utils/locale';
 
@@ -67,6 +68,7 @@ function localeRouteChildren() {
 export default function App() {
   usePageMeta();
   useSubpageClass();
+  useCorporateThemeClass();
   useScrollTopOnRouteChange();
   const location = useLocation();
   const { t } = useTranslation();

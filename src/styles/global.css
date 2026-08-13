@@ -6082,3 +6082,119 @@ body:not(.tl-subpage) .tl-about-extra {
     padding: 22px;
   }
 }
+
+/* ── CORPORATE PAGE THEME — Nav + Footer overrides ──
+   body.tl-corp-page is toggled by useCorporateThemeClass whenever the
+   route is /korporativ (see App.jsx) — the site's shared Nav/Footer stay
+   the same components everywhere, they just pick up this dark palette
+   here instead of a page-specific fork of either component. */
+.tl-nav-business-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: var(--tl-green);
+  color: #fff;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  vertical-align: middle;
+}
+
+body.tl-corp-page .tl-nav {
+  background: rgba(12, 17, 29, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+body.tl-corp-page .tl-nav-links a {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+body.tl-corp-page .tl-nav-links a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.tl-corp-page .tl-nav-links a.active {
+  color: #fff;
+}
+
+body.tl-corp-page .tl-nav-divider {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+body.tl-corp-page .tl-lang-switcher-trigger,
+body.tl-corp-page .tl-auth-menu-trigger,
+body.tl-corp-page .tl-nav-burger {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+body.tl-corp-page .tl-lang-switcher-trigger:hover,
+body.tl-corp-page .tl-auth-menu-trigger:hover,
+body.tl-corp-page .tl-nav-burger:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+body.tl-corp-page .tl-nav-burger span,
+body.tl-corp-page .tl-nav-burger span::before,
+body.tl-corp-page .tl-nav-burger span::after {
+  background: #fff;
+}
+
+body.tl-corp-page .tl-btn-login {
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+body.tl-corp-page .tl-btn-login:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+body.tl-corp-page .tl-footer {
+  background: #0C111D;
+}
+
+body.tl-corp-page .tl-footer-brand p,
+body.tl-corp-page .tl-footer-membership-label,
+body.tl-corp-page .tl-footer-contact-label,
+body.tl-corp-page .tl-footer-bottom {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+body.tl-corp-page .tl-footer-col-title {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+body.tl-corp-page .tl-footer-col a,
+body.tl-corp-page .tl-footer-contact-value,
+body.tl-corp-page .tl-footer-contact-value a {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+body.tl-corp-page .tl-footer-contact {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+body.tl-corp-page .tl-footer-social a {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.tl-corp-page .tl-footer-social a:hover {
+  background: var(--tl-green);
+}
+
+@media (max-width: 900px) {
+  body.tl-corp-page .tl-nav-links.tl-nav-open {
+    background: #0C111D;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+
+  body.tl-corp-page .tl-nav-links.tl-nav-open a {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+}

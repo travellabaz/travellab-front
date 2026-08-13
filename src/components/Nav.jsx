@@ -8,7 +8,7 @@ import AuthMenu from './AuthMenu';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 import { SUPPORTED_LANGUAGES } from '../i18n';
-import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
+import { getLocaleFromPathname, buildLocalizedPath, stripLocalePrefix } from '../utils/locale';
 
 const LANG_SHORT_LABEL = { az: 'AZ', ru: 'RU', en: 'EN' };
 
@@ -35,6 +35,7 @@ export default function Nav() {
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(location.pathname);
   const localize = (path) => buildLocalizedPath(path, lang);
+  const isCorporate = stripLocalePrefix(location.pathname) === '/korporativ';
 
   const handleLogoClick = () => {
     setMobileOpen(false);
@@ -46,7 +47,8 @@ export default function Nav() {
   return (
     <nav className="tl-nav">
       <Link to={localize('/')} className="tl-logo" onClick={handleLogoClick}>
-        <LogoFull className="tl-logo-svg" style={{ height: 29, width: 'auto' }} />
+        <LogoFull className="tl-logo-svg" style={{ height: 29, width: 'auto' }} wordmarkColor={isCorporate ? '#fff' : undefined} />
+        {isCorporate && <span className="tl-nav-business-badge">Business</span>}
       </Link>
       <ul className={'tl-nav-links' + (mobileOpen ? ' tl-nav-open' : '')}>
         {NAV_LINK_PATHS.map(({ path, key }) => (
