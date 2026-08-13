@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { useAuth } from '../context/AuthContext';
+import { useModals } from '../context/ModalContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
 import { formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { offerGradient } from '../utils/offerVisual';
@@ -19,6 +20,7 @@ export default function OfferDetailPage() {
   const { state } = useLocation();
   const offer = state?.offer;
   const { isAuthenticated, profile } = useAuth();
+  const { openManagerContact } = useModals();
   const [manager, setManager] = useState(pickManager);
 
   useEffect(() => {
@@ -123,15 +125,26 @@ export default function OfferDetailPage() {
               )}
 
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <a
-                  href={link}
-                  target={isMobile() ? '_blank' : '_self'}
-                  rel="noopener noreferrer"
-                  className="tl-btn-book"
-                  style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-                >
-                  {managerLabel(t)} →
-                </a>
+                {isMobile() ? (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tl-btn-book"
+                    style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                  >
+                    {managerLabel(t)} →
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openManagerContact(manager)}
+                    className="tl-btn-book"
+                    style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                  >
+                    {managerLabel(t)} →
+                  </button>
+                )}
                 {offer.hotelUrl && (
                   <a
                     href={offer.hotelUrl}

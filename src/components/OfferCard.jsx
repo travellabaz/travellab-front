@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedNavigate } from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
+import { useModals } from '../context/ModalContext';
 import { contactManager, managerLabel } from '../utils/managers';
 import { formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { offerGradient } from '../utils/offerVisual';
@@ -35,6 +36,7 @@ export default function OfferCard({ offer, photos }) {
   const { t } = useTranslation();
   const navigate = useLocalizedNavigate();
   const { isAuthenticated, profile } = useAuth();
+  const { openManagerContact } = useModals();
   const [photoUrl, setPhotoUrl] = useState(null);
 
   useEffect(() => {
@@ -130,7 +132,7 @@ export default function OfferCard({ offer, photos }) {
             type="button"
             className="tl-btn-book"
             style={{ border: 'none', cursor: 'pointer' }}
-            onClick={(e) => { e.stopPropagation(); contactManager(offerContactShape(offer, t), t); }}
+            onClick={(e) => { e.stopPropagation(); contactManager(offerContactShape(offer, t), t, openManagerContact); }}
           >
             {managerLabel(t)}
           </button>

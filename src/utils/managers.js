@@ -39,12 +39,17 @@ export function managerLabel(t) {
   return isMobile() ? t('common.waWrite') : t('common.call');
 }
 
-export function contactManager(tour, t) {
+// On mobile this opens WhatsApp (real, deliberate navigation — fine).
+// On desktop it used to navigate straight to a tel: link, which macOS
+// Chrome hands off to FaceTime with no warning; openManagerContact
+// (from useModals()) shows a small popup with the picked manager's
+// name/number instead, so calling — if the visitor wants to — is their
+// own click on a real tel: link inside it.
+export function contactManager(tour, t, openManagerContact) {
   const manager = pickManager();
-  const url = managerLink(tour, manager, t);
-  if (url.indexOf('tel:') === 0) {
-    window.location.href = url;
+  if (isMobile()) {
+    window.open(managerLink(tour, manager, t), '_blank');
   } else {
-    window.open(url, '_blank');
+    openManagerContact(manager);
   }
 }

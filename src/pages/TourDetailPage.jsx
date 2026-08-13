@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
 import { useAuth } from '../context/AuthContext';
+import { useModals } from '../context/ModalContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
@@ -14,6 +15,7 @@ export default function TourDetailPage() {
   const { id } = useParams();
   const { tours, loading } = useTours();
   const { isAuthenticated, profile } = useAuth();
+  const { openManagerContact } = useModals();
   const [manager, setManager] = useState(pickManager);
 
   const tour = tours.find((t) => String(t.id) === id);
@@ -115,17 +117,26 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              {!expired && (
+              {!expired && (isMobile() ? (
                 <a
                   href={link}
-                  target={isMobile() ? '_blank' : '_self'}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="tl-btn-book"
                   style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
                 >
                   {managerLabel(t)} →
                 </a>
-              )}
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openManagerContact(manager)}
+                  className="tl-btn-book"
+                  style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                >
+                  {managerLabel(t)} →
+                </button>
+              ))}
               <div style={{ marginTop: 10, fontSize: 12, color: 'var(--tl-gray-400)' }}>
                 {t('common.manager')}: {manager.name} — {formatManagerNumber(manager.number)}
               </div>

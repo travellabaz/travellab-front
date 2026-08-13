@@ -15,6 +15,8 @@
     "networkError": "Network error.",
     "waWrite": "Message on WhatsApp",
     "call": "Call",
+    "copyNumber": "Copy number",
+    "copied": "Copied!",
     "tourInterestMessage": "Hello! I'm interested in the \"{{title}}\" tour."
   },
   "nav": {

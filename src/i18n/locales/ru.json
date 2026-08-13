@@ -15,6 +15,8 @@
     "networkError": "Ошибка сети.",
     "waWrite": "Написать в WhatsApp",
     "call": "Позвонить",
+    "copyNumber": "Скопировать номер",
+    "copied": "Скопировано!",
     "tourInterestMessage": "Здравствуйте! Меня интересует тур \"{{title}}\"."
   },
   "nav": {

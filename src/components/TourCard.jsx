@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import Link, { useLocalizedNavigate } from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
+import { useModals } from '../context/ModalContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
@@ -9,6 +10,7 @@ import { isTourExpired } from '../utils/tourDate';
 export default function TourCard({ tour }) {
   const { t } = useTranslation();
   const { isAuthenticated, profile } = useAuth();
+  const { openManagerContact } = useModals();
   const navigate = useLocalizedNavigate();
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
@@ -78,7 +80,7 @@ export default function TourCard({ tour }) {
               type="button"
               className="tl-btn-book"
               style={{ border: 'none', cursor: 'pointer' }}
-              onClick={(e) => { e.stopPropagation(); contactManager(tour, t); }}
+              onClick={(e) => { e.stopPropagation(); contactManager(tour, t, openManagerContact); }}
             >
               {managerLabel(t)}
             </button>

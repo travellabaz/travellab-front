@@ -30,6 +30,7 @@ import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
 import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
+import ManagerContactModal from './modals/ManagerContactModal';
 import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
@@ -132,6 +133,7 @@ export default function App() {
       <AuthModal />
       <PrivacyModal />
       <TermsModal />
+      <ManagerContactModal />
       <GoogleOneTap />
     </>
   );
