@@ -289,13 +289,6 @@ html {
   justify-self: center;
 }
 
-/* Hidden at desktop widths — .tl-nav-links itself is a plain flex row
-   there, so this <li> would otherwise show inline as a stray nav item.
-   Re-enabled inside the mobile open-menu media query further down. */
-.tl-nav-mobile-lang {
-  display: none;
-}
-
 .tl-nav-links a {
   display: flex;
   align-items: center;
@@ -3595,6 +3588,94 @@ body:not(.tl-subpage) .tl-about-extra {
   transform: translateY(0);
 }
 
+/* ── MOBILE NAV DROPDOWN (Nav.jsx's mobileMenu, portaled to <body>) ──
+   No media query needed here: this list only exists in the DOM at all
+   while mobileOpen is true (see the conditional createPortal call), and
+   that state is only reachable via the burger button, which itself is
+   hidden above the 900px breakpoint — so this can never render at desktop
+   widths regardless. Portaled specifically so it's never a child of .tl-nav
+   (a CSS Grid container) — it used to be a grid item that switched to
+   position: fixed for the open state, and Chrome kept sizing/positioning
+   it against its old grid-area box even after that, clipping the AZ/RU/EN
+   row on the right edge on Android. Safari never had the bug. A portal
+   sidesteps the whole class of issue by construction. */
+.tl-mobile-menu {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 68px;
+  left: 0;
+  right: 0;
+  background: var(--tl-white);
+  border-bottom: 1px solid var(--tl-gray-200);
+  box-shadow: 0 12px 28px rgba(10, 30, 25, 0.1);
+  padding: 8px 20px 18px;
+  gap: 0;
+  z-index: 99;
+  max-height: calc(100vh - 68px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.tl-mobile-menu a {
+  display: block;
+  padding: 13px 8px;
+  font-size: 14.5px;
+  color: var(--tl-gray-600);
+  text-decoration: none;
+  border-radius: 0;
+  border-bottom: 1px solid var(--tl-gray-100);
+  transition: color 0.2s;
+}
+
+.tl-mobile-menu a:hover {
+  color: var(--tl-navy);
+}
+
+.tl-mobile-menu a.active {
+  color: var(--tl-green);
+  font-weight: 700;
+}
+
+.tl-mobile-menu li:last-child a {
+  border-bottom: none;
+}
+
+.tl-mobile-menu .tl-nav-mobile-lang {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 8px;
+  padding: 14px 8px 4px;
+}
+
+/* flex: 1 on each pill (not content-sized + justify-content: center) —
+   three equal thirds of the row's own width can never individually
+   overflow it. */
+.tl-mobile-menu .tl-nav-mobile-lang .tl-nav-mobile-lang-opt {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 7px 8px;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-gray-600);
+  text-decoration: none;
+}
+
+.tl-mobile-menu .tl-nav-mobile-lang .tl-nav-mobile-lang-opt.active {
+  border-color: transparent;
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
 @media (max-width: 900px) {
   /* All hero pills in one row, no wrapping to a second line — there
      isn't room to fit them all at a readable size, so the row scrolls
@@ -3626,63 +3707,6 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-nav-burger {
     display: flex;
-  }
-
-  .tl-nav-links.tl-nav-open {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 68px;
-    left: 0;
-    right: 0;
-    background: var(--tl-white);
-    border-bottom: 1px solid var(--tl-gray-200);
-    box-shadow: 0 12px 28px rgba(10, 30, 25, 0.1);
-    padding: 8px 20px 18px;
-    gap: 0;
-    z-index: 99;
-    max-height: calc(100vh - 68px);
-    overflow-y: auto;
-  }
-
-  .tl-nav-links.tl-nav-open a {
-    display: block;
-    padding: 13px 8px;
-    font-size: 14.5px;
-    border-radius: 0;
-    border-bottom: 1px solid var(--tl-gray-100);
-  }
-
-  .tl-nav-links.tl-nav-open li:last-child a {
-    border-bottom: none;
-  }
-
-  .tl-nav-links.tl-nav-open .tl-nav-mobile-lang {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    box-sizing: border-box;
-    gap: 8px;
-    padding: 14px 8px 4px;
-  }
-
-  /* Extra-specific selector needed to beat .tl-nav-links.tl-nav-open a's
-     block/padding/border-bottom styling meant for the full-width nav
-     links above this row — these are small centered pills instead. */
-  .tl-nav-links.tl-nav-open .tl-nav-mobile-lang .tl-nav-mobile-lang-opt {
-    display: inline-flex;
-    padding: 7px 16px;
-    border: 1px solid var(--tl-gray-200);
-    border-radius: 100px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--tl-gray-600);
-  }
-
-  .tl-nav-links.tl-nav-open .tl-nav-mobile-lang .tl-nav-mobile-lang-opt.active {
-    border-color: transparent;
-    background: var(--tl-green-light);
-    color: var(--tl-green-dark);
   }
 
   .tl-nav-lang-switcher {
@@ -5522,11 +5546,15 @@ body:not(.tl-subpage) .tl-about-extra {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  /* Above .tl-nav-links.tl-nav-open's z-index: 99 — both live inside
-     .tl-nav's own stacking context, so a lower value here would render
-     behind the mobile hamburger menu whenever both happened to be open
-     (AuthMenu.jsx also closes the hamburger menu on open, but this is a
-     safety net against the two ever stacking the wrong way). */
+  /* .tl-mobile-menu (the hamburger dropdown) is portaled to <body> at
+     z-index: 99, a sibling of .tl-nav rather than a descendant of it —
+     .tl-nav's own z-index: 100 already keeps this popover (nested inside
+     .tl-nav) painting above it, since a positioned ancestor's z-index
+     governs the whole stacking context as a unit against outside
+     siblings. This z-index: 110 is a safety net for that relationship
+     changing, not what makes it work today (AuthMenu.jsx also closes the
+     hamburger menu on open, so the two are never simultaneously open in
+     practice). */
   z-index: 110;
   width: 160px;
   display: flex;

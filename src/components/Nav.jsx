@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LogoFull from './LogoFull';
@@ -43,12 +44,56 @@ export default function Nav() {
     }
   };
 
+  // Portaled straight to <body> instead of rendering inline inside <nav> —
+  // .tl-nav is a CSS Grid container (grid-template-columns) and this list
+  // used to be one of its grid items (grid-column: 2) before switching to
+  // position: fixed for the open dropdown. Confirmed live in Chrome that a
+  // grid item's containing block sticks to its old grid-area box even
+  // after it becomes fixed-positioned and even after being moved out of
+  // the grid's DOM subtree entirely — the dropdown rendered pinned inside
+  // that narrow middle column instead of spanning the viewport. Safari
+  // didn't have this quirk, which is why it only showed up on Android
+  // Chrome. A portal sidesteps the whole class of bug: this list is never
+  // a grid item in the first place, so there's no stale grid-area
+  // containing block to inherit.
+  const mobileMenu = mobileOpen
+    ? createPortal(
+        <ul className="tl-mobile-menu">
+          {NAV_LINK_PATHS.map(({ path, key }) => (
+            <li key={path}>
+              <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
+                {t(`nav.${key}`)}
+              </NavLink>
+            </li>
+          ))}
+          {/* The top bar's own LanguageSwitcher dropdown is hidden at this
+              breakpoint (see .tl-nav-lang-switcher's media rule) — nesting a
+              second dropdown inside an already-open menu reads worse than a
+              flat AZ/RU/EN row, the usual pattern for language options
+              inside a mobile hamburger menu. */}
+          <li className="tl-nav-mobile-lang">
+            {SUPPORTED_LANGUAGES.map((l) => (
+              <Link
+                key={l}
+                to={buildLocalizedPath(location.pathname, l) + location.search}
+                className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
+                onClick={() => setMobileOpen(false)}
+              >
+                {LANG_SHORT_LABEL[l]}
+              </Link>
+            ))}
+          </li>
+        </ul>,
+        document.body
+      )
+    : null;
+
   return (
     <nav className="tl-nav">
       <Link to={localize('/')} className="tl-logo" onClick={handleLogoClick}>
         <LogoFull className="tl-logo-svg" style={{ height: 29, width: 'auto' }} />
       </Link>
-      <ul className={'tl-nav-links' + (mobileOpen ? ' tl-nav-open' : '')}>
+      <ul className="tl-nav-links">
         {NAV_LINK_PATHS.map(({ path, key }) => (
           <li key={path}>
             <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
@@ -56,24 +101,8 @@ export default function Nav() {
             </NavLink>
           </li>
         ))}
-        {/* Mobile-menu-only: the top bar's own LanguageSwitcher dropdown is
-            hidden at this breakpoint (see .tl-nav-lang-switcher's media
-            rule) — nesting a second dropdown inside an already-open menu
-            reads worse than a flat AZ/RU/EN row, the usual pattern for
-            language options inside a mobile hamburger menu. */}
-        <li className="tl-nav-mobile-lang">
-          {SUPPORTED_LANGUAGES.map((l) => (
-            <Link
-              key={l}
-              to={buildLocalizedPath(location.pathname, l) + location.search}
-              className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
-              onClick={() => setMobileOpen(false)}
-            >
-              {LANG_SHORT_LABEL[l]}
-            </Link>
-          ))}
-        </li>
       </ul>
+      {mobileMenu}
       <div className="tl-nav-right">
         <LanguageSwitcher className="tl-nav-lang-switcher" />
         <span className="tl-nav-divider" aria-hidden="true" />
