@@ -6,6 +6,7 @@ body {
   color: var(--tpwl-main-text);
   background-color: var(--tpwl-search-result-background);
   font-family: var(--tpwl-font-family), 'Geist Sans', sans-serif;
+  overflow-x: hidden;
 }
 
 body a {
@@ -159,6 +160,14 @@ body a:focus {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 70px;
+  /* If anything on the page is even 1px wider than the viewport, some
+     Android Chrome builds position `right: 0` / `left: 0` fixed elements
+     (like the mobile nav dropdown) against that wider layout box instead
+     of the actual visible screen — the element itself isn't misconfigured,
+     it just gets anchored to a phantom right edge past what's visible.
+     iOS Safari doesn't exhibit this, which is why it only showed up in
+     one browser. This guarantees there's no such overflow to trigger it. */
+  overflow-x: hidden;
 }
 
 /* Fallback values for the Travelpayouts widget's own CSS variables, for
@@ -3650,7 +3659,6 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-nav-links.tl-nav-open .tl-nav-mobile-lang {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     width: 100%;
     box-sizing: border-box;
