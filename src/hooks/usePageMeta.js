@@ -46,7 +46,7 @@ export default function usePageMeta() {
   // reason, so this only reaches crawlers that execute JS (Googlebot does;
   // WhatsApp/Telegram/Facebook link previews won't get a tour-specific
   // image/title).
-  const { tours } = useTours();
+  const { tours, loading: toursLoading } = useTours();
 
   useEffect(() => {
     const lang = getLocaleFromPathname(location.pathname);
@@ -56,6 +56,13 @@ export default function usePageMeta() {
     const post = postSlug ? getPostBySlug(postSlug, lang) : null;
     const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
+    // Only true once the live tours list has actually loaded — while it's
+    // still loading, tour is legitimately null for every tour ID, active
+    // or not, and flashing noindex during that window would be wrong.
+    // Server-side (prerender.mjs) already 301s a stale tour ID at build
+    // time; this covers the same case for any visit that lands on this ID
+    // between builds, once the client confirms it's really gone.
+    const tourNotFound = !!tourIdMatch && !toursLoading && !tour;
     const vizaCountryMatch = /^\/viza\/([^/]+)$/.exec(path);
     const vizaCountry = vizaCountryMatch ? getVizaCountryBySlug(vizaCountryMatch[1]) : null;
     const vizaCountryName = vizaCountry ? t(`countries.${vizaCountry.name}`, vizaCountry.name) : null;
@@ -116,6 +123,7 @@ export default function usePageMeta() {
     setMeta('twitter-desc', 'content', page.desc);
     setMeta('twitter-image', 'content', image);
     setMeta('canonical', 'href', pageUrl);
+    setMeta('meta-robots', 'content', tourNotFound ? 'noindex, follow' : 'index, follow');
 
     // hreflang alternates — one per supported language pointing at the
     // equivalent page, plus x-default (-> AZ, the unprefixed default).
@@ -211,5 +219,5 @@ export default function usePageMeta() {
     // i18n.language: so a client-side language switch (no pathname change
     // for the AZ<->AZ case is impossible, but query/hash-only navigations
     // could theoretically leave path unchanged) always re-evaluates.
-  }, [location.pathname, location.search, tours, t, i18n.language]);
+  }, [location.pathname, location.search, tours, toursLoading, t, i18n.language]);
 }

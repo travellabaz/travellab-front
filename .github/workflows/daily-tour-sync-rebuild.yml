@@ -1,0 +1,34 @@
+name: Daily tour-sync rebuild
+
+# site-backend's TourSyncJob runs at 3:00 UTC and updates which tours are
+# active/inactive. This site is static (Netlify builds on git push), so
+# without this, a tour going inactive wouldn't be reflected here — 301
+# redirect, sitemap removal, noindex — until the next unrelated push
+# happened to rebuild it (previously only the 07:13 UTC daily-blog commit).
+# An empty commit shortly after 3:00 is enough to trigger a fresh Netlify
+# build/deploy, same mechanism daily-blog.yml already relies on.
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-tour-sync-rebuild
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger a Netlify rebuild
+        run: |
+          git config user.name "travellab-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git commit --allow-empty -m "Rebuild after daily tour status sync"
+          git pull --rebase origin main
+          git push
