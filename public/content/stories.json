@@ -77,7 +77,10 @@
       "label": "Labpoint",
       "order": 7,
       "cover_icon": "award",
-      "stories": []
+      "stories": [
+        { "id": "labpoint-001", "type": "image", "media_url": "/stories/labpoint/001.jpg", "duration_seconds": 5, "link": null },
+        { "id": "labpoint-002", "type": "image", "media_url": "/stories/labpoint/002.jpg", "duration_seconds": 5, "link": null }
+      ]
     },
     {
       "id": "reyler",
