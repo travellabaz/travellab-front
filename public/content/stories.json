@@ -1,0 +1,67 @@
+{
+  "categories": [
+    {
+      "id": "turistler",
+      "label": "Turistlər",
+      "order": 1,
+      "cover_icon": "users",
+      "stories": []
+    },
+    {
+      "id": "viza",
+      "label": "Viza",
+      "order": 2,
+      "cover_icon": "passport",
+      "stories": []
+    },
+    {
+      "id": "endirimler",
+      "label": "Endirimlər",
+      "order": 3,
+      "cover_icon": "percent",
+      "stories": []
+    },
+    {
+      "id": "bloggerler",
+      "label": "Bloggerlər",
+      "order": 4,
+      "cover_icon": "camera",
+      "stories": []
+    },
+    {
+      "id": "hediyye-karti",
+      "label": "Hədiyyə Kartı",
+      "order": 5,
+      "cover_icon": "gift",
+      "stories": []
+    },
+    {
+      "id": "shop",
+      "label": "Shop",
+      "order": 6,
+      "cover_icon": "bag",
+      "stories": []
+    },
+    {
+      "id": "labpoint",
+      "label": "Labpoint",
+      "order": 7,
+      "cover_icon": "award",
+      "stories": []
+    },
+    {
+      "id": "reyler",
+      "label": "Rəylər",
+      "order": 8,
+      "cover_icon": "star",
+      "stories": []
+    },
+    {
+      "id": "ofis",
+      "label": "Ofis",
+      "order": 9,
+      "cover_icon": "building",
+      "stories": []
+    }
+  ]
+}

@@ -129,6 +129,23 @@
     "next": "Следующие туры",
     "viewAll": "Смотреть все туры →"
   },
+  "stories": {
+    "sectionTag": "Специально для вас",
+    "prev": "Назад",
+    "next": "Далее",
+    "viewMore": "Подробнее",
+    "categories": {
+      "turistler": "Туристам",
+      "viza": "Виза",
+      "endirimler": "Скидки",
+      "bloggerler": "Блогерам",
+      "hediyye-karti": "Подарочная карта",
+      "shop": "Shop",
+      "labpoint": "Labpoint",
+      "reyler": "Отзывы",
+      "ofis": "Офис"
+    }
+  },
   "toursPage": {
     "tag": "Специальные предложения",
     "title": "Турпакеты — готовые туры",

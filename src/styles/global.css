@@ -572,6 +572,237 @@ body.tl-subpage .tl-tours-arrow {
   display: flex;
 }
 
+/* ── STORIES (StoriesSection.jsx / StoryViewer.jsx) ── */
+.tl-story-row {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 4px 10px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tl-story-item {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 68px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.tl-story-item:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+/* Ring built from three nested circles: gradient background (unviewed) or
+   flat gray (viewed) -> a white "gap" ring -> the icon/photo circle on
+   top — the standard cross-browser way to fake a circular gradient
+   border, since a plain border-image doesn't clip to border-radius
+   reliably. */
+.tl-story-ring {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: conic-gradient(from 180deg, var(--tl-orange), #E91E8C, var(--tl-orange));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tl-story-ring.viewed {
+  background: var(--tl-gray-200);
+}
+
+.tl-story-avatar-gap {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--tl-white);
+  padding: 2px;
+  display: flex;
+}
+
+.tl-story-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--tl-gray-50);
+  color: var(--tl-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tl-story-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tl-story-label {
+  font-size: 11px;
+  color: var(--tl-gray-600);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 68px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 560px) {
+  .tl-story-item {
+    width: 58px;
+  }
+  .tl-story-ring {
+    width: 52px;
+    height: 52px;
+  }
+  .tl-story-label {
+    max-width: 58px;
+  }
+}
+
+/* Fullscreen viewer */
+.tl-story-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.tl-story-viewer-progress {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.tl-story-viewer-seg {
+  flex: 1;
+  height: 2.5px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tl-story-viewer-seg-fill {
+  height: 100%;
+  background: var(--tl-white);
+}
+
+.tl-story-viewer-head {
+  position: absolute;
+  top: 22px;
+  left: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tl-story-viewer-label {
+  color: var(--tl-white);
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.tl-story-viewer-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tl-story-viewer-iconbtn {
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  color: var(--tl-white);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-story-viewer-media {
+  width: 100%;
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.tl-story-viewer-media-el {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.tl-story-viewer-tapzone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.tl-story-viewer-tapzone-left {
+  left: 0;
+}
+
+.tl-story-viewer-tapzone-right {
+  right: 0;
+}
+
+.tl-story-viewer-linkbtn {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  border: none;
+  border-radius: 100px;
+  padding: 10px 22px;
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: var(--tl-shadow);
+}
+
 /* About: stats/services/address only show on the dedicated Haqqımızda
    page, not in the homepage's combined view. */
 body:not(.tl-subpage) .tl-about-extra {

@@ -129,6 +129,23 @@
     "next": "Növbəti turlar",
     "viewAll": "Bütün turları gör →"
   },
+  "stories": {
+    "sectionTag": "Sizdən gələnlər",
+    "prev": "Əvvəlki",
+    "next": "Növbəti",
+    "viewMore": "Ətraflı",
+    "categories": {
+      "turistler": "Turistlər",
+      "viza": "Viza",
+      "endirimler": "Endirimlər",
+      "bloggerler": "Bloggerlər",
+      "hediyye-karti": "Hədiyyə Kartı",
+      "shop": "Shop",
+      "labpoint": "Labpoint",
+      "reyler": "Rəylər",
+      "ofis": "Ofis"
+    }
+  },
   "toursPage": {
     "tag": "Xüsusi Təkliflər",
     "title": "Tur Paketləri — Hazır Turlar",

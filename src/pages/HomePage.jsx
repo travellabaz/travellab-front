@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import StoriesSection from '../sections/StoriesSection';
 import ToursSection from '../sections/ToursSection';
 import HotelsSection from '../sections/HotelsSection';
 import CtaSection from '../sections/CtaSection';
@@ -15,6 +16,7 @@ export default function HomePage() {
   const { t } = useTranslation();
   return (
     <main className="tpwl-main">
+      <StoriesSection />
       <ToursSection />
       <HotelsSection />
       <CtaSection />

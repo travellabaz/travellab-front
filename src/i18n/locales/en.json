@@ -129,6 +129,23 @@
     "next": "Next tours",
     "viewAll": "See all tours →"
   },
+  "stories": {
+    "sectionTag": "Just for you",
+    "prev": "Previous",
+    "next": "Next",
+    "viewMore": "Learn more",
+    "categories": {
+      "turistler": "Tourists",
+      "viza": "Visa",
+      "endirimler": "Deals",
+      "bloggerler": "Bloggers",
+      "hediyye-karti": "Gift Card",
+      "shop": "Shop",
+      "labpoint": "Labpoint",
+      "reyler": "Reviews",
+      "ofis": "Office"
+    }
+  },
   "toursPage": {
     "tag": "Special Offers",
     "title": "Tour Packages — Ready-Made Tours",
