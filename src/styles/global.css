@@ -573,22 +573,15 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 /* ── STORIES (StoriesSection.jsx / StoryViewer.jsx) ── */
-/* Deliberately full-bleed — unlike every other homepage section, this
-   row isn't wrapped in .tl-section's 1200px column, so it spans the
-   entire viewport edge to edge instead of stopping at the same margins
-   as the tours/hotels/etc. cards below it. Only the small header (tag)
-   above it stays inside the normal content column, for alignment with
-   the rest of the page. */
-.tl-story-section {
-  padding-top: 16px;
-}
-
-/* Specificity bumped (two classes) rather than relying on source order to
-   beat .tl-section's own padding shorthand, since that's defined later
-   in this file. */
-.tl-story-section .tl-story-header {
-  padding-top: 0;
-  padding-bottom: 4px;
+/* Same .tl-section column as every other homepage block (tours, hotels,
+   etc.) — the row's first/last circle line up with the "Sizdən
+   gələnlər" tag above them and with the tour cards below, rather than
+   using its own different inset. Only the top padding is trimmed
+   (specificity bumped to beat .tl-section's own shorthand, defined
+   later in this file), so it doesn't stack with the nav's own gap and
+   read as an oversized block above the row. */
+.tl-story-section .tl-section {
+  padding-top: 20px;
 }
 
 .tl-story-scroller {
@@ -622,11 +615,11 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 .tl-story-arrow-prev {
-  left: 12px;
+  left: -56px;
 }
 
 .tl-story-arrow-next {
-  right: 12px;
+  right: -56px;
 }
 
 @media (max-width: 900px) {
@@ -638,16 +631,16 @@ body.tl-subpage .tl-tours-arrow {
 .tl-story-row {
   display: flex;
   /* space-between rather than a fixed gap: with only 9 items, this
-     spreads them evenly across the full row width on wide screens
-     (first flush left, last flush right) instead of clumping them at
-     the left edge with empty space after. Once there isn't room to fit
-     them all, overflow-x still takes over and this has no visible
-     effect — space-between never fights native scrolling. */
+     spreads them evenly across the full row width (first flush left,
+     last flush right, matching the column's own edges) instead of
+     clumping them at the left with empty space after. Once there isn't
+     room to fit them all, overflow-x still takes over and this has no
+     visible effect — space-between never fights native scrolling. */
   justify-content: space-between;
   gap: 18px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 4px 32px 10px;
+  padding: 4px 0 10px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }

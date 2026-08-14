@@ -46,41 +46,41 @@ export default function StoriesSection() {
 
   return (
     <section className="tl-story-section">
-      <div className="tl-section tl-story-header">
+      <div className="tl-section" style={{ paddingBottom: 24 }}>
         <div className="tl-tag">{t('stories.sectionTag')}</div>
-      </div>
 
-      <div className="tl-story-scroller">
-        <button type="button" className="tl-story-arrow tl-story-arrow-prev" aria-label={t('stories.prev')} onClick={() => scrollBy(-SCROLL_STEP)}>
-          ‹
-        </button>
-        <div className="tl-story-row" ref={rowRef}>
-          {categories.map((category, index) => {
-            const hasStories = category.stories.length > 0;
-            const viewed = !hasStories || isCategoryViewed(category);
-            return (
-              <button
-                type="button"
-                key={category.id}
-                className="tl-story-item"
-                disabled={!hasStories}
-                onClick={() => setOpenCategoryIndex(index)}
-              >
-                <span className={'tl-story-ring' + (viewed ? ' viewed' : '')}>
-                  <span className="tl-story-avatar-gap">
-                    <span className="tl-story-avatar">
-                      <StoryIcon name={category.cover_icon} />
+        <div className="tl-story-scroller">
+          <button type="button" className="tl-story-arrow tl-story-arrow-prev" aria-label={t('stories.prev')} onClick={() => scrollBy(-SCROLL_STEP)}>
+            ‹
+          </button>
+          <div className="tl-story-row" ref={rowRef}>
+            {categories.map((category, index) => {
+              const hasStories = category.stories.length > 0;
+              const viewed = !hasStories || isCategoryViewed(category);
+              return (
+                <button
+                  type="button"
+                  key={category.id}
+                  className="tl-story-item"
+                  disabled={!hasStories}
+                  onClick={() => setOpenCategoryIndex(index)}
+                >
+                  <span className={'tl-story-ring' + (viewed ? ' viewed' : '')}>
+                    <span className="tl-story-avatar-gap">
+                      <span className="tl-story-avatar">
+                        <StoryIcon name={category.cover_icon} />
+                      </span>
                     </span>
                   </span>
-                </span>
-                <span className="tl-story-label">{t(`stories.categories.${category.id}`, category.label)}</span>
-              </button>
-            );
-          })}
+                  <span className="tl-story-label">{t(`stories.categories.${category.id}`, category.label)}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button type="button" className="tl-story-arrow tl-story-arrow-next" aria-label={t('stories.next')} onClick={() => scrollBy(SCROLL_STEP)}>
+            ›
+          </button>
         </div>
-        <button type="button" className="tl-story-arrow tl-story-arrow-next" aria-label={t('stories.next')} onClick={() => scrollBy(SCROLL_STEP)}>
-          ›
-        </button>
       </div>
 
       {openCategoryIndex !== null && (
