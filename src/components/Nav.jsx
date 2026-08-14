@@ -72,15 +72,18 @@ export default function Nav() {
               flat AZ/RU/EN row, the usual pattern for language options
               inside a mobile hamburger menu. */}
           <li className="tl-nav-mobile-lang">
+            {/* Plain <a>, not <Link> — see LanguageSwitcher.jsx for why a
+                real page reload is what makes the search widget actually
+                open in the picked language. */}
             {SUPPORTED_LANGUAGES.map((l) => (
-              <Link
+              <a
                 key={l}
-                to={buildLocalizedPath(location.pathname, l) + location.search}
+                href={buildLocalizedPath(location.pathname, l) + location.search}
                 className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
                 onClick={() => setMobileOpen(false)}
               >
                 {LANG_SHORT_LABEL[l]}
-              </Link>
+              </a>
             ))}
           </li>
         </ul>,

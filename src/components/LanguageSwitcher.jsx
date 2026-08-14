@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 
@@ -34,15 +34,21 @@ export default function LanguageSwitcher({ className }) {
 
       {open && (
         <div className="tl-lang-switcher-popover">
+          {/* Plain <a>, not <Link> — a real navigation, not a client-side
+              route change. The Travelpayouts search widget only reads its
+              locale once at page load (see index.html) and never
+              re-detects a live language switch; a full reload is what
+              makes it actually open in the language you just picked
+              instead of staying on whatever it started in. */}
           {SUPPORTED_LANGUAGES.map((lang) => (
-            <Link
+            <a
               key={lang}
-              to={buildLocalizedPath(location.pathname, lang) + location.search}
+              href={buildLocalizedPath(location.pathname, lang) + location.search}
               className={'tl-lang-switcher-option' + (lang === current ? ' active' : '')}
               onClick={() => setOpen(false)}
             >
               {FULL_LABEL[lang]}
-            </Link>
+            </a>
           ))}
         </div>
       )}
