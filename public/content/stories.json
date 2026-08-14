@@ -41,7 +41,11 @@
       "label": "Bloggerlər",
       "order": 4,
       "cover_icon": "camera",
-      "stories": []
+      "stories": [
+        { "id": "bloggerler-001", "type": "video", "media_url": "/stories/bloggerler/001.mp4", "duration_seconds": null, "link": null },
+        { "id": "bloggerler-002", "type": "video", "media_url": "/stories/bloggerler/002.mp4", "duration_seconds": null, "link": null },
+        { "id": "bloggerler-003", "type": "video", "media_url": "/stories/bloggerler/003.mp4", "duration_seconds": null, "link": null }
+      ]
     },
     {
       "id": "hediyye-karti",
