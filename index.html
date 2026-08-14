@@ -177,6 +177,21 @@
           window.location.reload();
         };
 
+        // Mirrors src/utils/locale.js's getLocaleFromPathname (can't import
+        // it here — this runs before the SPA/React even loads) so the
+        // search widget opens in whichever of AZ/RU/EN the site itself is
+        // on, instead of always defaulting to AZ. Also overwrites any
+        // tpwl_locale cookie left over from the widget's own internal
+        // language switcher — with the site now driving this, having that
+        // switcher silently disagree with the page's actual language would
+        // be more confusing than not.
+        function getSiteLocale() {
+          var seg = window.location.pathname.split('/')[1];
+          return seg === 'ru' ? 'RU' : seg === 'en' ? 'EN' : 'AZ';
+        }
+        var siteLocale = getSiteLocale();
+        setCookie('tpwl_locale', siteLocale);
+
         window.TPWL_CONFIGURATION = {
           version: "v2",
           ab_flag: "",
@@ -189,7 +204,7 @@
           marker: "571353",
           trs: "349139",
           domain: "www.travellab.az",
-          locale: "AZ",
+          locale: siteLocale,
           link_color: "FF6325"
         };
 
