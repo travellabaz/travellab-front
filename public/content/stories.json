@@ -5,14 +5,20 @@
       "label": "Turistlər",
       "order": 1,
       "cover_icon": "users",
-      "stories": []
+      "stories": [
+        { "id": "turistler-001", "type": "video", "media_url": "/stories/turistler/001.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-002", "type": "video", "media_url": "/stories/turistler/002.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-003", "type": "video", "media_url": "/stories/turistler/003.mp4", "duration_seconds": null, "link": null }
+      ]
     },
     {
       "id": "viza",
       "label": "Viza",
       "order": 2,
       "cover_icon": "passport",
-      "stories": []
+      "stories": [
+        { "id": "viza-001", "type": "video", "media_url": "/stories/viza/001.mp4", "duration_seconds": null, "link": null }
+      ]
     },
     {
       "id": "endirimler",
