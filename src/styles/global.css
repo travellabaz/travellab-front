@@ -653,12 +653,18 @@ body.tl-subpage .tl-tours-arrow {
   height: 100%;
   border-radius: 50%;
   background: var(--tl-white);
-  color: var(--tl-green);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
+
+/* Icon color cycles through the 4 colors of the Travellab logo mark
+   (see LogoFull.jsx) instead of every category using the same green. */
+.tl-story-avatar.tl-logo-color-0 { color: #069547; }
+.tl-story-avatar.tl-logo-color-1 { color: #0C75BA; }
+.tl-story-avatar.tl-logo-color-2 { color: #314973; }
+.tl-story-avatar.tl-logo-color-3 { color: #E0921F; }
 
 .tl-story-avatar img {
   width: 100%;

@@ -34,7 +34,13 @@
       "label": "Endirimlər",
       "order": 3,
       "cover_icon": "percent",
-      "stories": []
+      "stories": [
+        { "id": "endirimler-001", "type": "image", "media_url": "/stories/endirimler/001.jpg", "duration_seconds": 5, "link": null },
+        { "id": "endirimler-002", "type": "image", "media_url": "/stories/endirimler/002.jpg", "duration_seconds": 5, "link": null },
+        { "id": "endirimler-003", "type": "image", "media_url": "/stories/endirimler/003.jpg", "duration_seconds": 5, "link": null },
+        { "id": "endirimler-004", "type": "image", "media_url": "/stories/endirimler/004.jpg", "duration_seconds": 5, "link": null },
+        { "id": "endirimler-005", "type": "image", "media_url": "/stories/endirimler/005.jpg", "duration_seconds": 5, "link": null }
+      ]
     },
     {
       "id": "bloggerler",

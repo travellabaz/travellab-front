@@ -58,7 +58,7 @@ export default function StoriesSection() {
                 onClick={() => setOpenCategoryIndex(index)}
               >
                 <span className={'tl-story-ring' + (viewed ? ' viewed' : '')}>
-                  <span className="tl-story-avatar">
+                  <span className={`tl-story-avatar tl-logo-color-${index % 4}`}>
                     <StoryIcon name={category.cover_icon} />
                   </span>
                 </span>
