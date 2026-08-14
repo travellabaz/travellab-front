@@ -70,7 +70,27 @@
       "label": "Shop",
       "order": 6,
       "cover_icon": "bag",
-      "stories": []
+      "stories": [
+        { "id": "shop-001", "type": "image", "media_url": "/stories/shop/001.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-002", "type": "image", "media_url": "/stories/shop/002.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-003", "type": "image", "media_url": "/stories/shop/003.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-004", "type": "image", "media_url": "/stories/shop/004.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-005", "type": "image", "media_url": "/stories/shop/005.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-006", "type": "image", "media_url": "/stories/shop/006.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-007", "type": "image", "media_url": "/stories/shop/007.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-008", "type": "image", "media_url": "/stories/shop/008.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-009", "type": "image", "media_url": "/stories/shop/009.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-010", "type": "image", "media_url": "/stories/shop/010.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-011", "type": "image", "media_url": "/stories/shop/011.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-012", "type": "image", "media_url": "/stories/shop/012.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-013", "type": "image", "media_url": "/stories/shop/013.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-014", "type": "image", "media_url": "/stories/shop/014.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-015", "type": "image", "media_url": "/stories/shop/015.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-016", "type": "image", "media_url": "/stories/shop/016.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-017", "type": "image", "media_url": "/stories/shop/017.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-018", "type": "image", "media_url": "/stories/shop/018.jpg", "duration_seconds": 5, "link": null },
+        { "id": "shop-019", "type": "image", "media_url": "/stories/shop/019.jpg", "duration_seconds": 5, "link": null }
+      ]
     },
     {
       "id": "labpoint",
