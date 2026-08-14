@@ -607,7 +607,7 @@ body.tl-subpage .tl-tours-arrow {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  width: 68px;
+  width: 84px;
   background: none;
   border: none;
   padding: 0;
@@ -629,10 +629,10 @@ body.tl-subpage .tl-tours-arrow {
    entirely; solid-color "padding-box" layer is what shows through the
    gap, always opaque white, never the page background. */
 .tl-story-ring {
-  width: 60px;
-  height: 60px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  border: 2.5px solid transparent;
+  border: 3px solid transparent;
   background:
     linear-gradient(var(--tl-white), var(--tl-white)) padding-box,
     conic-gradient(from 180deg, var(--tl-orange), #E91E8C, var(--tl-orange)) border-box;
@@ -666,12 +666,17 @@ body.tl-subpage .tl-tours-arrow {
   object-fit: cover;
 }
 
+.tl-story-avatar svg {
+  width: 28px;
+  height: 28px;
+}
+
 .tl-story-label {
   font-size: 11px;
   color: var(--tl-gray-600);
   text-align: center;
   line-height: 1.3;
-  max-width: 68px;
+  max-width: 84px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -679,14 +684,18 @@ body.tl-subpage .tl-tours-arrow {
 
 @media (max-width: 560px) {
   .tl-story-item {
-    width: 58px;
+    width: 68px;
   }
   .tl-story-ring {
-    width: 52px;
-    height: 52px;
+    width: 62px;
+    height: 62px;
+  }
+  .tl-story-avatar svg {
+    width: 24px;
+    height: 24px;
   }
   .tl-story-label {
-    max-width: 58px;
+    max-width: 68px;
   }
 }
 
