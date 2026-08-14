@@ -47,8 +47,6 @@ export default function StoriesSection() {
   return (
     <section className="tl-story-section">
       <div className="tl-section" style={{ paddingBottom: 24 }}>
-        <div className="tl-tag">{t('stories.sectionTag')}</div>
-
         <div className="tl-story-scroller">
           <button type="button" className="tl-story-arrow tl-story-arrow-prev" aria-label={t('stories.prev')} onClick={() => scrollBy(-SCROLL_STEP)}>
             ‹
