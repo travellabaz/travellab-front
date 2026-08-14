@@ -17,6 +17,7 @@ import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
 import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
 import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
+import { toAccusative } from './src/utils/ruGrammar.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -270,8 +271,10 @@ async function main() {
         image = post.coverImage.startsWith('http') ? post.coverImage : `${BASE_URL}${post.coverImage}`;
       } else if (kind === 'vizaCountry') {
         const countryName = t(`countries.${entry.country.name}`, entry.country.name);
-        title = t('seo.vizaCountryTitle', { country: countryName });
-        desc = t('seo.vizaCountryDesc', { country: countryName });
+        // "Виза в Грецию", not the bare nominative — see src/utils/ruGrammar.js.
+        const countryNameAcc = toAccusative(countryName, lang);
+        title = t('seo.vizaCountryTitle', { country: countryNameAcc });
+        desc = t('seo.vizaCountryDesc', { country: countryNameAcc });
         image = DEFAULT_OG_IMAGE;
       } else if (kind === 'tourSearchCountry') {
         const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);
@@ -317,9 +320,10 @@ async function main() {
         breadcrumbItems.push({ name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` }, { name: tour.title, url: pageUrl });
       } else if (kind === 'vizaCountry') {
         const countryName = t(`countries.${entry.country.name}`, entry.country.name);
+        const countryNameAcc = toAccusative(countryName, lang);
         breadcrumbItems.push(
           { name: t('nav.viza'), url: `${BASE_URL}${buildLocalizedPath('/viza', lang)}` },
-          { name: t('viza.countryPageBreadcrumb', { country: countryName }), url: pageUrl }
+          { name: t('viza.countryPageBreadcrumb', { country: countryNameAcc }), url: pageUrl }
         );
       } else if (kind === 'tourSearchCountry') {
         const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);

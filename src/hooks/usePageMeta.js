@@ -8,6 +8,7 @@ import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
+import { toAccusative } from '../utils/ruGrammar';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../i18n';
 import { getLocaleFromPathname, stripLocalePrefix, buildLocalizedPath } from '../utils/locale';
 
@@ -67,6 +68,9 @@ export default function usePageMeta() {
     const vizaCountryMatch = /^\/viza\/([^/]+)$/.exec(path);
     const vizaCountry = vizaCountryMatch ? getVizaCountryBySlug(vizaCountryMatch[1]) : null;
     const vizaCountryName = vizaCountry ? t(`countries.${vizaCountry.name}`, vizaCountry.name) : null;
+    // "Виза в Грецию", not the bare nominative "Виза в Греция" — see
+    // utils/ruGrammar.js (AZ/EN pass through unchanged).
+    const vizaCountryNameAcc = vizaCountryName ? toAccusative(vizaCountryName, i18n.language) : null;
     const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
     const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
     const tourSearchCountryName = tourSearchCountry ? t(`countries.${tourSearchCountry.nameAz}`, tourSearchCountry.nameAz) : null;
@@ -87,7 +91,7 @@ export default function usePageMeta() {
       : tour
         ? { title: tour.metaTitle || `${tour.title} — Travellab`, desc: tour.metaDescription || truncate(tour.description, 160) }
         : vizaCountry
-          ? { title: t('seo.vizaCountryTitle', { country: vizaCountryName, defaultValue: `${vizaCountryName} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryName, defaultValue: '' }) }
+          ? { title: t('seo.vizaCountryTitle', { country: vizaCountryNameAcc, defaultValue: `${vizaCountryNameAcc} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryNameAcc, defaultValue: '' }) }
           : tourSearchCountry
             ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
             : flightRoute
@@ -170,7 +174,7 @@ export default function usePageMeta() {
       } else if (tour) {
         items.push({ name: t('nav.tours'), url: BASE_URL + buildLocalizedPath('/tours', lang) }, { name: tour.title, url: pageUrl });
       } else if (vizaCountry) {
-        items.push({ name: t('nav.viza'), url: BASE_URL + buildLocalizedPath('/viza', lang) }, { name: t('viza.countryPageBreadcrumb', { country: vizaCountryName }), url: pageUrl });
+        items.push({ name: t('nav.viza'), url: BASE_URL + buildLocalizedPath('/viza', lang) }, { name: t('viza.countryPageBreadcrumb', { country: vizaCountryNameAcc }), url: pageUrl });
       } else if (tourSearchCountry) {
         items.push(
           { name: t('tourSearch.tourSearchCrumb'), url: BASE_URL + buildLocalizedPath('/tours/search', lang) },

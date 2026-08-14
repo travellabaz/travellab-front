@@ -6,9 +6,10 @@ import FaqSection from '../components/FaqSection';
 import Breadcrumb from '../components/Breadcrumb';
 import SeoBodyText from '../components/SeoBodyText';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
+import { toAccusative, toGenitive } from '../utils/ruGrammar';
 
 export default function VizaCountryPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { country: slug } = useParams();
   const country = getVizaCountryBySlug(slug);
 
@@ -30,10 +31,16 @@ export default function VizaCountryPage() {
   }
 
   const countryName = t(`countries.${country.name}`);
+  // Russian declines "in/for <country>" phrases (accusative for "виза в
+  // Грецию", genitive for "документы для Греции") — countryName itself
+  // stays nominative since it's also used bare elsewhere; see
+  // utils/ruGrammar.js for why AZ/EN pass through unchanged.
+  const countryNameAcc = toAccusative(countryName, i18n.language);
+  const countryNameGen = toGenitive(countryName, i18n.language);
   const faq = [
-    { q: t('vizaFaq.countryQ1', { country: countryName }), a: t('vizaFaq.countryA1', { country: countryName }) },
-    { q: t('vizaFaq.countryQ2', { country: countryName }), a: t('vizaFaq.countryA2', { country: countryName }) },
-    { q: t('vizaFaq.countryQ3', { country: countryName }), a: t('vizaFaq.countryA3', { country: countryName }) },
+    { q: t('vizaFaq.countryQ1', { country: countryNameAcc }), a: t('vizaFaq.countryA1', { country: countryNameGen }) },
+    { q: t('vizaFaq.countryQ2', { country: countryNameAcc }), a: t('vizaFaq.countryA2', { country: countryNameGen }) },
+    { q: t('vizaFaq.countryQ3', { country: countryNameAcc }), a: t('vizaFaq.countryA3', { country: countryNameAcc }) },
   ];
 
   return (
@@ -44,7 +51,7 @@ export default function VizaCountryPage() {
             items={[
               { name: t('breadcrumb.home'), to: '/' },
               { name: t('nav.viza'), to: '/viza' },
-              { name: t('viza.countryPageBreadcrumb', { country: countryName }) },
+              { name: t('viza.countryPageBreadcrumb', { country: countryNameAcc }) },
             ]}
           />
         </div>
@@ -52,7 +59,7 @@ export default function VizaCountryPage() {
       <VizaSection initialCountry={country.name} />
       <FaqSection
         tag={t('toursFaq.tag')}
-        title={t('viza.countryPageFaqTitle', { country: countryName })}
+        title={t('viza.countryPageFaqTitle', { country: countryNameAcc })}
         items={faq}
       />
       <section>
