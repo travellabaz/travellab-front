@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import StoryIcon from '../utils/storyIcons.jsx';
 import StoryViewer from '../components/StoryViewer';
 import { isCategoryViewed } from '../utils/storyViewed';
-
-const SCROLL_STEP = 260;
 
 // Instagram-style highlight row — file-based content (see
 // /public/content/stories.json + /public/stories/), no admin panel or
@@ -21,7 +19,6 @@ export default function StoriesSection() {
   const [categories, setCategories] = useState(null); // null = still loading
   const [openCategoryIndex, setOpenCategoryIndex] = useState(null);
   const [viewedTick, setViewedTick] = useState(0); // bumped to re-read localStorage after closing the viewer
-  const rowRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,44 +37,37 @@ export default function StoriesSection() {
     };
   }, []);
 
-  const scrollBy = (delta) => rowRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
-
   if (!categories || categories.length === 0) return null;
 
   return (
     <section className="tl-story-section">
       <div className="tl-section" style={{ paddingBottom: 24 }}>
-        <div className="tl-story-scroller">
-          <button type="button" className="tl-story-arrow tl-story-arrow-prev" aria-label={t('stories.prev')} onClick={() => scrollBy(-SCROLL_STEP)}>
-            ‹
-          </button>
-          <div className="tl-story-row" ref={rowRef}>
-            {categories.map((category, index) => {
-              const hasStories = category.stories.length > 0;
-              const viewed = !hasStories || isCategoryViewed(category);
-              return (
-                <button
-                  type="button"
-                  key={category.id}
-                  className="tl-story-item"
-                  disabled={!hasStories}
-                  onClick={() => setOpenCategoryIndex(index)}
-                >
-                  <span className={'tl-story-ring' + (viewed ? ' viewed' : '')}>
-                    <span className="tl-story-avatar-gap">
-                      <span className="tl-story-avatar">
-                        <StoryIcon name={category.cover_icon} />
-                      </span>
+        {/* Native touch/wheel scroll only — no prev/next buttons, the row
+            fits all 9 categories on desktop anyway (see justify-content:
+            space-between in global.css). */}
+        <div className="tl-story-row">
+          {categories.map((category, index) => {
+            const hasStories = category.stories.length > 0;
+            const viewed = !hasStories || isCategoryViewed(category);
+            return (
+              <button
+                type="button"
+                key={category.id}
+                className="tl-story-item"
+                disabled={!hasStories}
+                onClick={() => setOpenCategoryIndex(index)}
+              >
+                <span className={'tl-story-ring' + (viewed ? ' viewed' : '')}>
+                  <span className="tl-story-avatar-gap">
+                    <span className="tl-story-avatar">
+                      <StoryIcon name={category.cover_icon} />
                     </span>
                   </span>
-                  <span className="tl-story-label">{t(`stories.categories.${category.id}`, category.label)}</span>
-                </button>
-              );
-            })}
-          </div>
-          <button type="button" className="tl-story-arrow tl-story-arrow-next" aria-label={t('stories.next')} onClick={() => scrollBy(SCROLL_STEP)}>
-            ›
-          </button>
+                </span>
+                <span className="tl-story-label">{t(`stories.categories.${category.id}`, category.label)}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
