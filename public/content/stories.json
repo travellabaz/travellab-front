@@ -58,7 +58,12 @@
       "label": "Hədiyyə Kartı",
       "order": 5,
       "cover_icon": "gift",
-      "stories": []
+      "stories": [
+        { "id": "hediyye-karti-001", "type": "video", "media_url": "/stories/hediyye-karti/001.mp4", "duration_seconds": null, "link": null },
+        { "id": "hediyye-karti-002", "type": "image", "media_url": "/stories/hediyye-karti/002.jpg", "duration_seconds": 5, "link": null },
+        { "id": "hediyye-karti-003", "type": "image", "media_url": "/stories/hediyye-karti/003.jpg", "duration_seconds": 5, "link": null },
+        { "id": "hediyye-karti-004", "type": "image", "media_url": "/stories/hediyye-karti/004.jpg", "duration_seconds": 5, "link": null }
+      ]
     },
     {
       "id": "shop",
