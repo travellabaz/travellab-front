@@ -637,6 +637,13 @@ body.tl-subpage .tl-tours-arrow {
 
 .tl-story-row {
   display: flex;
+  /* space-between rather than a fixed gap: with only 9 items, this
+     spreads them evenly across the full row width on wide screens
+     (first flush left, last flush right) instead of clumping them at
+     the left edge with empty space after. Once there isn't room to fit
+     them all, overflow-x still takes over and this has no visible
+     effect — space-between never fights native scrolling. */
+  justify-content: space-between;
   gap: 18px;
   overflow-x: auto;
   overflow-y: hidden;
