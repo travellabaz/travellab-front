@@ -17,7 +17,16 @@
       "order": 2,
       "cover_icon": "passport",
       "stories": [
-        { "id": "viza-001", "type": "video", "media_url": "/stories/viza/001.mp4", "duration_seconds": null, "link": null }
+        { "id": "viza-001", "type": "video", "media_url": "/stories/viza/001.mp4", "duration_seconds": null, "link": null },
+        { "id": "viza-002", "type": "image", "media_url": "/stories/viza/002.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-003", "type": "image", "media_url": "/stories/viza/003.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-004", "type": "image", "media_url": "/stories/viza/004.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-005", "type": "image", "media_url": "/stories/viza/005.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-006", "type": "image", "media_url": "/stories/viza/006.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-007", "type": "image", "media_url": "/stories/viza/007.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-008", "type": "image", "media_url": "/stories/viza/008.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-009", "type": "image", "media_url": "/stories/viza/009.jpg", "duration_seconds": 5, "link": null },
+        { "id": "viza-010", "type": "image", "media_url": "/stories/viza/010.jpg", "duration_seconds": 5, "link": null }
       ]
     },
     {
