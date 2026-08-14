@@ -573,12 +573,74 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 /* ── STORIES (StoriesSection.jsx / StoryViewer.jsx) ── */
+/* Deliberately full-bleed — unlike every other homepage section, this
+   row isn't wrapped in .tl-section's 1200px column, so it spans the
+   entire viewport edge to edge instead of stopping at the same margins
+   as the tours/hotels/etc. cards below it. Only the small header (tag)
+   above it stays inside the normal content column, for alignment with
+   the rest of the page. */
+.tl-story-section {
+  padding-top: 16px;
+}
+
+/* Specificity bumped (two classes) rather than relying on source order to
+   beat .tl-section's own padding shorthand, since that's defined later
+   in this file. */
+.tl-story-section .tl-story-header {
+  padding-top: 0;
+  padding-bottom: 4px;
+}
+
+.tl-story-scroller {
+  position: relative;
+}
+
+.tl-story-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--tl-shadow);
+  z-index: 2;
+  transition: all 0.2s;
+}
+
+.tl-story-arrow:hover {
+  background: var(--tl-green);
+  border-color: var(--tl-green);
+  color: var(--tl-white);
+}
+
+.tl-story-arrow-prev {
+  left: 12px;
+}
+
+.tl-story-arrow-next {
+  right: 12px;
+}
+
+@media (max-width: 900px) {
+  .tl-story-arrow {
+    display: none;
+  }
+}
+
 .tl-story-row {
   display: flex;
   gap: 18px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 4px 4px 10px;
+  padding: 4px 32px 10px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
 }
