@@ -619,17 +619,23 @@ body.tl-subpage .tl-tours-arrow {
   opacity: 0.55;
 }
 
-/* Ring built from three nested circles: gradient background (unviewed) or
-   flat gray (viewed) -> a white "gap" ring -> the icon/photo circle on
-   top — the standard cross-browser way to fake a circular gradient
-   border, since a plain border-image doesn't clip to border-radius
-   reliably. */
+/* Gradient ring via the double-background/transparent-border technique
+   (background: <solid> padding-box, <gradient> border-box) rather than a
+   padded conic-gradient circle — the padded version rasterizes unevenly
+   at the top/bottom of the circle (visibly thinner ring + a sliver of
+   the page background bleeding through), because a sub-pixel padding
+   value can't clip evenly against a border-radius circle in every
+   browser. Letting the border itself carry the gradient sidesteps that
+   entirely; solid-color "padding-box" layer is what shows through the
+   gap, always opaque white, never the page background. */
 .tl-story-ring {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  padding: 2.5px;
-  background: conic-gradient(from 180deg, var(--tl-orange), #E91E8C, var(--tl-orange));
+  border: 2.5px solid transparent;
+  background:
+    linear-gradient(var(--tl-white), var(--tl-white)) padding-box,
+    conic-gradient(from 180deg, var(--tl-orange), #E91E8C, var(--tl-orange)) border-box;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,23 +643,16 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 .tl-story-ring.viewed {
-  background: var(--tl-gray-200);
-}
-
-.tl-story-avatar-gap {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: var(--tl-white);
-  padding: 2px;
-  display: flex;
+  background:
+    linear-gradient(var(--tl-white), var(--tl-white)) padding-box,
+    linear-gradient(var(--tl-gray-200), var(--tl-gray-200)) border-box;
 }
 
 .tl-story-avatar {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: var(--tl-gray-50);
+  background: var(--tl-white);
   color: var(--tl-green);
   display: flex;
   align-items: center;
