@@ -178,7 +178,9 @@ async function callModel(prompt) {
   });
 
   if (!res.ok) {
-    throw new Error(`Model request failed: ${res.status} ${await res.text()}`);
+    const err = new Error(`Model request failed: ${res.status} ${await res.text()}`);
+    err.status = res.status;
+    throw err;
   }
   const data = await res.json();
   const candidate = data.candidates?.[0];
@@ -362,11 +364,22 @@ function insertInlinePhotos(body, photos) {
   return result;
 }
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// 503 ("high demand") and 429 (rate limit) are transient and worth
+// waiting out rather than hammering the endpoint again immediately —
+// retrying instantly against every attempt just re-hits the same
+// overloaded backend. Everything else (4xx other than 429, bad JSON,
+// word-count misses) isn't capacity-related, so back off less for those.
+function isTransient(err) {
+  return err.status === 503 || err.status === 429;
+}
+
 // Gemini doesn't always hit the 1400-2000 word target the prompt asks for
 // (seen as low as 717) — that's a model-compliance miss, not a real error,
 // so it's worth a couple of retries before giving up and failing the whole
 // workflow (which means no post at all gets published that day).
-async function generateDraft(lang, existing, category, topicHint, maxAttempts = 3) {
+async function generateDraft(lang, existing, category, topicHint, maxAttempts = 5) {
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -377,6 +390,11 @@ async function generateDraft(lang, existing, category, topicHint, maxAttempts = 
     } catch (err) {
       lastError = err;
       console.warn(`[${lang}] Attempt ${attempt}/${maxAttempts} failed: ${err.message}`);
+      if (attempt < maxAttempts) {
+        const delayMs = isTransient(err) ? attempt * 20_000 : 3_000;
+        console.warn(`[${lang}] Retrying in ${delayMs / 1000}s...`);
+        await sleep(delayMs);
+      }
     }
   }
   throw lastError;
