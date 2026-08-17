@@ -234,9 +234,20 @@ const INTERNAL_LINK_PATHS = {
 // picked Gemini over other free models in the first place). `topicHint`
 // is only set for RU/EN — it's the AZ draft's title, so the RU/EN posts
 // cover the same underlying subject instead of picking their own.
-function buildPrompt(lang, existing, category, topicHint) {
+// Appended after a body-too-short retry — mainly bites on the lite
+// fallback model, which tends to undershoot the length target hard
+// (seen ~700 words vs the ~1400-2000 asked for above), not just fall a
+// bit short like the primary occasionally does.
+const LENGTH_ENFORCEMENT = {
+  az: '\n\nVACİB (bu tələb məcburidir): body mətninin ümumi uzunluğu 1400 sözdən AZ OLA BİLMƏZ. Əgər fikirlərin bitdiyini hiss edirsənsə, hər alt-başlıq altında əlavə nümunə, konkret rəqəm/addım və ya izahat əlavə edərək bölmələri dərinləşdir, təzə alt-başlıqlar da əlavə edə bilərsən — məqsəd süni uzatma deyil, real dərinlikdir.',
+  ru: '\n\nВАЖНО (это обязательное требование): общий объём текста body НЕ МОЖЕТ быть меньше 1400 слов. Если кажется, что тема исчерпана, углуби разделы — добавь конкретные примеры, цифры, шаги в каждый подраздел, при необходимости добавь ещё подразделы. Цель — реальная глубина, а не искусственное растягивание.',
+  en: "\n\nIMPORTANT (this is a hard requirement): the body text's total length cannot be under 1400 words. If it feels like the topic is covered, go deeper in each section — add concrete examples, numbers, or steps, and add more subsections if needed. The goal is real depth, not artificial padding.",
+};
+
+function buildPrompt(lang, existing, category, topicHint, opts = {}) {
   const cat = CATEGORIES[category];
   const paths = INTERNAL_LINK_PATHS[lang];
+  const lengthEnforcement = opts.enforceLength ? LENGTH_ENFORCEMENT[lang] : '';
 
   if (lang === 'az') {
     const avoidList = existing.length
@@ -269,6 +280,8 @@ ${avoidList}
 
 Bundan əlavə, yazının mövzusuna uyğun stok fotoları tapmaq üçün 2-3 sadə İNGİLİSCƏ axtarış ifadəsi ver. Hər axtarış ifadəsi üçün Azərbaycan dilində alt-mətn də yaz.
 
+${lengthEnforcement}
+
 Cavabı YALNIZ aşağıdakı JSON formatında ver: {"title": "...", "excerpt": "...", "metaDescription": "...", "imageQueries": ["...", "...", "..."], "imageAltTexts": ["...", "...", "..."], "body": [{"type": "p", "text": "..."}, {"type": "h2", "text": "..."}]}`;
   }
 
@@ -298,6 +311,8 @@ ${paths.map((p) => `- ${p}`).join('\n')}
 
 Также дай 2-3 простые поисковые фразы НА АНГЛИЙСКОМ для подбора стоковых фото по теме статьи. Для каждой фразы напиши alt-текст НА РУССКОМ языке.
 
+${lengthEnforcement}
+
 Ответ ТОЛЬКО в формате JSON: {"title": "...", "excerpt": "...", "metaDescription": "...", "imageQueries": ["...", "...", "..."], "imageAltTexts": ["...", "...", "..."], "body": [{"type": "p", "text": "..."}, {"type": "h2", "text": "..."}]}`;
   }
 
@@ -326,6 +341,8 @@ ${paths.map((p) => `- ${p}`).join('\n')}
 Example: "To find the best prices, compare options in our [flight search](/search)." Links should only appear in "p" type blocks, wherever topically relevant.
 
 Also give 2-3 simple search phrases IN ENGLISH for finding stock photos matching the article's topic. For each phrase, write an alt text also IN ENGLISH.
+
+${lengthEnforcement}
 
 Respond ONLY in this JSON format: {"title": "...", "excerpt": "...", "metaDescription": "...", "imageQueries": ["...", "...", "..."], "imageAltTexts": ["...", "...", "..."], "body": [{"type": "p", "text": "..."}, {"type": "h2", "text": "..."}]}`;
 }
@@ -380,33 +397,46 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // doesn't imply the other is also overloaded, since they're separate
 // capacity pools. delayMs is how long to wait *before* that attempt.
 const ATTEMPT_PLAN = [
-  { model: PRIMARY_MODEL, delayMs: 0 },
-  { model: PRIMARY_MODEL, delayMs: 20_000 },
-  { model: FALLBACK_MODEL, delayMs: 0 },
-  { model: FALLBACK_MODEL, delayMs: 20_000 },
-  { model: FALLBACK_MODEL, delayMs: 40_000 },
+  { model: PRIMARY_MODEL, backoffMs: 0 },
+  { model: PRIMARY_MODEL, backoffMs: 20_000 },
+  { model: FALLBACK_MODEL, backoffMs: 0 },
+  { model: FALLBACK_MODEL, backoffMs: 20_000 },
+  { model: FALLBACK_MODEL, backoffMs: 40_000 },
 ];
 
+// 503/429 are capacity problems — worth the full climbing backoff above.
+// A short body or unparsable JSON isn't a capacity problem, so waiting 20-
+// 40s before re-asking the same (or next) model doesn't make it more
+// likely to comply; a small pause is enough to not hammer the API.
+function isTransient(err) {
+  return err?.status === 503 || err?.status === 429;
+}
+
 // Gemini doesn't always hit the 1400-2000 word target the prompt asks for
-// (seen as low as 717) — that's a model-compliance miss, not a real error,
-// so it's worth a couple of retries before giving up and failing the whole
-// workflow (which means no post at all gets published that day).
+// — seen as low as ~700 words, especially from the lite fallback model —
+// that's a model-compliance miss, not a real error, so it's worth a
+// couple of retries (with a stronger length instruction appended once
+// this has already happened once, see LENGTH_ENFORCEMENT) before giving
+// up and failing the whole workflow (which means no post that day).
 async function generateDraft(lang, existing, category, topicHint, plan = ATTEMPT_PLAN) {
   let lastError;
+  let enforceLength = false;
   for (let i = 0; i < plan.length; i++) {
-    const { model, delayMs } = plan[i];
+    const { model, backoffMs } = plan[i];
+    const delayMs = i === 0 ? 0 : isTransient(lastError) ? backoffMs : Math.min(backoffMs, 2_000);
     if (delayMs > 0) {
       console.warn(`[${lang}] Retrying in ${delayMs / 1000}s (model: ${model})...`);
       await sleep(delayMs);
     }
     try {
-      const raw = await callModel(buildPrompt(lang, existing, category, topicHint), model);
+      const raw = await callModel(buildPrompt(lang, existing, category, topicHint, { enforceLength }), model);
       const draft = extractJson(raw);
       validate(draft);
       return draft;
     } catch (err) {
       lastError = err;
       console.warn(`[${lang}] Attempt ${i + 1}/${plan.length} (${model}) failed: ${err.message}`);
+      if (/Body too short/.test(err.message)) enforceLength = true;
     }
   }
   throw lastError;
