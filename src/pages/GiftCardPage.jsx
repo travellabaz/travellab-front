@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
 import SeoBodyText from '../components/SeoBodyText';
@@ -24,11 +25,61 @@ function GiftCardHeroImage() {
   );
 }
 
+// The static preview doubles as a poster for the promo video — clicking it
+// opens the video full-screen with sound, rather than autoplaying it muted
+// in this small box (the clip is a ~29s narrated ad with burned-in
+// captions, not a silent loop, so it needs to be watched intentionally).
 function GiftCardPreviewImage() {
+  const { t } = useTranslation();
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  useEffect(() => {
+    if (!videoOpen) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setVideoOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [videoOpen]);
+
   return (
-    <div className="tl-gift-visual tl-gift-visual-preview">
-      <img src="/images/gift-card/preview.png" alt="Travellab" />
-    </div>
+    <>
+      <button
+        type="button"
+        className="tl-gift-visual tl-gift-visual-preview tl-gift-visual-video-trigger"
+        onClick={() => setVideoOpen(true)}
+        aria-label={t('giftCard.previewPlayVideo')}
+      >
+        <img src="/images/gift-card/preview.png" alt="Travellab" />
+        <span className="tl-gift-play-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+        </span>
+      </button>
+
+      {videoOpen &&
+        createPortal(
+          <div className="tl-gift-video-overlay" onClick={() => setVideoOpen(false)}>
+            <button
+              type="button"
+              className="tl-gift-video-close"
+              onClick={() => setVideoOpen(false)}
+              aria-label={t('giftCard.previewCloseVideo')}
+            >
+              ✕
+            </button>
+            <video
+              className="tl-gift-video-player"
+              src="/videos/hediyye-karti.mp4"
+              poster="/images/gift-card/preview.png"
+              controls
+              autoPlay
+              playsInline
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>,
+          document.body
+        )}
+    </>
   );
 }
 
