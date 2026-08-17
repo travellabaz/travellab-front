@@ -459,6 +459,11 @@
     "countryNotFound": "This country was not found",
     "seeAllCountries": "See all countries"
   },
+  "visaGallery": {
+    "title": "Our clients' visas",
+    "subtitle": "{{count}} approved visas since 2022",
+    "close": "Close"
+  },
   "vizaFaq": {
     "items": [
       {

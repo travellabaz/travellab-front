@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import VizaSection from '../sections/VizaSection';
+import VisaGalleryMarquee from '../sections/VisaGalleryMarquee';
 import FaqSection from '../components/FaqSection';
 import { VIZA_FAQ } from '../data/vizaFaq';
 import { VIZA_COUNTRIES } from '../data/vizaCountries';
@@ -26,6 +27,8 @@ export default function VizaPage() {
       </section>
 
       <VizaSection />
+
+      <VisaGalleryMarquee />
 
       <FaqSection tag={t('toursFaq.tag')} title={t('vizaFaq.title')} items={t('vizaFaq.items', { returnObjects: true })} />
     </main>

@@ -459,6 +459,11 @@
     "countryNotFound": "Bu ölkə tapılmadı",
     "seeAllCountries": "Bütün ölkələrə bax"
   },
+  "visaGallery": {
+    "title": "Müştərilərimizin vizaları",
+    "subtitle": "2022-dən bəri {{count}} təsdiqlənmiş viza",
+    "close": "Bağla"
+  },
   "vizaFaq": {
     "items": [
       {
