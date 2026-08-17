@@ -27,8 +27,16 @@ const postsDir = path.join(__dirname, '../src/data/blog/posts');
 // within the same year), and this alias is Google's own mechanism for
 // scripts like this one to keep pointing at whatever flash-tier model is
 // currently available without needing a code change each time.
-const MODEL = 'gemini-flash-latest';
-const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+//
+// FALLBACK_MODEL is a distinct model tier (its own capacity pool), not
+// just a second attempt at the same one — seen the primary return 503
+// "high demand" across 5 retries spanning ~3.5 minutes, i.e. sustained
+// overload rather than a brief spike (likely everyone hammering whatever
+// model this alias just got hot-swapped to). Waiting longer on the same
+// model doesn't fix that; a different model tier might not be saturated.
+const PRIMARY_MODEL = 'gemini-flash-latest';
+const FALLBACK_MODEL = 'gemini-flash-lite-latest';
+const endpointFor = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
 const LANGUAGES = ['az', 'ru', 'en'];
 
@@ -154,11 +162,11 @@ function existingPosts() {
     .map((p) => ({ slug: p.slug, title: azTitleOf(p), category: p.category }));
 }
 
-async function callModel(prompt) {
+async function callModel(prompt, model = PRIMARY_MODEL) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
 
-  const res = await fetch(`${ENDPOINT}?key=${apiKey}`, {
+  const res = await fetch(`${endpointFor(model)}?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -366,35 +374,39 @@ function insertInlinePhotos(body, photos) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// 503 ("high demand") and 429 (rate limit) are transient and worth
-// waiting out rather than hammering the endpoint again immediately —
-// retrying instantly against every attempt just re-hits the same
-// overloaded backend. Everything else (4xx other than 429, bad JSON,
-// word-count misses) isn't capacity-related, so back off less for those.
-function isTransient(err) {
-  return err.status === 503 || err.status === 429;
-}
+// 2 quick tries on the primary model (a short wait covers a brief blip),
+// then move to the fallback model tier entirely rather than continuing to
+// wait on a possibly-saturated primary — a sustained outage on one model
+// doesn't imply the other is also overloaded, since they're separate
+// capacity pools. delayMs is how long to wait *before* that attempt.
+const ATTEMPT_PLAN = [
+  { model: PRIMARY_MODEL, delayMs: 0 },
+  { model: PRIMARY_MODEL, delayMs: 20_000 },
+  { model: FALLBACK_MODEL, delayMs: 0 },
+  { model: FALLBACK_MODEL, delayMs: 20_000 },
+  { model: FALLBACK_MODEL, delayMs: 40_000 },
+];
 
 // Gemini doesn't always hit the 1400-2000 word target the prompt asks for
 // (seen as low as 717) — that's a model-compliance miss, not a real error,
 // so it's worth a couple of retries before giving up and failing the whole
 // workflow (which means no post at all gets published that day).
-async function generateDraft(lang, existing, category, topicHint, maxAttempts = 5) {
+async function generateDraft(lang, existing, category, topicHint, plan = ATTEMPT_PLAN) {
   let lastError;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+  for (let i = 0; i < plan.length; i++) {
+    const { model, delayMs } = plan[i];
+    if (delayMs > 0) {
+      console.warn(`[${lang}] Retrying in ${delayMs / 1000}s (model: ${model})...`);
+      await sleep(delayMs);
+    }
     try {
-      const raw = await callModel(buildPrompt(lang, existing, category, topicHint));
+      const raw = await callModel(buildPrompt(lang, existing, category, topicHint), model);
       const draft = extractJson(raw);
       validate(draft);
       return draft;
     } catch (err) {
       lastError = err;
-      console.warn(`[${lang}] Attempt ${attempt}/${maxAttempts} failed: ${err.message}`);
-      if (attempt < maxAttempts) {
-        const delayMs = isTransient(err) ? attempt * 20_000 : 3_000;
-        console.warn(`[${lang}] Retrying in ${delayMs / 1000}s...`);
-        await sleep(delayMs);
-      }
+      console.warn(`[${lang}] Attempt ${i + 1}/${plan.length} (${model}) failed: ${err.message}`);
     }
   }
   throw lastError;
