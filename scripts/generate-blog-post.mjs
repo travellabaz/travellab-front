@@ -288,14 +288,14 @@ Cavabı YALNIZ aşağıdakı JSON formatında ver: {"title": "...", "excerpt": "
   if (lang === 'ru') {
     return `Ты SEO-эксперт и блог-райтер для Travellab — туристического агентства в Азербайджане (Баку). Travellab — АГЕНТСТВО, а не "платформа" — отражай это в тоне. Цель — глубокая, содержательная статья для блога, которая хорошо ранжируется в Google и даёт читателю реальную пользу. Не пиши поверхностные общие фразы.
 
-Напиши статью на РУССКОМ языке, объёмом ПРИМЕРНО 1400-2000 слов, на тему: «${topicHint}» (раскрой именно эту тему — не выбирай другую). Структура примерно такая (не повторяй один и тот же шаблон в каждой статье):
+Напиши статью ПОЛНОСТЬЮ на РУССКОМ языке (важно: заголовок темы ниже дан на азербайджанском только как ориентир по смыслу — сам ответ, включая title, excerpt, metaDescription и body, должен быть целиком на русском, ни одного азербайджанского слова), объёмом ПРИМЕРНО 1400-2000 слов, на тему: «${topicHint}» (раскрой именно эту тему, переведи и адаптируй её на русский — не выбирай другую тему и не копируй азербайджанский текст). Структура примерно такая (не повторяй один и тот же шаблон в каждой статье):
 - Вводный абзац (представляет тему, объясняет пользу для читателя, основная ключевая фраза — в первых 1-2 предложениях)
 - 6-10 подразделов с заголовками (h2), количество меняется от статьи к статье, каждый — 2-4 содержательных абзаца с конкретными примерами/шагами/советами
 - Заключительный раздел — заголовок придумай сам (не пиши каждый раз "Заключение"), краткое резюме и призыв к действию
 
 Текст должен звучать живо и индивидуально, не шаблонно: меняй длину предложений, не повторяй одни и те же переходные фразы («Прежде всего», «Кроме того» и т.д.), привязывай к реалиям (стоимость в разных валютах, аэропорт Гейдар Алиев в Баку (GYD) для маршрутов из Баку, если уместно, сезон/климат).
 
-Категория этой статьи ОБЯЗАТЕЛЬНО **${category}** — раскрывай тему в её рамках: ${cat.guidance}
+Категория этой статьи ОБЯЗАТЕЛЬНО **${category}** — раскрывай тему в её рамках (следующее пояснение категории дано на азербайджанском только для тебя как ориентир, не копируй его язык в ответ): ${cat.guidance}
 
 Требования SEO:
 - Выбери одну основную ключевую фразу и естественно используй её в заголовке, вступлении, минимум в двух подзаголовках и в excerpt.
@@ -313,20 +313,22 @@ ${paths.map((p) => `- ${p}`).join('\n')}
 
 ${lengthEnforcement}
 
+НАПОМИНАНИЕ: title, excerpt, metaDescription и весь текст body должны быть на РУССКОМ языке — без исключений, даже если тема или пояснения выше были даны на азербайджанском.
+
 Ответ ТОЛЬКО в формате JSON: {"title": "...", "excerpt": "...", "metaDescription": "...", "imageQueries": ["...", "...", "..."], "imageAltTexts": ["...", "...", "..."], "body": [{"type": "p", "text": "..."}, {"type": "h2", "text": "..."}]}`;
   }
 
   // en
   return `You are an SEO expert and blog writer for Travellab, a travel agency based in Baku, Azerbaijan. Travellab is an AGENCY, not a "platform" — reflect that in tone. The goal is a deep, genuinely useful blog article that ranks well on Google and gives the reader real value. Don't write shallow, generic filler.
 
-Write an article in ENGLISH, approximately 1400-2000 words, on the topic: "${topicHint}" (cover this exact topic — don't pick a different one). Structure roughly as follows (don't repeat the same template every time):
+Write an article ENTIRELY in ENGLISH (important: the topic below is given in Azerbaijani only as a meaning reference — your actual response, including title, excerpt, metaDescription, and body, must be entirely in English, not a single Azerbaijani word), approximately 1400-2000 words, on the topic: "${topicHint}" (cover this exact topic, translating and adapting it into English — don't pick a different topic and don't copy the Azerbaijani text). Structure roughly as follows (don't repeat the same template every time):
 - An intro paragraph (introduces the topic, explains the reader's benefit, main keyword phrase in the first 1-2 sentences)
 - 6-10 subsections with headings (h2), the count varies article to article, each 2-4 substantial paragraphs with concrete examples/steps/advice
 - A closing section — pick your own heading (don't just write "Conclusion" every time), brief summary and a call to action
 
 The writing should sound alive and specific, not templated: vary sentence length, don't repeat the same transition phrases ("First of all", "In addition", etc.), ground it in real specifics (currency costs, Heydar Aliyev International Airport in Baku (GYD) for routes from Baku where relevant, season/climate) where appropriate.
 
-This article's category MUST be **${category}** — cover the topic within that scope: ${cat.guidance}
+This article's category MUST be **${category}** — cover the topic within that scope (the category guidance below is in Azerbaijani, for your reference only — don't copy its language into the response): ${cat.guidance}
 
 SEO requirements:
 - Pick one primary keyword phrase and use it naturally in the title, intro, at least two subheadings, and the excerpt.
@@ -344,6 +346,8 @@ Also give 2-3 simple search phrases IN ENGLISH for finding stock photos matching
 
 ${lengthEnforcement}
 
+REMINDER: title, excerpt, metaDescription, and all body text must be in ENGLISH — no exceptions, even though the topic or guidance above was given in Azerbaijani.
+
 Respond ONLY in this JSON format: {"title": "...", "excerpt": "...", "metaDescription": "...", "imageQueries": ["...", "...", "..."], "imageAltTexts": ["...", "...", "..."], "body": [{"type": "p", "text": "..."}, {"type": "h2", "text": "..."}]}`;
 }
 
@@ -354,7 +358,30 @@ function extractJson(raw) {
   return JSON.parse(raw.slice(start, end + 1));
 }
 
-function validate(post) {
+// Azerbaijani-specific letters (ə, ğ, ı, ö, ü, ş, ç — both cases). Cheap
+// heuristic, not a real language detector, but ə alone is close to a
+// unique fingerprint: it's extremely common in Azerbaijani and virtually
+// never appears in Russian or English text.
+const AZ_LETTERS = /[əƏğĞıİöÖüÜşŞçÇ]/g;
+const CYRILLIC_LETTERS = /[а-яА-ЯёЁ]/g;
+const ANY_LETTERS = /[a-zA-Zа-яА-ЯёЁəƏğĞıİöÖüÜşŞçÇ]/g;
+
+// Weaker fallback models have been seen ignoring the "write in Russian/
+// English" instruction entirely and echoing the Azerbaijani topic/
+// category guidance that's embedded in the prompt for context — this
+// catches that before a mislabeled post ships, rather than relying on
+// the prompt wording alone.
+function languageMismatch(lang, text) {
+  const total = (text.match(ANY_LETTERS) || []).length || 1;
+  const azRatio = (text.match(AZ_LETTERS) || []).length / total;
+  const cyrillicRatio = (text.match(CYRILLIC_LETTERS) || []).length / total;
+  if (lang === 'az') return azRatio < 0.01;
+  if (lang === 'ru') return cyrillicRatio < 0.5;
+  if (lang === 'en') return cyrillicRatio > 0 || azRatio > 0.02;
+  return false;
+}
+
+function validate(post, lang) {
   if (!post.title || typeof post.title !== 'string') throw new Error('Missing/invalid title');
   if (!post.excerpt || typeof post.excerpt !== 'string') throw new Error('Missing/invalid excerpt');
   if (!Array.isArray(post.body) || post.body.length === 0) throw new Error('Missing/empty body');
@@ -367,6 +394,11 @@ function validate(post) {
     .filter((b) => b.type === 'p')
     .reduce((sum, b) => sum + b.text.trim().split(/\s+/).length, 0);
   if (wordCount < 900) throw new Error(`Body too short: ${wordCount} words (expected ~1400-2000)`);
+
+  const sampleText = post.title + ' ' + post.body.map((b) => b.text).join(' ');
+  if (languageMismatch(lang, sampleText)) {
+    throw new Error(`Body appears to be in the wrong language (expected ${lang})`);
+  }
 }
 
 // Spreads inline photos evenly through the p/h2 blocks (e.g. 2 photos in a
@@ -431,7 +463,7 @@ async function generateDraft(lang, existing, category, topicHint, plan = ATTEMPT
     try {
       const raw = await callModel(buildPrompt(lang, existing, category, topicHint, { enforceLength }), model);
       const draft = extractJson(raw);
-      validate(draft);
+      validate(draft, lang);
       return draft;
     } catch (err) {
       lastError = err;
