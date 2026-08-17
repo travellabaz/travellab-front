@@ -5992,11 +5992,11 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-visa-track.dir-rtl {
-  animation: tl-visa-marquee-rtl 28s linear infinite;
+  animation: tl-visa-marquee-rtl 60s linear infinite;
 }
 
 .tl-visa-track.dir-ltr {
-  animation: tl-visa-marquee-ltr 28s linear infinite;
+  animation: tl-visa-marquee-ltr 60s linear infinite;
 }
 
 .tl-visa-track.paused {
