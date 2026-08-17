@@ -5595,6 +5595,16 @@ body:not(.tl-subpage) .tl-about-extra {
   max-width: 220px;
 }
 
+/* The cover photo is a portrait 9:16 video frame — left at its natural
+   height it'd tower over the rest of the sidebar, so it's cropped into
+   a shorter portrait card here instead (full frame still shown in the
+   full-screen video modal). */
+.tl-gift-visual-video-trigger.tl-gift-visual-preview img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top;
+}
+
 .tl-gift-visual-video-trigger {
   position: relative;
   background: none;
