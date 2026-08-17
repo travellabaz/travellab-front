@@ -5649,6 +5649,9 @@ body:not(.tl-subpage) .tl-about-extra {
   aspect-ratio: 9 / 16;
   border-radius: var(--tl-r-lg);
   background: #000;
+  /* Poster is the landscape print-design crop, video itself is portrait
+     9:16 — cover crops the poster to fill instead of stretching it. */
+  object-fit: cover;
 }
 
 .tl-gift-video-close {

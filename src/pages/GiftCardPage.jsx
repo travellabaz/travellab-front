@@ -50,7 +50,7 @@ function GiftCardPreviewImage() {
         onClick={() => setVideoOpen(true)}
         aria-label={t('giftCard.previewPlayVideo')}
       >
-        <img src="/images/gift-card/preview.png" alt="Travellab" />
+        <img src="/images/gift-card/hediyye-karti-cover.jpg" alt="Travellab" />
         <span className="tl-gift-play-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
         </span>
@@ -70,7 +70,7 @@ function GiftCardPreviewImage() {
             <video
               className="tl-gift-video-player"
               src="/videos/hediyye-karti.mp4"
-              poster="/images/gift-card/preview.png"
+              poster="/images/gift-card/hediyye-karti-cover.jpg"
               controls
               autoPlay
               playsInline
