@@ -5595,14 +5595,19 @@ body:not(.tl-subpage) .tl-about-extra {
   max-width: 220px;
 }
 
-/* The cover photo is a portrait 9:16 video frame — left at its natural
+/* The cover photo / teaser clip is portrait 9:16 — left at its natural
    height it'd tower over the rest of the sidebar, so it's cropped into
    a shorter portrait card here instead (full frame still shown in the
    full-screen video modal). */
-.tl-gift-visual-video-trigger.tl-gift-visual-preview img {
+.tl-gift-visual-video-trigger.tl-gift-visual-preview img,
+.tl-gift-visual-video-trigger.tl-gift-visual-preview video {
+  width: 100%;
+  max-width: 220px;
   aspect-ratio: 3 / 4;
   object-fit: cover;
   object-position: top;
+  display: block;
+  border-radius: 20px;
 }
 
 .tl-gift-visual-video-trigger {
@@ -6128,6 +6133,53 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-visa-lightbox-close:hover {
   background: rgba(255, 255, 255, 0.22);
+}
+
+.tl-visa-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--tl-white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.tl-visa-lightbox-nav svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tl-visa-lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.tl-visa-lightbox-nav-prev {
+  left: 16px;
+}
+
+.tl-visa-lightbox-nav-next {
+  right: 16px;
+}
+
+@media (max-width: 560px) {
+  .tl-visa-lightbox-nav {
+    width: 38px;
+    height: 38px;
+  }
+  .tl-visa-lightbox-nav-prev {
+    left: 6px;
+  }
+  .tl-visa-lightbox-nav-next {
+    right: 6px;
+  }
 }
 
 @media (max-width: 560px) {

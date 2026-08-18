@@ -25,10 +25,10 @@ function GiftCardHeroImage() {
   );
 }
 
-// The static preview doubles as a poster for the promo video — clicking it
-// opens the video full-screen with sound, rather than autoplaying it muted
-// in this small box (the clip is a ~29s narrated ad with burned-in
-// captions, not a silent loop, so it needs to be watched intentionally).
+// The small box autoplays a silent 4s teaser (the clean tail of the promo
+// clip, no captions/narration in that stretch) so it doesn't sit static —
+// clicking it opens the full video full-screen with sound instead of
+// relying on this muted loop to tell the whole story.
 function GiftCardPreviewImage() {
   const { t } = useTranslation();
   const [videoOpen, setVideoOpen] = useState(false);
@@ -50,7 +50,14 @@ function GiftCardPreviewImage() {
         onClick={() => setVideoOpen(true)}
         aria-label={t('giftCard.previewPlayVideo')}
       >
-        <img src="/images/gift-card/hediyye-karti-cover.jpg" alt="Travellab" />
+        <video
+          src="/videos/hediyye-karti-teaser.mp4"
+          poster="/images/gift-card/hediyye-karti-cover.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
         <span className="tl-gift-play-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
         </span>

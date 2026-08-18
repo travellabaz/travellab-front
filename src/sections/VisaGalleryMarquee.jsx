@@ -61,16 +61,41 @@ function MarqueeRow({ items, direction, onOpen }) {
   );
 }
 
-function VisaLightbox({ item, onClose }) {
-  const touchStartY = useRef(null);
+function NavArrow({ direction, onClick }) {
+  return (
+    <button
+      type="button"
+      className={`tl-visa-lightbox-nav tl-visa-lightbox-nav-${direction}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      aria-label={direction === 'prev' ? 'Previous' : 'Next'}
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        {direction === 'prev' ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
+      </svg>
+    </button>
+  );
+}
+
+function VisaLightbox({ items, index, onIndexChange, onClose }) {
+  const touchStart = useRef(null);
+  const item = items[index];
+
+  const goNext = () => onIndexChange((index + 1) % items.length);
+  const goPrev = () => onIndexChange((index - 1 + items.length) % items.length);
 
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onClose, index, items.length]);
 
   const { t } = useTranslation();
 
@@ -78,19 +103,34 @@ function VisaLightbox({ item, onClose }) {
     <div
       className="tl-visa-lightbox-overlay"
       onClick={onClose}
-      onTouchStart={(e) => { touchStartY.current = e.touches[0].clientY; }}
+      onTouchStart={(e) => {
+        const t0 = e.touches[0];
+        touchStart.current = { x: t0.clientX, y: t0.clientY };
+      }}
       onTouchEnd={(e) => {
-        if (touchStartY.current == null) return;
-        const dy = e.changedTouches[0].clientY - touchStartY.current;
-        if (dy > 80) onClose();
-        touchStartY.current = null;
+        if (!touchStart.current) return;
+        const t1 = e.changedTouches[0];
+        const dx = t1.clientX - touchStart.current.x;
+        const dy = t1.clientY - touchStart.current.y;
+        if (Math.abs(dy) > Math.abs(dx)) {
+          if (dy > 80) onClose();
+        } else if (Math.abs(dx) > 60) {
+          if (dx < 0) goNext();
+          else goPrev();
+        }
+        touchStart.current = null;
       }}
     >
       <button type="button" className="tl-visa-lightbox-close" onClick={onClose} aria-label={t('visaGallery.close')}>
         ✕
       </button>
+
+      <NavArrow direction="prev" onClick={goPrev} />
+      <NavArrow direction="next" onClick={goNext} />
+
       {item.type === 'video' ? (
         <video
+          key={item.id}
           className="tl-visa-lightbox-media"
           src={item.media_url}
           controls
@@ -100,6 +140,7 @@ function VisaLightbox({ item, onClose }) {
         />
       ) : (
         <img
+          key={item.id}
           className="tl-visa-lightbox-media"
           src={item.media_url}
           alt={item.country}
@@ -115,8 +156,13 @@ export default function VisaGalleryMarquee() {
   const { t } = useTranslation();
   const [items, setItems] = useState(null); // null = not fetched yet
   const [inView, setInView] = useState(false);
-  const [lightboxItem, setLightboxItem] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const sectionRef = useRef(null);
+
+  const openLightbox = (item) => {
+    const idx = items.findIndex((i) => i.id === item.id);
+    setLightboxIndex(idx === -1 ? 0 : idx);
+  };
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -176,20 +222,27 @@ export default function VisaGalleryMarquee() {
             <div className="tl-section">
               <div className="tl-visa-static-grid">
                 {items.map((item) => (
-                  <VisaCard key={item.id} item={item} onOpen={setLightboxItem} />
+                  <VisaCard key={item.id} item={item} onOpen={openLightbox} />
                 ))}
               </div>
             </div>
           ) : (
             <>
-              <MarqueeRow items={rows[0]} direction="ltr" onOpen={setLightboxItem} />
-              <MarqueeRow items={rows[1]} direction="rtl" onOpen={setLightboxItem} />
+              <MarqueeRow items={rows[0]} direction="ltr" onOpen={openLightbox} />
+              <MarqueeRow items={rows[1]} direction="rtl" onOpen={openLightbox} />
             </>
           )}
         </>
       )}
 
-      {lightboxItem && <VisaLightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />}
+      {lightboxIndex !== null && (
+        <VisaLightbox
+          items={items}
+          index={lightboxIndex}
+          onIndexChange={setLightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </section>
   );
 }
