@@ -130,6 +130,7 @@
     "viewAll": "See all tours →"
   },
   "stories": {
+    "sectionTitle": "Our Stories",
     "prev": "Previous",
     "next": "Next",
     "viewMore": "Learn more",
@@ -507,6 +508,14 @@
     "countryA3": "As a travel agency, Travellab provides full support for a {{country}} visa, from document preparation to application — we prepare the list of required documents, help fill out forms, and simplify communication with the consulate.",
     "title": "Frequently asked questions about visas"
   },
+  "endirimler": {
+    "tag": "Your discounts",
+    "title": "Deals",
+    "subtitle": "Your LabPoint balance: {{balance}} — this amount is automatically deducted from the tour prices below.",
+    "loginRequiredDesc": "Register to see your discounts — the LabPoint balance you get from signing up is automatically deducted from tour prices.",
+    "loginRequiredCta": "Register",
+    "emptyDesc": "There aren't any tours your balance discounts yet. As your balance grows, more tours will show up here."
+  },
   "giftCard": {
     "tag": "Give a trip, give a memory!",
     "title": "Travellab Gift Card",
@@ -668,6 +677,10 @@
     "giftCard": {
       "title": "Gift Card - Give the Gift of Travel | Travellab",
       "desc": "Give your loved ones the gift of travel with a Travellab Gift Card. Valid for flights, hotels and tours, valid for 1 year."
+    },
+    "endirimler": {
+      "title": "Deals - Tour Discounts with LabPoint Balance | Travellab",
+      "desc": "Get discounts on tours using your LabPoint balance. Register and discover Travellab's discounted tours."
     },
     "vizaCountryTitle": "{{country}} Visa - Documents and Requirements | Travellab",
     "vizaCountryDesc": "Required documents, timeline and cost for a {{country}} visa. Fast, reliable visa service with Travellab. Apply now!",

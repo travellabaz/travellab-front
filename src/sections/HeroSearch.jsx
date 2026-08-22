@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Link from '../components/LocalizedLink';
+import Link, { useLocalizedNavigate } from '../components/LocalizedLink';
 import { HOTELS_URL } from './HotelsSection';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
@@ -34,6 +34,7 @@ export default function HeroSearch({ title }) {
   const [photoIndex, setPhotoIndex] = useState(0);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
+  const navigate = useLocalizedNavigate();
   const { t } = useTranslation();
   const pillsRef = useRef(null);
   const photoAlts = t('hero.photoAlts', { returnObjects: true });
@@ -137,15 +138,16 @@ export default function HeroSearch({ title }) {
             go live (next up: "Yanan Turlar" once that integration lands). */}
         <div className="tl-hero-mode-pills" ref={pillsRef}>
           <a href={HOTELS_URL} className="tl-hero-pill tl-hero-pill-accent">{t('hero.pillHotels')}</a>
-          {/* Signup bait: only shown to visitors who aren't logged in yet —
-              disappears the moment they are, since the point is to nudge
-              them toward registering, not to advertise a real discounts
-              page. */}
-          {!isAuthenticated && (
-            <button type="button" className="tl-hero-pill tl-hero-pill-deal" onClick={() => openAuth('register')}>
-              {t('hero.pillDeals')}
-            </button>
-          )}
+          {/* Always visible now: logged-out visitors get nudged into
+              registering first (that's where their LabPoint balance comes
+              from), logged-in ones go straight to the real discounts page. */}
+          <button
+            type="button"
+            className="tl-hero-pill tl-hero-pill-deal"
+            onClick={() => (isAuthenticated ? navigate('/endirimler') : openAuth('register'))}
+          >
+            {t('hero.pillDeals')}
+          </button>
           <Link to="/tours" className="tl-hero-pill">{t('hero.pillTours')}</Link>
           <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">{t('hero.pillGroupTours')}</Link>
           <Link to="/hediyye-karti" className="tl-hero-pill tl-hero-pill-gift">{t('hero.pillGiftCard')}</Link>

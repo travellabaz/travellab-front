@@ -583,6 +583,14 @@ body.tl-subpage .tl-tours-arrow {
   padding-top: 20px;
 }
 
+.tl-story-section-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin-bottom: 14px;
+}
+
 .tl-story-row {
   display: flex;
   /* space-between rather than a fixed gap: with only 9 items, this

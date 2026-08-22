@@ -130,6 +130,7 @@
     "viewAll": "Bütün turları gör →"
   },
   "stories": {
+    "sectionTitle": "Storilərimiz",
     "prev": "Əvvəlki",
     "next": "Növbəti",
     "viewMore": "Ətraflı",
@@ -507,6 +508,14 @@
     "countryA3": "Travellab səyahət agentliyi olaraq, {{country}} vizası üçün sənəd hazırlığından müraciətə qədər tam dəstək göstəririk — lazımi sənədlərin siyahısını hazırlayır, formların doldurulmasında kömək edir və konsulluqla əlaqəni asanlaşdırırıq.",
     "title": "Viza ilə bağlı tez-tez verilən suallar"
   },
+  "endirimler": {
+    "tag": "Sizin endirimləriniz",
+    "title": "Endirimlər",
+    "subtitle": "Labpoint balansınız: {{balance}} — bu məbləğ aşağıdakı turların qiymətindən avtomatik çıxılır.",
+    "loginRequiredDesc": "Endirimləri görmək üçün qeydiyyatdan keçin — qeydiyyat zamanı qazandığınız Labpoint balansı tur qiymətlərindən avtomatik çıxılır.",
+    "loginRequiredCta": "Qeydiyyatdan keç",
+    "emptyDesc": "Hazırda balansınızla endirim etdiyiniz tur yoxdur. Balansınız artdıqca daha çox tur burada görünəcək."
+  },
   "giftCard": {
     "tag": "Hədiyyə edin, xatirə qazandırın!",
     "title": "Travellab Hədiyyə Kartı",
@@ -668,6 +677,10 @@
     "giftCard": {
       "title": "Hədiyyə Kartı - Səyahət Hədiyyə Edin | Travellab",
       "desc": "Travellab Hədiyyə Kartı ilə sevdiklərinizə səyahət hədiyyə edin. Aviabilet, otel və turlarda keçərli, 1 il müddətinə etibarlıdır."
+    },
+    "endirimler": {
+      "title": "Endirimlər - Labpoint Balansı ilə Tur Endirimləri | Travellab",
+      "desc": "Labpoint balansınızla tur qiymətlərindən endirim əldə edin. Qeydiyyatdan keçin və Travellab-da endirimli turları kəşf edin."
     },
     "vizaCountryTitle": "{{country}} Vizası - Sənədlər və Şərtlər | Travellab",
     "vizaCountryDesc": "{{country}} vizası üçün lazımi sənədlər, müddət və qiymət. Travellab ilə sürətli və etibarlı viza xidməti. İndi müraciət edin!",

@@ -42,6 +42,7 @@ export default function StoriesSection() {
   return (
     <section className="tl-story-section">
       <div className="tl-section" style={{ paddingBottom: 24 }}>
+        <h2 className="tl-story-section-title">{t('stories.sectionTitle')}</h2>
         {/* Native touch/wheel scroll only — no prev/next buttons, the row
             fits all 9 categories on desktop anyway (see justify-content:
             space-between in global.css). */}
