@@ -235,11 +235,21 @@
           const hasFlightSearch = /flightSearch=\w+/.test(window.location.href);
           const canSmoothScroll = 'scrollBehavior' in document.documentElement.style;
           const widgetsBlock = document.querySelector('.tpwl-widgets__wrapper');
+          const resultsBlock = document.getElementById('tpwl-tickets');
 
           if (!hasFlightSearch) {
             if (widgetsBlock) widgetsBlock.style.display = 'flex';
+            // HeroSearch (and its #tpwl-tickets results div) is a single
+            // persistent instance shared across every route — without this,
+            // navigating away from a search via the main nav (any link click
+            // runs through the wrapped pushState/replaceState below) leaves
+            // the previous ticket list sitting there under whatever page
+            // you land on next.
+            if (resultsBlock) resultsBlock.style.display = 'none';
             return;
           }
+
+          if (resultsBlock) resultsBlock.style.display = '';
 
           // hiding widgetsBlock removes its height from the page, shifting
           // #tpwl-tickets (and the scroll target) upward — if the scroll ran
@@ -256,7 +266,6 @@
             return;
           }
 
-          const resultsBlock = document.getElementById('tpwl-tickets');
           if (!resultsBlock) {
             widgetsBlock.style.display = 'none';
             return;
