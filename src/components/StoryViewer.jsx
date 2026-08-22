@@ -3,9 +3,12 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedNavigate } from './LocalizedLink';
 import { markCategoryViewed } from '../utils/storyViewed';
+import StoryIcon from '../utils/storyIcons.jsx';
 
 const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doesn't set its own
 const SWIPE_DOWN_CLOSE_THRESHOLD = 80; // px
+const SWIPE_HORIZONTAL_CATEGORY_THRESHOLD = 60; // px — a deliberate drag, not a tap
+const NEXT_CATEGORY_PREVIEW_COUNT = 2; // how many upcoming categories peek in on desktop
 
 // Fullscreen Instagram-style story viewer. Only ever mounted for the one
 // category the visitor actually clicked (see StoriesSection.jsx) — that's
@@ -149,7 +152,19 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
     const dx = t0.clientX - start.x;
     const dy = t0.clientY - start.y;
     touchStartRef.current = null;
-    if (dy > SWIPE_DOWN_CLOSE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) onClose();
+    if (dy > SWIPE_DOWN_CLOSE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
+      onClose();
+      return;
+    }
+    // A deliberate horizontal drag jumps straight to the next/previous
+    // CATEGORY, skipping whatever stories are left in the current one —
+    // a plain tap on the left/right half (the buttons underneath) still
+    // advances one story at a time. preventDefault suppresses the
+    // synthetic click that would otherwise also fire on those buttons.
+    if (Math.abs(dx) > SWIPE_HORIZONTAL_CATEGORY_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      e.preventDefault();
+      goToCategory(dx < 0 ? catIndex + 1 : catIndex - 1, false);
+    }
   };
 
   const handleLinkClick = (e) => {
@@ -159,6 +174,15 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
   };
 
   if (!category || !story) return null;
+
+  // Desktop-only peek at what's coming up (see .tl-story-viewer-next-stack,
+  // hidden below the desktop breakpoint) — lets a visitor jump straight to
+  // e.g. "Endirimlər" without clicking through every remaining story in
+  // the category they're currently on, mirroring Instagram's web viewer.
+  const upcomingCategories = [];
+  for (let i = catIndex + 1; i < categories.length && upcomingCategories.length < NEXT_CATEGORY_PREVIEW_COUNT; i++) {
+    if (categories[i].stories.length > 0) upcomingCategories.push({ index: i, category: categories[i] });
+  }
 
   return createPortal(
     <div
@@ -204,6 +228,27 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
           <img key={story.id} src={story.media_url} alt="" className="tl-story-viewer-media-el" />
         )}
       </div>
+
+      {upcomingCategories.length > 0 && (
+        <div className="tl-story-viewer-next-stack">
+          {upcomingCategories.map(({ index, category: nextCat }, depth) => (
+            <button
+              type="button"
+              key={nextCat.id}
+              className={`tl-story-viewer-next-item tl-story-viewer-next-depth-${depth}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                goToCategory(index, false);
+              }}
+            >
+              <span className="tl-story-viewer-next-avatar">
+                <StoryIcon name={nextCat.cover_icon} />
+              </span>
+              <span className="tl-story-viewer-next-label">{t(`stories.categories.${nextCat.id}`, nextCat.label)}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <button
         type="button"

@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 import { useTours } from '../context/ToursContext';
 import TourCard from '../components/TourCard';
-import { extractMinPrice, calcBalanceDiscount, formatPrice } from '../utils/price';
+import { extractMinPrice, calcBalanceDiscount } from '../utils/price';
 
 // Gated behind login: the whole point of this page is "tour price minus
 // your LabPoint balance" (see TourCard's balanceDiscount), which only
@@ -57,10 +57,6 @@ export default function EndirimlerPage() {
               <h1 className="tl-title">{t('endirimler.title')}</h1>
             </div>
           </div>
-
-          <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', marginBottom: 24 }}>
-            {t('endirimler.subtitle', { balance: formatPrice(balanceAzn, 'AZN') })}
-          </p>
 
           {loading && (
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>

@@ -511,7 +511,6 @@
   "endirimler": {
     "tag": "Your discounts",
     "title": "Deals",
-    "subtitle": "Your LabPoint balance: {{balance}} — this amount is automatically deducted from the tour prices below.",
     "loginRequiredDesc": "Register to see your discounts — the LabPoint balance you get from signing up is automatically deducted from tour prices.",
     "loginRequiredCta": "Register",
     "emptyDesc": "There aren't any tours your balance discounts yet. As your balance grows, more tours will show up here."

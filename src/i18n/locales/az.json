@@ -511,7 +511,6 @@
   "endirimler": {
     "tag": "Sizin endirimləriniz",
     "title": "Endirimlər",
-    "subtitle": "Labpoint balansınız: {{balance}} — bu məbləğ aşağıdakı turların qiymətindən avtomatik çıxılır.",
     "loginRequiredDesc": "Endirimləri görmək üçün qeydiyyatdan keçin — qeydiyyat zamanı qazandığınız Labpoint balansı tur qiymətlərindən avtomatik çıxılır.",
     "loginRequiredCta": "Qeydiyyatdan keç",
     "emptyDesc": "Hazırda balansınızla endirim etdiyiniz tur yoxdur. Balansınız artdıqca daha çox tur burada görünəcək."
