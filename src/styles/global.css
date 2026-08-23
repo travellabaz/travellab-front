@@ -6296,17 +6296,17 @@ body:not(.tl-subpage) .tl-about-extra {
     gap: 24px;
   }
   .tl-visa-card-wrap {
-    width: 240px;
+    width: 190px;
   }
   .tl-visa-card {
-    width: 240px;
-    height: 320px;
-    border-radius: 18px;
+    width: 190px;
+    height: 253px;
+    border-radius: 16px;
   }
   .tl-visa-card-label {
-    max-width: 240px;
-    font-size: 13px;
-    padding: 5px 16px;
+    max-width: 190px;
+    font-size: 12px;
+    padding: 4px 14px;
   }
   .tl-visa-play-badge {
     width: 34px;
