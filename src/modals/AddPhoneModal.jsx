@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
 
 const OTP_SECONDS = 120;
-const PROMPT_DELAY_MS = 7000;
+const PROMPT_DELAY_MS = 20000; // minimum time on site before this is even considered
+const MIN_CLICKS_BEFORE_PROMPT = 3; // needs some real browsing first, not just elapsed time
 const SHOWN_KEY = 'tl_phone_prompt_shown';
 
 function useCountdown() {
@@ -38,7 +39,10 @@ const emptyOtp = () => Array(6).fill('');
 // receive their referral-link SMS, which otherwise silently never arrives.
 // Shown once per browser tab session (sessionStorage, not localStorage —
 // a fresh tab or the next day tries again as long as profile.phone is
-// still empty), a short delay after load, and is always dismissible.
+// still empty), and always dismissible. Waits for both a minimum delay
+// AND a bit of real clicking around the site — popping up the instant
+// someone lands felt jarring; this way it only shows once they're
+// actually browsing.
 export default function AddPhoneModal() {
   const { t } = useTranslation();
   const { isAuthenticated, profile, refreshProfile } = useAuth();
@@ -56,11 +60,33 @@ export default function AddPhoneModal() {
   useEffect(() => {
     if (!isAuthenticated || profile?.phone) return undefined;
     if (sessionStorage.getItem(SHOWN_KEY)) return undefined;
-    const timer = setTimeout(() => {
+
+    let delayDone = false;
+    let clicks = 0;
+    let shown = false;
+
+    const tryShow = () => {
+      if (shown || !delayDone || clicks < MIN_CLICKS_BEFORE_PROMPT) return;
+      shown = true;
       sessionStorage.setItem(SHOWN_KEY, '1');
       setOpen(true);
+    };
+
+    const timer = setTimeout(() => {
+      delayDone = true;
+      tryShow();
     }, PROMPT_DELAY_MS);
-    return () => clearTimeout(timer);
+
+    const onClick = () => {
+      clicks += 1;
+      tryShow();
+    };
+    document.addEventListener('click', onClick);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', onClick);
+    };
   }, [isAuthenticated, profile]);
 
   if (!open) return null;
