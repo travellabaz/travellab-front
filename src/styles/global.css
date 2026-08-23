@@ -6287,3 +6287,35 @@ body:not(.tl-subpage) .tl-about-extra {
     max-width: 92px;
   }
 }
+
+/* Desktop: noticeably bigger cards, deliberately sized so the row can't
+   all be seen at once — the point of a marquee is the motion, and at the
+   old 110px size a wide screen just showed the whole thing statically. */
+@media (min-width: 900px) {
+  .tl-visa-track {
+    gap: 24px;
+  }
+  .tl-visa-card-wrap {
+    width: 240px;
+  }
+  .tl-visa-card {
+    width: 240px;
+    height: 320px;
+    border-radius: 18px;
+  }
+  .tl-visa-card-label {
+    max-width: 240px;
+    font-size: 13px;
+    padding: 5px 16px;
+  }
+  .tl-visa-play-badge {
+    width: 34px;
+    height: 34px;
+    top: 10px;
+    right: 10px;
+  }
+  .tl-visa-play-badge svg {
+    width: 16px;
+    height: 16px;
+  }
+}
