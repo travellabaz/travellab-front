@@ -100,6 +100,37 @@ export async function setPassword({ phone, password, passwordConfirm }) {
   return { ok: res.ok, data };
 }
 
+// Links a phone onto the CURRENTLY authenticated client (Google/mail
+// sign-ups have none) — see AddPhoneModal.jsx. Distinct from register()'s
+// OTP session: this one requires a bearer token, hence authFetch.
+export async function requestPhoneLink(phone, onSessionExpired) {
+  const res = await authFetch(
+    '/clients/phone-link/request',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() },
+      body: JSON.stringify({ phone: toApiPhone(phone) }),
+    },
+    onSessionExpired
+  );
+  const data = res ? await res.json().catch(() => ({})) : {};
+  return { ok: !!res && res.ok, data };
+}
+
+export async function confirmPhoneLink(sessionId, otp, onSessionExpired) {
+  const res = await authFetch(
+    '/clients/phone-link/confirm',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'session-id': sessionId, ...acceptLanguageHeader() },
+      body: JSON.stringify({ otp }),
+    },
+    onSessionExpired
+  );
+  const data = res ? await res.json().catch(() => ({})) : {};
+  return { ok: !!res && res.ok, data };
+}
+
 export async function fetchProfile(onSessionExpired) {
   const [cardsRes, detailsRes] = await Promise.all([
     authFetch('/lab-cards', { headers: { 'Content-Type': 'application/json', ...acceptLanguageHeader() } }, onSessionExpired),

@@ -611,6 +611,21 @@
     "errorGoogleLogin": "Google ilə daxil olarkən xəta baş verdi.",
     "errorGeneric": "Xəta baş verdi."
   },
+  "addPhone": {
+    "title": "Nömrənizi əlavə edin",
+    "desc": "Unikal referral linkinizi WhatsApp/SMS ilə almaq üçün mobil nömrənizi təsdiqləyin.",
+    "phoneLabel": "Mobil Nömrə (Whatsapp aktiv olan nömrə)",
+    "later": "Sonra",
+    "submit": "Təsdiqlə",
+    "otpTitle": "OTP Kodu",
+    "otpDesc": "+994{{phone}} nömrəsinə OTP göndərildi.",
+    "successTitle": "Təşəkkürlər!",
+    "successDesc": "Nömrəniz təsdiqləndi. Unikal referral linkiniz tezliklə WhatsApp/SMS ilə göndəriləcək.",
+    "close": "Bağla",
+    "errorPhoneRequired": "Telefon nömrəsini daxil edin.",
+    "errorOtpLength": "6 rəqəmli kodu daxil edin.",
+    "errorGeneric": "Xəta baş verdi."
+  },
   "notFound": {
     "title": "Bu səhifə tapılmadı",
     "desc": "Axtardığınız səhifə silinmiş və ya köçürülmüş ola bilər. Ana səhifəyə qayıdın və ya axtardığınızı başqa yerdən tapın.",

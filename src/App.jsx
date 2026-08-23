@@ -29,6 +29,7 @@ import GiftCardPage from './pages/GiftCardPage';
 import EndirimlerPage from './pages/EndirimlerPage';
 import ReferralRedirect from './pages/ReferralRedirect';
 import AuthModal from './modals/AuthModal';
+import AddPhoneModal from './modals/AddPhoneModal';
 import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
 import ManagerContactModal from './modals/ManagerContactModal';
@@ -133,6 +134,7 @@ export default function App() {
       <CookieBanner />
 
       <AuthModal />
+      <AddPhoneModal />
       <PrivacyModal />
       <TermsModal />
       <ManagerContactModal />

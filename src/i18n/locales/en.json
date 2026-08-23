@@ -611,6 +611,21 @@
     "errorGoogleLogin": "An error occurred while signing in with Google.",
     "errorGeneric": "An error occurred."
   },
+  "addPhone": {
+    "title": "Add your phone number",
+    "desc": "Confirm your phone number to get your unique referral link via WhatsApp/SMS.",
+    "phoneLabel": "Mobile number (WhatsApp-active)",
+    "later": "Later",
+    "submit": "Confirm",
+    "otpTitle": "Verification code",
+    "otpDesc": "A code was sent to +994{{phone}}.",
+    "successTitle": "Thank you!",
+    "successDesc": "Your number is confirmed. Your unique referral link will arrive via WhatsApp/SMS shortly.",
+    "close": "Close",
+    "errorPhoneRequired": "Enter your phone number.",
+    "errorOtpLength": "Enter the 6-digit code.",
+    "errorGeneric": "Something went wrong."
+  },
   "notFound": {
     "title": "Page not found",
     "desc": "The page you're looking for may have been removed or moved. Return to the homepage or find what you're looking for another way.",
