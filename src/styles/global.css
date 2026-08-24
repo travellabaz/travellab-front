@@ -281,6 +281,7 @@ html {
 
 .tl-nav-links {
   display: flex;
+  align-items: center;
   gap: 2px;
   list-style: none;
   margin: 0;
