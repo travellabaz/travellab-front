@@ -4212,6 +4212,10 @@ body:not(.tl-subpage) .tl-about-extra {
     display: none;
   }
 
+  .tl-about-service-grid {
+    grid-template-columns: 1fr;
+  }
+
   .tl-about-service-item {
     padding: 10px;
   }
