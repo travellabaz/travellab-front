@@ -1,5 +1,6 @@
 import { BASE_URL } from '../data/pageMeta';
 import { buildLocalizedPath } from './locale';
+import { productSlug } from '../data/shop';
 
 // Travellab Shop orders go through one dedicated WhatsApp line, not the
 // round-robin manager pool the rest of the site uses (see utils/managers.js)
@@ -10,7 +11,7 @@ export const SHOP_WHATSAPP_NUMBER = '994514063665';
 // message can open the exact product (and see the right language) without
 // being told which one by hand.
 export function productUrl(product, lang) {
-  return BASE_URL + buildLocalizedPath(`/shop/${product.sku}`, lang);
+  return BASE_URL + buildLocalizedPath(`/shop/${productSlug(product)}`, lang);
 }
 
 // t = i18next translate function from the calling component's useTranslation().

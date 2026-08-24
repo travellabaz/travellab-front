@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ModalProvider } from './context/ModalContext';
 import { ToursProvider } from './context/ToursContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import { initI18n } from './i18n';
 import { getLocaleFromPathname } from './utils/locale';
 
@@ -29,7 +30,9 @@ export function render(url) {
             <ToursProvider>
               <ModalProvider>
                 <CartProvider>
-                  <App />
+                  <WishlistProvider>
+                    <App />
+                  </WishlistProvider>
                 </CartProvider>
               </ModalProvider>
             </ToursProvider>

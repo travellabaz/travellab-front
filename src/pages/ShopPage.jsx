@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
@@ -14,8 +15,11 @@ export default function ShopPage() {
   const { t } = useTranslation();
   const allProducts = getAllProducts();
   const categories = getCategories();
-
-  const [category, setCategory] = useState(null);
+  const location = useLocation();
+  // Only read once, as the initial value — this seeds the in-page filter
+  // state below, it isn't a two-way binding to the URL (same as every
+  // other client-only view/sort toggle on this page).
+  const [category, setCategory] = useState(() => new URLSearchParams(location.search).get('category'));
   const [sort, setSort] = useState('newest');
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);

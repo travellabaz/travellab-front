@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
@@ -20,11 +21,35 @@ export default function ShopProductPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [color, setColor] = useState(product?.colors[0] || null);
   const [qty, setQty] = useState(1);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    if (!lightboxOpen) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setLightboxOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [lightboxOpen]);
 
   if (!product) return <NotFoundPage />;
 
   const related = getRelatedProducts(product, 4);
   const changeQty = (delta) => setQty((q) => Math.max(1, Math.min(20, q + delta)));
+
+  // Photos are entered in the Sheet in the same order as the colours
+  // (every product has exactly as many images as colours) — so picking a
+  // colour swatch also switches the gallery to that colour's photo, and
+  // vice versa when browsing the thumbnails.
+  const colorImagesAligned = product.colors.length === product.images.length;
+  const selectColor = (c) => {
+    setColor(c);
+    if (colorImagesAligned) setActiveImage(product.colors.indexOf(c));
+  };
+  const selectImage = (i) => {
+    setActiveImage(i);
+    if (colorImagesAligned) setColor(product.colors[i]);
+  };
 
   return (
     <main className="tpwl-main">
@@ -45,13 +70,15 @@ export default function ShopProductPage() {
         <div className="tl-section" style={{ paddingTop: 12 }}>
           <div className="tl-product-detail">
             <div className="tl-product-gallery">
-              <div className="tl-product-gallery-main">
-                {product.images[activeImage] ? (
+              {product.images[activeImage] ? (
+                <button type="button" className="tl-product-gallery-main tl-product-gallery-zoom" onClick={() => setLightboxOpen(true)} aria-label={t('shop.galleryZoom')}>
                   <img src={product.images[activeImage]} alt={product.name} />
-                ) : (
+                </button>
+              ) : (
+                <div className="tl-product-gallery-main">
                   <span className="tl-product-card-noimg" aria-hidden="true" />
-                )}
-              </div>
+                </div>
+              )}
               {product.images.length > 1 && (
                 <div className="tl-product-gallery-thumbs">
                   {product.images.map((src, i) => (
@@ -59,7 +86,7 @@ export default function ShopProductPage() {
                       key={src}
                       type="button"
                       className={'tl-product-gallery-thumb' + (i === activeImage ? ' active' : '')}
-                      onClick={() => setActiveImage(i)}
+                      onClick={() => selectImage(i)}
                     >
                       <img src={src} alt="" />
                     </button>
@@ -76,7 +103,7 @@ export default function ShopProductPage() {
               {product.colors.length > 0 && (
                 <div className="tl-product-field">
                   <label>{t('shop.colorLabel')}</label>
-                  <ColorDots colors={product.colors} max={0} selected={color} onSelect={setColor} />
+                  <ColorDots colors={product.colors} max={0} selected={color} onSelect={selectColor} />
                 </div>
               )}
 
@@ -141,6 +168,16 @@ export default function ShopProductPage() {
           )}
         </div>
       </section>
+
+      {lightboxOpen &&
+        product.images[activeImage] &&
+        createPortal(
+          <div className="tl-product-lightbox-overlay" onClick={() => setLightboxOpen(false)}>
+            <button type="button" className="tl-product-lightbox-close" onClick={() => setLightboxOpen(false)} aria-label={t('shop.galleryClose')}>✕</button>
+            <img className="tl-product-lightbox-img" src={product.images[activeImage]} alt={product.name} onClick={(e) => e.stopPropagation()} />
+          </div>,
+          document.body
+        )}
     </main>
   );
 }

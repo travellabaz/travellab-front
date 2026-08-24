@@ -9,8 +9,23 @@ export function getAllProducts() {
   return products;
 }
 
+// Case-insensitive on purpose: Netlify/Cloudflare 301s every URL on this
+// site to an all-lowercase, trailing-slash canonical form (confirmed live
+// — /Shop and /shop both end up at /shop/, same for every other route).
+// Product URLs use the lowercase SKU (see productSlug) precisely so that
+// redirect never has to fire, but a stray uppercase link/bookmark still
+// needs to resolve instead of hitting "not found".
 export function getProductBySku(sku) {
-  return products.find((p) => p.sku === sku) || null;
+  if (!sku) return null;
+  const needle = sku.toLowerCase();
+  return products.find((p) => p.sku.toLowerCase() === needle) || null;
+}
+
+// The URL-safe form of a product's SKU — lowercase, so it never triggers
+// the host's forced-lowercase redirect. product.sku itself keeps its
+// original casing (e.g. "TB-020") for display and WhatsApp messages.
+export function productSlug(product) {
+  return product.sku.toLowerCase();
 }
 
 export function getBestsellers(limit = 5) {

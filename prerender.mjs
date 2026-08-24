@@ -255,7 +255,11 @@ async function main() {
     routeEntries.push({ bareRoutePath: `/tours/${tour.id}`, kind: 'tour', tourId: String(tour.id), langs: LANGUAGES });
   }
   for (const product of shopProducts) {
-    routeEntries.push({ bareRoutePath: `/shop/${product.sku}`, kind: 'shopProduct', product, langs: LANGUAGES });
+    // Lowercase — Netlify/Cloudflare 301s every URL on this site to an
+    // all-lowercase canonical form (confirmed live), so the prerendered
+    // file has to already live at that path or the redirect lands on
+    // "not found" instead of the real page.
+    routeEntries.push({ bareRoutePath: `/shop/${product.sku.toLowerCase()}`, kind: 'shopProduct', product, langs: LANGUAGES });
   }
 
   let renderCount = 0;

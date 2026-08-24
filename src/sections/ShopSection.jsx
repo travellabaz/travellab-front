@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import ShopBenefitsStrip from '../components/ShopBenefitsStrip';
-import { getBestsellers } from '../data/shop';
+import { getBestsellers, productSlug } from '../data/shop';
 
 // The outer strip below the card — distinct from the 4 payment/cashback/
 // original/delivery benefits already listed in the left column ("əlavə
@@ -44,7 +44,7 @@ export default function ShopSection() {
             <div className="tl-shop-bestsellers-title">{t('shop.bestsellersTitle')}</div>
             <div className="tl-shop-bestsellers-list">
               {bestsellers.map((p) => (
-                <Link to={`/shop/${p.sku}`} className="tl-shop-bestseller-item" key={p.sku}>
+                <Link to={`/shop/${productSlug(p)}`} className="tl-shop-bestseller-item" key={p.sku}>
                   <span className="tl-shop-bestseller-thumb">
                     {p.images[0] && <img src={p.images[0]} alt={p.name} loading="lazy" />}
                   </span>

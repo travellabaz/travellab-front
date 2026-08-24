@@ -36,6 +36,7 @@ import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
 import ManagerContactModal from './modals/ManagerContactModal';
 import CartDrawer from './components/CartDrawer';
+import WishlistDrawer from './components/WishlistDrawer';
 import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
@@ -144,6 +145,7 @@ export default function App() {
       <TermsModal />
       <ManagerContactModal />
       <CartDrawer />
+      <WishlistDrawer />
       <GoogleOneTap />
     </>
   );
