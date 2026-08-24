@@ -596,6 +596,8 @@
     "outOfStock": "Нет в наличии",
     "wishlist": "В избранное",
     "colorLabel": "Цвет",
+    "sizeLabel": "Размер",
+    "priceFromValue": "от {{price}} {{currency}}",
     "qtyLabel": "Количество",
     "qtyDecrease": "Уменьшить количество",
     "qtyIncrease": "Увеличить количество",
@@ -614,7 +616,11 @@
     "cartTotal": "Итого",
     "cartContinue": "Продолжить покупки",
     "cartRemove": "Удалить",
-    "waCartMessage": "Здравствуйте, хочу заказать следующие товары:\n{{list}}"
+    "waCartMessage": "Здравствуйте, хочу заказать следующие товары:\n{{list}}",
+    "waTourCartMessage": "Здравствуйте, меня интересуют следующие туры:\n{{list}}",
+    "whatsappOrderTo": "WhatsApp — {{name}}",
+    "cartSectionShop": "Travellab Shop",
+    "cartSectionTours": "Туры"
   },
   "auth": {
     "register": "Регистрация",

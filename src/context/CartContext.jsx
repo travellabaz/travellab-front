@@ -1,13 +1,24 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { getProductBySku } from '../data/shop';
 
 const CartContext = createContext(null);
 const STORAGE_KEY = 'tl-shop-cart';
 
-// { [sku]: qty } — no real checkout/payment exists yet (see the Shop task:
-// the WhatsApp CTA is the actual order path), so this only needs to track
-// what's "in the bag" for the nav badge and the cart drawer's own WhatsApp
-// hand-off message. localStorage, not a server cart — per-device only.
+// Shared by Shop products and tours — no real checkout/payment exists (the
+// WhatsApp CTA is the actual order path for both), so this only needs to
+// track what's "in the bag" for the nav badge and the drawer's own
+// WhatsApp hand-off. Each line snapshots what it needs to display and
+// order (title/price/image/url) at add time rather than storing a bare id
+// and re-resolving later — required for tours, which are fetched live and
+// aren't guaranteed to still be in that list by the time the drawer opens
+// (an inactive tour disappears from ToursContext entirely), and kept the
+// same for products for one consistent shape. `kind` ('product' | 'tour')
+// is what lets the drawer split the WhatsApp hand-off by destination
+// number — see utils/shopWhatsapp.js (dedicated Shop line) vs
+// utils/managers.js (tour manager pool).
+function lineKey(kind, id) {
+  return `${kind}:${id}`;
+}
+
 function readStored() {
   if (typeof window === 'undefined') return {};
   try {
@@ -29,37 +40,49 @@ export function CartProvider({ children }) {
     }
   }, [items]);
 
-  const addItem = useCallback((sku, qty = 1) => {
-    setItems((cur) => ({ ...cur, [sku]: (cur[sku] || 0) + qty }));
+  // item: { kind, id, title, price, currency, image, url }, url/id bare
+  // (unlocalized) paths — LocalizedLink/productUrl prefix them at render.
+  const addItem = useCallback((item, qty = 1) => {
+    const key = lineKey(item.kind, item.id);
+    setItems((cur) => ({ ...cur, [key]: { ...item, qty: (cur[key]?.qty || 0) + qty } }));
     setDrawerOpen(true);
   }, []);
 
-  const removeItem = useCallback((sku) => {
+  const removeItem = useCallback((kind, id) => {
     setItems((cur) => {
       const next = { ...cur };
-      delete next[sku];
+      delete next[lineKey(kind, id)];
       return next;
     });
   }, []);
 
-  const setQty = useCallback((sku, qty) => {
-    setItems((cur) => (qty <= 0 ? (({ [sku]: _drop, ...rest }) => rest)(cur) : { ...cur, [sku]: qty }));
+  const setQty = useCallback((kind, id, qty) => {
+    const key = lineKey(kind, id);
+    setItems((cur) => (qty <= 0 ? (({ [key]: _drop, ...rest }) => rest)(cur) : { ...cur, [key]: { ...cur[key], qty } }));
   }, []);
 
-  const lines = useMemo(
-    () =>
-      Object.entries(items)
-        .map(([sku, qty]) => ({ product: getProductBySku(sku), qty }))
-        .filter((l) => l.product),
-    [items]
-  );
+  const lines = useMemo(() => Object.values(items), [items]);
+  const productLines = useMemo(() => lines.filter((l) => l.kind === 'product'), [lines]);
+  const tourLines = useMemo(() => lines.filter((l) => l.kind === 'tour'), [lines]);
 
   const count = useMemo(() => lines.reduce((sum, l) => sum + l.qty, 0), [lines]);
-  const total = useMemo(() => lines.reduce((sum, l) => sum + l.qty * l.product.price, 0), [lines]);
+  const total = useMemo(() => lines.reduce((sum, l) => sum + l.qty * (l.price || 0), 0), [lines]);
 
   const value = useMemo(
-    () => ({ lines, count, total, addItem, removeItem, setQty, drawerOpen, openDrawer: () => setDrawerOpen(true), closeDrawer: () => setDrawerOpen(false) }),
-    [lines, count, total, addItem, removeItem, setQty, drawerOpen]
+    () => ({
+      lines,
+      productLines,
+      tourLines,
+      count,
+      total,
+      addItem,
+      removeItem,
+      setQty,
+      drawerOpen,
+      openDrawer: () => setDrawerOpen(true),
+      closeDrawer: () => setDrawerOpen(false),
+    }),
+    [lines, productLines, tourLines, count, total, addItem, removeItem, setQty, drawerOpen]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

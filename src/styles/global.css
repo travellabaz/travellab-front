@@ -6524,21 +6524,92 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-shop-card-image {
-  display: block;
   border-radius: var(--tl-r-lg);
   overflow: hidden;
   align-self: stretch;
+  min-height: 320px;
 }
 
-.tl-shop-card-image img {
+/* — Image carousel (Shop homepage lifestyle photo, /shop banner) — */
+.tl-image-carousel {
+  position: relative;
   width: 100%;
   height: 100%;
-  min-height: 320px;
+}
+
+.tl-image-carousel-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tl-image-carousel-frame img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
+.tl-image-carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--tl-navy);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--tl-shadow);
+}
+
+.tl-image-carousel-arrow:hover {
+  background: #fff;
+}
+
+.tl-image-carousel-prev {
+  left: 12px;
+}
+
+.tl-image-carousel-next {
+  right: 12px;
+}
+
+.tl-image-carousel-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+
+.tl-image-carousel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.tl-image-carousel-dot.active {
+  width: 18px;
+  border-radius: 4px;
+  background: #fff;
+}
+
 .tl-shop-bestsellers {
+  display: flex;
+  flex-direction: column;
   background: var(--tl-gray-50);
   border: 1px solid var(--tl-gray-200);
   border-radius: var(--tl-r-lg);
@@ -6602,6 +6673,67 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 12px;
   font-weight: 700;
   color: var(--tl-green-dark);
+}
+
+/* Pinned to the bottom of the (stretched-height) bestsellers box via
+   margin-top: auto on its flex column parent — fills whatever empty
+   space is left below the (short, fixed-length) list above it. */
+.tl-shop-extra-scroller {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.tl-shop-extra-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.tl-shop-extra-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.tl-shop-extra-thumb {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+}
+
+.tl-shop-extra-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tl-shop-extra-arrow {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.tl-shop-extra-arrow:hover {
+  background: var(--tl-green);
+  border-color: var(--tl-green);
+  color: #fff;
 }
 
 .tl-shop-extra-bar {
@@ -6791,6 +6923,13 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* — /shop page — */
+.tl-shop-banner {
+  border-radius: var(--tl-r-xl);
+  overflow: hidden;
+  margin-bottom: 24px;
+  height: 260px;
+}
+
 .tl-shop-page-header {
   margin-bottom: 16px;
 }
@@ -7170,6 +7309,45 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 12px;
 }
 
+.tl-size-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tl-size-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 56px;
+  border: 1px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tl-size-pill em {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--tl-gray-600);
+}
+
+.tl-size-pill.active {
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-size-pill.active em {
+  color: var(--tl-green-dark);
+}
+
 .tl-product-oos-notice {
   display: inline-block;
   background: var(--tl-navy);
@@ -7319,6 +7497,25 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 14px;
   text-align: center;
   padding: 40px 0;
+}
+
+.tl-cart-section {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--tl-gray-200);
+}
+
+.tl-cart-section:last-of-type {
+  border-bottom: none;
+}
+
+.tl-cart-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tl-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 12px;
 }
 
 .tl-cart-lines {

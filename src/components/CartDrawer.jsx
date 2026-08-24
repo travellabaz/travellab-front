@@ -1,29 +1,76 @@
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import { useCart } from '../context/CartContext';
-import { SHOP_WHATSAPP_NUMBER, productUrl } from '../utils/shopWhatsapp';
-import { getLocaleFromPathname } from '../utils/locale';
+import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
+import { pickManager } from '../utils/managers';
+import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
+import { BASE_URL } from '../data/pageMeta';
 
 // No real checkout exists (see the Shop task — WhatsApp is the actual
-// order path), so "checkout" here is just building one message that lists
-// every cart line and handing off to WhatsApp, same pattern as every other
-// wa.me CTA on the site.
+// order path, and tours already work the same way), so "checkout" here is
+// just building one message per destination and handing off to WhatsApp.
+// Shop products and tours go to two different numbers — a dedicated Shop
+// line vs. the round-robin tour-manager pool — so a mixed cart sends two
+// separate messages, one per section, instead of one combined one.
+function CartSection({ title, lines, removeItem, setQty, waHref, waLabel }) {
+  const { t } = useTranslation();
+  const total = lines.reduce((sum, l) => sum + l.qty * (l.price || 0), 0);
+
+  return (
+    <div className="tl-cart-section">
+      <div className="tl-cart-section-title">{title}</div>
+      <div className="tl-cart-lines">
+        {lines.map((line) => (
+          <div className="tl-cart-line" key={`${line.kind}:${line.id}`}>
+            {line.image && <img src={line.image} alt={line.title} />}
+            <div className="tl-cart-line-info">
+              <strong>{line.title}</strong>
+              {line.price != null && <span>{line.price} {line.currency}</span>}
+              <div className="tl-qty-stepper tl-qty-stepper-sm">
+                <button type="button" onClick={() => setQty(line.kind, line.id, line.qty - 1)}>−</button>
+                <span>{line.qty}</span>
+                <button type="button" onClick={() => setQty(line.kind, line.id, line.qty + 1)}>+</button>
+              </div>
+            </div>
+            <button type="button" className="tl-cart-line-remove" onClick={() => removeItem(line.kind, line.id)} aria-label={t('shop.cartRemove')}>✕</button>
+          </div>
+        ))}
+      </div>
+      {total > 0 && (
+        <div className="tl-cart-total">
+          <span>{title}</span>
+          <strong>{total.toFixed(2)} AZN</strong>
+        </div>
+      )}
+      <a href={waHref} target="_blank" rel="noopener noreferrer" className="tl-cart-checkout">
+        {waLabel}
+      </a>
+    </div>
+  );
+}
+
 export default function CartDrawer() {
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(useLocation().pathname);
-  const { lines, count, total, removeItem, setQty, drawerOpen, closeDrawer } = useCart();
+  const { productLines, tourLines, count, removeItem, setQty, drawerOpen, closeDrawer } = useCart();
+  const [tourManager] = useState(pickManager);
 
   if (!drawerOpen) return null;
 
-  // Each line gets its own link (not one link for the whole cart) — with
-  // several products, whoever picks up the WhatsApp message needs to open
-  // each one individually, same as if they'd been sent one at a time.
-  const waText = lines
-    .map((l) => `${l.product.name} (${l.product.sku}) x${l.qty}\n${productUrl(l.product, lang)}`)
+  const productWaText = productLines
+    .map((l) => `${l.title} (${l.id}) x${l.qty}\n${BASE_URL}${buildLocalizedPath(l.url, lang)}`)
     .join('\n\n');
-  const waUrl = 'https://wa.me/' + SHOP_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(t('shop.waCartMessage', { list: waText }));
+  const productWaUrl = 'https://wa.me/' + SHOP_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(t('shop.waCartMessage', { list: productWaText }));
+
+  const tourWaText = tourLines
+    .map((l) => `${l.title} x${l.qty}\n${BASE_URL}${buildLocalizedPath(l.url, lang)}`)
+    .join('\n\n');
+  const tourWaUrl = 'https://wa.me/' + tourManager.number + '?text=' + encodeURIComponent(t('shop.waTourCartMessage', { list: tourWaText }));
+
+  const isEmpty = productLines.length === 0 && tourLines.length === 0;
 
   return createPortal(
     <div className="tl-cart-overlay" onClick={closeDrawer}>
@@ -33,34 +80,30 @@ export default function CartDrawer() {
           <button type="button" onClick={closeDrawer} aria-label={t('shop.cartClose')}>✕</button>
         </div>
 
-        {lines.length === 0 ? (
+        {isEmpty ? (
           <p className="tl-cart-empty">{t('shop.cartEmpty')}</p>
         ) : (
           <>
-            <div className="tl-cart-lines">
-              {lines.map(({ product, qty }) => (
-                <div className="tl-cart-line" key={product.sku}>
-                  {product.images[0] && <img src={product.images[0]} alt={product.name} />}
-                  <div className="tl-cart-line-info">
-                    <strong>{product.name}</strong>
-                    <span>{product.price} {product.currency}</span>
-                    <div className="tl-qty-stepper tl-qty-stepper-sm">
-                      <button type="button" onClick={() => setQty(product.sku, qty - 1)}>−</button>
-                      <span>{qty}</span>
-                      <button type="button" onClick={() => setQty(product.sku, qty + 1)}>+</button>
-                    </div>
-                  </div>
-                  <button type="button" className="tl-cart-line-remove" onClick={() => removeItem(product.sku)} aria-label={t('shop.cartRemove')}>✕</button>
-                </div>
-              ))}
-            </div>
-            <div className="tl-cart-total">
-              <span>{t('shop.cartTotal')}</span>
-              <strong>{total.toFixed(2)} AZN</strong>
-            </div>
-            <a href={waUrl} target="_blank" rel="noopener noreferrer" className="tl-cart-checkout">
-              {t('shop.whatsappOrder')}
-            </a>
+            {productLines.length > 0 && (
+              <CartSection
+                title={t('shop.cartSectionShop')}
+                lines={productLines}
+                removeItem={removeItem}
+                setQty={setQty}
+                waHref={productWaUrl}
+                waLabel={t('shop.whatsappOrder')}
+              />
+            )}
+            {tourLines.length > 0 && (
+              <CartSection
+                title={t('shop.cartSectionTours')}
+                lines={tourLines}
+                removeItem={removeItem}
+                setQty={setQty}
+                waHref={tourWaUrl}
+                waLabel={t('shop.whatsappOrderTo', { name: tourManager.name })}
+              />
+            )}
           </>
         )}
 

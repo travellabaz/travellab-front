@@ -5,15 +5,23 @@ import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
 import ShopBenefitsStrip from '../components/ShopBenefitsStrip';
 import ColorDots from '../components/ColorDots';
-import { getAllProducts, getCategories, sortProducts } from '../data/shop';
+import ImageCarousel from '../components/ImageCarousel';
+import { getProductGroups, getCategories, sortProductGroups } from '../data/shop';
 import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
 
 const PAGE_SIZE = 8;
 const SORT_OPTIONS = ['newest', 'cheapest', 'expensive'];
 
+// Add more paths here as new banner photos are shot — nothing else needs
+// to change (see ImageCarousel).
+const BANNER_IMAGES = [
+  '/images/shop/banner-woman-suitcase.jpg',
+  '/images/shop/banner-man-suitcase.jpg',
+];
+
 export default function ShopPage() {
   const { t } = useTranslation();
-  const allProducts = getAllProducts();
+  const allGroups = getProductGroups();
   const categories = getCategories();
   const location = useLocation();
   // Only read once, as the initial value — this seeds the in-page filter
@@ -28,15 +36,15 @@ export default function ShopPage() {
 
   const allColors = useMemo(() => {
     const set = new Set();
-    allProducts.forEach((p) => p.colors.forEach((c) => set.add(c)));
+    allGroups.forEach((g) => g.colors.forEach((c) => set.add(c)));
     return Array.from(set);
-  }, [allProducts]);
+  }, [allGroups]);
 
   const filtered = useMemo(() => {
-    let list = category ? allProducts.filter((p) => p.categories.includes(category)) : allProducts;
-    if (colorFilter) list = list.filter((p) => p.colors.includes(colorFilter));
-    return sortProducts(list, sort);
-  }, [allProducts, category, colorFilter, sort]);
+    let list = category ? allGroups.filter((g) => g.categories.includes(category)) : allGroups;
+    if (colorFilter) list = list.filter((g) => g.colors.includes(colorFilter));
+    return sortProductGroups(list, sort);
+  }, [allGroups, category, colorFilter, sort]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -69,6 +77,10 @@ export default function ShopPage() {
 
       <section>
         <div className="tl-section" style={{ paddingTop: 12 }}>
+          <div className="tl-shop-banner">
+            <ImageCarousel images={BANNER_IMAGES} alt={t('shop.pageTitle')} />
+          </div>
+
           <div className="tl-shop-page-header">
             <div>
               <h1 className="tl-title">{t('shop.pageTitle')}</h1>
@@ -129,8 +141,8 @@ export default function ShopPage() {
           </div>
 
           <div className="tl-product-grid">
-            {visible.map((p) => (
-              <ProductCard key={p.sku} product={p} />
+            {visible.map((g) => (
+              <ProductCard key={g.id} group={g} />
             ))}
           </div>
 

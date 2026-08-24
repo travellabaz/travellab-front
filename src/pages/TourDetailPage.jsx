@@ -8,6 +8,8 @@ import { useModals } from '../context/ModalContext';
 import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
+import { toTourCartItem } from '../utils/tourCartItem';
+import { useCart } from '../context/CartContext';
 import Breadcrumb from '../components/Breadcrumb';
 
 export default function TourDetailPage() {
@@ -16,6 +18,7 @@ export default function TourDetailPage() {
   const { tours, loading } = useTours();
   const { isAuthenticated, profile } = useAuth();
   const { openManagerContact } = useModals();
+  const { addItem } = useCart();
   const [manager, setManager] = useState(pickManager);
 
   const tour = tours.find((t) => String(t.id) === id);
@@ -117,26 +120,38 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              {!expired && (isMobile() ? (
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tl-btn-book"
-                  style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-                >
-                  {managerLabel(t)} →
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => openManagerContact(manager)}
-                  className="tl-btn-book"
-                  style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-                >
-                  {managerLabel(t)} →
-                </button>
-              ))}
+              {!expired && (
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  {isMobile() ? (
+                    <a
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="tl-btn-book"
+                      style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                    >
+                      {managerLabel(t)} →
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => openManagerContact(manager)}
+                      className="tl-btn-book"
+                      style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                    >
+                      {managerLabel(t)} →
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => addItem(toTourCartItem(tour))}
+                    className="tl-btn-book"
+                    style={{ border: '1px solid var(--tl-gray-200)', cursor: 'pointer', background: '#fff', color: 'var(--tl-navy)', padding: '13px 26px' }}
+                  >
+                    {t('shop.addToCart')}
+                  </button>
+                </div>
+              )}
               <div style={{ marginTop: 10, fontSize: 12, color: 'var(--tl-gray-400)' }}>
                 {t('common.manager')}: {manager.name} — {formatManagerNumber(manager.number)}
               </div>

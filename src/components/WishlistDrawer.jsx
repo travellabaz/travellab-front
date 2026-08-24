@@ -3,16 +3,41 @@ import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
-import { productSlug } from '../data/shop';
 
-// Same right-side drawer pattern as CartDrawer (and its CSS classes,
-// reused as-is — a list of saved products needs the same shape).
+function WishlistSection({ title, items, remove, addItem }) {
+  const { t } = useTranslation();
+  return (
+    <div className="tl-cart-section">
+      <div className="tl-cart-section-title">{title}</div>
+      <div className="tl-cart-lines">
+        {items.map((item) => (
+          <div className="tl-cart-line" key={`${item.kind}:${item.id}`}>
+            {item.image && <img src={item.image} alt={item.title} />}
+            <div className="tl-cart-line-info">
+              <Link to={item.url}><strong>{item.title}</strong></Link>
+              {item.price != null && <span>{item.price} {item.currency}</span>}
+              <button type="button" className="tl-wishlist-add-to-cart" onClick={() => addItem(item, 1)}>
+                {t('shop.addToCart')}
+              </button>
+            </div>
+            <button type="button" className="tl-cart-line-remove" onClick={() => remove(item.kind, item.id)} aria-label={t('shop.cartRemove')}>✕</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Same right-side drawer pattern as CartDrawer — a saved item needs the
+// same shape whether it's a Shop product or a tour.
 export default function WishlistDrawer() {
   const { t } = useTranslation();
-  const { products, count, remove, drawerOpen, closeDrawer } = useWishlist();
+  const { productItems, tourItems, count, remove, drawerOpen, closeDrawer } = useWishlist();
   const { addItem } = useCart();
 
   if (!drawerOpen) return null;
+
+  const isEmpty = productItems.length === 0 && tourItems.length === 0;
 
   return createPortal(
     <div className="tl-cart-overlay" onClick={closeDrawer}>
@@ -22,24 +47,17 @@ export default function WishlistDrawer() {
           <button type="button" onClick={closeDrawer} aria-label={t('shop.cartClose')}>✕</button>
         </div>
 
-        {products.length === 0 ? (
+        {isEmpty ? (
           <p className="tl-cart-empty">{t('shop.wishlistEmpty')}</p>
         ) : (
-          <div className="tl-cart-lines">
-            {products.map((product) => (
-              <div className="tl-cart-line" key={product.sku}>
-                {product.images[0] && <img src={product.images[0]} alt={product.name} />}
-                <div className="tl-cart-line-info">
-                  <Link to={`/shop/${productSlug(product)}`} onClick={closeDrawer}><strong>{product.name}</strong></Link>
-                  <span>{product.price} {product.currency}</span>
-                  <button type="button" className="tl-wishlist-add-to-cart" onClick={() => addItem(product.sku, 1)}>
-                    {t('shop.addToCart')}
-                  </button>
-                </div>
-                <button type="button" className="tl-cart-line-remove" onClick={() => remove(product.sku)} aria-label={t('shop.cartRemove')}>✕</button>
-              </div>
-            ))}
-          </div>
+          <>
+            {productItems.length > 0 && (
+              <WishlistSection title={t('shop.cartSectionShop')} items={productItems} remove={remove} addItem={addItem} />
+            )}
+            {tourItems.length > 0 && (
+              <WishlistSection title={t('shop.cartSectionTours')} items={tourItems} remove={remove} addItem={addItem} />
+            )}
+          </>
         )}
 
         <Link to="/shop" className="tl-cart-continue" onClick={closeDrawer}>{t('shop.cartContinue')}</Link>

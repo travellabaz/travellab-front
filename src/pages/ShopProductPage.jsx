@@ -6,17 +6,28 @@ import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
 import ColorDots from '../components/ColorDots';
 import NotFoundPage from './NotFoundPage';
-import { getProductBySku, getRelatedProducts } from '../data/shop';
+import { getProductBySku, getGroupBySku, getRelatedProductGroups, productSlug, toCartItem } from '../data/shop';
 import { orderProductWhatsappUrl } from '../utils/shopWhatsapp';
 import { useCart } from '../context/CartContext';
 import { getLocaleFromPathname } from '../utils/locale';
+import { useLocalizedNavigate } from '../components/LocalizedLink';
+
+// The dimensions trailing "ölçüdə" in a variant's name (e.g. "52x30x28
+// sm") — shown next to the size letter on the size picker, since "S/M/L"
+// alone doesn't mean much without them.
+function sizeDims(name) {
+  const m = /öl[cç]üdə\s+(.+)$/i.exec(name);
+  return m ? m[1].trim() : '';
+}
 
 export default function ShopProductPage() {
   const { sku } = useParams();
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(useLocation().pathname);
+  const navigate = useLocalizedNavigate();
   const { addItem } = useCart();
   const product = getProductBySku(sku);
+  const group = product ? getGroupBySku(product.sku) : null;
 
   const [activeImage, setActiveImage] = useState(0);
   const [color, setColor] = useState(product?.colors[0] || null);
@@ -32,9 +43,10 @@ export default function ShopProductPage() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [lightboxOpen]);
 
-  if (!product) return <NotFoundPage />;
+  if (!product || !group) return <NotFoundPage />;
 
-  const related = getRelatedProducts(product, 4);
+  const related = getRelatedProductGroups(group, 4);
+  const selectSize = (variantSku) => navigate(`/shop/${productSlug({ sku: variantSku })}`);
   const changeQty = (delta) => setQty((q) => Math.max(1, Math.min(20, q + delta)));
 
   // Photos are entered in the Sheet in the same order as the colours
@@ -60,7 +72,7 @@ export default function ShopProductPage() {
               { name: t('breadcrumb.home'), to: '/' },
               { name: t('shop.breadcrumb'), to: '/shop' },
               { name: product.categories[0] || t('shop.breadcrumb'), to: `/shop?category=${encodeURIComponent(product.categories[0] || '')}` },
-              { name: product.name },
+              { name: group.name },
             ]}
           />
         </div>
@@ -97,8 +109,27 @@ export default function ShopProductPage() {
 
             <div className="tl-product-info">
               <div className="tl-product-category-tag">{product.categories.join(' · ')}</div>
-              <h1 className="tl-product-name">{product.name}</h1>
+              <h1 className="tl-product-name">{group.name}</h1>
               <div className="tl-product-price">{product.price} {product.currency}</div>
+
+              {group.variants.length > 1 && (
+                <div className="tl-product-field">
+                  <label>{t('shop.sizeLabel')}</label>
+                  <div className="tl-size-pills">
+                    {group.variants.map((v) => (
+                      <button
+                        key={v.sku}
+                        type="button"
+                        className={'tl-size-pill' + (v.sku === product.sku ? ' active' : '')}
+                        onClick={() => selectSize(v.sku)}
+                      >
+                        {v.size}
+                        <em>{sizeDims(v.name)}</em>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {product.colors.length > 0 && (
                 <div className="tl-product-field">
@@ -134,7 +165,7 @@ export default function ShopProductPage() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.5.1-.2 0-.4 0-.5C10 9 9.5 7.8 9.3 7.3c-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s1 2.6 1.1 2.7c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.2-1.3-.1-.1-.3-.2-.5-.3z" /><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 20.2 12 8.2 8.2 0 0 1 12 20.2z" /></svg>
                   {t('shop.whatsappOrder')}
                 </a>
-                <button type="button" className="tl-product-cta-cart" onClick={() => addItem(product.sku, qty)} disabled={!product.inStock}>
+                <button type="button" className="tl-product-cta-cart" onClick={() => addItem(toCartItem(product), qty)} disabled={!product.inStock}>
                   {t('shop.addToCart')}
                 </button>
               </div>
@@ -160,8 +191,8 @@ export default function ShopProductPage() {
             <div className="tl-product-related">
               <h2 className="tl-title" style={{ marginBottom: 16 }}>{t('shop.relatedTitle')}</h2>
               <div className="tl-product-grid">
-                {related.map((p) => (
-                  <ProductCard key={p.sku} product={p} />
+                {related.map((g) => (
+                  <ProductCard key={g.id} group={g} />
                 ))}
               </div>
             </div>

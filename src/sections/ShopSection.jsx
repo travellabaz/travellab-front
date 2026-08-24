@@ -1,7 +1,51 @@
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import ShopBenefitsStrip from '../components/ShopBenefitsStrip';
-import { getBestsellers, productSlug } from '../data/shop';
+import ImageCarousel from '../components/ImageCarousel';
+import { getBestsellerGroups, getProductGroups, productSlug } from '../data/shop';
+
+const EXTRA_SCROLL_STEP = 92;
+const EXTRA_AUTO_SCROLL_MS = 2600;
+
+// Fills the empty space the bestseller list otherwise leaves below it
+// (only ever a handful of items long) with more of the catalogue as small
+// thumbnails — auto-advances on a timer, but a visitor can always take
+// over with the arrows or by dragging/swiping the strip itself (plain
+// native horizontal scroll underneath, same as ToursSection's row).
+function MoreProductsStrip({ groups }) {
+  const scrollerRef = useRef(null);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || groups.length === 0) return undefined;
+    const id = setInterval(() => {
+      const el = scrollerRef.current;
+      if (!el) return;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
+      el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + EXTRA_SCROLL_STEP, behavior: 'smooth' });
+    }, EXTRA_AUTO_SCROLL_MS);
+    return () => clearInterval(id);
+  }, [paused, groups.length]);
+
+  if (groups.length === 0) return null;
+
+  const scrollBy = (delta) => scrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
+
+  return (
+    <div className="tl-shop-extra-scroller" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <button type="button" className="tl-shop-extra-arrow tl-shop-extra-arrow-prev" onClick={() => scrollBy(-EXTRA_SCROLL_STEP)} aria-label="Previous">‹</button>
+      <div className="tl-shop-extra-strip" ref={scrollerRef}>
+        {groups.map((g) => (
+          <Link to={`/shop/${productSlug(g.defaultVariant)}`} key={g.id} className="tl-shop-extra-thumb" title={g.name}>
+            {g.defaultVariant.images[0] && <img src={g.defaultVariant.images[0]} alt={g.name} loading="lazy" />}
+          </Link>
+        ))}
+      </div>
+      <button type="button" className="tl-shop-extra-arrow tl-shop-extra-arrow-next" onClick={() => scrollBy(EXTRA_SCROLL_STEP)} aria-label="Next">›</button>
+    </div>
+  );
+}
 
 // The outer strip below the card — distinct from the 4 payment/cashback/
 // original/delivery benefits already listed in the left column ("əlavə
@@ -10,9 +54,20 @@ import { getBestsellers, productSlug } from '../data/shop';
 // which is the one figure the task's own homepage mockup already shows.
 const EXTRA_BENEFIT_KEYS = ['customers', 'packaging', 'support', 'payment'];
 
+// Add more paths here as new lifestyle photos are shot — nothing else
+// needs to change (see ImageCarousel).
+const LIFESTYLE_IMAGES = [
+  '/images/shop/lifestyle-couple.jpg',
+  '/images/shop/lifestyle-woman.jpg',
+  '/images/shop/lifestyle-man.jpg',
+];
+
 export default function ShopSection() {
   const { t } = useTranslation();
-  const bestsellers = getBestsellers(5);
+  const bestsellers = getBestsellerGroups(5);
+  const moreProducts = getProductGroups()
+    .filter((g) => !bestsellers.some((b) => b.id === g.id))
+    .slice(0, 10);
 
   return (
     <section id="shop" className="tl-page-top">
@@ -36,25 +91,26 @@ export default function ShopSection() {
             </Link>
           </div>
 
-          <Link to="/shop" className="tl-shop-card-image">
-            <img src="/images/shop/lifestyle-couple.jpg" alt={t('shop.homeTitle')} />
-          </Link>
+          <div className="tl-shop-card-image">
+            <ImageCarousel images={LIFESTYLE_IMAGES} alt={t('shop.homeTitle')} linkTo="/shop" />
+          </div>
 
           <div className="tl-shop-bestsellers">
             <div className="tl-shop-bestsellers-title">{t('shop.bestsellersTitle')}</div>
             <div className="tl-shop-bestsellers-list">
-              {bestsellers.map((p) => (
-                <Link to={`/shop/${productSlug(p)}`} className="tl-shop-bestseller-item" key={p.sku}>
+              {bestsellers.map((g) => (
+                <Link to={`/shop/${productSlug(g.defaultVariant)}`} className="tl-shop-bestseller-item" key={g.id}>
                   <span className="tl-shop-bestseller-thumb">
-                    {p.images[0] && <img src={p.images[0]} alt={p.name} loading="lazy" />}
+                    {g.defaultVariant.images[0] && <img src={g.defaultVariant.images[0]} alt={g.name} loading="lazy" />}
                   </span>
                   <span>
-                    <strong>{p.name}</strong>
-                    <em>{p.price} {p.currency}</em>
+                    <strong>{g.name}</strong>
+                    <em>{g.minPrice} {g.defaultVariant.currency}</em>
                   </span>
                 </Link>
               ))}
             </div>
+            <MoreProductsStrip groups={moreProducts} />
           </div>
         </div>
 

@@ -2,20 +2,24 @@ import { useTranslation } from 'react-i18next';
 import Link, { useLocalizedNavigate } from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+import { useWishlist } from '../context/WishlistContext';
 import { truncate } from '../utils/text';
 import { contactManager, managerLabel } from '../utils/managers';
 import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
+import { toTourCartItem } from '../utils/tourCartItem';
 
 export default function TourCard({ tour }) {
   const { t } = useTranslation();
   const { isAuthenticated, profile } = useAuth();
   const { openManagerContact } = useModals();
+  const { has, toggle } = useWishlist();
   const navigate = useLocalizedNavigate();
   const price = extractMinPrice(tour.description);
   const reward = price ? calcReward(price) : null;
   const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
   const expired = isTourExpired(tour.description);
+  const wishlisted = has('tour', String(tour.id));
 
   return (
     <div
@@ -33,6 +37,17 @@ export default function TourCard({ tour }) {
             : {}),
         }}
       >
+        <button
+          type="button"
+          className={'tl-product-card-wish' + (wishlisted ? ' active' : '')}
+          aria-label={t('shop.wishlist')}
+          aria-pressed={wishlisted}
+          onClick={(e) => { e.stopPropagation(); toggle(toTourCartItem(tour)); }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
+          </svg>
+        </button>
         {(expired || reward) && (
           <div className="tl-pkg-badges">
             {expired ? (
