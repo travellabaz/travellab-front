@@ -1,70 +1,14 @@
 // Additional named partners (OTA platforms + airlines) added alongside the
-// Figma-exact logo strip below. These are simple wordmark chips in each
-// brand's colour rather than traced reproductions of the full logo marks —
-// kept lightweight and legible at strip scale instead of attempting
-// pixel-accurate copies of marks (crane, oryx, calligraphy, etc.) that
-// would need real vector source to get right.
+// Figma-exact logo strip below. Plain wordmarks — correct official casing
+// and brand colour, no invented icon marks — rather than freehand attempts
+// at the full logo marks (crane, oryx, owl, etc.) that would need real
+// vector source to get right.
 const EXTRA_LOGOS = [
-  {
-    name: 'Expedia',
-    node: (
-      <svg viewBox="0 0 140 48" height="48" width="140" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="10" cy="16" r="5" fill="#FFC72C" />
-        <text x="24" y="31" fontFamily="'Geist Sans', sans-serif" fontWeight="800" fontSize="24" fill="#10214B">Expedia</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Tripadvisor',
-    node: (
-      <svg viewBox="0 0 190 48" height="48" width="190" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="14" cy="24" r="10" fill="none" stroke="#00AF87" strokeWidth="3" />
-        <circle cx="14" cy="24" r="3" fill="#00AF87" />
-        <circle cx="38" cy="24" r="10" fill="none" stroke="#00AF87" strokeWidth="3" />
-        <circle cx="38" cy="24" r="3" fill="#00AF87" />
-        <text x="58" y="31" fontFamily="'Geist Sans', sans-serif" fontWeight="800" fontSize="22" fill="#1D2939">tripadvisor</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Turkish Airlines',
-    node: (
-      <svg viewBox="0 0 210 48" height="48" width="210" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="24" r="10" fill="#E30A17" />
-        <path d="M9 17a7.5 7.5 0 000 14 6 6 0 010-14z" fill="#fff" />
-        <text x="30" y="31" fontFamily="'Geist Sans', sans-serif" fontWeight="800" fontSize="20" fill="#B60812">Turkish Airlines</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Azerbaijan Airlines',
-    node: (
-      <svg viewBox="0 0 110 48" height="48" width="110" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="14" width="8" height="6.67" fill="#0072BC" />
-        <rect x="0" y="20.67" width="8" height="6.67" fill="#E4002B" />
-        <rect x="0" y="27.33" width="8" height="6.67" rx="0" fill="#159A48" />
-        <text x="18" y="31" fontFamily="'Geist Sans', sans-serif" fontWeight="800" fontSize="24" fill="#0072BC">AZAL</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Emirates',
-    node: (
-      <svg viewBox="0 0 140 48" height="48" width="140" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="19" width="10" height="10" rx="2" fill="#D71A21" />
-        <text x="20" y="31" fontFamily="'Geist Sans', sans-serif" fontWeight="800" fontSize="24" fill="#D71A21">Emirates</text>
-      </svg>
-    ),
-  },
-  {
-    name: 'Qatar Airways',
-    node: (
-      <svg viewBox="0 0 180 48" height="48" width="180" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="19" width="10" height="10" rx="2" fill="#5C0A31" />
-        <text x="20" y="31" fontFamily="'Geist Sans', sans-serif" fontWeight="800" fontSize="20" fill="#5C0A31">Qatar Airways</text>
-      </svg>
-    ),
-  },
+  { name: 'Expedia', text: 'Expedia', color: '#10214B' },
+  { name: 'Tripadvisor', text: 'Tripadvisor', color: '#1A1A1A' },
+  { name: 'Turkish Airlines', text: 'Turkish Airlines', color: '#C8102E' },
+  { name: 'Emirates', text: 'Emirates', color: '#DA291C' },
+  { name: 'Qatar Airways', text: 'Qatar Airways', color: '#5C0A31' },
 ];
 
 // Exact vector reproduction of the Figma "Partnyorlar" logo row.
@@ -165,7 +109,7 @@ export default function PartnersLogos(props) {
     </svg>
     {EXTRA_LOGOS.map((logo) => (
       <div className="tl-partner-chip" key={logo.name}>
-        {logo.node}
+        <span className="tl-partner-wordmark" style={{ color: logo.color }}>{logo.text}</span>
       </div>
     ))}
     </div>
