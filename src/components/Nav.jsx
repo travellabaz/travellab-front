@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -107,24 +107,17 @@ export default function Nav() {
       </Link>
       <ul className="tl-nav-links">
         {NAV_LINK_PATHS.map(({ path, key }) => (
-          <Fragment key={path}>
-            <li>
-              <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
-                {t(`nav.${key}`)}
-              </NavLink>
-            </li>
-            {/* Right after Tours on the main (desktop) nav specifically —
-                the mobile hamburger menu keeps Shop as its own trailing
-                item instead, see mobileMenu above. */}
-            {key === 'tours' && (
-              <li>
-                <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')}>
-                  {t('nav.shop')}
-                </NavLink>
-              </li>
-            )}
-          </Fragment>
+          <li key={path}>
+            <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
+              {t(`nav.${key}`)}
+            </NavLink>
+          </li>
         ))}
+        <li>
+          <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')}>
+            {t('nav.shop')}
+          </NavLink>
+        </li>
       </ul>
       {mobileMenu}
       <div className="tl-nav-right">

@@ -19,11 +19,11 @@ export default function HomePage() {
     <main className="tpwl-main">
       <StoriesSection />
       <ToursSection />
+      <ShopSection />
       <HotelsSection />
       <CtaSection />
       <EventsSection />
       <LabpointSection />
-      <ShopSection />
       <PartnersSection />
 
       <section>
