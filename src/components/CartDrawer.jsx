@@ -1,8 +1,10 @@
 import { createPortal } from 'react-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import { useCart } from '../context/CartContext';
-import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
+import { SHOP_WHATSAPP_NUMBER, productUrl } from '../utils/shopWhatsapp';
+import { getLocaleFromPathname } from '../utils/locale';
 
 // No real checkout exists (see the Shop task — WhatsApp is the actual
 // order path), so "checkout" here is just building one message that lists
@@ -10,13 +12,17 @@ import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
 // wa.me CTA on the site.
 export default function CartDrawer() {
   const { t } = useTranslation();
+  const lang = getLocaleFromPathname(useLocation().pathname);
   const { lines, count, total, removeItem, setQty, drawerOpen, closeDrawer } = useCart();
 
   if (!drawerOpen) return null;
 
+  // Each line gets its own link (not one link for the whole cart) — with
+  // several products, whoever picks up the WhatsApp message needs to open
+  // each one individually, same as if they'd been sent one at a time.
   const waText = lines
-    .map((l) => `${l.product.name} (${l.product.sku}) x${l.qty}`)
-    .join('\n');
+    .map((l) => `${l.product.name} (${l.product.sku}) x${l.qty}\n${productUrl(l.product, lang)}`)
+    .join('\n\n');
   const waUrl = 'https://wa.me/' + SHOP_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(t('shop.waCartMessage', { list: waText }));
 
   return createPortal(

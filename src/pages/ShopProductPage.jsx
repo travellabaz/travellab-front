@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
@@ -8,10 +8,12 @@ import NotFoundPage from './NotFoundPage';
 import { getProductBySku, getRelatedProducts } from '../data/shop';
 import { orderProductWhatsappUrl } from '../utils/shopWhatsapp';
 import { useCart } from '../context/CartContext';
+import { getLocaleFromPathname } from '../utils/locale';
 
 export default function ShopProductPage() {
   const { sku } = useParams();
   const { t } = useTranslation();
+  const lang = getLocaleFromPathname(useLocation().pathname);
   const { addItem } = useCart();
   const product = getProductBySku(sku);
 
@@ -95,7 +97,7 @@ export default function ShopProductPage() {
 
               <div className="tl-product-ctas">
                 <a
-                  href={orderProductWhatsappUrl(product, t)}
+                  href={orderProductWhatsappUrl(product, t, lang)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={'tl-product-cta-wa' + (!product.inStock ? ' disabled' : '')}

@@ -591,7 +591,7 @@
     "loadMore": "Загрузить ещё",
     "whatsappOrder": "Заказать через WhatsApp",
     "waGenericMessage": "Здравствуйте, у меня вопрос по Travellab Shop.",
-    "waOrderMessage": "Здравствуйте, хочу заказать {{name}} ({{sku}})",
+    "waOrderMessage": "Здравствуйте, хочу заказать {{name}} ({{sku}})\n{{link}}",
     "outOfStock": "Нет в наличии",
     "wishlist": "В избранное",
     "colorLabel": "Цвет",
