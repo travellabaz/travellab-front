@@ -1,0 +1,442 @@
+[
+  {
+    "sku": "TB-001",
+    "name": "Power Bank Baseus / 10000W / Digital Display + 3in1 USB kabel",
+    "categories": [
+      "Elektronika",
+      "Setlər"
+    ],
+    "price": 74.9,
+    "currency": "AZN",
+    "colors": [
+      "Bej",
+      "Mavi"
+    ],
+    "images": [
+      "/images/shop/products/TB-001-1.png",
+      "/images/shop/products/TB-001-2.png"
+    ],
+    "description": "Baseus 10000mAh Sürətli Doldurma Power Bank\n\nBaseus 10000mAh Power Bank kompakt dizaynı və sürətli doldurma dəstəyi ilə telefon, qulaqcıq və digər cihazlarınızı rahatlıqla enerji ilə təmin edir.\n\n10 000mAh tutum gündəlik istifadə və səyahətlər üçün ideal seçimdir. Yüngül və daşınması rahat dizaynı sayəsində enerjiniz hər zaman yanınızdadır.\n\nHədiyyə: 3-in-1 USB şnur",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-002",
+    "name": "Səyahət üçün Ergonomik Boyun Yastığı",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 19.9,
+    "currency": "AZN",
+    "colors": [
+      "Narıncı",
+      "Mavi"
+    ],
+    "images": [
+      "/images/shop/products/TB-002-1.png",
+      "/images/shop/products/TB-002-2.png"
+    ],
+    "description": "Səyahət zamanı boyun və baş nahiyəsini rahat şəkildə dəstəkləmək üçün nəzərdə tutulmuş ergonomik boyun yastığı. Xüsusi U-formalı quruluşu başın düzgün vəziyyətdə saxlanmasına və uzun səfərlər zamanı rahatlığın artırılmasına kömək edir.\n\nYumşaq materialı və rahat forması sayəsində təyyarə, avtomobil, avtobus və digər uzunmüddətli səfərlərdə istifadə üçün uyğundur. Ön hissəsindəki bağlama sistemi yastığın boyun ətrafında daha stabil qalmasını təmin edir.\n\nYastıqla birlikdə kompakt saxlama qabı təqdim olunur. İstifadədən sonra yastığı qabında saxlayaraq çantada rahatlıqla daşımaq mümkündür.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-003",
+    "name": "Ətir qabı + Aroma şam + Saç rezini (Set)",
+    "categories": [
+      "Aksesuarlar",
+      "Setlər"
+    ],
+    "price": 14.9,
+    "currency": "AZN",
+    "colors": [
+      "Göy",
+      "Yashıl",
+      "Cəhrayı"
+    ],
+    "images": [
+      "/images/shop/products/TB-003-1.png",
+      "/images/shop/products/TB-003-2.png",
+      "/images/shop/products/TB-003-3.png"
+    ],
+    "description": "Gündəlik istifadə və səyahət üçün ideal olan bu set ətir qabı, aroma şam və saç rezinindən ibarətdir. Kompakt və praktik məhsullar bir arada təqdim olunur və həm şəxsi istifadə, həm də hədiyyə üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-004",
+    "name": "Diş fırçası + Pasta qabı",
+    "categories": [
+      "Gigiyena və baxım"
+    ],
+    "price": 14.9,
+    "currency": "AZN",
+    "colors": [
+      "Ağ"
+    ],
+    "images": [
+      "/images/shop/products/TB-004-1.jpg"
+    ],
+    "description": "Gündəlik ağız və diş baxımı üçün praktik və rahat seçimdir. Kompakt dizaynı sayəsində evdə, səyahətdə və işdə istifadə üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-005",
+    "name": "İlk yardım çantası",
+    "categories": [
+      "Gigiyena və baxım"
+    ],
+    "price": 19.9,
+    "currency": "AZN",
+    "colors": [
+      "Narıncı",
+      "Mavi"
+    ],
+    "images": [
+      "/images/shop/products/TB-005-1.jpg",
+      "/images/shop/products/TB-005-2.jpg"
+    ],
+    "description": "Gündəlik istifadə və səyahətlər üçün praktik və kompakt apteçka. Kiçik ölçüsü sayəsində çantada rahat daşınır və lazım olan əsas vasitələri bir yerdə saxlamağa imkan verir.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-006",
+    "name": "Passport üçün üzlük",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 12.9,
+    "currency": "AZN",
+    "colors": [
+      "Qəhvəyi",
+      "Cəhrayı",
+      "Göy"
+    ],
+    "images": [
+      "/images/shop/products/TB-006-1.jpg",
+      "/images/shop/products/TB-006-2.jpg",
+      "/images/shop/products/TB-006-3.jpg"
+    ],
+    "description": "Passportunuzu cızıqlardan, tozdan və gündəlik istifadədən qorumaq üçün praktik və rahat seçimdir. Kompakt dizaynı sayəsində səyahətlər zamanı rahatlıqla istifadə olunur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-007",
+    "name": "Laptop Dayağı",
+    "categories": [
+      "Elektronika"
+    ],
+    "price": 19.9,
+    "currency": "AZN",
+    "colors": [
+      "Qara"
+    ],
+    "images": [
+      "/images/shop/products/TB-007-1.jpg"
+    ],
+    "description": "Laptopu rahat və düzgün hündürlükdə istifadə etmək üçün praktik dayaq. Kompakt və rahat dizaynı sayəsində iş, təhsil və gündəlik istifadə üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-008",
+    "name": "Eko‑dəri orqanayzer",
+    "categories": [
+      "Biznes"
+    ],
+    "price": 29.9,
+    "currency": "AZN",
+    "colors": [
+      "Qəhvəyi"
+    ],
+    "images": [
+      "/images/shop/products/TB-008-1.jpg"
+    ],
+    "description": "Sənədlər, kartlar, qələmlər və digər şəxsi əşyaları səliqəli şəkildə saxlamaq üçün praktik orqanayzer. Eko-dəri materialı və kompakt dizaynı ilə gündəlik istifadə və səyahət üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-009",
+    "name": "Vizitkartlıq",
+    "categories": [
+      "Biznes"
+    ],
+    "price": 14.8,
+    "currency": "AZN",
+    "colors": [
+      "Qəhvəyi"
+    ],
+    "images": [
+      "/images/shop/products/TB-009-1.jpg"
+    ],
+    "description": "Vizit kartlarını səliqəli və təhlükəsiz şəkildə saxlamaq üçün praktik seçimdir. Kompakt dizaynı sayəsində cibdə və ya çantada rahat daşınır və gündəlik iş istifadəsi üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-010",
+    "name": "Zontik",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 29.9,
+    "currency": "AZN",
+    "colors": [
+      "Mavi",
+      "Göy",
+      "Qara",
+      "Bej"
+    ],
+    "images": [
+      "/images/shop/products/TB-010-1.jpg",
+      "/images/shop/products/TB-010-2.jpg",
+      "/images/shop/products/TB-010-3.jpg",
+      "/images/shop/products/TB-010-4.jpg"
+    ],
+    "description": "Yağışlı və küləkli havalarda qorunmaq üçün praktik və rahat seçimdir. Kompakt dizaynı sayəsində çantada və ya avtomobildə rahat saxlanılır.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-011",
+    "name": "Termos",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 19.9,
+    "currency": "AZN",
+    "colors": [
+      "Qara",
+      "Ağ",
+      "Mavi",
+      "Yaşıl"
+    ],
+    "images": [
+      "/images/shop/products/TB-011-1.jpg",
+      "/images/shop/products/TB-011-2.jpg",
+      "/images/shop/products/TB-011-3.jpg",
+      "/images/shop/products/TB-011-4.jpg"
+    ],
+    "description": "İçkiləri uzun müddət isti və ya soyuq saxlamaq üçün praktik seçimdir. Kompakt və rahat dizaynı sayəsində gündəlik istifadə, iş və səyahət üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-012",
+    "name": "Şəkil çap aparatı + Air Tag + Foto maqnit",
+    "categories": [
+      "Elektronika"
+    ],
+    "price": 249.9,
+    "currency": "AZN",
+    "colors": [
+      "Ağ"
+    ],
+    "images": [
+      "/images/shop/products/TB-012-1.png"
+    ],
+    "description": "Xatirələrinizi foto maqnitə çevirmək telefonunuzdakı şəkilləri istənilən yerdə çap etmək üçün praktik mini foto printer və əşyalarınızı asanlıqla izləmək üçün AirTag bir arada. Gündəlik istifadə və səyahət üçün ideal seçimdir.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-013",
+    "name": "Suya davamlı torbalar",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 79.9,
+    "currency": "AZN",
+    "colors": [
+      "Bej"
+    ],
+    "images": [
+      "/images/shop/products/TB-013-1.png"
+    ],
+    "description": "Əşyaları sudan, nəmdən və çirklənmədən qorumaq üçün praktik seçimdir. Səyahət, çimərlik və gündəlik istifadə üçün uyğundur.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-014",
+    "name": "Çamadan Üzlük/S ölçüdə 52х30х28 sm",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 24.9,
+    "currency": "AZN",
+    "colors": [
+      "Sarı",
+      "Göy",
+      "Rəngli"
+    ],
+    "images": [
+      "/images/shop/products/TB-014-1.jpg",
+      "/images/shop/products/TB-014-2.jpg",
+      "/images/shop/products/TB-014-3.jpg"
+    ],
+    "description": "Çamadanınızı cızıqlardan, tozdan və gündəlik istifadədən qorumaq üçün praktik seçimdir. Elastik quruluşu sayəsində çamadana rahat uyğunlaşır və səyahətlər üçün idealdır.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-015",
+    "name": "Çamadan Üzlük/M ölçüdə 57х33х32 sm",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 29.9,
+    "currency": "AZN",
+    "colors": [
+      "Sarı",
+      "Göy",
+      "Rəngli"
+    ],
+    "images": [
+      "/images/shop/products/TB-015-1.jpg",
+      "/images/shop/products/TB-015-2.jpg",
+      "/images/shop/products/TB-015-3.jpg"
+    ],
+    "description": "Çamadanınızı cızıqlardan, tozdan və gündəlik istifadədən qorumaq üçün praktik seçimdir. Elastik quruluşu sayəsində çamadana rahat uyğunlaşır və səyahətlər üçün idealdır.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-016",
+    "name": "Çamadan Üzlük/L ölçüdə 64х35х34 sm",
+    "categories": [
+      "Aksesuarlar"
+    ],
+    "price": 34.9,
+    "currency": "AZN",
+    "colors": [
+      "Sarı",
+      "Göy",
+      "Rəngli"
+    ],
+    "images": [
+      "/images/shop/products/TB-016-1.jpg",
+      "/images/shop/products/TB-016-2.jpg",
+      "/images/shop/products/TB-016-3.jpg"
+    ],
+    "description": "Çamadanınızı cızıqlardan, tozdan və gündəlik istifadədən qorumaq üçün praktik seçimdir. Elastik quruluşu sayəsində çamadana rahat uyğunlaşır və səyahətlər üçün idealdır.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-017",
+    "name": "Çamadan/S ölçüdə 52х30х28 sm",
+    "categories": [
+      "Çamadan"
+    ],
+    "price": 79,
+    "currency": "AZN",
+    "colors": [
+      "Mavi",
+      "Çəhrayı",
+      "Qara",
+      "Boz"
+    ],
+    "images": [
+      "/images/shop/products/TB-017-1.jpg",
+      "/images/shop/products/TB-017-2.jpg",
+      "/images/shop/products/TB-017-3.jpg",
+      "/images/shop/products/TB-017-4.jpg"
+    ],
+    "description": "Səyahətlər üçün rahat və praktik seçimdir. Geniş tutumu sayəsində geyim, şəxsi əşyalar və digər əşyaları səliqəli şəkildə daşımağa imkan verir.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-018",
+    "name": "Çamadan/M ölçüdə 57х33х32 sm",
+    "categories": [
+      "Çamadan"
+    ],
+    "price": 109,
+    "currency": "AZN",
+    "colors": [
+      "Mavi",
+      "Çəhrayı",
+      "Qara",
+      "Boz"
+    ],
+    "images": [
+      "/images/shop/products/TB-018-1.jpg",
+      "/images/shop/products/TB-018-2.jpg",
+      "/images/shop/products/TB-018-3.jpg",
+      "/images/shop/products/TB-018-4.jpg"
+    ],
+    "description": "Səyahətlər üçün rahat və praktik seçimdir. Geniş tutumu sayəsində geyim, şəxsi əşyalar və digər əşyaları səliqəli şəkildə daşımağa imkan verir.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-019",
+    "name": "Çamadan/L ölçüdə 64х35х34 sm",
+    "categories": [
+      "Çamadan"
+    ],
+    "price": 139,
+    "currency": "AZN",
+    "colors": [
+      "Mavi",
+      "Çəhrayı",
+      "Qara",
+      "Boz"
+    ],
+    "images": [
+      "/images/shop/products/TB-019-1.jpg",
+      "/images/shop/products/TB-019-2.jpg",
+      "/images/shop/products/TB-019-3.jpg",
+      "/images/shop/products/TB-019-4.jpg"
+    ],
+    "description": "Səyahətlər üçün rahat və praktik seçimdir. Geniş tutumu sayəsində geyim, şəxsi əşyalar və digər əşyaları səliqəli şəkildə daşımağa imkan verir.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-020",
+    "name": "Premium Çamadan/S ölçüdə 52х30х28 sm",
+    "categories": [
+      "Çamadan"
+    ],
+    "price": 200,
+    "currency": "AZN",
+    "colors": [
+      "Qara",
+      "Yaşıl"
+    ],
+    "images": [
+      "/images/shop/products/TB-020-1.jpg",
+      "/images/shop/products/TB-020-2.jpg"
+    ],
+    "description": "Yüksək keyfiyyət və şık dizaynı bir arada təqdim edən Premium Çamadan səyahətlər üçün ideal seçimdir. Möhkəm konstruksiyası, geniş daxili həcmi və rahat istifadəsi ilə əşyalarınızı təhlükəsiz və səliqəli şəkildə daşımağa imkan verir.",
+    "inStock": true,
+    "bestseller": true
+  },
+  {
+    "sku": "TB-021",
+    "name": "Premium Çamadan/L ölçüdə 64х35х34 sm",
+    "categories": [
+      "Çamadan"
+    ],
+    "price": 300,
+    "currency": "AZN",
+    "colors": [
+      "Qara",
+      "Yaşıl"
+    ],
+    "images": [
+      "/images/shop/products/TB-021-1.jpg",
+      "/images/shop/products/TB-021-2.jpg"
+    ],
+    "description": "Yüksək keyfiyyət və şık dizaynı bir arada təqdim edən Premium Çamadan səyahətlər üçün ideal seçimdir. Möhkəm konstruksiyası, geniş daxili həcmi və rahat istifadəsi ilə əşyalarınızı təhlükəsiz və səliqəli şəkildə daşımağa imkan verir.",
+    "inStock": true,
+    "bestseller": true
+  }
+]

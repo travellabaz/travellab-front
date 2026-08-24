@@ -8,6 +8,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 import AuthMenu from './AuthMenu';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+import { useCart } from '../context/CartContext';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 
@@ -32,6 +33,7 @@ export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
+  const { count, openDrawer } = useCart();
   const location = useLocation();
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(location.pathname);
@@ -66,6 +68,11 @@ export default function Nav() {
               </NavLink>
             </li>
           ))}
+          <li>
+            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-link' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+              {t('nav.shop')}
+            </NavLink>
+          </li>
           {/* The top bar's own LanguageSwitcher dropdown is hidden at this
               breakpoint (see .tl-nav-lang-switcher's media rule) — nesting a
               second dropdown inside an already-open menu reads worse than a
@@ -104,9 +111,23 @@ export default function Nav() {
             </NavLink>
           </li>
         ))}
+        <li>
+          <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')}>
+            {t('nav.shop')}
+          </NavLink>
+        </li>
       </ul>
       {mobileMenu}
       <div className="tl-nav-right">
+        <button type="button" className="tl-nav-cart" aria-label={t('nav.cart')} onClick={openDrawer}>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 6h15l-1.5 9h-12z" />
+            <path d="M6 6L5 3H2" />
+            <circle cx="9" cy="20" r="1.4" />
+            <circle cx="18" cy="20" r="1.4" />
+          </svg>
+          {count > 0 && <span className="tl-nav-cart-badge">{count}</span>}
+        </button>
         <LanguageSwitcher className="tl-nav-lang-switcher" />
         <span className="tl-nav-divider" aria-hidden="true" />
         <button

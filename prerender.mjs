@@ -23,6 +23,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
 const ssrDir = path.join(__dirname, 'dist-server');
 const postsDir = path.join(__dirname, 'src/data/blog/posts');
+const shopProductsPath = path.join(__dirname, 'src/data/shop/products.json');
 const localesDir = path.join(__dirname, 'src/i18n/locales');
 
 const LANGUAGES = ['az', 'ru', 'en'];
@@ -42,6 +43,7 @@ const SEO_KEY_BY_PATH = {
   '/viza': 'viza',
   '/hediyye-karti': 'giftCard',
   '/endirimler': 'endirimler',
+  '/shop': 'shop',
 };
 
 // Reads the JSON translation files straight off disk (not `import ... json`)
@@ -130,6 +132,14 @@ function writeRedirects(inactiveTourIds) {
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
 // JSON file per post, so the route list has to be built from whatever
 // files exist at build time instead of being hardcoded.
+// Same build-time snapshot ShopPage/ShopProductPage read via
+// src/data/shop/index.js — read straight off disk here too (see
+// loadTranslators above for why this file avoids `import ... json`).
+function loadShopProducts() {
+  if (!fs.existsSync(shopProductsPath)) return [];
+  return JSON.parse(fs.readFileSync(shopProductsPath, 'utf-8'));
+}
+
 function loadBlogPosts() {
   return fs
     .readdirSync(postsDir)
@@ -215,6 +225,8 @@ async function main() {
   const blogPosts = loadBlogPosts();
   const blogPostBySlug = Object.fromEntries(blogPosts.map((p) => [p.slug, p]));
 
+  const shopProducts = loadShopProducts();
+
   const activeTours = await fetchActiveTours();
   const toursById = Object.fromEntries(activeTours.map((t) => [String(t.id), t]));
 
@@ -241,6 +253,9 @@ async function main() {
   }
   for (const tour of activeTours) {
     routeEntries.push({ bareRoutePath: `/tours/${tour.id}`, kind: 'tour', tourId: String(tour.id), langs: LANGUAGES });
+  }
+  for (const product of shopProducts) {
+    routeEntries.push({ bareRoutePath: `/shop/${product.sku}`, kind: 'shopProduct', product, langs: LANGUAGES });
   }
 
   let renderCount = 0;
@@ -292,6 +307,11 @@ async function main() {
         title = tour.metaTitle || `${tour.title} — Travellab`;
         desc = tour.metaDescription || truncate(tour.description, 160) || t(`seo.tours.desc`);
         image = tour.imageUrl || DEFAULT_OG_IMAGE;
+      } else if (kind === 'shopProduct') {
+        const product = entry.product;
+        title = `${product.name} — Travellab Shop`;
+        desc = truncate(product.description, 160) || t('seo.shop.desc');
+        image = product.images[0] || DEFAULT_OG_IMAGE;
       }
 
       const appHtml = render(localizedRoutePath || '/');
@@ -319,6 +339,8 @@ async function main() {
         breadcrumbItems.push({ name: t('footer.blog'), url: `${BASE_URL}${buildLocalizedPath('/blog', lang)}` }, { name: post.title, url: pageUrl });
       } else if (kind === 'tour') {
         breadcrumbItems.push({ name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` }, { name: tour.title, url: pageUrl });
+      } else if (kind === 'shopProduct') {
+        breadcrumbItems.push({ name: t('shop.breadcrumb'), url: `${BASE_URL}${buildLocalizedPath('/shop', lang)}` }, { name: entry.product.name, url: pageUrl });
       } else if (kind === 'vizaCountry') {
         const countryName = t(`countries.${entry.country.name}`, entry.country.name);
         const countryNameAcc = toAccusative(countryName, lang);

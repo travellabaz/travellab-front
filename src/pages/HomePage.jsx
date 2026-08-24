@@ -5,6 +5,7 @@ import HotelsSection from '../sections/HotelsSection';
 import CtaSection from '../sections/CtaSection';
 import EventsSection from '../sections/EventsSection';
 import LabpointSection from '../sections/LabpointSection';
+import ShopSection from '../sections/ShopSection';
 import PartnersSection from '../sections/PartnersSection';
 import SeoBodyText from '../components/SeoBodyText';
 
@@ -22,6 +23,7 @@ export default function HomePage() {
       <CtaSection />
       <EventsSection />
       <LabpointSection />
+      <ShopSection />
       <PartnersSection />
 
       <section>

@@ -6,6 +6,7 @@ import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ModalProvider } from './context/ModalContext';
 import { ToursProvider } from './context/ToursContext';
+import { CartProvider } from './context/CartContext';
 import { initI18n } from './i18n';
 import { getLocaleFromPathname } from './utils/locale';
 
@@ -27,7 +28,9 @@ export function render(url) {
           <AuthProvider>
             <ToursProvider>
               <ModalProvider>
-                <App />
+                <CartProvider>
+                  <App />
+                </CartProvider>
               </ModalProvider>
             </ToursProvider>
           </AuthProvider>

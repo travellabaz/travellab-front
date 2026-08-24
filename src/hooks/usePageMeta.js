@@ -8,6 +8,7 @@ import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
+import { getProductBySku } from '../data/shop';
 import { toAccusative } from '../utils/ruGrammar';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../i18n';
 import { getLocaleFromPathname, stripLocalePrefix, buildLocalizedPath } from '../utils/locale';
@@ -33,6 +34,7 @@ const SEO_KEY_BY_PATH = {
   '/viza': 'viza',
   '/hediyye-karti': 'giftCard',
   '/endirimler': 'endirimler',
+  '/shop': 'shop',
 };
 
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/
@@ -59,6 +61,8 @@ export default function usePageMeta() {
     const post = postSlug ? getPostBySlug(postSlug, lang) : null;
     const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
+    const shopProductMatch = /^\/shop\/([^/]+)$/.exec(path);
+    const shopProduct = shopProductMatch ? getProductBySku(shopProductMatch[1]) : null;
     // Only true once the live tours list has actually loaded — while it's
     // still loading, tour is legitimately null for every tour ID, active
     // or not, and flashing noindex during that window would be wrong.
@@ -91,17 +95,19 @@ export default function usePageMeta() {
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour
         ? { title: tour.metaTitle || `${tour.title} — Travellab`, desc: tour.metaDescription || truncate(tour.description, 160) }
-        : vizaCountry
-          ? { title: t('seo.vizaCountryTitle', { country: vizaCountryNameAcc, defaultValue: `${vizaCountryNameAcc} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryNameAcc, defaultValue: '' }) }
-          : tourSearchCountry
-            ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
-            : flightRoute
-              ? { title: t('seo.flightRouteTitle', { origin: t('flights.baku'), destination: flightRouteDestination, defaultValue: `${flightRouteDestination} — Travellab` }), desc: t('seo.flightRouteDesc', { destination: flightRouteDestination, defaultValue: '' }) }
-              : isToursList
-                ? { title: t(`tourCategoryMeta.${categoryMetaKey}.title`), desc: t(`tourCategoryMeta.${categoryMetaKey}.desc`) }
-                : seoKey
-                  ? { title: t(`seo.${seoKey}.title`), desc: t(`seo.${seoKey}.desc`) }
-                  : { title: t('notFound.title') + ' — Travellab', desc: t('notFound.desc') };
+        : shopProduct
+          ? { title: `${shopProduct.name} — Travellab Shop`, desc: truncate(shopProduct.description, 160) || t('seo.shop.desc') }
+          : vizaCountry
+            ? { title: t('seo.vizaCountryTitle', { country: vizaCountryNameAcc, defaultValue: `${vizaCountryNameAcc} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryNameAcc, defaultValue: '' }) }
+            : tourSearchCountry
+              ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
+              : flightRoute
+                ? { title: t('seo.flightRouteTitle', { origin: t('flights.baku'), destination: flightRouteDestination, defaultValue: `${flightRouteDestination} — Travellab` }), desc: t('seo.flightRouteDesc', { destination: flightRouteDestination, defaultValue: '' }) }
+                : isToursList
+                  ? { title: t(`tourCategoryMeta.${categoryMetaKey}.title`), desc: t(`tourCategoryMeta.${categoryMetaKey}.desc`) }
+                  : seoKey
+                    ? { title: t(`seo.${seoKey}.title`), desc: t(`seo.${seoKey}.desc`) }
+                    : { title: t('notFound.title') + ' — Travellab', desc: t('notFound.desc') };
 
     const pageImage = seoKey ? PAGE_META[path === '/' ? '/' : path]?.image : undefined;
 
@@ -112,7 +118,9 @@ export default function usePageMeta() {
       ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
       : tour && tour.imageUrl
         ? tour.imageUrl
-        : pageImage
+        : shopProduct && shopProduct.images[0]
+          ? shopProduct.images[0]
+          : pageImage
           ? (pageImage.startsWith('http') ? pageImage : BASE_URL + pageImage)
           : DEFAULT_OG_IMAGE;
 
@@ -174,6 +182,8 @@ export default function usePageMeta() {
         items.push({ name: t('footer.blog'), url: BASE_URL + buildLocalizedPath('/blog', lang) }, { name: post.title, url: pageUrl });
       } else if (tour) {
         items.push({ name: t('nav.tours'), url: BASE_URL + buildLocalizedPath('/tours', lang) }, { name: tour.title, url: pageUrl });
+      } else if (shopProduct) {
+        items.push({ name: t('shop.breadcrumb'), url: BASE_URL + buildLocalizedPath('/shop', lang) }, { name: shopProduct.name, url: pageUrl });
       } else if (vizaCountry) {
         items.push({ name: t('nav.viza'), url: BASE_URL + buildLocalizedPath('/viza', lang) }, { name: t('viza.countryPageBreadcrumb', { country: vizaCountryNameAcc }), url: pageUrl });
       } else if (tourSearchCountry) {

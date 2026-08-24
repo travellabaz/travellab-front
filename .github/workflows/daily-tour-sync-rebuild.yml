@@ -25,6 +25,31 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Travellab Shop's "admin panel" is a Google Sheet (see
+      # src/data/shop/index.js) — this pulls it as CSV, downloads each
+      # product's photos out of Drive into public/images/shop/products, and
+      # regenerates src/data/shop/products.json. A no-op commit below still
+      # covers the tour-sync rebuild even on a day nothing here changed.
+      - name: Sync Shop products from the Google Sheet
+        run: node scripts/sync-shop-products.mjs
+
+      - name: Commit Shop product changes, if any
+        run: |
+          git config user.name "travellab-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/data/shop/products.json public/images/shop/products
+          if git diff --cached --quiet; then
+            echo "No Shop product changes"
+          else
+            git commit -m "Sync Shop products from Google Sheet"
+            git pull --rebase origin main
+            git push
+          fi
+
       - name: Trigger a Netlify rebuild
         run: |
           git config user.name "travellab-bot"

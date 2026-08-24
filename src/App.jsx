@@ -23,6 +23,8 @@ import VizaPage from './pages/VizaPage';
 import VizaCountryPage from './pages/VizaCountryPage';
 import FlightRoutePage from './pages/FlightRoutePage';
 import AboutPage from './pages/AboutPage';
+import ShopPage from './pages/ShopPage';
+import ShopProductPage from './pages/ShopProductPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import GiftCardPage from './pages/GiftCardPage';
@@ -33,6 +35,7 @@ import AddPhoneModal from './modals/AddPhoneModal';
 import PrivacyModal from './modals/PrivacyModal';
 import TermsModal from './modals/TermsModal';
 import ManagerContactModal from './modals/ManagerContactModal';
+import CartDrawer from './components/CartDrawer';
 import usePageMeta from './hooks/usePageMeta';
 import useSubpageClass from './hooks/useSubpageClass';
 import useScrollTopOnRouteChange from './hooks/useScrollTopOnRouteChange';
@@ -61,6 +64,8 @@ function localeRouteChildren() {
     <Route key="viza" path="viza" element={<VizaPage />} />,
     <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
     <Route key="about" path="about" element={<AboutPage />} />,
+    <Route key="shop" path="shop" element={<ShopPage />} />,
+    <Route key="shop-product" path="shop/:sku" element={<ShopProductPage />} />,
     <Route key="blog" path="blog" element={<BlogPage />} />,
     <Route key="blog-slug" path="blog/:slug" element={<BlogPostPage />} />,
     <Route key="gift-card" path="hediyye-karti" element={<GiftCardPage />} />,
@@ -138,6 +143,7 @@ export default function App() {
       <PrivacyModal />
       <TermsModal />
       <ManagerContactModal />
+      <CartDrawer />
       <GoogleOneTap />
     </>
   );

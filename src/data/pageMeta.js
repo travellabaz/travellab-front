@@ -40,6 +40,11 @@ export const PAGE_META = {
     desc: 'Travellab — Bakıda fəaliyyət göstərən etibarlı səyahət agentliyi. ATAA üzvü, aviabilet, otel, tur və viza xidmətləri. Bizi tanıyın!',
     image: '/images/hero/mosque-og.jpg',
   },
+  '/shop': {
+    title: 'Travellab Shop - Səyahət Aksesuarları | Travellab',
+    desc: 'Travellab Shop-da səyahət aksesuarları, çamadanlar və daha çoxunu kəşf edin. Sərfəli qiymətlər, sürətli çatdırılma, WhatsApp ilə sifariş.',
+    image: '/images/shop/lifestyle-couple.jpg',
+  },
   '/blog': {
     title: 'Səyahət Bələdçisi və Məsləhətlər - Bloq | Travellab',
     desc: 'Şəhər bələdçiləri, viza təlimatları, macəra hekayələri və səyahət xəbərləri. Travellab bloqunda faydalı məlumatlar tapın.',
