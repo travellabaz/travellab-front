@@ -6446,6 +6446,20 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
 }
 
+/* Grid items default to min-width: auto (= their content's intrinsic
+   size). The bestseller sidebar's horizontal auto-scroll strip
+   (MoreProductsStrip, flex-shrink:0 thumbnails meant to scroll, not wrap)
+   has a large intrinsic width, so without this it drags the whole
+   .tl-shop-card column wider than the viewport on mobile — confirmed
+   live: removing it collapsed the single-column mobile layout from a
+   714px-wide overflow back down to fitting the actual 324px available.
+   card-left gets the same treatment since its own long-text children
+   (.tl-shop-desc etc.) are exactly the same kind of risk. */
+.tl-shop-card-left,
+.tl-shop-bestsellers {
+  min-width: 0;
+}
+
 .tl-shop-kicker {
   font-size: 11px;
   font-weight: 700;
