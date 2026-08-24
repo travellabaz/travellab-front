@@ -3012,6 +3012,18 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-shrink: 0;
 }
 
+.tl-partner-chip {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 48px;
+  margin: 0 40px;
+}
+
+.tl-partner-chip svg {
+  display: block;
+}
+
 /* ── BLOG ── */
 .tl-blog-hero {
   background: var(--tl-hero-orange);
