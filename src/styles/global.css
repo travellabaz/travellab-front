@@ -2813,10 +2813,16 @@ body:not(.tl-subpage) .tl-about-extra {
   padding: 12px;
 }
 
-.tl-about-service-item span {
-  font-size: 18px;
+.tl-about-service-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--tl-r-sm);
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  margin-top: 1px;
 }
 
 .tl-about-service-item strong {
@@ -2851,6 +2857,11 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-about-address:hover {
   border-color: var(--tl-green);
   color: var(--tl-navy);
+}
+
+.tl-about-address svg {
+  flex-shrink: 0;
+  color: var(--tl-green-dark);
 }
 
 .tl-about-map {
@@ -2924,6 +2935,14 @@ body:not(.tl-subpage) .tl-about-extra {
   border-radius: var(--tl-r-lg);
   overflow: hidden;
   display: block;
+}
+
+.tl-about-brand {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin-bottom: 10px;
 }
 
 .tl-about-photos {
