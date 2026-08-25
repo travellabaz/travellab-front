@@ -1,48 +1,46 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import ShopBenefitsStrip from '../components/ShopBenefitsStrip';
 import ImageCarousel from '../components/ImageCarousel';
-import { getBestsellerGroups, getProductGroups, productSlug } from '../data/shop';
+import { getBestsellerGroups, getCategories, getProductGroups, productSlug } from '../data/shop';
 
-const EXTRA_SCROLL_STEP = 92;
-const EXTRA_AUTO_SCROLL_MS = 2600;
+const SPOTLIGHT_ROTATE_MS = 3200;
 
 // Fills the empty space the bestseller list otherwise leaves below it
-// (only ever a handful of items long) with more of the catalogue as small
-// thumbnails — auto-advances on a timer, but a visitor can always take
-// over with the arrows or by dragging/swiping the strip itself (plain
-// native horizontal scroll underneath, same as ToursSection's row).
-function MoreProductsStrip({ groups }) {
-  const scrollerRef = useRef(null);
+// (only ever a handful of items long) with a single large product, one
+// per category — auto-rotates through the categories on a timer so a
+// visitor sees the catalogue's breadth without it looking like a wall of
+// tiny thumbnails, but can always flip through manually with the arrows.
+function CategorySpotlight({ items }) {
+  const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused || groups.length === 0) return undefined;
-    const id = setInterval(() => {
-      const el = scrollerRef.current;
-      if (!el) return;
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
-      el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + EXTRA_SCROLL_STEP, behavior: 'smooth' });
-    }, EXTRA_AUTO_SCROLL_MS);
+    if (paused || items.length < 2) return undefined;
+    const id = setInterval(() => setIndex((i) => (i + 1) % items.length), SPOTLIGHT_ROTATE_MS);
     return () => clearInterval(id);
-  }, [paused, groups.length]);
+  }, [paused, items.length]);
 
-  if (groups.length === 0) return null;
+  if (items.length === 0) return null;
 
-  const scrollBy = (delta) => scrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
+  const current = items[index % items.length];
+  const go = (delta) => setIndex((i) => (i + delta + items.length) % items.length);
 
   return (
-    <div className="tl-shop-extra-scroller" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <button type="button" className="tl-shop-extra-arrow tl-shop-extra-arrow-prev" onClick={() => scrollBy(-EXTRA_SCROLL_STEP)} aria-label="Previous">‹</button>
-      <div className="tl-shop-extra-strip" ref={scrollerRef}>
-        {groups.map((g) => (
-          <Link to={`/shop/${productSlug(g.defaultVariant)}`} key={g.id} className="tl-shop-extra-thumb" title={g.name}>
-            {g.defaultVariant.images[0] && <img src={g.defaultVariant.images[0]} alt={g.name} loading="lazy" />}
-          </Link>
-        ))}
-      </div>
-      <button type="button" className="tl-shop-extra-arrow tl-shop-extra-arrow-next" onClick={() => scrollBy(EXTRA_SCROLL_STEP)} aria-label="Next">›</button>
+    <div className="tl-shop-spotlight" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <Link to={`/shop/${productSlug(current.group.defaultVariant)}`} className="tl-shop-spotlight-media" title={current.group.name}>
+        {current.group.defaultVariant.images[0] && (
+          <img src={current.group.defaultVariant.images[0]} alt={current.group.name} loading="lazy" />
+        )}
+        <span className="tl-shop-spotlight-badge">{current.category}</span>
+      </Link>
+      {items.length > 1 && (
+        <>
+          <button type="button" className="tl-shop-spotlight-arrow tl-shop-spotlight-arrow-prev" onClick={() => go(-1)} aria-label="Previous">‹</button>
+          <button type="button" className="tl-shop-spotlight-arrow tl-shop-spotlight-arrow-next" onClick={() => go(1)} aria-label="Next">›</button>
+        </>
+      )}
     </div>
   );
 }
@@ -65,9 +63,10 @@ const LIFESTYLE_IMAGES = [
 export default function ShopSection() {
   const { t } = useTranslation();
   const bestsellers = getBestsellerGroups(5);
-  const moreProducts = getProductGroups()
-    .filter((g) => !bestsellers.some((b) => b.id === g.id))
-    .slice(0, 10);
+  const allGroups = getProductGroups();
+  const spotlightItems = getCategories()
+    .map((category) => ({ category, group: allGroups.find((g) => g.categories.includes(category)) }))
+    .filter((item) => item.group);
 
   return (
     <section id="shop" className="tl-page-top">
@@ -110,7 +109,7 @@ export default function ShopSection() {
                 </Link>
               ))}
             </div>
-            <MoreProductsStrip groups={moreProducts} />
+            <CategorySpotlight items={spotlightItems} />
           </div>
         </div>
 

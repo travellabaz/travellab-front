@@ -9,7 +9,6 @@ import AuthMenu from './AuthMenu';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 import { useCart } from '../context/CartContext';
-import { useWishlist } from '../context/WishlistContext';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 
@@ -35,7 +34,6 @@ export default function Nav() {
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
   const { count, openDrawer } = useCart();
-  const { count: wishlistCount, openDrawer: openWishlistDrawer } = useWishlist();
   const location = useLocation();
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(location.pathname);
@@ -121,12 +119,6 @@ export default function Nav() {
       </ul>
       {mobileMenu}
       <div className="tl-nav-right">
-        <button type="button" className="tl-nav-cart" aria-label={t('nav.wishlist')} onClick={openWishlistDrawer}>
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-          </svg>
-          {wishlistCount > 0 && <span className="tl-nav-cart-badge">{wishlistCount}</span>}
-        </button>
         <button type="button" className="tl-nav-cart" aria-label={t('nav.cart')} onClick={openDrawer}>
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 6h15l-1.5 9h-12z" />

@@ -3,13 +3,13 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedNavigate } from './LocalizedLink';
 import { markCategoryViewed } from '../utils/storyViewed';
-import StoryIcon from '../utils/storyIcons.jsx';
 
 const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doesn't set its own
 const SWIPE_DOWN_CLOSE_THRESHOLD = 80; // px
 const DRAG_START_THRESHOLD = 10; // px of horizontal movement before a touch counts as a category drag, not a tap
 const DRAG_COMPLETE_RATIO = 0.35; // fraction of the media width the drag must cross to commit the category switch
 const NEXT_CATEGORY_PREVIEW_COUNT = 2; // how many upcoming categories peek in on desktop
+const PREV_CATEGORY_PREVIEW_COUNT = 1; // how many previous categories peek in on desktop
 const CATEGORY_TRANSITION_MS = 480; // settle/commit animation duration — also used for the instant (non-drag) jumps below
 
 function StoryMedia({ story, mediaRef, muted, className }) {
@@ -25,6 +25,24 @@ function StoryMedia({ story, mediaRef, muted, className }) {
     />
   ) : (
     <img key={story.id} src={story.media_url} alt="" className={className} />
+  );
+}
+
+// Desktop-only side preview: a real thumbnail of the adjacent category's
+// first story (not just an icon), matching Instagram's own web viewer —
+// clicking it jumps straight there via the same cube transition as
+// everything else (see goToCategory).
+function CategoryPreviewCard({ category, depth, side, t, onClick }) {
+  const cover = category.stories[0];
+  return (
+    <button type="button" className={`tl-story-side-card tl-story-side-card-${side} tl-story-side-depth-${depth}`} onClick={onClick}>
+      {cover?.type === 'video' ? (
+        <video src={cover.media_url} className="tl-story-side-card-media" muted autoPlay loop playsInline />
+      ) : (
+        <img src={cover?.media_url} alt="" className="tl-story-side-card-media" loading="lazy" />
+      )}
+      <span className="tl-story-side-card-label">{t(`stories.categories.${category.id}`, category.label)}</span>
+    </button>
   );
 }
 
@@ -289,13 +307,18 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
 
   if (!category || !story) return null;
 
-  // Desktop-only peek at what's coming up (see .tl-story-viewer-next-stack,
-  // hidden below the desktop breakpoint) — lets a visitor jump straight to
-  // e.g. "Endirimlər" without clicking through every remaining story in
-  // the category they're currently on, mirroring Instagram's web viewer.
+  // Desktop-only peek at what's coming up (and what came before) — lets a
+  // visitor jump straight to e.g. "Endirimlər" without clicking through
+  // every remaining story in the category they're currently on,
+  // mirroring Instagram's web viewer (see .tl-story-viewer-side-stack,
+  // hidden below the desktop breakpoint).
   const upcomingCategories = [];
   for (let i = catIndex + 1; i < categories.length && upcomingCategories.length < NEXT_CATEGORY_PREVIEW_COUNT; i++) {
     if (categories[i].stories.length > 0) upcomingCategories.push({ index: i, category: categories[i] });
+  }
+  const previousCategories = [];
+  for (let i = catIndex - 1; i >= 0 && previousCategories.length < PREV_CATEGORY_PREVIEW_COUNT; i--) {
+    if (categories[i].stories.length > 0) previousCategories.push({ index: i, category: categories[i] });
   }
 
   return createPortal(
@@ -355,25 +378,54 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
         )}
       </div>
 
+      {previousCategories.length > 0 && (
+        <>
+          <div className="tl-story-viewer-side-stack tl-story-viewer-side-stack-left">
+            {previousCategories.map(({ index, category: prevCat }, depth) => (
+              <CategoryPreviewCard
+                key={prevCat.id}
+                category={prevCat}
+                depth={depth}
+                side="left"
+                t={t}
+                onClick={(e) => { e.stopPropagation(); goToCategory(index, false); }}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="tl-story-viewer-side-chevron tl-story-viewer-side-chevron-left"
+            aria-label={t('stories.prev')}
+            onClick={(e) => { e.stopPropagation(); goToCategory(previousCategories[0].index, false); }}
+          >
+            ‹
+          </button>
+        </>
+      )}
+
       {upcomingCategories.length > 0 && (
-        <div className="tl-story-viewer-next-stack">
-          {upcomingCategories.map(({ index, category: nextCat }, depth) => (
-            <button
-              type="button"
-              key={nextCat.id}
-              className={`tl-story-viewer-next-item tl-story-viewer-next-depth-${depth}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                goToCategory(index, false);
-              }}
-            >
-              <span className="tl-story-viewer-next-avatar">
-                <StoryIcon name={nextCat.cover_icon} />
-              </span>
-              <span className="tl-story-viewer-next-label">{t(`stories.categories.${nextCat.id}`, nextCat.label)}</span>
-            </button>
-          ))}
-        </div>
+        <>
+          <div className="tl-story-viewer-side-stack tl-story-viewer-side-stack-right">
+            {upcomingCategories.map(({ index, category: nextCat }, depth) => (
+              <CategoryPreviewCard
+                key={nextCat.id}
+                category={nextCat}
+                depth={depth}
+                side="right"
+                t={t}
+                onClick={(e) => { e.stopPropagation(); goToCategory(index, false); }}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="tl-story-viewer-side-chevron tl-story-viewer-side-chevron-right"
+            aria-label={t('stories.next')}
+            onClick={(e) => { e.stopPropagation(); goToCategory(upcomingCategories[0].index, false); }}
+          >
+            ›
+          </button>
+        </>
       )}
 
       <button

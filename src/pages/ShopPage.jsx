@@ -11,6 +11,10 @@ import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
 
 const PAGE_SIZE = 8;
 const SORT_OPTIONS = ['newest', 'cheapest', 'expensive'];
+// Rotated by category index so the promo card's color varies instead of
+// always being the same one (see the "discover another category" card
+// mixed into the first page of the grid below).
+const PROMO_COLORS = ['green', 'blue', 'orange', 'teal'];
 
 // Add more paths here as new banner photos are shot — nothing else needs
 // to change (see ImageCarousel).
@@ -48,6 +52,21 @@ export default function ShopPage() {
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
+
+  // A card promoting one other category, mixed into the grid so a visitor
+  // browsing e.g. "Setlər" or "Hamısı" notices there's more to the catalogue
+  // without having to look back up at the chips. Only ever shown on the
+  // first page (visibleCount still at its initial value) — "Load more"
+  // reveals the rest of the real catalogue with no promo mixed in, and the
+  // one real product it displaces on that first page just reappears there.
+  const promoCategory = useMemo(() => {
+    if (categories.length < 2) return null;
+    const idx = category ? categories.indexOf(category) : -1;
+    return categories[(idx + 1) % categories.length];
+  }, [categories, category]);
+  const showPromoCard = Boolean(promoCategory) && visibleCount === PAGE_SIZE && visible.length > 0;
+  const gridGroups = showPromoCard ? visible.slice(0, PAGE_SIZE - 1) : visible;
+  const promoColor = promoCategory ? PROMO_COLORS[categories.indexOf(promoCategory) % PROMO_COLORS.length] : null;
 
   const selectCategory = (cat) => {
     setCategory(cat);
@@ -141,9 +160,22 @@ export default function ShopPage() {
           </div>
 
           <div className="tl-product-grid">
-            {visible.map((g) => (
+            {gridGroups.map((g) => (
               <ProductCard key={g.id} group={g} />
             ))}
+            {showPromoCard && (
+              <button
+                type="button"
+                className={`tl-shop-promo-card tl-shop-promo-${promoColor}`}
+                onClick={() => selectCategory(promoCategory)}
+              >
+                <span className="tl-shop-promo-kicker">{t('shop.promoDiscover')}</span>
+                <span className="tl-shop-promo-category">{promoCategory}</span>
+                <span className="tl-shop-promo-arrow" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+                </span>
+              </button>
+            )}
           </div>
 
           {filtered.length === 0 && <p className="tl-shop-empty">{t('shop.noResults')}</p>}
