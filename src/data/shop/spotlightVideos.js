@@ -9,4 +9,5 @@
 export const SHOP_SPOTLIGHT_VIDEOS = [
   { sku: 'TB-010', video: '/videos/shop/tb-010.mp4', poster: '/images/shop/spotlight-videos/tb-010.jpg' },
   { sku: 'TB-004', video: '/videos/shop/tb-004.mp4', poster: '/images/shop/spotlight-videos/tb-004.jpg' },
+  { sku: 'TB-005', video: '/videos/shop/tb-005.mp4', poster: '/images/shop/spotlight-videos/tb-005.jpg' },
 ];
