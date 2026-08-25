@@ -15,7 +15,10 @@ const SORT_OPTIONS = ['newest', 'cheapest', 'expensive'];
 // Rotated by category index so the promo card's color varies instead of
 // always being the same one (see the "discover another category" card
 // mixed into the first page of the grid below).
-const PROMO_COLORS = ['green', 'blue', 'orange', 'teal'];
+// Green first would mean the very first category (whatever sorts first,
+// e.g. "Elektronika" on the "Hamısı" view) always got the same color as
+// the rest of the site's green branding — start on a different one.
+const PROMO_COLORS = ['blue', 'orange', 'teal', 'green'];
 
 // Add more paths here as new banner photos are shot — nothing else needs
 // to change (see ImageCarousel).
