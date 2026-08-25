@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 import ShopBenefitsStrip from '../components/ShopBenefitsStrip';
 import ColorDots from '../components/ColorDots';
 import ImageCarousel from '../components/ImageCarousel';
+import ShopVideoGallery from '../components/ShopVideoGallery';
 import { getProductGroups, getCategories, sortProductGroups } from '../data/shop';
 import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
 
@@ -179,6 +180,8 @@ export default function ShopPage() {
           </div>
 
           {filtered.length === 0 && <p className="tl-shop-empty">{t('shop.noResults')}</p>}
+
+          <ShopVideoGallery />
 
           <div className="tl-shop-benefits-bar-wrap">
             <ShopBenefitsStrip variant="bar" />

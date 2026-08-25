@@ -591,6 +591,7 @@
     "noResults": "По этим параметрам ничего не найдено.",
     "loadMore": "Загрузить ещё",
     "promoDiscover": "Смотрите также",
+    "videosTitle": "Смотрите в видео",
     "whatsappOrder": "Заказать через WhatsApp",
     "waGenericMessage": "Здравствуйте, у меня вопрос по Travellab Shop.",
     "waOrderMessage": "Здравствуйте, хочу заказать {{name}} ({{sku}})\n{{link}}",
