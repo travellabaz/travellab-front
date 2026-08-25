@@ -7240,105 +7240,159 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 14px;
 }
 
-.tl-shop-videos-row {
+.tl-shop-videos-carousel {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0 28px;
 }
 
-.tl-shop-videos-scroller {
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-  padding-bottom: 2px;
-}
-
-.tl-shop-videos-scroller::-webkit-scrollbar {
-  display: none;
-}
-
-.tl-shop-video-card {
+/* Center card plays; side cards are just their poster frame, smaller and
+   stacked behind it (see ShopVideoGallery.jsx) — only ever one <video>
+   mounted at a time, so switching cards never leaves a previous clip
+   playing behind the scenes. */
+.tl-shop-spotlight-track {
   position: relative;
-  flex-shrink: 0;
-  width: 210px;
-  aspect-ratio: 9 / 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  width: 100%;
+  max-width: 760px;
+}
+
+.tl-shop-spotlight-card {
+  position: absolute;
   border-radius: var(--tl-r-lg);
   overflow: hidden;
   background: #111;
-  scroll-snap-align: start;
+  box-shadow: var(--tl-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
-.tl-shop-video-el {
+.tl-shop-spotlight-card.active {
+  position: relative;
+  width: 225px;
+  height: 400px;
+  z-index: 3;
+  cursor: default;
+}
+
+.tl-shop-spotlight-depth-1 {
+  width: 180px;
+  height: 320px;
+  z-index: 2;
+  opacity: 0.9;
+}
+
+.tl-shop-spotlight-depth-1.tl-shop-spotlight-left { transform: translateX(-60px); }
+.tl-shop-spotlight-depth-1.tl-shop-spotlight-right { transform: translateX(60px); }
+
+.tl-shop-spotlight-depth-2 {
+  width: 150px;
+  height: 266px;
+  z-index: 1;
+  opacity: 0.75;
+}
+
+.tl-shop-spotlight-depth-2.tl-shop-spotlight-left { transform: translateX(-110px); }
+.tl-shop-spotlight-depth-2.tl-shop-spotlight-right { transform: translateX(110px); }
+
+.tl-shop-spotlight-media {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.tl-shop-video-mute {
+.tl-shop-spotlight-top {
   position: absolute;
   top: 10px;
+  left: 10px;
   right: 10px;
-  width: 30px;
-  height: 30px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tl-shop-spotlight-label {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tl-shop-spotlight-icons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tl-shop-spotlight-icons button {
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   border: none;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   color: #fff;
-  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
 
-.tl-shop-video-product {
+/* Reused for both the card's bottom-overlaid CTA and the lightbox's own
+   (see tl-shop-spotlight-product-lightbox below) — same product summary
+   + "shop now" pill either way. */
+.tl-shop-spotlight-product {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 1;
+  padding: 30px 10px 10px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88), transparent);
+}
+
+.tl-shop-spotlight-product-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 28px 10px 10px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
-  text-decoration: none;
-  color: #fff;
+  margin-bottom: 8px;
 }
 
-.tl-shop-video-product:hover {
-  text-decoration: none;
-  color: #fff;
-}
-
-.tl-shop-video-product-thumb {
+.tl-shop-spotlight-product-thumb {
   flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
   overflow: hidden;
   background: #fff;
 }
 
-.tl-shop-video-product-thumb img {
+.tl-shop-spotlight-product-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.tl-shop-video-product-info {
-  flex: 1;
+.tl-shop-spotlight-product-text {
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
+  color: #fff;
 }
 
-.tl-shop-video-product-info strong {
+.tl-shop-spotlight-product-text strong {
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
@@ -7346,28 +7400,64 @@ body:not(.tl-subpage) .tl-about-extra {
   text-overflow: ellipsis;
 }
 
-.tl-shop-video-product-info em {
+.tl-shop-spotlight-product-text em {
   font-style: normal;
   font-size: 12px;
   font-weight: 700;
   color: var(--tl-green-light);
 }
 
-.tl-shop-video-product-arrow {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+.tl-shop-spotlight-product-cta {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--tl-blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tl-shop-spotlight-product-cta:hover {
+  background: var(--tl-blue-dark);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Full-screen playback — reuses the gift-card video overlay/close button
+   (see GiftCardPage.jsx) since it's already a generic fullscreen-video
+   lightbox, just with the shop's own product bar nested inside instead
+   of GiftCardPage's plain video-only content. */
+.tl-shop-video-lightbox {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--tl-r-lg);
+  overflow: hidden;
+  background: #000;
+}
+
+.tl-shop-video-lightbox-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  display: block;
+}
+
+.tl-shop-spotlight-product-lightbox {
+  padding-top: 40px;
 }
 
 .tl-shop-videos-arrow {
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1px solid var(--tl-gray-200);
   background: var(--tl-white);
@@ -7377,12 +7467,18 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 4;
 }
 
-.tl-shop-videos-arrow:hover {
+.tl-shop-videos-arrow:hover:not(:disabled) {
   background: var(--tl-green);
   border-color: var(--tl-green);
   color: #fff;
+}
+
+.tl-shop-videos-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .tl-shop-loadmore-wrap {
