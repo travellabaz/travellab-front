@@ -7,9 +7,10 @@ import StoryIcon from '../utils/storyIcons.jsx';
 
 const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doesn't set its own
 const SWIPE_DOWN_CLOSE_THRESHOLD = 80; // px
-const SWIPE_HORIZONTAL_CATEGORY_THRESHOLD = 60; // px — a deliberate drag, not a tap
+const DRAG_START_THRESHOLD = 10; // px of horizontal movement before a touch counts as a category drag, not a tap
+const DRAG_COMPLETE_RATIO = 0.35; // fraction of the media width the drag must cross to commit the category switch
 const NEXT_CATEGORY_PREVIEW_COUNT = 2; // how many upcoming categories peek in on desktop
-const CATEGORY_TRANSITION_MS = 480; // must match the CSS transition duration below
+const CATEGORY_TRANSITION_MS = 480; // settle/commit animation duration — also used for the instant (non-drag) jumps below
 
 function StoryMedia({ story, mediaRef, muted, className }) {
   return story.type === 'video' ? (
@@ -41,21 +42,37 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
   const [progress, setProgress] = useState(0); // 0..1 within the current story
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
-  // Set only on a real category-to-category jump (not a same-category
-  // story advance) — { direction, category, story, animate }. `animate`
-  // starts false so the outgoing/incoming faces first paint flat/rotated
-  // in their *start* position, then flips true a frame later to trigger
-  // the CSS transition to their end position (see the cube CSS below).
-  const [transition, setTransition] = useState(null);
+  // Cube-rotate preview for a category-to-category jump only (never a
+  // same-category story advance) — { direction, targetIndex, category,
+  // story, outStory, progress, animate }. `progress` (0..1) is driven
+  // 1:1 by the finger while dragging (`animate: false`, no CSS easing —
+  // see onTouchMove) and then eased to its final 0 or 1 on release
+  // (`animate: true`) once the gesture is classified as committed or
+  // cancelled (see onTouchEnd). The same shape is reused for the
+  // instant, non-drag jumps (auto-advance past a category's last story,
+  // the desktop next-category preview) — those just skip straight to
+  // an animated 0→1 with no live-tracked phase (see goToCategory).
+  const [drag, setDrag] = useState(null);
   const videoRef = useRef(null);
   const imageTimerRef = useRef(null);
-  const touchStartRef = useRef(null);
-  const transitionTimeoutRef = useRef(null);
+  const touchStartRef = useRef(null); // { x, y } at touchstart
+  const dragActiveRef = useRef(null); // set once a touchmove is recognized as a category drag
+  const dragSettleTimeoutRef = useRef(null);
+  const mediaBoxRef = useRef(null); // for measuring drag progress against the media box's actual width
 
   const category = categories[catIndex];
   const story = category?.stories[storyIndex];
 
-  useEffect(() => () => clearTimeout(transitionTimeoutRef.current), []);
+  useEffect(() => () => clearTimeout(dragSettleTimeoutRef.current), []);
+
+  const findAdjacentCategory = useCallback((dir) => {
+    let i = catIndex + dir;
+    while (i >= 0 && i < categories.length) {
+      if (categories[i].stories.length) return { index: i, category: categories[i] };
+      i += dir;
+    }
+    return null;
+  }, [categories, catIndex]);
 
   // Reached the end of a category's stories — record it as viewed (see
   // storyViewed.js for what "viewed" means) and let the row's rings update.
@@ -83,14 +100,16 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
     // between stories *within* one category stays a plain instant swap.
     if (nextCatIndex !== catIndex && category && story) {
       const direction = nextCatIndex > catIndex ? 'next' : 'prev';
-      clearTimeout(transitionTimeoutRef.current);
-      setTransition({ direction, category, story, animate: false });
+      const targetStory = nextCategory.stories[atLastStory ? nextCategory.stories.length - 1 : 0];
+      dragActiveRef.current = null;
+      clearTimeout(dragSettleTimeoutRef.current);
+      setDrag({ direction, targetIndex: nextCatIndex, category: nextCategory, story: targetStory, outStory: story, progress: 0, animate: false });
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setTransition((tr) => (tr ? { ...tr, animate: true } : tr));
+          setDrag((d) => (d ? { ...d, progress: 1, animate: true } : d));
         });
       });
-      transitionTimeoutRef.current = setTimeout(() => setTransition(null), CATEGORY_TRANSITION_MS);
+      dragSettleTimeoutRef.current = setTimeout(() => setDrag(null), CATEGORY_TRANSITION_MS);
     }
     setCatIndex(nextCatIndex);
     setStoryIndex(atLastStory ? nextCategory.stories.length - 1 : 0);
@@ -185,25 +204,80 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
     const t0 = e.touches[0];
     touchStartRef.current = { x: t0.clientX, y: t0.clientY };
   };
+
+  // Cube-rotates live with the finger once a horizontal drag is
+  // recognized — see the `drag` state comment above. A plain tap (no
+  // recognized drag) falls through untouched to the tapzone buttons'
+  // own onClick (goPrev/goNext), same as before.
+  const onTouchMove = (e) => {
+    const start = touchStartRef.current;
+    if (!start) return;
+    const t0 = e.touches[0];
+    const dx = t0.clientX - start.x;
+    const dy = t0.clientY - start.y;
+
+    if (!dragActiveRef.current) {
+      if (Math.abs(dy) > Math.abs(dx) || Math.abs(dx) < DRAG_START_THRESHOLD) return;
+      const dir = dx < 0 ? 1 : -1;
+      const adjacent = findAdjacentCategory(dir);
+      if (!adjacent) return; // nothing to preview in that direction — leave the drag inert
+      dragActiveRef.current = {
+        direction: dir === 1 ? 'next' : 'prev',
+        targetIndex: adjacent.index,
+        category: adjacent.category,
+        story: adjacent.category.stories[0],
+      };
+      setPaused(true);
+    }
+
+    const active = dragActiveRef.current;
+    const width = mediaBoxRef.current?.clientWidth || window.innerWidth;
+    const dragProgress = Math.max(0, Math.min(1, Math.abs(dx) / width));
+    setDrag({
+      direction: active.direction,
+      targetIndex: active.targetIndex,
+      category: active.category,
+      story: active.story,
+      outStory: story,
+      progress: dragProgress,
+      animate: false,
+    });
+  };
+
   const onTouchEnd = (e) => {
     const start = touchStartRef.current;
+    const active = dragActiveRef.current;
+    touchStartRef.current = null;
+    dragActiveRef.current = null;
+
+    if (active) {
+      // Suppress the synthetic click the tapzone button underneath would
+      // otherwise fire — a drag (committed or cancelled) is never also a tap.
+      e.preventDefault();
+      setPaused(false);
+      const t0 = e.changedTouches[0];
+      const dx = t0.clientX - start.x;
+      const width = mediaBoxRef.current?.clientWidth || window.innerWidth;
+      const dragProgress = Math.max(0, Math.min(1, Math.abs(dx) / width));
+      const commit = dragProgress >= DRAG_COMPLETE_RATIO;
+      clearTimeout(dragSettleTimeoutRef.current);
+      setDrag((d) => (d ? { ...d, progress: commit ? 1 : 0, animate: true } : d));
+      dragSettleTimeoutRef.current = setTimeout(() => {
+        if (commit) {
+          setCatIndex(active.targetIndex);
+          setStoryIndex(0);
+        }
+        setDrag(null);
+      }, CATEGORY_TRANSITION_MS);
+      return;
+    }
+
     if (!start) return;
     const t0 = e.changedTouches[0];
     const dx = t0.clientX - start.x;
     const dy = t0.clientY - start.y;
-    touchStartRef.current = null;
     if (dy > SWIPE_DOWN_CLOSE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
       onClose();
-      return;
-    }
-    // A deliberate horizontal drag jumps straight to the next/previous
-    // CATEGORY, skipping whatever stories are left in the current one —
-    // a plain tap on the left/right half (the buttons underneath) still
-    // advances one story at a time. preventDefault suppresses the
-    // synthetic click that would otherwise also fire on those buttons.
-    if (Math.abs(dx) > SWIPE_HORIZONTAL_CATEGORY_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
-      e.preventDefault();
-      goToCategory(dx < 0 ? catIndex + 1 : catIndex - 1, false);
     }
   };
 
@@ -228,6 +302,7 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
     <div
       className="tl-story-viewer"
       onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
       <div className="tl-story-viewer-progress">
@@ -253,14 +328,26 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
         </div>
       </div>
 
-      <div className="tl-story-viewer-media">
-        {transition ? (
+      <div className="tl-story-viewer-media" ref={mediaBoxRef}>
+        {drag ? (
           <>
-            <div className={`tl-story-cube-face tl-story-cube-outgoing tl-story-cube-${transition.direction}${transition.animate ? ' tl-story-cube-animate' : ''}`}>
-              <StoryMedia story={transition.story} muted className="tl-story-viewer-media-el" />
+            <div
+              className={`tl-story-cube-face tl-story-cube-outgoing tl-story-cube-${drag.direction}`}
+              style={{
+                transform: `rotateY(${(drag.direction === 'next' ? -90 : 90) * drag.progress}deg)`,
+                transitionDuration: drag.animate ? `${CATEGORY_TRANSITION_MS}ms` : '0ms',
+              }}
+            >
+              <StoryMedia story={drag.outStory} muted className="tl-story-viewer-media-el" />
             </div>
-            <div className={`tl-story-cube-face tl-story-cube-incoming tl-story-cube-${transition.direction}${transition.animate ? ' tl-story-cube-animate' : ''}`}>
-              <StoryMedia story={story} mediaRef={videoRef} muted={muted} className="tl-story-viewer-media-el" />
+            <div
+              className={`tl-story-cube-face tl-story-cube-incoming tl-story-cube-${drag.direction}`}
+              style={{
+                transform: `rotateY(${(drag.direction === 'next' ? 90 : -90) * (1 - drag.progress)}deg)`,
+                transitionDuration: drag.animate ? `${CATEGORY_TRANSITION_MS}ms` : '0ms',
+              }}
+            >
+              <StoryMedia story={drag.story} muted={muted} className="tl-story-viewer-media-el" />
             </div>
           </>
         ) : (
