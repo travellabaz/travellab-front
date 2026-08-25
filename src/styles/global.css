@@ -797,6 +797,7 @@ body.tl-subpage .tl-tours-arrow {
   align-items: center;
   justify-content: center;
   position: relative;
+  perspective: 1200px;
 }
 
 .tl-story-viewer-media-el {
@@ -804,6 +805,50 @@ body.tl-subpage .tl-tours-arrow {
   height: 100%;
   object-fit: contain;
   background: #000;
+}
+
+/* Category-to-category "cube rotate" transition: two faces of an
+   imaginary box hinged at the viewport's left/right edge, rotated into
+   and out of view together so it reads as one box turning, not a
+   crossfade. Only ever mounted for a genuine category change — see
+   goToCategory in StoryViewer.jsx — never for a same-category story
+   advance. */
+.tl-story-cube-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transition: transform 480ms cubic-bezier(0.65, 0, 0.35, 1);
+  will-change: transform;
+}
+
+.tl-story-cube-outgoing.tl-story-cube-next {
+  transform-origin: left center;
+  transform: rotateY(0deg);
+}
+.tl-story-cube-outgoing.tl-story-cube-next.tl-story-cube-animate {
+  transform: rotateY(-90deg);
+}
+.tl-story-cube-incoming.tl-story-cube-next {
+  transform-origin: right center;
+  transform: rotateY(90deg);
+}
+.tl-story-cube-incoming.tl-story-cube-next.tl-story-cube-animate {
+  transform: rotateY(0deg);
+}
+
+.tl-story-cube-outgoing.tl-story-cube-prev {
+  transform-origin: right center;
+  transform: rotateY(0deg);
+}
+.tl-story-cube-outgoing.tl-story-cube-prev.tl-story-cube-animate {
+  transform: rotateY(90deg);
+}
+.tl-story-cube-incoming.tl-story-cube-prev {
+  transform-origin: left center;
+  transform: rotateY(-90deg);
+}
+.tl-story-cube-incoming.tl-story-cube-prev.tl-story-cube-animate {
+  transform: rotateY(0deg);
 }
 
 .tl-story-viewer-tapzone {

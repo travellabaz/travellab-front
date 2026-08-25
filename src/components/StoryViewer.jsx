@@ -9,6 +9,23 @@ const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doe
 const SWIPE_DOWN_CLOSE_THRESHOLD = 80; // px
 const SWIPE_HORIZONTAL_CATEGORY_THRESHOLD = 60; // px — a deliberate drag, not a tap
 const NEXT_CATEGORY_PREVIEW_COUNT = 2; // how many upcoming categories peek in on desktop
+const CATEGORY_TRANSITION_MS = 480; // must match the CSS transition duration below
+
+function StoryMedia({ story, mediaRef, muted, className }) {
+  return story.type === 'video' ? (
+    <video
+      key={story.id}
+      ref={mediaRef}
+      src={story.media_url}
+      className={className}
+      muted={muted}
+      playsInline
+      autoPlay
+    />
+  ) : (
+    <img key={story.id} src={story.media_url} alt="" className={className} />
+  );
+}
 
 // Fullscreen Instagram-style story viewer. Only ever mounted for the one
 // category the visitor actually clicked (see StoriesSection.jsx) — that's
@@ -24,12 +41,21 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
   const [progress, setProgress] = useState(0); // 0..1 within the current story
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
+  // Set only on a real category-to-category jump (not a same-category
+  // story advance) — { direction, category, story, animate }. `animate`
+  // starts false so the outgoing/incoming faces first paint flat/rotated
+  // in their *start* position, then flips true a frame later to trigger
+  // the CSS transition to their end position (see the cube CSS below).
+  const [transition, setTransition] = useState(null);
   const videoRef = useRef(null);
   const imageTimerRef = useRef(null);
   const touchStartRef = useRef(null);
+  const transitionTimeoutRef = useRef(null);
 
   const category = categories[catIndex];
   const story = category?.stories[storyIndex];
+
+  useEffect(() => () => clearTimeout(transitionTimeoutRef.current), []);
 
   // Reached the end of a category's stories — record it as viewed (see
   // storyViewed.js for what "viewed" means) and let the row's rings update.
@@ -52,10 +78,24 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
       goToCategory(atLastStory ? nextCatIndex - 1 : nextCatIndex + 1, atLastStory);
       return;
     }
+    // A real jump to a different category — cube-flip the story that was
+    // on screen away, out of view (see .tl-story-cube-* CSS). Advancing
+    // between stories *within* one category stays a plain instant swap.
+    if (nextCatIndex !== catIndex && category && story) {
+      const direction = nextCatIndex > catIndex ? 'next' : 'prev';
+      clearTimeout(transitionTimeoutRef.current);
+      setTransition({ direction, category, story, animate: false });
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTransition((tr) => (tr ? { ...tr, animate: true } : tr));
+        });
+      });
+      transitionTimeoutRef.current = setTimeout(() => setTransition(null), CATEGORY_TRANSITION_MS);
+    }
     setCatIndex(nextCatIndex);
     setStoryIndex(atLastStory ? nextCategory.stories.length - 1 : 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, onClose]);
+  }, [categories, onClose, catIndex, category, story]);
 
   const goNext = useCallback(() => {
     if (!category) return;
@@ -214,18 +254,17 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
       </div>
 
       <div className="tl-story-viewer-media">
-        {story.type === 'video' ? (
-          <video
-            key={story.id}
-            ref={videoRef}
-            src={story.media_url}
-            className="tl-story-viewer-media-el"
-            muted={muted}
-            playsInline
-            autoPlay
-          />
+        {transition ? (
+          <>
+            <div className={`tl-story-cube-face tl-story-cube-outgoing tl-story-cube-${transition.direction}${transition.animate ? ' tl-story-cube-animate' : ''}`}>
+              <StoryMedia story={transition.story} muted className="tl-story-viewer-media-el" />
+            </div>
+            <div className={`tl-story-cube-face tl-story-cube-incoming tl-story-cube-${transition.direction}${transition.animate ? ' tl-story-cube-animate' : ''}`}>
+              <StoryMedia story={story} mediaRef={videoRef} muted={muted} className="tl-story-viewer-media-el" />
+            </div>
+          </>
         ) : (
-          <img key={story.id} src={story.media_url} alt="" className="tl-story-viewer-media-el" />
+          <StoryMedia story={story} mediaRef={videoRef} muted={muted} className="tl-story-viewer-media-el" />
         )}
       </div>
 
