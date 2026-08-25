@@ -244,16 +244,39 @@ const LENGTH_ENFORCEMENT = {
   en: "\n\nIMPORTANT (this is a hard requirement): the body text's total length cannot be under 1400 words. If it feels like the topic is covered, go deeper in each section — add concrete examples, numbers, or steps, and add more subsections if needed. The goal is real depth, not artificial padding.",
 };
 
+// Gemini has no live clock and defaults to whatever year its training
+// data biased it toward (seen writing "2024" in both titles and body
+// text for posts actually published in 2026) — telling it today's real
+// date explicitly, in every language's prompt, is the fix. Also covers
+// the model tacking a year onto a title out of SEO habit (e.g. "... List
+// 2024") without it being a "this just happened" claim the per-category
+// guidance above was written to prevent.
+function dateNoteFor(lang, currentYear, todayLabel) {
+  if (lang === 'az') {
+    return `Bugünkü tarix: ${todayLabel} (cari il: ${currentYear}). Mətndə və ya başlıqda hər hansı il qeyd etməli olsan, MÜTLƏQ ${currentYear} istifadə et — ${currentYear - 1}, ${currentYear - 2} kimi köhnə illərə İSTİNAD ETMƏ (bu, sənin öyrədilmə məlumatındakı defolt ilə səhv salına bilər). Mümkünsə başlıqda/mətndə konkret il ümumiyyətlə yazma ki, məzmun uzun müddət aktual qalsın — yalnız mütləq lazımdırsa ${currentYear} yaz.`;
+  }
+  if (lang === 'ru') {
+    return `Сегодняшняя дата: ${todayLabel} (текущий год: ${currentYear}). Если в тексте или заголовке нужно указать год, используй ТОЛЬКО ${currentYear} — НЕ ссылайся на старые годы вроде ${currentYear - 1}, ${currentYear - 2} (это может произойти из-за смещения к дефолтному году в твоих обучающих данных). По возможности вообще не указывай конкретный год в заголовке/тексте, чтобы материал дольше оставался актуальным — пиши год только если это действительно необходимо, и тогда это должен быть ${currentYear}.`;
+  }
+  return `Today's date is ${todayLabel} (current year: ${currentYear}). If you need to state a year anywhere in the title or text, use ONLY ${currentYear} — do NOT reference an older year like ${currentYear - 1} or ${currentYear - 2} (a common mistake from defaulting to whatever year your training data biased you toward). Where possible, avoid hardcoding a specific year into the title/text at all so the content stays evergreen — only include a year if truly necessary, and if so it must be ${currentYear}.`;
+}
+
 function buildPrompt(lang, existing, category, topicHint, opts = {}) {
   const cat = CATEGORIES[category];
   const paths = INTERNAL_LINK_PATHS[lang];
   const lengthEnforcement = opts.enforceLength ? LENGTH_ENFORCEMENT[lang] : '';
+  const now = new Date();
+  const currentYear = now.getUTCFullYear();
+  const todayLabel = now.toISOString().slice(0, 10);
+  const dateNote = dateNoteFor(lang, currentYear, todayLabel);
 
   if (lang === 'az') {
     const avoidList = existing.length
-      ? `Bu mövzular artıq işlənib, onları TƏKRARLAMA:\n${existing.map((p) => `- ${p.title}`).join('\n')}`
+      ? `Bu mövzular artıq işlənib — bunları TƏKRARLAMA, HƏTTA fərqli sözlərlə ifadə etsən belə eyni məzmun/bucaq olmasın (məs. eyni şəhər bələdçisi, eyni məsləhət növü artıq varsa, tamam başqa bir mövzu və ya çox fərqli bir alt-mövzu seç):\n${existing.map((p) => `- ${p.title}`).join('\n')}`
       : '';
     return `Sən Travellab (Azərbaycanda fəaliyyət göstərən bir səyahət agentliyi) üçün SEO üzrə ekspert bloq yazıçısısan. Travellab PLATFORMA yox, SƏYAHƏT AGENTLİYİDİR — bunu ton və mətndə əks etdir. Məqsəd — Google-da yaxşı sıralanan, oxucuya real dəyər verən, DƏRİN və ƏTRAFLI bir bloq yazısı yazmaqdır. Səthi, ümumi cümlələrlə dolu qısa mətnlər yazma.
+
+${dateNote}
 
 Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dərin faydalı bir bloq yazısı yaz. Struktur TƏQRIBƏN belə olmalıdır (dəqiq bənd sayını özün seç, hər yazıda eyni qəlibi TƏKRARLAMA):
 - Giriş abzası (mövzunu təqdim edir, oxucuya faydasını izah edir, əsas açar sözü ilk 1-2 cümlədə keçir)
@@ -288,6 +311,8 @@ Cavabı YALNIZ aşağıdakı JSON formatında ver: {"title": "...", "excerpt": "
   if (lang === 'ru') {
     return `Ты SEO-эксперт и блог-райтер для Travellab — туристического агентства в Азербайджане (Баку). Travellab — АГЕНТСТВО, а не "платформа" — отражай это в тоне. Цель — глубокая, содержательная статья для блога, которая хорошо ранжируется в Google и даёт читателю реальную пользу. Не пиши поверхностные общие фразы.
 
+${dateNote}
+
 Напиши статью ПОЛНОСТЬЮ на РУССКОМ языке (важно: заголовок темы ниже дан на азербайджанском только как ориентир по смыслу — сам ответ, включая title, excerpt, metaDescription и body, должен быть целиком на русском, ни одного азербайджанского слова), объёмом ПРИМЕРНО 1400-2000 слов, на тему: «${topicHint}» (раскрой именно эту тему, переведи и адаптируй её на русский — не выбирай другую тему и не копируй азербайджанский текст). Структура примерно такая (не повторяй один и тот же шаблон в каждой статье):
 - Вводный абзац (представляет тему, объясняет пользу для читателя, основная ключевая фраза — в первых 1-2 предложениях)
 - 6-10 подразделов с заголовками (h2), количество меняется от статьи к статье, каждый — 2-4 содержательных абзаца с конкретными примерами/шагами/советами
@@ -320,6 +345,8 @@ ${lengthEnforcement}
 
   // en
   return `You are an SEO expert and blog writer for Travellab, a travel agency based in Baku, Azerbaijan. Travellab is an AGENCY, not a "platform" — reflect that in tone. The goal is a deep, genuinely useful blog article that ranks well on Google and gives the reader real value. Don't write shallow, generic filler.
+
+${dateNote}
 
 Write an article ENTIRELY in ENGLISH (important: the topic below is given in Azerbaijani only as a meaning reference — your actual response, including title, excerpt, metaDescription, and body, must be entirely in English, not a single Azerbaijani word), approximately 1400-2000 words, on the topic: "${topicHint}" (cover this exact topic, translating and adapting it into English — don't pick a different topic and don't copy the Azerbaijani text). Structure roughly as follows (don't repeat the same template every time):
 - An intro paragraph (introduces the topic, explains the reader's benefit, main keyword phrase in the first 1-2 sentences)
