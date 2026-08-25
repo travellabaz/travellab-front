@@ -7276,6 +7276,20 @@ body:not(.tl-subpage) .tl-about-extra {
   cursor: default;
 }
 
+/* Re-mounts (key={activeItem.sku}) every time the active card changes —
+   see ShopVideoGallery.jsx — so this animation replays on every swipe/
+   arrow/tap, sliding in from whichever side the new card came from. */
+@keyframes tl-shop-spotlight-in-next {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes tl-shop-spotlight-in-prev {
+  from { opacity: 0; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.tl-shop-spotlight-anim-next { animation: tl-shop-spotlight-in-next 220ms cubic-bezier(0.2, 0.7, 0.3, 1); }
+.tl-shop-spotlight-anim-prev { animation: tl-shop-spotlight-in-prev 220ms cubic-bezier(0.2, 0.7, 0.3, 1); }
+
 /* Half-width window (110px of a 220px card) — the poster inside is the
    full 220px wide and just shifted so the half facing away from center
    is the half that's clipped off, not the near half (see the -prev/-next
@@ -7295,33 +7309,33 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-left: -110px;
 }
 
-/* Same proportions, scaled down so prev-card + active + next-card still
-   fits inside a phone viewport without forcing horizontal page scroll —
-   swipe (see onTouchStart/onTouchEnd in ShopVideoGallery.jsx) is the
-   primary way through the strip at this width, arrows stay as a backup. */
+/* Same proportions, scaled down so prev-card + active + next-card +
+   both arrow buttons still fit inside a phone viewport without forcing
+   horizontal page scroll — arrows and swipe (see onTouchStart/
+   onTouchEnd in ShopVideoGallery.jsx) both work at this width. */
 @media (max-width: 480px) {
   .tl-shop-spotlight-track {
-    height: 300px;
-    gap: 8px;
+    height: 270px;
+    gap: 6px;
   }
 
   .tl-shop-spotlight-card.active {
-    width: 170px;
-    height: 300px;
+    width: 150px;
+    height: 270px;
   }
 
   .tl-shop-spotlight-side {
-    width: 55px;
-    height: 300px;
+    width: 45px;
+    height: 270px;
   }
 
   .tl-shop-spotlight-side .tl-shop-spotlight-clip {
-    width: 110px;
-    height: 300px;
+    width: 90px;
+    height: 270px;
   }
 
   .tl-shop-spotlight-side-prev .tl-shop-spotlight-clip {
-    margin-left: -55px;
+    margin-left: -45px;
   }
 }
 
@@ -7371,6 +7385,20 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+/* navigator.share basically only exists on mobile browsers — on desktop
+   the button would just copy a link with nowhere real to paste it, so
+   it only shows up where the real OS share sheet does (see share() in
+   ShopVideoGallery.jsx). Two classes to out-specificity the button rule
+   above regardless of source order. */
+.tl-shop-spotlight-icons .tl-shop-spotlight-share-btn {
+  display: none;
+}
+@media (max-width: 480px) {
+  .tl-shop-spotlight-icons .tl-shop-spotlight-share-btn {
+    display: flex;
+  }
 }
 
 /* Reused for both the card's bottom-overlaid CTA and the lightbox's own
@@ -7495,12 +7523,14 @@ body:not(.tl-subpage) .tl-about-extra {
   z-index: 4;
 }
 
-/* Swipe replaces them at this width (see onTouchStart/onTouchEnd in
-   ShopVideoGallery.jsx) — freeing up the room the buttons would
-   otherwise need next to the (already tight) track. */
+/* Shrunk (not hidden) at this width — swipe (see onTouchStart/onTouchEnd
+   in ShopVideoGallery.jsx) works alongside the buttons, not instead of
+   them, so both need to fit next to the already-tight track. */
 @media (max-width: 480px) {
   .tl-shop-videos-arrow {
-    display: none;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
   }
 }
 

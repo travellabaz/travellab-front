@@ -29,6 +29,7 @@ export default function ShopVideoGallery() {
   const [muted, setMuted] = useState(true);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [direction, setDirection] = useState('next'); // which way the active card last slid in from
   const touchStartRef = useRef(null);
 
   const items = SHOP_SPOTLIGHT_VIDEOS
@@ -50,7 +51,8 @@ export default function ShopVideoGallery() {
   const { item: activeItem, group: activeGroup } = items[clampedIndex];
 
   const goTo = (i) => {
-    if (i < 0 || i >= items.length) return;
+    if (i < 0 || i >= items.length || i === clampedIndex) return;
+    setDirection(i > clampedIndex ? 'next' : 'prev');
     setMuted(true);
     setActiveIndex(i);
   };
@@ -70,8 +72,17 @@ export default function ShopVideoGallery() {
     goTo(dx < 0 ? clampedIndex + 1 : clampedIndex - 1);
   };
 
+  // Real share sheet where it exists (mobile browsers, mainly — see the
+  // tl-shop-spotlight-share-btn media query too, which hides the button
+  // on desktop since navigator.share basically never exists there and
+  // "copied a link with nothing to paste it into" isn't a real share).
+  // Falls back to copy-link for the odd mobile browser without it.
   const share = () => {
     const url = productUrl(activeGroup.defaultVariant, lang);
+    if (navigator.share) {
+      navigator.share({ title: activeGroup.name, url }).catch(() => {});
+      return;
+    }
     navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -125,9 +136,8 @@ export default function ShopVideoGallery() {
             </div>
           )}
 
-          <div className="tl-shop-spotlight-card active">
+          <div key={activeItem.sku} className={`tl-shop-spotlight-card active tl-shop-spotlight-anim-${direction}`}>
             <video
-              key={activeItem.sku}
               src={activeItem.video}
               poster={activeItem.poster}
               className="tl-shop-spotlight-clip"
@@ -142,7 +152,7 @@ export default function ShopVideoGallery() {
                 <button type="button" onClick={() => setMuted((m) => !m)} aria-label={muted ? 'Unmute' : 'Mute'}>
                   {muted ? MuteIcon : UnmuteIcon}
                 </button>
-                <button type="button" onClick={share} aria-label={t('shop.videosShare')}>
+                <button type="button" className="tl-shop-spotlight-share-btn" onClick={share} aria-label={t('shop.videosShare')}>
                   {copied ? CheckIcon : ShareIcon}
                 </button>
                 <button type="button" onClick={() => setLightboxOpen(true)} aria-label="Fullscreen">
