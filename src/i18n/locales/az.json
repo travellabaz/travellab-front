@@ -581,6 +581,11 @@
     "breadcrumb": "Travellab Shop",
     "pageTitle": "Travellab Shop",
     "pageSubtitle": "Səyahətinizi daha rahat və nizamlı edin.",
+    "categoryPageSubtitle": "{{category}} kateqoriyasında sərfəli qiymətlərlə, sürətli çatdırılma ilə.",
+    "seoP1": "Travellab Shop-da səyahət üçün lazım olan hər şeyi bir yerdə tapa bilərsiniz — çamadanlar, səyahət aksesuarları, gigiyena dəstləri və daha çoxu sərfəli qiymətlərlə təqdim olunur.",
+    "seoP2": "Bütün məhsullar orijinaldır və sürətli çatdırılma ilə göndərilir. Sifariş vermək üçün WhatsApp vasitəsilə bizimlə əlaqə saxlaya, ya da birbaşa saytdan sifariş edə bilərsiniz.",
+    "categorySeoP1": "Travellab Shop-da geniş {{category}} seçimi tapa bilərsiniz — sərfəli qiymətlərlə, orijinal keyfiyyətlə və sürətli çatdırılma ilə.",
+    "categorySeoP2": "{{category}} kateqoriyasındakı bütün məhsulları WhatsApp vasitəsilə asanlıqla sifariş edə bilərsiniz — komandamız suallarınıza həmişə açıqdır.",
     "allCategories": "Hamısı",
     "sortLabel": "Sıralama",
     "sort_newest": "Ən yeni",
@@ -764,6 +769,9 @@
       "title": "Travellab Shop - Səyahət Aksesuarları | Travellab",
       "desc": "Travellab Shop-da səyahət aksesuarları, çamadanlar və daha çoxunu kəşf edin. Sərfəli qiymətlər, sürətli çatdırılma, WhatsApp ilə sifariş."
     },
+    "shopProductDesc": "{{name}} indi {{price}} {{currency}}-dən Travellab Shop-da. {{feature}} Sürətli çatdırılma, WhatsApp ilə sifariş!",
+    "shopCategoryTitle": "{{category}} - Sərfəli Qiymətlərlə {{year}} | Travellab Shop",
+    "shopCategoryDesc": "Travellab Shop-da {{category}} üçün geniş seçim, sərfəli qiymətlər və sürətli çatdırılma. WhatsApp ilə asanlıqla sifariş edin!",
     "endirimler": {
       "title": "Endirimlər - Labpoint Balansı ilə Tur Endirimləri | Travellab",
       "desc": "Labpoint balansınızla tur qiymətlərindən endirim əldə edin. Qeydiyyatdan keçin və Travellab-da endirimli turları kəşf edin."

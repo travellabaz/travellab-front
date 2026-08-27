@@ -18,13 +18,30 @@ import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
 import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
 import { toAccusative } from './src/utils/ruGrammar.js';
+import { slugify } from './src/utils/slugify.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
 const ssrDir = path.join(__dirname, 'dist-server');
 const postsDir = path.join(__dirname, 'src/data/blog/posts');
 const shopProductsPath = path.join(__dirname, 'src/data/shop/products.json');
+const shopSlugRedirectsPath = path.join(__dirname, 'src/data/shop/slugRedirects.json');
 const localesDir = path.join(__dirname, 'src/i18n/locales');
+const CURRENT_YEAR = new Date().getFullYear();
+
+// A sized variant's raw Sheet name carries its size/dimensions suffix
+// (e.g. "Premium Çamadan/S ölçüdə 52x30x28 sm" — see SIZE_VARIANT_RE in
+// src/data/shop/index.js and scripts/sync-shop-products.mjs, duplicated
+// here for the same "this script can't import that module" reason noted
+// on shopCategories below). Title/schema/breadcrumb must show the clean
+// group name ("Premium Çamadan"), not the raw per-row Sheet name — the
+// PDP itself already shows group.name; the prerendered <title> silently
+// didn't match that until this was added.
+const SIZE_VARIANT_RE = /^(.+)\/(XS|S|M|L|XL)\s+öl[cç]üdə/i;
+function productDisplayName(rawName) {
+  const m = SIZE_VARIANT_RE.exec(rawName);
+  return m ? m[1].trim() : rawName;
+}
 
 const LANGUAGES = ['az', 'ru', 'en'];
 const DEFAULT_LANGUAGE = 'az';
@@ -119,14 +136,36 @@ async function fetchInactiveTourIds() {
 // vite build) — Netlify matches _redirects top to bottom, first rule wins.
 // One rule per language prefix, so a stale /ru/tours/<id> bookmark also
 // redirects correctly instead of falling through to the SPA catch-all.
-function writeRedirects(inactiveTourIds) {
+function writeRedirects(inactiveTourIds, shopProducts, slugHistory) {
   const redirectsPath = path.join(distDir, '_redirects');
   const existing = fs.existsSync(redirectsPath) ? fs.readFileSync(redirectsPath, 'utf-8') : '';
   const inactiveLines = inactiveTourIds.flatMap((id) =>
     LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`)
-  ).join('\n');
-  fs.writeFileSync(redirectsPath, inactiveLines ? `${inactiveLines}\n${existing}` : existing);
-  console.log(`wrote ${inactiveTourIds.length * LANGUAGES.length} inactive-tour redirects to dist/_redirects`);
+  );
+
+  // Shop URLs moved from SKU (/shop/tb-020) to a name-derived slug
+  // (/shop/premium-camadan) — see Shop SEO Paketi. Two redirect sources,
+  // both per language prefix:
+  //  1. Every product's SKU-based URL always differs from its slug now
+  //     (computed fresh each build, no history needed — SKU is stable).
+  //  2. Slug *history*, for a product whose Sheet name (and so slug) was
+  //     edited after this migration — see scripts/sync-shop-products.mjs's
+  //     assignSlugs, which appends the old slug to slugHistory[sku].previous
+  //     every time the computed slug changes, so this covers every past
+  //     slug a product has ever had, not just its immediately-previous one.
+  const shopLines = shopProducts.flatMap((product) => {
+    const slug = product.slug || product.sku.toLowerCase();
+    const skuPath = product.sku.toLowerCase();
+    const previousSlugs = slugHistory[product.sku]?.previous || [];
+    const oldPaths = [skuPath, ...previousSlugs].filter((old) => old && old !== slug);
+    return oldPaths.flatMap((old) =>
+      LANGUAGES.map((lang) => `${buildLocalizedPath(`/shop/${old}`, lang)}  ${buildLocalizedPath(`/shop/${slug}`, lang)}  301`)
+    );
+  });
+
+  const allLines = [...inactiveLines, ...shopLines].join('\n');
+  fs.writeFileSync(redirectsPath, allLines ? `${allLines}\n${existing}` : existing);
+  console.log(`wrote ${inactiveLines.length} inactive-tour redirects and ${shopLines.length} shop slug redirects to dist/_redirects`);
 }
 
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
@@ -138,6 +177,35 @@ function writeRedirects(inactiveTourIds) {
 function loadShopProducts() {
   if (!fs.existsSync(shopProductsPath)) return [];
   return JSON.parse(fs.readFileSync(shopProductsPath, 'utf-8'));
+}
+
+// { [sku]: { current, previous: [...] } } — written by
+// scripts/sync-shop-products.mjs whenever a product's Sheet name (and so
+// its slug) changes, so the old URL 301s here instead of 404ing.
+function loadShopSlugRedirects() {
+  if (!fs.existsSync(shopSlugRedirectsPath)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(shopSlugRedirectsPath, 'utf-8'));
+  } catch {
+    return {};
+  }
+}
+
+// Distinct category names in first-seen (== Sheet row) order, each with
+// its slug and one representative product to use as the category page's
+// og:image — mirrors getCategories()/categorySlug() in src/data/shop/
+// index.js (duplicated rather than imported, same reasoning as
+// hasLocaleVariants et al. below: this script runs under plain node, and
+// that module also does its own `import products.json`).
+function shopCategories(products) {
+  const seen = new Map();
+  for (const p of products) {
+    for (const cat of p.categories) {
+      if (!seen.has(cat)) seen.set(cat, { name: cat, slug: slugify(cat), products: [] });
+      seen.get(cat).products.push(p);
+    }
+  }
+  return Array.from(seen.values());
 }
 
 function loadBlogPosts() {
@@ -255,11 +323,18 @@ async function main() {
     routeEntries.push({ bareRoutePath: `/tours/${tour.id}`, kind: 'tour', tourId: String(tour.id), langs: LANGUAGES });
   }
   for (const product of shopProducts) {
-    // Lowercase — Netlify/Cloudflare 301s every URL on this site to an
-    // all-lowercase canonical form (confirmed live), so the prerendered
-    // file has to already live at that path or the redirect lands on
-    // "not found" instead of the real page.
-    routeEntries.push({ bareRoutePath: `/shop/${product.sku.toLowerCase()}`, kind: 'shopProduct', product, langs: LANGUAGES });
+    // slug (not SKU) is the public URL now — see productSlug() in
+    // src/data/shop/index.js and Shop SEO Paketi. Already lowercase from
+    // slugify(), but .toLowerCase() stays as a defensive no-op: Netlify/
+    // Cloudflare 301s every URL on this site to an all-lowercase
+    // canonical form (confirmed live), so the prerendered file has to
+    // already live at that path or the redirect lands on "not found".
+    const slug = (product.slug || product.sku.toLowerCase()).toLowerCase();
+    routeEntries.push({ bareRoutePath: `/shop/${slug}`, kind: 'shopProduct', product, langs: LANGUAGES });
+  }
+  const categories = shopCategories(shopProducts);
+  for (const category of categories) {
+    routeEntries.push({ bareRoutePath: `/shop/${category.slug}`, kind: 'shopCategory', category, langs: LANGUAGES });
   }
 
   let renderCount = 0;
@@ -313,9 +388,20 @@ async function main() {
         image = tour.imageUrl || DEFAULT_OG_IMAGE;
       } else if (kind === 'shopProduct') {
         const product = entry.product;
-        title = `${product.name} — Travellab Shop`;
-        desc = truncate(product.description, 160) || t('seo.shop.desc');
+        const displayName = productDisplayName(product.name);
+        // "{name} - {price} {currency} | Travellab Shop" — Shop SEO Paketi's
+        // required title shape; no year here (a single product doesn't get
+        // stale the way a "Collection 2026"-style category page would).
+        title = `${displayName} - ${product.price} ${product.currency} | Travellab Shop`;
+        const feature = product.metaFeature || truncate(product.description, 60) || '';
+        desc = t('seo.shopProductDesc', { name: displayName, price: product.price, currency: product.currency, feature }).replace(/\s+/g, ' ').trim();
         image = product.images[0] || DEFAULT_OG_IMAGE;
+      } else if (kind === 'shopCategory') {
+        const { category } = entry;
+        title = t('seo.shopCategoryTitle', { category: category.name, year: CURRENT_YEAR });
+        desc = t('seo.shopCategoryDesc', { category: category.name });
+        const withImage = category.products.find((p) => p.images[0]);
+        image = withImage ? withImage.images[0] : DEFAULT_OG_IMAGE;
       }
 
       const appHtml = render(localizedRoutePath || '/');
@@ -344,7 +430,14 @@ async function main() {
       } else if (kind === 'tour') {
         breadcrumbItems.push({ name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` }, { name: tour.title, url: pageUrl });
       } else if (kind === 'shopProduct') {
-        breadcrumbItems.push({ name: t('shop.breadcrumb'), url: `${BASE_URL}${buildLocalizedPath('/shop', lang)}` }, { name: entry.product.name, url: pageUrl });
+        breadcrumbItems.push({ name: t('shop.breadcrumb'), url: `${BASE_URL}${buildLocalizedPath('/shop', lang)}` });
+        const productCategory = entry.product.categories[0];
+        if (productCategory) {
+          breadcrumbItems.push({ name: productCategory, url: `${BASE_URL}${buildLocalizedPath(`/shop/${slugify(productCategory)}`, lang)}` });
+        }
+        breadcrumbItems.push({ name: productDisplayName(entry.product.name), url: pageUrl });
+      } else if (kind === 'shopCategory') {
+        breadcrumbItems.push({ name: t('shop.breadcrumb'), url: `${BASE_URL}${buildLocalizedPath('/shop', lang)}` }, { name: entry.category.name, url: pageUrl });
       } else if (kind === 'vizaCountry') {
         const countryName = t(`countries.${entry.country.name}`, entry.country.name);
         const countryNameAcc = toAccusative(countryName, lang);
@@ -375,6 +468,37 @@ async function main() {
       if (kind === 'blog') {
         const articleJson = buildArticleJson(post, pageUrl, lang);
         html = html.replace('</head>', `<script type="application/ld+json" id="article-ld">${articleJson}</script>\n  </head>`);
+      } else if (kind === 'shopProduct') {
+        const product = entry.product;
+        const productJson = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: productDisplayName(product.name),
+          image: product.images.length ? product.images.map((src) => (src.startsWith('http') ? src : `${BASE_URL}${src}`)) : undefined,
+          description: product.description || undefined,
+          sku: product.sku,
+          brand: { '@type': 'Brand', name: 'Travellab' },
+          offers: {
+            '@type': 'Offer',
+            url: pageUrl,
+            priceCurrency: product.currency,
+            price: String(product.price),
+            availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            seller: { '@type': 'Organization', name: 'Travellab' },
+          },
+        });
+        html = html.replace('</head>', `<script type="application/ld+json" id="product-ld">${productJson}</script>\n  </head>`);
+      } else if (kind === 'shopCategory') {
+        const itemListJson = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          itemListElement: entry.category.products.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${BASE_URL}${buildLocalizedPath(`/shop/${(p.slug || p.sku.toLowerCase())}`, lang)}`,
+          })),
+        });
+        html = html.replace('</head>', `<script type="application/ld+json" id="itemlist-ld">${itemListJson}</script>\n  </head>`);
       }
 
       const outDir = isHome ? distDir : path.join(distDir, localizedRoutePath);
@@ -411,7 +535,8 @@ async function main() {
   console.log(`wrote dist/sitemap.xml (${urlEntries.length} URL entries, ${activeTours.length} live tours)`);
 
   const inactiveTourIds = await fetchInactiveTourIds();
-  writeRedirects(inactiveTourIds);
+  const slugHistory = loadShopSlugRedirects();
+  writeRedirects(inactiveTourIds, shopProducts, slugHistory);
 
   fs.rmSync(ssrDir, { recursive: true, force: true });
 }

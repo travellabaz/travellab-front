@@ -581,6 +581,11 @@
     "breadcrumb": "Travellab Shop",
     "pageTitle": "Travellab Shop",
     "pageSubtitle": "Сделайте свои путешествия удобнее и организованнее.",
+    "categoryPageSubtitle": "Категория «{{category}}» в Travellab Shop — выгодные цены, быстрая доставка.",
+    "seoP1": "В Travellab Shop вы найдёте всё необходимое для путешествий в одном месте — чемоданы, дорожные аксессуары, наборы для гигиены и многое другое по выгодным ценам.",
+    "seoP2": "Все товары оригинальные и доставляются быстро. Чтобы сделать заказ, напишите нам в WhatsApp или оформите заказ прямо на сайте.",
+    "categorySeoP1": "В Travellab Shop представлен широкий выбор товаров в категории «{{category}}» — по выгодным ценам, оригинального качества, с быстрой доставкой.",
+    "categorySeoP2": "Любой товар из категории «{{category}}» можно заказать прямо через WhatsApp — наша команда всегда готова ответить на ваши вопросы.",
     "allCategories": "Все",
     "sortLabel": "Сортировка",
     "sort_newest": "Сначала новые",
@@ -764,6 +769,9 @@
       "title": "Travellab Shop - Дорожные аксессуары | Travellab",
       "desc": "Дорожные аксессуары, чемоданы и многое другое в Travellab Shop. Выгодные цены, быстрая доставка, заказ через WhatsApp."
     },
+    "shopProductDesc": "{{name}} уже от {{price}} {{currency}} в Travellab Shop. {{feature}} Быстрая доставка, заказ через WhatsApp!",
+    "shopCategoryTitle": "{{category}} - Выгодные цены {{year}} | Travellab Shop",
+    "shopCategoryDesc": "Широкий выбор товаров в категории «{{category}}» в Travellab Shop — выгодные цены и быстрая доставка. Заказывайте прямо через WhatsApp!",
     "endirimler": {
       "title": "Скидки - Скидки на туры с балансом Labpoint | Travellab",
       "desc": "Получите скидку на туры благодаря балансу Labpoint. Зарегистрируйтесь и откройте для себя скидки Travellab."

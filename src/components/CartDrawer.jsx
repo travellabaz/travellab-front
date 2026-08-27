@@ -15,8 +15,18 @@ import { BASE_URL } from '../data/pageMeta';
 // Shop products and tours go to two different numbers — a dedicated Shop
 // line vs. the round-robin tour-manager pool — so a mixed cart sends two
 // separate messages, one per section, instead of one combined one.
+// Tour prices are mined out of Instagram captions in whatever currency
+// that tour listed (USD/EUR/AZN — see utils/price.js), so a cart section
+// can't assume one shared currency the way Shop (always AZN) could.
+// Summing raw amounts across different currencies would be meaningless,
+// so the subtotal only displays when every line in the section actually
+// shares one currency — otherwise each line's own price (already shown
+// per-line) is the only total a customer can trust; the section still
+// works fine without a subtotal shown.
 function CartSection({ title, lines, removeItem, setQty, waHref, waLabel }) {
   const { t } = useTranslation();
+  const currencies = new Set(lines.map((l) => l.currency));
+  const singleCurrency = currencies.size === 1 ? lines[0]?.currency : null;
   const total = lines.reduce((sum, l) => sum + l.qty * (l.price || 0), 0);
 
   return (
@@ -39,10 +49,10 @@ function CartSection({ title, lines, removeItem, setQty, waHref, waLabel }) {
           </div>
         ))}
       </div>
-      {total > 0 && (
+      {total > 0 && singleCurrency && (
         <div className="tl-cart-total">
           <span>{title}</span>
-          <strong>{total.toFixed(2)} AZN</strong>
+          <strong>{total.toFixed(2)} {singleCurrency}</strong>
         </div>
       )}
       <a href={waHref} target="_blank" rel="noopener noreferrer" className="tl-cart-checkout">

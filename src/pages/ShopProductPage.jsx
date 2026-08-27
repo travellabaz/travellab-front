@@ -5,12 +5,35 @@ import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
 import ProductCard from '../components/ProductCard';
 import ColorDots from '../components/ColorDots';
+import SeoBodyText from '../components/SeoBodyText';
 import NotFoundPage from './NotFoundPage';
-import { getProductBySku, getGroupBySku, getRelatedProductGroups, productSlug, toCartItem } from '../data/shop';
+import ShopPage from './ShopPage';
+import {
+  getCategoryBySlug,
+  getProductBySlug,
+  getProductBySku,
+  getGroupBySku,
+  getRelatedProductGroups,
+  productSlug,
+  categorySlug,
+  toCartItem,
+} from '../data/shop';
 import { orderProductWhatsappUrl } from '../utils/shopWhatsapp';
 import { useCart } from '../context/CartContext';
 import { getLocaleFromPathname } from '../utils/locale';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
+
+// /shop/:slug serves two different kinds of page under one route — a
+// category landing page (/shop/camadan) or a single product's detail
+// page (/shop/premium-camadan), per Shop SEO Paketi. Category slugs are
+// the smaller, curated set (see getCategories()), so checked first;
+// anything left over falls through to a product lookup, then 404.
+export default function ShopProductPage() {
+  const { slug } = useParams();
+  const category = getCategoryBySlug(slug);
+  if (category) return <ShopPage key={category} category={category} />;
+  return <ShopProductDetail slug={slug} />;
+}
 
 // The dimensions trailing "ölçüdə" in a variant's name (e.g. "52x30x28
 // sm") — shown next to the size letter on the size picker, since "S/M/L"
@@ -20,13 +43,12 @@ function sizeDims(name) {
   return m ? m[1].trim() : '';
 }
 
-export default function ShopProductPage() {
-  const { sku } = useParams();
+function ShopProductDetail({ slug }) {
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(useLocation().pathname);
   const navigate = useLocalizedNavigate();
   const { addItem } = useCart();
-  const product = getProductBySku(sku);
+  const product = getProductBySlug(slug);
   const group = product ? getGroupBySku(product.sku) : null;
 
   const [activeImage, setActiveImage] = useState(0);
@@ -45,8 +67,15 @@ export default function ShopProductPage() {
 
   if (!product || !group) return <NotFoundPage />;
 
+  const imgAlt = `${product.name} - Travellab Shop`;
   const related = getRelatedProductGroups(group, 4);
-  const selectSize = (variantSku) => navigate(`/shop/${productSlug({ sku: variantSku })}`);
+  // Sizes are separate Sheet rows/SKUs (see data/shop/index.js) — resolve
+  // the target variant's own product record so its (possibly different)
+  // slug is used, rather than assuming any relationship to the current one.
+  const selectSize = (variantSku) => {
+    const variant = getProductBySku(variantSku);
+    if (variant) navigate(`/shop/${productSlug(variant)}`);
+  };
   const changeQty = (delta) => setQty((q) => Math.max(1, Math.min(20, q + delta)));
 
   // Photos are entered in the Sheet in the same order as the colours
@@ -71,7 +100,7 @@ export default function ShopProductPage() {
             items={[
               { name: t('breadcrumb.home'), to: '/' },
               { name: t('shop.breadcrumb'), to: '/shop' },
-              { name: product.categories[0] || t('shop.breadcrumb'), to: `/shop?category=${encodeURIComponent(product.categories[0] || '')}` },
+              ...(product.categories[0] ? [{ name: product.categories[0], to: `/shop/${categorySlug(product.categories[0])}` }] : []),
               { name: group.name },
             ]}
           />
@@ -84,7 +113,7 @@ export default function ShopProductPage() {
             <div className="tl-product-gallery">
               {product.images[activeImage] ? (
                 <button type="button" className="tl-product-gallery-main tl-product-gallery-zoom" onClick={() => setLightboxOpen(true)} aria-label={t('shop.galleryZoom')}>
-                  <img src={product.images[activeImage]} alt={product.name} />
+                  <img src={product.images[activeImage]} alt={imgAlt} />
                 </button>
               ) : (
                 <div className="tl-product-gallery-main">
@@ -100,7 +129,7 @@ export default function ShopProductPage() {
                       className={'tl-product-gallery-thumb' + (i === activeImage ? ' active' : '')}
                       onClick={() => selectImage(i)}
                     >
-                      <img src={src} alt="" />
+                      <img src={src} alt={imgAlt} />
                     </button>
                   ))}
                 </div>
@@ -197,6 +226,17 @@ export default function ShopProductPage() {
               </div>
             </div>
           )}
+
+          {/* Per-product SEO paragraph — AI-generated and cached at sync
+              time (see scripts/sync-shop-products.mjs's generateProductSeoCopy),
+              so it reads as real, product-specific copy instead of a
+              templated line repeated (with just the name swapped) across
+              every product page. */}
+          {product.seoParagraph && (
+            <SeoBodyText>
+              <p>{product.seoParagraph}</p>
+            </SeoBodyText>
+          )}
         </div>
       </section>
 
@@ -205,7 +245,7 @@ export default function ShopProductPage() {
         createPortal(
           <div className="tl-product-lightbox-overlay" onClick={() => setLightboxOpen(false)}>
             <button type="button" className="tl-product-lightbox-close" onClick={() => setLightboxOpen(false)} aria-label={t('shop.galleryClose')}>✕</button>
-            <img className="tl-product-lightbox-img" src={product.images[activeImage]} alt={product.name} onClick={(e) => e.stopPropagation()} />
+            <img className="tl-product-lightbox-img" src={product.images[activeImage]} alt={imgAlt} onClick={(e) => e.stopPropagation()} />
           </div>,
           document.body
         )}

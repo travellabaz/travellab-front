@@ -581,6 +581,11 @@
     "breadcrumb": "Travellab Shop",
     "pageTitle": "Travellab Shop",
     "pageSubtitle": "Make your trips more comfortable and organized.",
+    "categoryPageSubtitle": "{{category}} at Travellab Shop — great prices, fast delivery.",
+    "seoP1": "Travellab Shop has everything you need for your trip in one place — suitcases, travel accessories, hygiene sets, and more, all at great prices.",
+    "seoP2": "Every product is original and ships fast. To place an order, message us on WhatsApp or order directly from the site.",
+    "categorySeoP1": "Travellab Shop offers a wide selection of {{category}} — at great prices, original quality, and fast delivery.",
+    "categorySeoP2": "Any product in the {{category}} category can be ordered easily via WhatsApp — our team is always here to answer your questions.",
     "allCategories": "All",
     "sortLabel": "Sort",
     "sort_newest": "Newest",
@@ -764,6 +769,9 @@
       "title": "Travellab Shop - Travel Accessories | Travellab",
       "desc": "Discover travel accessories, luggage and more at Travellab Shop. Great prices, fast delivery, order via WhatsApp."
     },
+    "shopProductDesc": "{{name}} now from {{price}} {{currency}} at Travellab Shop. {{feature}} Fast delivery, order via WhatsApp!",
+    "shopCategoryTitle": "{{category}} - Great Prices {{year}} | Travellab Shop",
+    "shopCategoryDesc": "Wide selection of {{category}} at Travellab Shop — great prices and fast delivery. Order easily via WhatsApp!",
     "endirimler": {
       "title": "Deals - Tour Discounts with LabPoint Balance | Travellab",
       "desc": "Get discounts on tours using your LabPoint balance. Register and discover Travellab's discounted tours."

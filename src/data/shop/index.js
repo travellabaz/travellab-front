@@ -1,4 +1,5 @@
 import products from './products.json';
+import { slugify } from '../../utils/slugify';
 
 // products.json is the build-time snapshot of the "Məhsullar" Google Sheet
 // (see scripts/sync-shop-products.mjs) — this module is the only place the
@@ -38,11 +39,35 @@ export function getProductBySku(sku) {
   return products.find((p) => p.sku.toLowerCase() === needle) || null;
 }
 
-// The URL-safe form of a product's SKU — lowercase, so it never triggers
-// the host's forced-lowercase redirect. product.sku itself keeps its
-// original casing (e.g. "TB-020") for display and WhatsApp messages.
+// The product's URL slug — a name-derived, human-readable, keyword-
+// carrying path segment (e.g. "premium-camadan"), written into
+// products.json by scripts/sync-shop-products.mjs (which also tracks
+// slug history there so a name edit gets a 301, not a 404 — see
+// src/data/shop/slugRedirects.json and prerender.mjs). SKU stays the
+// stable internal id (cart/wishlist keys, WhatsApp messages); slug is
+// purely the public-facing URL — see getProductBySku for the SKU-based
+// lookup this is deliberately kept separate from.
 export function productSlug(product) {
-  return product.sku.toLowerCase();
+  return product.slug || product.sku.toLowerCase();
+}
+
+export function getProductBySlug(slug) {
+  if (!slug) return null;
+  const needle = slug.toLowerCase();
+  return products.find((p) => productSlug(p) === needle) || null;
+}
+
+// Category names are free text from the Sheet's "Kateqoriya" column, not
+// a fixed enum — the slug is derived the same way every time (not
+// persisted/tracked for redirects like product slugs) since a category
+// rename is rare and, unlike a product, has no per-item history to lose.
+export function categorySlug(categoryName) {
+  return slugify(categoryName);
+}
+
+export function getCategoryBySlug(slug) {
+  if (!slug) return null;
+  return getCategories().find((c) => categorySlug(c) === slug) || null;
 }
 
 // Snapshot shape CartContext/WishlistContext store — sku doubles as the

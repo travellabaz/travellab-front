@@ -35,13 +35,15 @@ jobs:
       # regenerates src/data/shop/products.json. A no-op commit below still
       # covers the tour-sync rebuild even on a day nothing here changed.
       - name: Sync Shop products from the Google Sheet
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/sync-shop-products.mjs
 
       - name: Commit Shop product changes, if any
         run: |
           git config user.name "travellab-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add src/data/shop/products.json public/images/shop/products
+          git add src/data/shop/products.json src/data/shop/slugRedirects.json public/images/shop/products
           if git diff --cached --quiet; then
             echo "No Shop product changes"
           else

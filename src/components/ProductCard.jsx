@@ -19,7 +19,7 @@ export default function ProductCard({ group }) {
     <div className="tl-product-card">
       <Link to={href} className="tl-product-card-media">
         {variant.images[0] ? (
-          <img src={variant.images[0]} alt={group.name} loading="lazy" />
+          <img src={variant.images[0]} alt={`${group.name} - Travellab Shop`} loading="lazy" />
         ) : (
           <span className="tl-product-card-noimg" aria-hidden="true" />
         )}

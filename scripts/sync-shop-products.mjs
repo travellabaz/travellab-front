@@ -18,11 +18,36 @@
 //     the task called out rather than catching it).
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { slugify } from '../src/utils/slugify.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_PATH = path.join(__dirname, '../src/data/shop/products.json');
+const REDIRECTS_PATH = path.join(__dirname, '../src/data/shop/slugRedirects.json');
 const IMAGES_DIR = path.join(__dirname, '../public/images/shop/products');
+
+// Same Gemini setup as scripts/generate-blog-post.mjs (see that file for
+// why "-latest" aliases + a distinct fallback model tier) — reused here
+// rather than duplicated with different names, since it's the exact same
+// account/key/failure modes.
+const GEMINI_PRIMARY_MODEL = 'gemini-flash-latest';
+const GEMINI_FALLBACK_MODEL = 'gemini-flash-lite-latest';
+const geminiEndpoint = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+// A sized variant's raw Sheet name carries its size/dimensions suffix
+// (e.g. "Premium Çamadan/S ölçüdə 52x30x28 sm" — see SIZE_VARIANT_RE in
+// src/data/shop/index.js, duplicated here rather than imported — that
+// module also `import`s products.json itself, which would be a
+// confusing circular read of the very file this script is about to
+// overwrite). Used both for slugging (baseSlugFor below) and for the
+// "clean" name fed to Gemini / the templated fallback, so SEO copy talks
+// about "Premium Çamadan", not the raw per-row Sheet name.
+const SIZE_VARIANT_RE = /^(.+)\/(XS|S|M|L|XL)\s+öl[cç]üdə/i;
+function productDisplayName(name) {
+  const m = SIZE_VARIANT_RE.exec(name);
+  return m ? m[1].trim() : name;
+}
 
 const SHEET_ID = '1f-0xHhGXWoE0Pnb8mJl7Xs9gQQcD3TcxTQaxeEqDbJM';
 const SHEET_NAME = 'Məhsullar';
@@ -165,6 +190,142 @@ function splitList(value) {
     .filter(Boolean);
 }
 
+// Cache key for a product's generated SEO copy — regenerate only when
+// something that copy actually depends on changes (name/category/price/
+// description), not on every daily sync run. Keeping this a hash instead
+// of just re-checking each field individually means one line covers
+// "did anything relevant change" without the two call sites (write here,
+// compare in loadPreviousSeoBySku) having to agree field-by-field.
+function seoCacheKey(product) {
+  return crypto.createHash('sha1').update(`${product.name}|${product.categories.join(',')}|${product.price}|${product.description}`).digest('hex').slice(0, 12);
+}
+
+function loadPreviousSeoBySku() {
+  if (!fs.existsSync(OUT_PATH)) return {};
+  try {
+    const prev = JSON.parse(fs.readFileSync(OUT_PATH, 'utf-8'));
+    return Object.fromEntries(prev.filter((p) => p.metaFeature && p.seoParagraph).map((p) => [p.sku, p]));
+  } catch (err) {
+    console.warn(`Could not read previous ${OUT_PATH} for SEO cache (${err.message}) — regenerating everything`);
+    return {};
+  }
+}
+
+async function callGemini(prompt, model = GEMINI_PRIMARY_MODEL) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
+  const res = await fetch(`${geminiEndpoint(model)}?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.8, maxOutputTokens: 1024, responseMimeType: 'application/json' },
+    }),
+  });
+  if (!res.ok) throw new Error(`Gemini request failed: ${res.status} ${await res.text()}`);
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error(`No text in Gemini response: ${JSON.stringify(data)}`);
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start === -1 || end === -1) throw new Error(`No JSON object in Gemini output:\n${text}`);
+  return JSON.parse(text.slice(start, end + 1));
+}
+
+// Two short AZ-only text fields for Shop SEO Paketi (shop content is AZ-
+// only site-wide already — see the Sheet's single "Ad (AZ)" column, no
+// per-language variants like blog/tour posts have): `metaFeature` is the
+// "{1 əsas xüsusiyyət}" clause the <meta description> template plugs in,
+// `seoParagraph` is the ~100-150 word page-end SEO_BODY_TEXT block (see
+// SeoBodyText.jsx). Generated once per product and cached in
+// products.json (see seoCacheKey) — regenerated only when the product's
+// name/category/price/description actually changes, so a normal daily
+// sync run (nothing edited) makes zero Gemini calls for this. Non-fatal
+// on failure: the sync must never fail (and thus skip a whole day's
+// product update) just because copy-generation hiccuped — falls back to
+// a plain templated line instead.
+async function generateProductSeoCopy(product) {
+  const name = productDisplayName(product.name);
+  const prompt = `Sən Travellab Shop (Bakıda fəaliyyət göstərən Travellab səyahət agentliyinin onlayn mağazası) üçün SEO mətn yazıçısısan.
+
+Məhsul: "${name}"
+Kateqoriya: ${product.categories.join(', ') || 'Ümumi'}
+Qiymət: ${product.price} ${product.currency}
+Mövcud təsvir: ${product.description || '(yoxdur)'}
+
+Bu məhsul üçün İKİ mətn yaz, Azərbaycan dilində:
+1. "feature" — meta description-un içində istifadə olunacaq, məhsulun BİR əsas üstünlüyünü vurğulayan çox qısa cümlə (təxminən 4-9 söz, nöqtə ilə bitsin). Reklam şüarı kimi deyil, sadə və konkret yaz.
+2. "seoParagraph" — səhifənin sonunda göstəriləcək 100-150 söz uzunluğunda unikal bir paraqraf. Məhsulun adını, "${product.categories[0] || ''}" kateqoriyasını və "Travellab Shop" ifadəsini təbii şəkildə, bir dəfə-iki dəfə keçir. Reklam kimi səslənməyən, faydalı, təbii yazılmış mətn olsun — məhsulun nə üçün faydalı olduğunu, kimin üçün uyğun olduğunu izah et.
+
+Cavabı YALNIZ bu JSON formatında ver, başqa heç nə yazma: {"feature": "...", "seoParagraph": "..."}`;
+
+  try {
+    const json = await callGemini(prompt, GEMINI_PRIMARY_MODEL);
+    if (json.feature && json.seoParagraph) return json;
+    throw new Error(`Incomplete response: ${JSON.stringify(json)}`);
+  } catch (primaryErr) {
+    console.warn(`[${product.sku}] SEO copy (primary model) failed: ${primaryErr.message} — trying fallback model`);
+    try {
+      const json = await callGemini(prompt, GEMINI_FALLBACK_MODEL);
+      if (json.feature && json.seoParagraph) return json;
+      throw new Error(`Incomplete response: ${JSON.stringify(json)}`);
+    } catch (fallbackErr) {
+      console.warn(`[${product.sku}] SEO copy (fallback model) also failed: ${fallbackErr.message} — using a templated fallback`);
+      return null;
+    }
+  }
+}
+
+// Slugging the raw size-suffixed name ("...52x30x28-sm") would be an
+// ugly URL for no benefit; "{base-name}-{size}" (e.g. "camadan-s") reads
+// better and is still unique across a group's variants. Uses the same
+// SIZE_VARIANT_RE as productDisplayName above, just keeping the size
+// letter instead of discarding it.
+function baseSlugFor(name) {
+  const m = SIZE_VARIANT_RE.exec(name);
+  return m ? `${slugify(m[1].trim())}-${m[2].toLowerCase()}` : slugify(name);
+}
+
+// Assigns each product a unique slug (de-duped with a -2/-3/... suffix in
+// the rare case two different products slugify to the same thing) and
+// updates the on-disk slug history in place: a SKU whose computed slug
+// changed since the last run (i.e. its Sheet name was edited) gets its
+// old slug appended to `previous`, so prerender.mjs can 301 it instead of
+// it 404ing. `history` is mutated and returned for convenience.
+function assignSlugs(products, history) {
+  const used = new Set();
+  for (const p of products) {
+    const base = baseSlugFor(p.name) || p.sku.toLowerCase();
+    let slug = base;
+    let n = 2;
+    while (used.has(slug)) {
+      slug = `${base}-${n}`;
+      n += 1;
+    }
+    used.add(slug);
+    p.slug = slug;
+
+    const entry = history[p.sku];
+    if (!entry) {
+      history[p.sku] = { current: slug, previous: [] };
+    } else if (entry.current !== slug) {
+      if (!entry.previous.includes(entry.current)) entry.previous.push(entry.current);
+      entry.current = slug;
+    }
+  }
+  return history;
+}
+
+function loadSlugHistory() {
+  if (!fs.existsSync(REDIRECTS_PATH)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(REDIRECTS_PATH, 'utf-8'));
+  } catch (err) {
+    console.warn(`Could not parse ${REDIRECTS_PATH} (${err.message}) — starting fresh`);
+    return {};
+  }
+}
+
 async function main() {
   console.log(`Fetching ${CSV_URL}`);
   const res = await fetch(CSV_URL);
@@ -188,6 +349,13 @@ async function main() {
     description: col('Təsvir'),
     stock: col('Stok'),
     bestseller: col('Bestseller'),
+    // Optional — Shop SEO Paketi's per-category keyword pair, entered on
+    // every row of that category (same duplication pattern "Kateqoriya"
+    // itself already uses). col() returns -1 until these two columns
+    // exist in the Sheet; every read below is written to tolerate that
+    // (undefined -> '' -> null) rather than assume they're there.
+    keywordP1: col('Açar söz P1'),
+    keywordP2: col('Açar söz P2'),
   };
 
   fs.mkdirSync(IMAGES_DIR, { recursive: true });
@@ -215,11 +383,41 @@ async function main() {
       description: (row[idx.description] || '').trim(),
       inStock: (row[idx.stock] || '').trim() !== 'Yox',
       bestseller: (row[idx.bestseller] || '').trim() === 'Bəli',
+      keywordP1: (row[idx.keywordP1] || '').trim() || null,
+      keywordP2: (row[idx.keywordP2] || '').trim() || null,
     });
   }
 
+  const previousSeoBySku = loadPreviousSeoBySku();
+  for (const p of products) {
+    const cacheKey = seoCacheKey(p);
+    const cached = previousSeoBySku[p.sku];
+    if (cached && cached.seoCacheKey === cacheKey) {
+      p.metaFeature = cached.metaFeature;
+      p.seoParagraph = cached.seoParagraph;
+    } else {
+      // eslint-disable-next-line no-await-in-loop
+      const generated = await generateProductSeoCopy(p);
+      if (generated) {
+        p.metaFeature = generated.feature;
+        p.seoParagraph = generated.seoParagraph;
+      } else {
+        // Deterministic fallback so the site never ships a blank field —
+        // not uniquely written per product, but still correct/usable
+        // (see generateProductSeoCopy's comment on why generation
+        // failures must never fail the whole sync).
+        p.metaFeature = 'Keyfiyyətli və sərfəli seçim.';
+        p.seoParagraph = `${productDisplayName(p.name)} Travellab Shop-da ${p.categories[0] || 'səyahət aksesuarları'} kateqoriyasında sərfəli qiymətə təqdim olunur. Orijinal keyfiyyət və sürətli çatdırılma ilə, WhatsApp vasitəsilə asanlıqla sifariş verə bilərsiniz.`;
+      }
+    }
+    p.seoCacheKey = cacheKey;
+  }
+
+  const slugHistory = assignSlugs(products, loadSlugHistory());
+
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(products, null, 2) + '\n');
+  fs.writeFileSync(REDIRECTS_PATH, JSON.stringify(slugHistory, null, 2) + '\n');
   console.log(`Wrote ${products.length} products to ${path.relative(process.cwd(), OUT_PATH)}`);
 }
 

@@ -66,7 +66,9 @@ function localeRouteChildren() {
     <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
     <Route key="about" path="about" element={<AboutPage />} />,
     <Route key="shop" path="shop" element={<ShopPage />} />,
-    <Route key="shop-product" path="shop/:sku" element={<ShopProductPage />} />,
+    // Serves both /shop/:categorySlug and /shop/:productSlug — see the
+    // dispatcher at the top of ShopProductPage.jsx for how it tells them apart.
+    <Route key="shop-slug" path="shop/:slug" element={<ShopProductPage />} />,
     <Route key="blog" path="blog" element={<BlogPage />} />,
     <Route key="blog-slug" path="blog/:slug" element={<BlogPostPage />} />,
     <Route key="gift-card" path="hediyye-karti" element={<GiftCardPage />} />,

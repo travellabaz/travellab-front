@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
+import Link from '../components/LocalizedLink';
 import ProductCard from '../components/ProductCard';
 import ShopBenefitsStrip from '../components/ShopBenefitsStrip';
 import ColorDots from '../components/ColorDots';
 import ImageCarousel from '../components/ImageCarousel';
 import ShopVideoGallery from '../components/ShopVideoGallery';
-import { getProductGroups, getCategories, sortProductGroups } from '../data/shop';
+import SeoBodyText from '../components/SeoBodyText';
+import { getProductGroups, getCategories, categorySlug, sortProductGroups } from '../data/shop';
 import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
 
 const PAGE_SIZE = 8;
@@ -27,15 +28,16 @@ const BANNER_IMAGES = [
   '/images/shop/banner-man-suitcase.jpg',
 ];
 
-export default function ShopPage() {
+// category: null for the all-products /shop page, or a real category name
+// (matching a value in the Sheet's "Kateqoriya" column) for a /shop/:slug
+// category landing page — see the dispatcher in ShopProductPage.jsx, which
+// mounts this with key={category} so switching categories gets a clean
+// remount (filters/pagination reset) instead of carrying over state that
+// belonged to the previous category.
+export default function ShopPage({ category = null }) {
   const { t } = useTranslation();
   const allGroups = getProductGroups();
   const categories = getCategories();
-  const location = useLocation();
-  // Only read once, as the initial value — this seeds the in-page filter
-  // state below, it isn't a two-way binding to the URL (same as every
-  // other client-only view/sort toggle on this page).
-  const [category, setCategory] = useState(() => new URLSearchParams(location.search).get('category'));
   const [sort, setSort] = useState('newest');
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -72,11 +74,6 @@ export default function ShopPage() {
   const gridGroups = showPromoCard ? visible.slice(0, PAGE_SIZE - 1) : visible;
   const promoColor = promoCategory ? PROMO_COLORS[categories.indexOf(promoCategory) % PROMO_COLORS.length] : null;
 
-  const selectCategory = (cat) => {
-    setCategory(cat);
-    setVisibleCount(PAGE_SIZE);
-  };
-
   const selectSort = (value) => {
     setSort(value);
     setSortOpen(false);
@@ -94,7 +91,13 @@ export default function ShopPage() {
     <main className="tpwl-main">
       <section className="tl-page-top">
         <div className="tl-section" style={{ paddingBottom: 0 }}>
-          <Breadcrumb items={[{ name: t('breadcrumb.home'), to: '/' }, { name: t('shop.breadcrumb') }]} />
+          <Breadcrumb
+            items={
+              category
+                ? [{ name: t('breadcrumb.home'), to: '/' }, { name: t('shop.breadcrumb'), to: '/shop' }, { name: category }]
+                : [{ name: t('breadcrumb.home'), to: '/' }, { name: t('shop.breadcrumb') }]
+            }
+          />
         </div>
       </section>
 
@@ -106,19 +109,21 @@ export default function ShopPage() {
 
           <div className="tl-shop-page-header">
             <div>
-              <h1 className="tl-title">{t('shop.pageTitle')}</h1>
-              <p className="tl-shop-page-subtitle">{t('shop.pageSubtitle')}</p>
+              <h1 className="tl-title">{category || t('shop.pageTitle')}</h1>
+              <p className="tl-shop-page-subtitle">
+                {category ? t('shop.categoryPageSubtitle', { category }) : t('shop.pageSubtitle')}
+              </p>
             </div>
           </div>
 
           <div className="tl-shop-chips">
-            <button type="button" className={'tl-shop-chip' + (!category ? ' active' : '')} onClick={() => selectCategory(null)}>
+            <Link to="/shop" className={'tl-shop-chip' + (!category ? ' active' : '')}>
               {t('shop.allCategories')}
-            </button>
+            </Link>
             {categories.map((cat) => (
-              <button key={cat} type="button" className={'tl-shop-chip' + (category === cat ? ' active' : '')} onClick={() => selectCategory(cat)}>
+              <Link key={cat} to={`/shop/${categorySlug(cat)}`} className={'tl-shop-chip' + (category === cat ? ' active' : '')}>
                 {cat}
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -168,23 +173,24 @@ export default function ShopPage() {
               <ProductCard key={g.id} group={g} />
             ))}
             {showPromoCard && (
-              <button
-                type="button"
-                className={`tl-shop-promo-card tl-shop-promo-${promoColor}`}
-                onClick={() => selectCategory(promoCategory)}
-              >
+              <Link to={`/shop/${categorySlug(promoCategory)}`} className={`tl-shop-promo-card tl-shop-promo-${promoColor}`}>
                 <span className="tl-shop-promo-kicker">{t('shop.promoDiscover')}</span>
                 <span className="tl-shop-promo-category">{promoCategory}</span>
                 <span className="tl-shop-promo-arrow" aria-hidden="true">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
                 </span>
-              </button>
+              </Link>
             )}
           </div>
 
           {filtered.length === 0 && <p className="tl-shop-empty">{t('shop.noResults')}</p>}
 
           <ShopVideoGallery />
+
+          <SeoBodyText>
+            <p>{t(category ? 'shop.categorySeoP1' : 'shop.seoP1', { category })}</p>
+            <p>{t(category ? 'shop.categorySeoP2' : 'shop.seoP2', { category })}</p>
+          </SeoBodyText>
 
           <div className="tl-shop-benefits-bar-wrap">
             <ShopBenefitsStrip variant="bar" />
