@@ -2822,7 +2822,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-about-hero {
   position: relative;
-  min-height: 340px;
+  min-height: 240px;
   display: flex;
   align-items: center;
   background-size: cover;
@@ -3014,36 +3014,6 @@ body:not(.tl-subpage) .tl-about-extra {
   min-height: 150px;
 }
 
-.tl-about-cert-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.tl-about-cert-badge {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: var(--tl-white);
-  border: 1px solid var(--tl-gray-200);
-  border-radius: 12px;
-  padding: 14px 22px;
-}
-
-.tl-about-cert-badge strong {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--tl-navy);
-}
-
-.tl-about-cert-badge span {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--tl-gray-600);
-  max-width: 220px;
-}
-
 .tl-about-events-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -3153,8 +3123,9 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* Tədbirlər promo card gets a real event photo as its background instead
-   of a flat gradient — the other two (Shop/Labpoint) keep the gradient
-   since there's no equivalent real photo asset for them. */
+   of a flat gradient — Shop keeps the gradient since there's no
+   equivalent real photo asset for it; Labpoint gets its own real card
+   visual instead (see .tl-about-lp-card below). */
 .tl-shop-promo-photo {
   background-size: cover;
   background-position: center;
@@ -3171,6 +3142,51 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-shop-promo-photo > * {
   position: relative;
   z-index: 1;
+}
+
+.tl-shop-promo-labpoint {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Small static replica of LabpointSection's real card visual (same dark
+   card, brand mark, LP balance look) — floats in the promo tile's corner
+   instead of a stock card photo. */
+.tl-about-lp-card {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 130px;
+  background: #191919;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  padding: 12px;
+  transform: rotate(4deg);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tl-about-lp-card-brand {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.tl-about-lp-card-bal {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.tl-about-lp-card-bal span {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .tl-about-cta {
@@ -3333,7 +3349,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-about-service-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 14px;
   margin-bottom: 18px;
 }
 
@@ -3346,16 +3362,16 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-about-service-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 14px;
   background: #fff;
   border: 1px solid var(--tl-gray-200);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 18px;
 }
 
 .tl-about-service-icon {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   border-radius: var(--tl-r-sm);
   background: var(--tl-green-light);
   color: var(--tl-green-dark);
@@ -3365,18 +3381,23 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-shrink: 0;
 }
 
+.tl-about-service-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
 .tl-about-service-item strong {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--tl-navy);
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .tl-about-service-item p {
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--tl-gray-600);
-  line-height: 1.4;
+  line-height: 1.45;
   margin: 0;
 }
 

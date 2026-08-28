@@ -279,12 +279,26 @@ export default function AboutSection() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
               </span>
             </Link>
-            <Link to="/labpoint" className="tl-shop-promo-card tl-shop-promo-orange">
+            <Link to="/labpoint" className="tl-shop-promo-card tl-shop-promo-orange tl-shop-promo-labpoint">
               <span className="tl-shop-promo-kicker">{t('about.promoLabpointKicker')}</span>
               <span className="tl-shop-promo-category">Labpoint</span>
               <span className="tl-shop-promo-arrow" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
               </span>
+              {/* Our own real card visual (same look as LabpointSection's
+                  .tl-lp-cardvis), not a stock photo — just a smaller,
+                  static/decorative copy since this is a promo tile, not
+                  the actual account balance widget. */}
+              <div className="tl-about-lp-card" aria-hidden="true">
+                <div className="tl-about-lp-card-brand">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 2h6M10 2v6.2L5.4 17a2 2 0 0 0 1.8 3h9.6a2 2 0 0 0 1.8-3L14 8.2V2" />
+                    <path d="M7.5 14h9" />
+                  </svg>
+                  LabPoint<sup>™</sup>
+                </div>
+                <div className="tl-about-lp-card-bal">2 500 <span>LP</span></div>
+              </div>
             </Link>
             <Link
               to="/events"
@@ -299,18 +313,6 @@ export default function AboutSection() {
             </Link>
           </div>
 
-          {/* Only ATAA — the only membership already stated elsewhere on
-              the site (see seo.about/viza translations). Not adding
-              IATA/TÜRSAB/ISO badges without the agency actually holding
-              those, per explicit confirmation. */}
-          <div className="tl-about-service-title">{t('about.certTitle')}</div>
-          <div className="tl-about-cert-row">
-            <div className="tl-about-cert-badge">
-              <strong>ATAA</strong>
-              <span>{t('about.certAtaa')}</span>
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -318,12 +320,6 @@ export default function AboutSection() {
 
       <section>
         <div className="tl-section">
-          <SeoBodyText>
-            <p>{t('about.seoP1')}</p>
-            <p>{t('about.seoP2')}</p>
-            <p>{t('about.seoP3')}</p>
-          </SeoBodyText>
-
           <div className="tl-about-cta">
             <span className="tl-about-cta-icon" aria-hidden="true">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2 11 13" /><path d="M22 2l-7 20-4-9-9-4 20-7z" /></svg>
@@ -360,6 +356,12 @@ export default function AboutSection() {
               allowFullScreen
             />
           </div>
+
+          <SeoBodyText>
+            <p>{t('about.seoP1')}</p>
+            <p>{t('about.seoP2')}</p>
+            <p>{t('about.seoP3')}</p>
+          </SeoBodyText>
         </div>
       </section>
     </>
