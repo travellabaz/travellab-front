@@ -86,6 +86,39 @@ const CATEGORIES = {
   },
 };
 
+// Some categories have almost no natural topic variety (unlike e.g.
+// "Bələdçi" where literally any city works) — "Vizasız Ölkələr" is
+// fundamentally always "which countries can an AZ passport enter without
+// a visa," so leaving topic selection to the model alone produced 5
+// near-identical posts (general list, framed as "budget", "complete
+// guide", "best routes" — same underlying content each time, the
+// avoidList of past titles wasn't enough to stop it). Rotating through a
+// fixed set of genuinely disjoint angles forces real variety instead of
+// relying on the model to self-police against its own past output.
+const NARROW_TOPIC_ANGLES = {
+  'Vizasız Ölkələr': [
+    'Yalnız Asiya qitəsindəki vizasız/qapıda viza ölkələr (məs. Tailand, Sinqapur, Malayziya, Filippin, Şri-Lanka) — yalnız bu regiona fokuslan, digər qitələrə toxunma',
+    'Yalnız Latın Amerikası və Karib hövzəsindəki vizasız ölkələr (məs. Argentina, Peru, Ekvador, Dominikan Respublikası) — yalnız bu regiona fokuslan',
+    'Yalnız Afrika qitəsindəki vizasız/qapıda viza ölkələr (məs. Keniya, Tanzaniya, Seyşel adaları, Mavriki, Mərakeş) — yalnız bu qitəyə fokuslan',
+    'Uzunmüddətli (60-90+ gün) vizasız qala biləcəyiniz ölkələr — yavaş səyahət/uzun istirahət üçün uyğun olanlar, ümumi siyahıdan çox müddət mövzusuna fokuslan',
+    'Vizasız ölkələrə girişdə lazım olan sənədlər və şərtlər (qayıdış bileti, otel bronu, kifayət qədər vəsait sübutu və s.) — ölkə siyahısından çox, hazırlıq prosesinə fokuslan',
+    'Az tanınan, kütləvi turist axını olmayan vizasız ölkələr — "gizli", alternativ istiqamətlərə fokuslan, məşhur siyahılardan fərqlən',
+    'Qapıda viza (viza on arrival) ilə tam vizasız rejimin fərqi və hansı ölkələr hansı kateqoriyaya düşür — terminoloji/prosedur fərqinə fokuslan',
+    'Qısa həftəsonu (2-4 gün) səfərləri üçün Bakıya ən yaxın vizasız ölkələr — məsafə/uçuş müddətinə görə seçilmiş, uzaq istiqamətlərə toxunma',
+  ],
+};
+
+// Deterministic rotation (like pickCategory below) rather than leaving it
+// to the model: counts how many posts already exist in this category and
+// picks the next angle in line, so the same angle can't recur until the
+// whole list has cycled through.
+function pickAngle(category, existing) {
+  const angles = NARROW_TOPIC_ANGLES[category];
+  if (!angles) return null;
+  const count = existing.filter((p) => p.category === category).length;
+  return angles[count % angles.length];
+}
+
 // Least-used category first (ties broken deterministically by post count)
 // so the categories stay roughly balanced over time instead of drifting
 // toward whichever one the model likes best. Counts against the AZ title
@@ -286,7 +319,7 @@ Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dəri
 Yazı canlı və fərdi səslənsin, şablon kimi deyil: cümlə uzunluğunu dəyişdir, hər yazıda eyni keçid ifadələrini ("İlk növbədə", "Bundan əlavə" və s.) təkrarlama, mümkün olduqca Azərbaycan reallıqlarına bağla (AZN valyutası, Bakı Heydər Əliyev Beynəlxalq Hava Limanı (GYD), yerli mövsüm/iqlim, azərbaycanlı səyahətçinin perspektivi) — bu həm oxucuya daha faydalı olur, həm də yazını generic olmaqdan çıxarır.
 
 Bu yazının kateqoriyası MÜTLƏQ **${category}**dir — mövzunu bu kateqoriyaya uyğun seç: ${cat.guidance}
-
+${topicHint ? `\nBu kateqoriya artıq bir neçə dəfə işlənib və mövzu təkrarlanma riski var — ona görə bu yazıda MÜTLƏQ bu konkret bucağa fokuslan, daha ümumi/geniş bucağa QAYITMA: ${topicHint}\n` : ''}
 SEO tələbləri:
 - Bir əsas açar söz ifadəsi seç (məsələn "ucuz bilet tapmaq", "ailəvi səyahət məsləhətləri") və onu başlıqda, girişdə, ən azı iki alt başlıqda və excerpt-də təbii şəkildə istifadə et.
 - title 45-65 simvol arası, cəlbedici və açar sözlü olsun.
@@ -504,10 +537,12 @@ async function generateDraft(lang, existing, category, topicHint, plan = ATTEMPT
 async function main() {
   const existing = existingPosts();
   const category = pickCategory(existing);
+  const angle = pickAngle(category, existing);
 
   // AZ first (also decides the day's topic — RU/EN cover the same subject,
-  // written natively rather than translated, see buildPrompt).
-  const azDraft = await generateDraft('az', existing, category, null);
+  // written natively rather than translated, see buildPrompt). `angle` is
+  // only non-null for categories with a fixed NARROW_TOPIC_ANGLES rotation.
+  const azDraft = await generateDraft('az', existing, category, angle);
   const ruDraft = await generateDraft('ru', existing, category, azDraft.title);
   const enDraft = await generateDraft('en', existing, category, azDraft.title);
 
