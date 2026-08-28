@@ -85,7 +85,11 @@ export default function App() {
   const { t } = useTranslation();
 
   // Locale-prefix-aware: /ru and /en both count as "home" too, same as /.
-  const barePath = stripLocalePrefix(location.pathname);
+  // Trailing slash stripped too — Google indexes "/search/" (and other
+  // routes) with one, and without this the exact "/search" checks below
+  // silently failed for that URL, hiding the flight search widget entirely
+  // for anyone landing via that search result.
+  const barePath = stripLocalePrefix(location.pathname).replace(/(.)\/$/, '$1');
   const flightRouteSlugMatch = /^\/ucuslar\/([^/]+)/.exec(barePath);
   const flightRoute = flightRouteSlugMatch ? getFlightRouteBySlug(flightRouteSlugMatch[1]) : null;
 
