@@ -7,6 +7,8 @@ const OTP_SECONDS = 120;
 const PROMPT_DELAY_MS = 20000; // minimum time on site before this is even considered
 const MIN_CLICKS_BEFORE_PROMPT = 3; // needs some real browsing first, not just elapsed time
 const SHOWN_KEY = 'tl_phone_prompt_shown';
+const SNOOZE_MS = 15 * 60 * 1000; // dismissing just postpones it, not forever
+const NEXT_AT_KEY = 'tl_phone_prompt_next_at';
 
 function useCountdown() {
   const [secondsLeft, setSecondsLeft] = useState(0);
@@ -42,7 +44,10 @@ const emptyOtp = () => Array(6).fill('');
 // still empty), and always dismissible. Waits for both a minimum delay
 // AND a bit of real clicking around the site — popping up the instant
 // someone lands felt jarring; this way it only shows once they're
-// actually browsing.
+// actually browsing. Dismissing it only snoozes it for SNOOZE_MS — it
+// keeps coming back on the same schedule until the phone is actually
+// added, rather than being gone for the rest of the tab session after one
+// close.
 export default function AddPhoneModal() {
   const { t } = useTranslation();
   const { isAuthenticated, profile, refreshProfile } = useAuth();
@@ -57,8 +62,36 @@ export default function AddPhoneModal() {
   const sessionIdRef = useRef(null);
   const countdown = useCountdown();
 
+  // Read inside the (possibly long-delayed) reshow timer instead of the
+  // stale isAuthenticated/profile the effect closed over — otherwise a
+  // phone added in the meantime (or a logout) wouldn't stop the snoozed
+  // popup from reopening 15 minutes later.
+  const liveRef = useRef({ isAuthenticated, profile });
+  liveRef.current = { isAuthenticated, profile };
+  const reshowTimerRef = useRef(null);
+
+  const scheduleReshow = (delayMs) => {
+    clearTimeout(reshowTimerRef.current);
+    reshowTimerRef.current = setTimeout(() => {
+      const { isAuthenticated: auth, profile: prof } = liveRef.current;
+      if (!auth || prof?.phone) return;
+      sessionStorage.removeItem(NEXT_AT_KEY);
+      setOpen(true);
+    }, delayMs);
+  };
+
   useEffect(() => {
     if (!isAuthenticated || profile?.phone) return undefined;
+
+    // Already dismissed at least once this tab session — resume the
+    // snooze countdown (a page reload shouldn't reset it back to 15
+    // minutes) instead of re-running the cold-start delay/click gating.
+    const nextAt = Number(sessionStorage.getItem(NEXT_AT_KEY)) || 0;
+    if (nextAt) {
+      scheduleReshow(Math.max(0, nextAt - Date.now()));
+      return () => clearTimeout(reshowTimerRef.current);
+    }
+
     if (sessionStorage.getItem(SHOWN_KEY)) return undefined;
 
     let delayDone = false;
@@ -91,7 +124,11 @@ export default function AddPhoneModal() {
 
   if (!open) return null;
 
-  const close = () => setOpen(false);
+  const close = () => {
+    setOpen(false);
+    sessionStorage.setItem(NEXT_AT_KEY, String(Date.now() + SNOOZE_MS));
+    scheduleReshow(SNOOZE_MS);
+  };
 
   const submitPhone = async () => {
     const digits = phone.replace(/\D/g, '');
