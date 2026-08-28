@@ -7,7 +7,7 @@ import SeoBodyText from '../components/SeoBodyText';
 import PartnersSection from './PartnersSection';
 import { useModals } from '../context/ModalContext';
 import { pickManager } from '../utils/managers';
-import { STATS, BUSINESS_HOURS } from '../config/companyInfo';
+import { STATS } from '../config/companyInfo';
 
 // Real site photography (same rotating set HeroSearch/blog covers/OG
 // images use), not unrelated stock — the hero banner needed one full-
@@ -271,24 +271,21 @@ export default function AboutSection() {
           </div>
           {eventsOpen && <EventsLightbox onClose={() => setEventsOpen(false)} />}
 
-          <div className="tl-about-promo-row">
-            <Link to="/shop" className="tl-shop-promo-card tl-shop-promo-green">
-              <span className="tl-shop-promo-kicker">{t('about.promoShopKicker')}</span>
-              <span className="tl-shop-promo-category">Travellab Shop</span>
-              <span className="tl-shop-promo-arrow" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
-              </span>
-            </Link>
-            <Link to="/labpoint" className="tl-shop-promo-card tl-shop-promo-orange tl-shop-promo-labpoint">
-              <span className="tl-shop-promo-kicker">{t('about.promoLabpointKicker')}</span>
-              <span className="tl-shop-promo-category">Labpoint</span>
-              <span className="tl-shop-promo-arrow" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
-              </span>
+          <div className="tl-tag">{t('about.ecosystemTag')}</div>
+          <h2 className="tl-about-eco-title">{t('about.ecosystemTitle')}</h2>
+          <div className="tl-about-eco-row">
+            <Link to="/labpoint" className="tl-about-eco-card tl-about-eco-orange">
+              <div className="tl-about-eco-body">
+                <span className="tl-shop-promo-kicker">{t('about.promoLabpointKicker')}</span>
+                <span className="tl-about-eco-card-title">Labpoint</span>
+                <p className="tl-about-eco-card-desc">{t('about.ecoLabpointDesc')}</p>
+                <span className="tl-about-eco-btn">
+                  {t('about.ecoLabpointBtn')}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+                </span>
+              </div>
               {/* Our own real card visual (same look as LabpointSection's
-                  .tl-lp-cardvis), not a stock photo — just a smaller,
-                  static/decorative copy since this is a promo tile, not
-                  the actual account balance widget. */}
+                  .tl-lp-cardvis), not a stock photo. */}
               <div className="tl-about-lp-card" aria-hidden="true">
                 <div className="tl-about-lp-card-brand">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -300,15 +297,38 @@ export default function AboutSection() {
                 <div className="tl-about-lp-card-bal">2 500 <span>LP</span></div>
               </div>
             </Link>
+
             <Link
               to="/events"
-              className="tl-shop-promo-card tl-shop-promo-blue tl-shop-promo-photo"
+              className="tl-about-eco-card tl-about-eco-photo"
               style={{ backgroundImage: `url(${EVENTS[0].src})` }}
             >
-              <span className="tl-shop-promo-kicker">{t('about.promoEventsKicker')}</span>
-              <span className="tl-shop-promo-category">{t('nav.events')}</span>
-              <span className="tl-shop-promo-arrow" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+              <div className="tl-about-eco-body">
+                <span className="tl-shop-promo-kicker">{t('about.promoEventsKicker')}</span>
+                <span className="tl-about-eco-card-title">{t('nav.events')}</span>
+                <p className="tl-about-eco-card-desc">{t('about.ecoEventsDesc')}</p>
+                <span className="tl-about-eco-btn">
+                  {t('about.ecoEventsBtn')}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+                </span>
+              </div>
+            </Link>
+
+            <Link to="/blog?category=Tibbi%20Turizm" className="tl-about-eco-card tl-about-eco-navy">
+              <div className="tl-about-eco-body">
+                <span className="tl-shop-promo-kicker">{t('about.promoMedicalKicker')}</span>
+                <span className="tl-about-eco-card-title">{t('about.serviceMedical')}</span>
+                <p className="tl-about-eco-card-desc">{t('about.ecoMedicalDesc')}</p>
+                <span className="tl-about-eco-btn">
+                  {t('about.ecoMedicalBtn')}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+                </span>
+              </div>
+              <span className="tl-about-eco-medical-icon" aria-hidden="true">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 8v8M8 12h8" />
+                </svg>
               </span>
             </Link>
           </div>
@@ -331,12 +351,6 @@ export default function AboutSection() {
             <button type="button" className="tl-about-cta-btn" onClick={() => openManagerContact(pickManager())}>
               {t('about.ctaButton')}
             </button>
-          </div>
-
-          <div className="tl-about-hours">
-            <span>{t('about.hoursWeekdayLabel')}: {BUSINESS_HOURS.weekday}</span>
-            <span>{t('about.hoursSaturdayLabel')}: {BUSINESS_HOURS.saturday}</span>
-            <span>{t('about.hoursSundayLabel')}: {t('about.hoursClosed')}</span>
           </div>
 
           <a

@@ -2994,24 +2994,95 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 600;
 }
 
-.tl-about-promo-row {
+.tl-about-eco-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 4px 0 16px;
+}
+
+.tl-about-eco-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  align-items: start;
   gap: 16px;
   margin-bottom: 28px;
 }
 
-/* .tl-shop-promo-card's own height:100% assumes a grid context where a
-   taller sibling (a real product card) sets the row's track size — there
-   is no such sibling here (every item in this row is the same promo
-   card), so it was resolving against an unrelated ancestor instead of
-   this row and overflowing past this section's own margin. Fixed height
-   sidesteps that entirely rather than fighting the percentage
-   resolution. */
-.tl-about-promo-row .tl-shop-promo-card {
-  height: auto;
-  min-height: 150px;
+.tl-about-eco-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 340px;
+  border-radius: 20px;
+  display: flex;
+  align-items: flex-end;
+  color: var(--tl-white);
+}
+
+.tl-about-eco-orange { background: linear-gradient(155deg, var(--tl-orange), var(--tl-orange-dark)); }
+.tl-about-eco-navy { background: linear-gradient(155deg, var(--tl-navy2), var(--tl-navy)); }
+
+.tl-about-eco-photo {
+  background-size: cover;
+  background-position: center;
+}
+
+.tl-about-eco-photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 116, 186, 0.25), rgba(7, 30, 58, 0.88));
+}
+
+.tl-about-eco-body {
+  position: relative;
+  z-index: 1;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tl-about-eco-card-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--tl-white);
+}
+
+.tl-about-eco-card-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 6px;
+  max-width: 220px;
+}
+
+/* The Labpoint card's floating .tl-about-lp-card sits over this same
+   corner — narrower max-width keeps the description from running under
+   it (was clipping "xüsusi üstünlüklər"). */
+.tl-about-eco-orange .tl-about-eco-card-desc {
+  max-width: 140px;
+}
+
+.tl-about-eco-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  border-radius: 100px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tl-about-eco-medical-icon {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .tl-about-events-grid {
@@ -3122,47 +3193,21 @@ body:not(.tl-subpage) .tl-about-extra {
   }
 }
 
-/* Tədbirlər promo card gets a real event photo as its background instead
-   of a flat gradient — Shop keeps the gradient since there's no
-   equivalent real photo asset for it; Labpoint gets its own real card
-   visual instead (see .tl-about-lp-card below). */
-.tl-shop-promo-photo {
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.tl-shop-promo-photo::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(7, 116, 186, 0.35), rgba(7, 30, 58, 0.82));
-}
-
-.tl-shop-promo-photo > * {
-  position: relative;
-  z-index: 1;
-}
-
-.tl-shop-promo-labpoint {
-  position: relative;
-  overflow: hidden;
-}
-
 /* Small static replica of LabpointSection's real card visual (same dark
-   card, brand mark, LP balance look) — floats in the promo tile's corner
-   instead of a stock card photo. */
+   card, brand mark, LP balance look) — floats in the corner of the
+   Labpoint ecosystem card instead of a stock card photo. */
 .tl-about-lp-card {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
-  width: 130px;
+  right: 22px;
+  bottom: 22px;
+  z-index: 1;
+  width: 150px;
   background: #191919;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 14px;
   transform: rotate(4deg);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
 }
 
 .tl-about-lp-card-brand {
@@ -3244,14 +3289,6 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-green-dark);
 }
 
-.tl-about-hours {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  font-size: 12px;
-  color: var(--tl-gray-600);
-  margin-bottom: 18px;
-}
 
 @media (max-width: 768px) {
   .tl-about-hero-stats {
@@ -3276,7 +3313,7 @@ body:not(.tl-subpage) .tl-about-extra {
     height: 90px;
   }
 
-  .tl-about-promo-row {
+  .tl-about-eco-row {
     grid-template-columns: 1fr;
   }
 
