@@ -3018,6 +3018,19 @@ body:not(.tl-subpage) .tl-about-extra {
   padding-right: 110px;
 }
 
+.tl-about-eco-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  border-radius: 100px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
 .tl-about-eco-suitcase {
   position: absolute;
   right: 8px;

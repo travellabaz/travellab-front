@@ -277,8 +277,9 @@ export default function AboutSection() {
             <Link to="/shop" className="tl-shop-promo-card tl-shop-promo-green tl-about-eco-mini">
               <span className="tl-shop-promo-kicker">{t('about.promoShopKicker')}</span>
               <span className="tl-shop-promo-category">Travellab Shop</span>
-              <span className="tl-shop-promo-arrow" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+              <span className="tl-about-eco-btn">
+                {t('about.ecoShopBtn')}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
               </span>
               <svg className="tl-about-eco-suitcase" viewBox="0 0 120 120" fill="none" aria-hidden="true">
                 <rect x="30" y="20" width="60" height="90" rx="10" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" />
@@ -293,8 +294,9 @@ export default function AboutSection() {
             <Link to="/labpoint" className="tl-shop-promo-card tl-shop-promo-orange tl-about-eco-mini">
               <span className="tl-shop-promo-kicker">{t('about.promoLabpointKicker')}</span>
               <span className="tl-shop-promo-category">Labpoint</span>
-              <span className="tl-shop-promo-arrow" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+              <span className="tl-about-eco-btn">
+                {t('about.ecoLabpointBtn')}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
               </span>
               {/* Our own real card visual (same look as LabpointSection's
                   .tl-lp-cardvis), not a stock photo. */}
@@ -313,8 +315,9 @@ export default function AboutSection() {
             <Link to="/hediyye-karti" className="tl-shop-promo-card tl-shop-promo-blue tl-about-eco-mini">
               <span className="tl-shop-promo-kicker">{t('about.promoGiftKicker')}</span>
               <span className="tl-shop-promo-category">{t('footer.giftCard')}</span>
-              <span className="tl-shop-promo-arrow" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+              <span className="tl-about-eco-btn">
+                {t('about.ecoGiftBtn')}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
               </span>
               {/* Mini replica of our actual gift card design (cream card +
                   orange ribbon, see /images/gift-card/hero.png) instead of
