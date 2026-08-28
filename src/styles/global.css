@@ -5971,6 +5971,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-gift-visual-video-trigger {
   position: relative;
+  width: 100%;
   background: none;
   border: none;
   padding: 0;
