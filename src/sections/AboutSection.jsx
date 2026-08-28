@@ -277,6 +277,7 @@ export default function AboutSection() {
             <Link to="/shop" className="tl-shop-promo-card tl-shop-promo-green tl-about-eco-mini">
               <span className="tl-shop-promo-kicker">{t('about.promoShopKicker')}</span>
               <span className="tl-shop-promo-category">Travellab Shop</span>
+              <p className="tl-about-eco-desc">{t('about.ecoShopDesc')}</p>
               <span className="tl-about-eco-btn">
                 {t('about.ecoShopBtn')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
@@ -294,6 +295,7 @@ export default function AboutSection() {
             <Link to="/labpoint" className="tl-shop-promo-card tl-shop-promo-orange tl-about-eco-mini">
               <span className="tl-shop-promo-kicker">{t('about.promoLabpointKicker')}</span>
               <span className="tl-shop-promo-category">Labpoint</span>
+              <p className="tl-about-eco-desc">{t('about.ecoLabpointDesc')}</p>
               <span className="tl-about-eco-btn">
                 {t('about.ecoLabpointBtn')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
@@ -315,6 +317,7 @@ export default function AboutSection() {
             <Link to="/hediyye-karti" className="tl-shop-promo-card tl-shop-promo-blue tl-about-eco-mini">
               <span className="tl-shop-promo-kicker">{t('about.promoGiftKicker')}</span>
               <span className="tl-shop-promo-category">{t('footer.giftCard')}</span>
+              <p className="tl-about-eco-desc">{t('about.ecoGiftDesc')}</p>
               <span className="tl-about-eco-btn">
                 {t('about.ecoGiftBtn')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>

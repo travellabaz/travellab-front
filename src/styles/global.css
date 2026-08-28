@@ -3012,10 +3012,22 @@ body:not(.tl-subpage) .tl-about-extra {
 /* Reuses the shared .tl-shop-promo-card format (same short kicker +
    title + circular arrow card as ShopPage's promo row) — this modifier
    just makes room for the icon visual floating on the right. */
-.tl-about-eco-mini {
+/* Combined selector (not a bare .tl-about-eco-mini) so this padding-right
+   beats .tl-shop-promo-card's own padding:20px shorthand regardless of
+   source order — same specificity, later rule would otherwise win and
+   silently drop this override, letting the description text run under
+   the floating icon. */
+.tl-shop-promo-card.tl-about-eco-mini {
   position: relative;
   overflow: hidden;
   padding-right: 110px;
+}
+
+.tl-about-eco-desc {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 2px 0 0;
+  line-height: 1.4;
 }
 
 .tl-about-eco-btn {
