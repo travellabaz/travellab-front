@@ -3009,75 +3009,23 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 28px;
 }
 
-.tl-about-eco-card {
+/* Reuses the shared .tl-shop-promo-card format (same short kicker +
+   title + circular arrow card as ShopPage's promo row) — this modifier
+   just makes room for the icon visual floating on the right. */
+.tl-about-eco-mini {
   position: relative;
   overflow: hidden;
-  min-height: 340px;
-  border-radius: 20px;
-  display: flex;
-  align-items: flex-end;
-  color: var(--tl-white);
+  padding-right: 110px;
 }
-
-.tl-about-eco-orange { background: linear-gradient(155deg, var(--tl-orange), var(--tl-orange-dark)); }
-.tl-about-eco-green { background: linear-gradient(155deg, var(--tl-green), var(--tl-green-dark)); }
-.tl-about-eco-blue { background: linear-gradient(155deg, var(--tl-blue), var(--tl-blue-dark)); }
 
 .tl-about-eco-suitcase {
   position: absolute;
-  right: 14px;
-  bottom: 14px;
+  right: 8px;
+  bottom: 50%;
+  transform: translateY(50%);
   z-index: 1;
-  width: 130px;
-  height: 130px;
-}
-
-.tl-about-eco-body {
-  position: relative;
-  z-index: 1;
-  padding: 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.tl-about-eco-card-title {
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--tl-white);
-}
-
-.tl-about-eco-card-desc {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0 0 6px;
-  max-width: 220px;
-}
-
-/* Each card's floating visual (LabPoint card, gift card, suitcase icon)
-   sits in this same bottom-right corner — narrower max-width keeps the
-   description from running under it. */
-.tl-about-eco-orange .tl-about-eco-card-desc,
-.tl-about-eco-blue .tl-about-eco-card-desc {
-  max-width: 140px;
-}
-
-.tl-about-eco-green .tl-about-eco-card-desc {
-  max-width: 160px;
-}
-
-.tl-about-eco-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-  background: var(--tl-white);
-  color: var(--tl-navy);
-  border-radius: 100px;
-  padding: 9px 16px;
-  font-size: 13px;
-  font-weight: 700;
+  width: 90px;
+  height: 90px;
 }
 
 .tl-about-events-grid {
@@ -3193,16 +3141,16 @@ body:not(.tl-subpage) .tl-about-extra {
    Labpoint ecosystem card instead of a stock card photo. */
 .tl-about-lp-card {
   position: absolute;
-  right: 22px;
-  bottom: 22px;
+  right: 10px;
+  bottom: 50%;
+  transform: translateY(50%) rotate(4deg);
   z-index: 1;
-  width: 150px;
+  width: 100px;
   background: #191919;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 14px;
-  padding: 14px;
-  transform: rotate(4deg);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
 }
 
 .tl-about-lp-card-brand {
@@ -3210,10 +3158,10 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   gap: 5px;
   font-family: 'Geist Sans', sans-serif;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .tl-about-lp-card-bal {
@@ -3235,16 +3183,16 @@ body:not(.tl-subpage) .tl-about-extra {
    reusing .tl-about-lp-card. */
 .tl-about-gift-card {
   position: absolute;
-  right: 22px;
-  bottom: 22px;
+  right: 10px;
+  bottom: 50%;
+  transform: translateY(50%) rotate(4deg);
   z-index: 1;
-  width: 150px;
-  height: 108px;
+  width: 100px;
+  height: 72px;
   background: #F2E1C3;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
-  transform: rotate(4deg);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3);
 }
 
 .tl-about-gift-card-ribbon {
@@ -3256,20 +3204,20 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-about-gift-card-logo {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 6px;
+  left: 7px;
   z-index: 1;
-  width: 26px;
+  width: 18px;
   height: auto;
 }
 
 .tl-about-gift-card-text {
   position: absolute;
-  left: 12px;
-  bottom: 10px;
+  left: 8px;
+  bottom: 6px;
   z-index: 1;
   font-family: 'Geist Sans', sans-serif;
-  font-size: 13px;
+  font-size: 9.5px;
   font-weight: 800;
   line-height: 1.15;
   color: var(--tl-navy);
