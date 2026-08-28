@@ -3020,18 +3020,16 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-about-eco-orange { background: linear-gradient(155deg, var(--tl-orange), var(--tl-orange-dark)); }
-.tl-about-eco-navy { background: linear-gradient(155deg, var(--tl-navy2), var(--tl-navy)); }
+.tl-about-eco-green { background: linear-gradient(155deg, var(--tl-green), var(--tl-green-dark)); }
+.tl-about-eco-blue { background: linear-gradient(155deg, var(--tl-blue), var(--tl-blue-dark)); }
 
-.tl-about-eco-photo {
-  background-size: cover;
-  background-position: center;
-}
-
-.tl-about-eco-photo::before {
-  content: '';
+.tl-about-eco-suitcase {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(7, 116, 186, 0.25), rgba(7, 30, 58, 0.88));
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  width: 130px;
+  height: 130px;
 }
 
 .tl-about-eco-body {
@@ -3057,11 +3055,16 @@ body:not(.tl-subpage) .tl-about-extra {
   max-width: 220px;
 }
 
-/* The Labpoint card's floating .tl-about-lp-card sits over this same
-   corner — narrower max-width keeps the description from running under
-   it (was clipping "xüsusi üstünlüklər"). */
-.tl-about-eco-orange .tl-about-eco-card-desc {
+/* Each card's floating visual (LabPoint card, gift card, suitcase icon)
+   sits in this same bottom-right corner — narrower max-width keeps the
+   description from running under it. */
+.tl-about-eco-orange .tl-about-eco-card-desc,
+.tl-about-eco-blue .tl-about-eco-card-desc {
   max-width: 140px;
+}
+
+.tl-about-eco-green .tl-about-eco-card-desc {
+  max-width: 160px;
 }
 
 .tl-about-eco-btn {
@@ -3075,14 +3078,6 @@ body:not(.tl-subpage) .tl-about-extra {
   padding: 9px 16px;
   font-size: 13px;
   font-weight: 700;
-}
-
-.tl-about-eco-medical-icon {
-  position: absolute;
-  right: 22px;
-  bottom: 22px;
-  z-index: 1;
-  color: rgba(255, 255, 255, 0.35);
 }
 
 .tl-about-events-grid {
@@ -3232,6 +3227,17 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 10px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.55);
+}
+
+.tl-about-gift-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tl-about-gift-card .tl-about-lp-card-bal {
+  font-size: 13px;
 }
 
 .tl-about-cta {

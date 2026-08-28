@@ -274,6 +274,26 @@ export default function AboutSection() {
           <div className="tl-tag">{t('about.ecosystemTag')}</div>
           <h2 className="tl-about-eco-title">{t('about.ecosystemTitle')}</h2>
           <div className="tl-about-eco-row">
+            <Link to="/shop" className="tl-about-eco-card tl-about-eco-green">
+              <div className="tl-about-eco-body">
+                <span className="tl-shop-promo-kicker">{t('about.promoShopKicker')}</span>
+                <span className="tl-about-eco-card-title">Travellab Shop</span>
+                <p className="tl-about-eco-card-desc">{t('about.ecoShopDesc')}</p>
+                <span className="tl-about-eco-btn">
+                  {t('about.ecoShopBtn')}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+                </span>
+              </div>
+              <svg className="tl-about-eco-suitcase" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+                <rect x="30" y="20" width="60" height="90" rx="10" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" />
+                <path d="M50 20v-6a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v6" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="30" y1="45" x2="90" y2="45" stroke="rgba(255,255,255,0.35)" strokeWidth="2" />
+                <line x1="60" y1="20" x2="60" y2="110" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
+                <path d="M18 66h20a4 4 0 0 1 4 4v30a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V70a4 4 0 0 1 4-4z" fill="var(--tl-orange)" />
+                <path d="M22 66v-8a6 6 0 0 1 12 0v8" stroke="var(--tl-orange)" strokeWidth="2.5" fill="none" />
+              </svg>
+            </Link>
+
             <Link to="/labpoint" className="tl-about-eco-card tl-about-eco-orange">
               <div className="tl-about-eco-body">
                 <span className="tl-shop-promo-kicker">{t('about.promoLabpointKicker')}</span>
@@ -298,38 +318,26 @@ export default function AboutSection() {
               </div>
             </Link>
 
-            <Link
-              to="/events"
-              className="tl-about-eco-card tl-about-eco-photo"
-              style={{ backgroundImage: `url(${EVENTS[0].src})` }}
-            >
+            <Link to="/hediyye-karti" className="tl-about-eco-card tl-about-eco-blue">
               <div className="tl-about-eco-body">
-                <span className="tl-shop-promo-kicker">{t('about.promoEventsKicker')}</span>
-                <span className="tl-about-eco-card-title">{t('nav.events')}</span>
-                <p className="tl-about-eco-card-desc">{t('about.ecoEventsDesc')}</p>
+                <span className="tl-shop-promo-kicker">{t('about.promoGiftKicker')}</span>
+                <span className="tl-about-eco-card-title">{t('footer.giftCard')}</span>
+                <p className="tl-about-eco-card-desc">{t('about.ecoGiftDesc')}</p>
                 <span className="tl-about-eco-btn">
-                  {t('about.ecoEventsBtn')}
+                  {t('about.ecoGiftBtn')}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
                 </span>
               </div>
-            </Link>
-
-            <Link to="/blog?category=Tibbi%20Turizm" className="tl-about-eco-card tl-about-eco-navy">
-              <div className="tl-about-eco-body">
-                <span className="tl-shop-promo-kicker">{t('about.promoMedicalKicker')}</span>
-                <span className="tl-about-eco-card-title">{t('about.serviceMedical')}</span>
-                <p className="tl-about-eco-card-desc">{t('about.ecoMedicalDesc')}</p>
-                <span className="tl-about-eco-btn">
-                  {t('about.ecoMedicalBtn')}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
-                </span>
-              </div>
-              <span className="tl-about-eco-medical-icon" aria-hidden="true">
-                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 8v8M8 12h8" />
+              {/* Same floating-card treatment as the Labpoint tile, styled
+                  as a gift card instead of a stock photo. */}
+              <div className="tl-about-lp-card tl-about-gift-card" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="8" width="18" height="13" rx="2" />
+                  <path d="M3 12h18M12 8v13" />
+                  <path d="M12 8c-2 0-3-1.5-3-3s1-2.5 3-1c0-1.5 1-2.5 3-1s0 3-3 5z" />
                 </svg>
-              </span>
+                <div className="tl-about-lp-card-bal">Hədiyyə Kartı</div>
+              </div>
             </Link>
           </div>
 
