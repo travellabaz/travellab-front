@@ -56,16 +56,19 @@ const STAT_ICONS = {
 // were pasted inline with no file behind them, so those show a monogram
 // instead of a fabricated/mismatched photo. No follower counts shown —
 // not confirmed for every person here, so omitted rather than guessed.
+// `link` is the specific post/reel the client pointed at for each person
+// (not just their generic profile) — Fatma's original post was deleted,
+// so hers falls back to the profile URL.
 const INFLUENCERS = [
-  { name: 'Leyla Hüseynova', handle: 'leila_land', color: 'var(--tl-green)' },
-  { name: 'Günel Rəhimova', handle: 'gunnerahim', color: 'var(--tl-blue)' },
-  { name: 'Nigar Quliyeva', handle: 'snigarochkaa', color: 'var(--tl-orange)' },
-  { name: 'İqamətdin Hüseynov', handle: 'igoguseinov', color: 'var(--tl-navy2)' },
-  { name: 'Aytən Quluzadə', handle: 'aytaniblog', color: 'var(--tl-green-dark)' },
-  { name: 'Ələkbər Quliyev', handle: 'allyfootball', color: 'var(--tl-blue-dark)' },
-  { name: 'Fərqanə Məmmədova', handle: 'farqaname', photo: '/images/labpoint/influencers/farqaname.jpg' },
-  { name: 'Fidan Seyidli', handle: 'seyidlimakeup', color: 'var(--tl-teal)' },
-  { name: 'Fatma Kazımova', handle: 'heyfatya', color: 'var(--tl-hero-orange)' },
+  { name: 'Leyla Hüseynova', handle: 'leila_land', color: 'var(--tl-green)', link: 'https://www.instagram.com/reels/DBIpA9DOuMy/' },
+  { name: 'Günel Rəhimova', handle: 'gunnerahim', color: 'var(--tl-blue)', link: 'https://www.instagram.com/reels/DInvwacAAcG/' },
+  { name: 'Nigar Quliyeva', handle: 'snigarochkaa', color: 'var(--tl-orange)', link: 'https://www.instagram.com/p/C-dDZKft8Ea/' },
+  { name: 'İqamətdin Hüseynov', handle: 'igoguseinov', color: 'var(--tl-navy2)', link: 'https://www.instagram.com/p/DBohWObth53/' },
+  { name: 'Aytən Quluzadə', handle: 'aytaniblog', color: 'var(--tl-green-dark)', link: 'https://www.instagram.com/p/DcB2nkUufe2/' },
+  { name: 'Ələkbər Quliyev', handle: 'allyfootball', color: 'var(--tl-blue-dark)', link: 'https://www.instagram.com/p/DGaRdo9gD7l/' },
+  { name: 'Fərqanə Məmmədova', handle: 'farqaname', photo: '/images/labpoint/influencers/farqaname.jpg', link: 'https://www.instagram.com/reels/DFk0niHNzTk/' },
+  { name: 'Fidan Seyidli', handle: 'seyidlimakeup', color: 'var(--tl-teal)', link: 'https://www.instagram.com/p/DJ1tRC0o7tG/' },
+  { name: 'Fatma Kazımova', handle: 'heyfatya', color: 'var(--tl-hero-orange)', link: 'https://instagram.com/heyfatya' },
 ];
 
 function VideoLightbox({ src, onClose }) {
@@ -290,7 +293,7 @@ export default function LabpointSection({ asH1 = false }) {
             {INFLUENCERS.map((inf) => (
               <a
                 key={inf.handle}
-                href={`https://instagram.com/${inf.handle}`}
+                href={inf.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="tl-lp-influencer-item"

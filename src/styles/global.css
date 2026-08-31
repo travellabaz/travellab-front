@@ -3030,11 +3030,21 @@ body:not(.tl-subpage) .tl-about-extra {
   object-fit: cover;
 }
 
+/* Fixed 2-line height so short one-line names ("Fidan Seyidli") and long
+   two-line ones ("İqamətdin Hüseynov") still leave the @handle sitting
+   at the same row across every card — was misaligned, each item's
+   handle sat at a different height depending on how its own name
+   happened to wrap. */
 .tl-lp-influencer-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   font-size: 13px;
   font-weight: 700;
   color: var(--tl-navy);
   line-height: 1.3;
+  min-height: 2.6em;
 }
 
 .tl-lp-influencer-handle {
