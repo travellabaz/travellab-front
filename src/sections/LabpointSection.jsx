@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import SeoBodyText from '../components/SeoBodyText';
@@ -49,34 +50,69 @@ const STAT_ICONS = {
   ),
 };
 
-// Real accounts confirmed by the client — handles/follower counts are not
-// placeholders. Avatars are a monogram (no real profile photos supplied
-// yet) linking out to the real Instagram profile.
+// Real accounts confirmed by the client, sent one by one (names, exact
+// handles, post/reel links). Photos: only Fərqanə's arrived as an actual
+// file we could save (public/images/labpoint/influencers/) — the rest
+// were pasted inline with no file behind them, so those show a monogram
+// instead of a fabricated/mismatched photo. No follower counts shown —
+// not confirmed for every person here, so omitted rather than guessed.
 const INFLUENCERS = [
-  { handle: 'leyla_land', followers: '127K', color: 'var(--tl-green)' },
-  { handle: 'gunnerahim', followers: '181K', color: 'var(--tl-blue)' },
-  { handle: 'snigarochka', followers: '95K', color: 'var(--tl-orange)' },
-  { handle: 'igoguseinov', followers: '86K', color: 'var(--tl-navy2)' },
-  { handle: 'farqaname', followers: '76K', color: 'var(--tl-green-dark)' },
-  { handle: 'allyfootball', followers: '64K', color: 'var(--tl-blue-dark)' },
+  { name: 'Leyla Hüseynova', handle: 'leila_land', color: 'var(--tl-green)' },
+  { name: 'Günel Rəhimova', handle: 'gunnerahim', color: 'var(--tl-blue)' },
+  { name: 'Nigar Quliyeva', handle: 'snigarochkaa', color: 'var(--tl-orange)' },
+  { name: 'İqamətdin Hüseynov', handle: 'igoguseinov', color: 'var(--tl-navy2)' },
+  { name: 'Aytən Quluzadə', handle: 'aytaniblog', color: 'var(--tl-green-dark)' },
+  { name: 'Ələkbər Quliyev', handle: 'allyfootball', color: 'var(--tl-blue-dark)' },
+  { name: 'Fərqanə Məmmədova', handle: 'farqaname', photo: '/images/labpoint/influencers/farqaname.jpg' },
+  { name: 'Fidan Seyidli', handle: 'seyidlimakeup', color: 'var(--tl-teal)' },
+  { name: 'Fatma Kazımova', handle: 'heyfatya', color: 'var(--tl-hero-orange)' },
 ];
 
-// 16:9 stand-in for a spot a real video will go into (see App.jsx's
-// AddPhoneModal-style comment pattern) — a play icon + "coming soon"
-// caption instead of a broken <video> tag or a stock photo standing in
-// for a real person. Once the real clip lands, swap this for
-// <video muted autoplay loop playsinline poster="...">.
-function VideoPlaceholder({ tint }) {
+function VideoLightbox({ src, onClose }) {
   const { t } = useTranslation();
-  return (
-    <div className={`tl-lp-video-placeholder tl-lp-video-placeholder-${tint}`}>
-      <span className="tl-lp-video-play">{PLAY_ICON}</span>
-      <span className="tl-lp-video-soon">{t('labpoint.videoComingSoon')}</span>
-    </div>
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div className="tl-lp-video-lightbox-overlay" onClick={onClose}>
+      <button type="button" className="tl-lp-video-lightbox-close" onClick={onClose} aria-label={t('about.eventsClose')}>✕</button>
+      <video
+        className="tl-lp-video-lightbox-player"
+        src={src}
+        controls
+        autoPlay
+        playsInline
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>,
+    document.body
   );
 }
 
-function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnLabel, videoTint }) {
+// Real portrait (9:16) clips the client sent — a silent autoplaying loop
+// as the card preview, full video with sound in a lightbox on click. Same
+// pattern as GiftCardPage's teaser/full-video split.
+function VideoTeaser({ src, poster }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" className="tl-lp-video-teaser" onClick={() => setOpen(true)}>
+        <video src={src} poster={poster} muted autoPlay loop playsInline />
+        <span className="tl-lp-video-play">{PLAY_ICON}</span>
+      </button>
+      {open && <VideoLightbox src={src} onClose={() => setOpen(false)} />}
+    </>
+  );
+}
+
+function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnLabel, videoSrc, videoPoster }) {
   return (
     <div className="tl-lp-benefit-card">
       <div className="tl-lp-benefit-text">
@@ -93,7 +129,7 @@ function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnL
           {btnLabel} {ARROW}
         </span>
       </div>
-      <VideoPlaceholder tint={videoTint} />
+      <VideoTeaser src={videoSrc} poster={videoPoster} />
     </div>
   );
 }
@@ -175,6 +211,11 @@ export default function LabpointSection({ asH1 = false }) {
           </div>
         </div>
 
+        {/* Stats band through the CTA banner are the full-page redesign —
+            shown only on the dedicated /labpoint page (asH1), not on the
+            compact hero embedded on the homepage. */}
+        {asH1 && (
+        <>
         <div className="tl-lp-stats-band">
           {STATS.map((s) => (
             <div className="tl-lp-stats-item" key={s.key}>
@@ -201,7 +242,8 @@ export default function LabpointSection({ asH1 = false }) {
               t('labpoint.usersBenefit4'),
             ]}
             btnLabel={t('labpoint.usersBtn')}
-            videoTint="green"
+            videoSrc="/videos/labpoint/users-teaser.mp4"
+            videoPoster="/images/labpoint/users-cover.jpg"
           />
           <BenefitCard
             tag={t('labpoint.influencersTag')}
@@ -216,7 +258,8 @@ export default function LabpointSection({ asH1 = false }) {
               t('labpoint.influencersBenefit4'),
             ]}
             btnLabel={t('labpoint.influencersBtn')}
-            videoTint="blue"
+            videoSrc="/videos/labpoint/influencers-teaser.mp4"
+            videoPoster="/images/labpoint/influencers-cover.jpg"
           />
         </div>
 
@@ -225,7 +268,15 @@ export default function LabpointSection({ asH1 = false }) {
             <h3 className="tl-lp-explainer-title">{t('labpoint.videoTitle')}</h3>
             <p className="tl-lp-explainer-desc">{t('labpoint.videoDesc')}</p>
           </div>
-          <VideoPlaceholder tint="explainer" />
+          <div className="tl-lp-explainer-video">
+            <iframe
+              src="https://www.youtube.com/embed/BLHWw1KFFRg"
+              title={t('labpoint.videoTitle')}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
         </div>
 
         <div className="tl-lp-influencers">
@@ -244,11 +295,15 @@ export default function LabpointSection({ asH1 = false }) {
                 rel="noopener noreferrer"
                 className="tl-lp-influencer-item"
               >
-                <span className="tl-lp-influencer-avatar" style={{ background: inf.color }}>
-                  {inf.handle[0].toUpperCase()}
-                </span>
+                {inf.photo ? (
+                  <img className="tl-lp-influencer-avatar tl-lp-influencer-avatar-photo" src={inf.photo} alt={inf.name} />
+                ) : (
+                  <span className="tl-lp-influencer-avatar" style={{ background: inf.color }}>
+                    {inf.handle[0].toUpperCase()}
+                  </span>
+                )}
+                <span className="tl-lp-influencer-name">{inf.name}</span>
                 <span className="tl-lp-influencer-handle">@{inf.handle}</span>
-                <span className="tl-lp-influencer-followers">{inf.followers} {t('labpoint.followersSuffix')}</span>
               </a>
             ))}
           </div>
@@ -265,11 +320,13 @@ export default function LabpointSection({ asH1 = false }) {
             <a href="https://travellab-point.az/" target="_blank" rel="noopener noreferrer" className="tl-lp-cta-btn tl-lp-cta-btn-light">
               {t('labpoint.ctaUserBtn')}
             </a>
-            <a href="https://travellab-point.az/" target="_blank" rel="noopener noreferrer" className="tl-lp-cta-btn tl-lp-cta-btn-outline">
+            <a href="https://travellab-point.az/influencer" target="_blank" rel="noopener noreferrer" className="tl-lp-cta-btn tl-lp-cta-btn-outline">
               {t('labpoint.ctaInfluencerBtn')}
             </a>
           </div>
         </div>
+        </>
+        )}
 
         {asH1 && (
           <SeoBodyText>
