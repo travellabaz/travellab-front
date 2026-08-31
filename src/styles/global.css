@@ -2732,6 +2732,322 @@ body:not(.tl-subpage) .tl-about-extra {
   z-index: 1;
 }
 
+/* ── Labpoint page: stats band, benefit cards, video explainer,
+   influencer row, CTA — everything added for the full-page redesign. ── */
+
+.tl-lp-stats-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  padding: 22px 28px;
+  margin: 24px 0 40px;
+}
+
+.tl-lp-stats-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tl-lp-stats-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+  flex-shrink: 0;
+}
+
+.tl-lp-stats-n {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  line-height: 1.15;
+}
+
+.tl-lp-stats-l {
+  font-size: 12px;
+  color: var(--tl-gray-600);
+}
+
+.tl-tag-blue {
+  color: var(--tl-blue);
+}
+
+.tl-lp-benefit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.tl-lp-benefit-card {
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-xl);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tl-lp-benefit-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  line-height: 1.25;
+  margin: 4px 0 14px;
+}
+
+.tl-lp-accent-green { color: var(--tl-green); }
+.tl-lp-accent-blue { color: var(--tl-blue); }
+
+.tl-lp-benefit-list {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tl-lp-benefit-list li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13.5px;
+  color: var(--tl-gray-600);
+}
+
+.tl-lp-benefit-check {
+  display: flex;
+  color: var(--tl-green);
+  flex-shrink: 0;
+}
+
+.tl-lp-benefit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background: var(--tl-green);
+  color: var(--tl-white);
+  border-radius: 100px;
+  padding: 11px 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tl-lp-video-placeholder {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tl-lp-video-placeholder-green { background: linear-gradient(155deg, var(--tl-green), var(--tl-green-dark)); }
+.tl-lp-video-placeholder-blue { background: linear-gradient(155deg, var(--tl-blue), var(--tl-navy2)); }
+.tl-lp-video-placeholder-explainer { background: linear-gradient(155deg, var(--tl-navy), var(--tl-navy2)); }
+
+.tl-lp-video-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.tl-lp-video-soon {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.tl-lp-explainer {
+  background: var(--tl-navy);
+  border-radius: var(--tl-r-xl);
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  align-items: center;
+  gap: 28px;
+  margin-bottom: 40px;
+}
+
+.tl-lp-explainer-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--tl-white);
+  margin: 0 0 10px;
+}
+
+.tl-lp-explainer-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.tl-lp-influencers {
+  margin-bottom: 40px;
+}
+
+.tl-lp-influencers-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.tl-lp-influencers-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--tl-navy);
+}
+
+.tl-lp-influencers-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-green);
+}
+
+.tl-lp-influencers-row {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.tl-lp-influencer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 96px;
+  text-align: center;
+  color: inherit;
+}
+
+.tl-lp-influencer-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  color: var(--tl-white);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.tl-lp-influencer-handle {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--tl-navy);
+}
+
+.tl-lp-influencer-followers {
+  font-size: 11px;
+  color: var(--tl-gray-600);
+}
+
+.tl-lp-cta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(155deg, var(--tl-green), var(--tl-green-dark));
+  border-radius: var(--tl-r-xl);
+  padding: 26px 32px;
+  margin-bottom: 40px;
+}
+
+.tl-lp-cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--tl-white);
+  flex-shrink: 0;
+}
+
+.tl-lp-cta-text {
+  flex: 1;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--tl-white);
+}
+
+.tl-lp-cta-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tl-lp-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 100px;
+  padding: 11px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tl-lp-cta-btn-light {
+  background: var(--tl-white);
+  color: var(--tl-green-dark);
+}
+
+.tl-lp-cta-btn-outline {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  color: var(--tl-white);
+}
+
+@media (max-width: 900px) {
+  .tl-lp-stats-band {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tl-lp-benefit-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tl-lp-explainer {
+    grid-template-columns: 1fr;
+  }
+
+  .tl-lp-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
 
 /* ── REGIONS ── */
 .tl-regions-grid {
