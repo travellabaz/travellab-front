@@ -68,7 +68,6 @@ const INFLUENCERS = [
   { name: 'Ələkbər Quliyev', handle: 'allyfootball', photo: '/images/labpoint/influencers/allyfootball.jpg', link: 'https://www.instagram.com/p/DGaRdo9gD7l/' },
   { name: 'Fərqanə Məmmədova', handle: 'farqaname', photo: '/images/labpoint/influencers/farqaname.jpg', link: 'https://www.instagram.com/reels/DFk0niHNzTk/' },
   { name: 'Fidan Seyidli', handle: 'seyidlimakeup', photo: '/images/labpoint/influencers/seyidlimakeup.jpg', link: 'https://www.instagram.com/p/DJ1tRC0o7tG/' },
-  { name: 'Fatma Kazımova', handle: 'heyfatya', photo: '/images/labpoint/influencers/heyfatya.jpg', link: 'https://instagram.com/heyfatya' },
 ];
 
 function VideoLightbox({ src, onClose }) {
