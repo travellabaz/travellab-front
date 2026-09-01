@@ -58,17 +58,17 @@ const STAT_ICONS = {
 // not confirmed for every person here, so omitted rather than guessed.
 // `link` is the specific post/reel the client pointed at for each person
 // (not just their generic profile) — Fatma's original post was deleted,
-// so hers falls back to the profile URL.
+// so hers falls back to the profile URL. All 9 now have a real photo.
 const INFLUENCERS = [
-  { name: 'Leyla Hüseynova', handle: 'leila_land', color: 'var(--tl-green)', link: 'https://www.instagram.com/reels/DBIpA9DOuMy/' },
-  { name: 'Günel Rəhimova', handle: 'gunnerahim', color: 'var(--tl-blue)', link: 'https://www.instagram.com/reels/DInvwacAAcG/' },
-  { name: 'Nigar Quliyeva', handle: 'snigarochkaa', color: 'var(--tl-orange)', link: 'https://www.instagram.com/p/C-dDZKft8Ea/' },
-  { name: 'İqamətdin Hüseynov', handle: 'igoguseinov', color: 'var(--tl-navy2)', link: 'https://www.instagram.com/p/DBohWObth53/' },
-  { name: 'Aytən Quluzadə', handle: 'aytaniblog', color: 'var(--tl-green-dark)', link: 'https://www.instagram.com/p/DcB2nkUufe2/' },
-  { name: 'Ələkbər Quliyev', handle: 'allyfootball', color: 'var(--tl-blue-dark)', link: 'https://www.instagram.com/p/DGaRdo9gD7l/' },
+  { name: 'Leyla Hüseynova', handle: 'leila_land', photo: '/images/labpoint/influencers/leila_land.jpg', link: 'https://www.instagram.com/reels/DBIpA9DOuMy/' },
+  { name: 'Günel Rəhimova', handle: 'gunnerahim', photo: '/images/labpoint/influencers/gunnerahim.jpg', link: 'https://www.instagram.com/reels/DInvwacAAcG/' },
+  { name: 'Nigar Quliyeva', handle: 'snigarochkaa', photo: '/images/labpoint/influencers/snigarochkaa.jpg', link: 'https://www.instagram.com/p/C-dDZKft8Ea/' },
+  { name: 'İqamətdin Hüseynov', handle: 'igoguseinov', photo: '/images/labpoint/influencers/igoguseinov.jpg', link: 'https://www.instagram.com/p/DBohWObth53/' },
+  { name: 'Aytən Quluzadə', handle: 'aytaniblog', photo: '/images/labpoint/influencers/aytaniblog.jpg', link: 'https://www.instagram.com/p/DcB2nkUufe2/' },
+  { name: 'Ələkbər Quliyev', handle: 'allyfootball', photo: '/images/labpoint/influencers/allyfootball.jpg', link: 'https://www.instagram.com/p/DGaRdo9gD7l/' },
   { name: 'Fərqanə Məmmədova', handle: 'farqaname', photo: '/images/labpoint/influencers/farqaname.jpg', link: 'https://www.instagram.com/reels/DFk0niHNzTk/' },
-  { name: 'Fidan Seyidli', handle: 'seyidlimakeup', color: 'var(--tl-teal)', link: 'https://www.instagram.com/p/DJ1tRC0o7tG/' },
-  { name: 'Fatma Kazımova', handle: 'heyfatya', color: 'var(--tl-hero-orange)', link: 'https://instagram.com/heyfatya' },
+  { name: 'Fidan Seyidli', handle: 'seyidlimakeup', photo: '/images/labpoint/influencers/seyidlimakeup.jpg', link: 'https://www.instagram.com/p/DJ1tRC0o7tG/' },
+  { name: 'Fatma Kazımova', handle: 'heyfatya', photo: '/images/labpoint/influencers/heyfatya.jpg', link: 'https://instagram.com/heyfatya' },
 ];
 
 function VideoLightbox({ src, onClose }) {
