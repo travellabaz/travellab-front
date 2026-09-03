@@ -101,6 +101,7 @@
   "hotels": {
     "tag": "Hotel Booking",
     "title": "Hotel Booking — Search Hotels Online",
+    "titleAccent": "Online Hotel Search",
     "openFullScreen": "Open full screen →",
     "brand": "Travellab Hotels",
     "desc": "Compare over 2.6 million hotels across more than 220 countries in our search system, integrated with a global hotel database, and book at the best price. The hotel search opens in a new window for security reasons.",

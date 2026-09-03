@@ -41,8 +41,10 @@ export default function HotelsSection({ asH1 = false }) {
       <div className="tl-section">
         <div className="tl-section-header" style={{ marginBottom: 20 }}>
           <div>
-            <div className="tl-tag">{t('hotels.tag')}</div>
-            <Heading className="tl-title">{t('hotels.title')}</Heading>
+            <div className="tl-tag">{t('hotels.tag')} <span className="tl-tag-dash">—</span></div>
+            <Heading className="tl-title">
+              {t('hotels.brand')} —<br /><span className="tl-hotel-title-accent">{t('hotels.titleAccent')}</span>
+            </Heading>
           </div>
           <a href={HOTELS_URL} className="tl-viewall">{t('hotels.openFullScreen')}</a>
         </div>
@@ -76,7 +78,7 @@ export default function HotelsSection({ asH1 = false }) {
             </div>
 
             <div className="tl-hotel-cta-row">
-              <a href={HOTELS_URL} className="tl-outlink tl-outlink-blue">{t('hotels.searchBtn')}</a>
+              <a href={HOTELS_URL} className="tl-outlink tl-outlink-green">{t('hotels.searchBtn')}</a>
             </div>
           </div>
 

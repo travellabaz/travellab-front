@@ -1469,6 +1469,15 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-white);
 }
 
+.tl-tag-dash {
+  color: var(--tl-gray-400, #9ca3af);
+  font-weight: 400;
+}
+
+.tl-hotel-title-accent {
+  color: var(--tl-green);
+}
+
 .tl-viewall {
   font-size: 13px;
   color: var(--tl-green);
