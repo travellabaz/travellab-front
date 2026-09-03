@@ -80,10 +80,8 @@ export default function HotelsSection({ asH1 = false }) {
             </div>
           </div>
 
-          {/* Placeholder photo from the site's existing hero rotation —
-              swap for a real hotel/resort shot once one is sent. */}
           <div className="tl-hotel-collage">
-            <img className="tl-hotel-collage-photo" src="/images/hero/plane-wing.jpg" alt="" />
+            <img className="tl-hotel-collage-photo" src="/images/hotels/hero-pool.jpg" alt="" />
 
             <div className="tl-hotel-badge-reach">
               <span className="tl-hotel-badge-reach-icon" aria-hidden="true">{FEAT_ICONS.globe}</span>
@@ -92,6 +90,11 @@ export default function HotelsSection({ asH1 = false }) {
                 <div className="tl-hotel-badge-reach-n">220+</div>
                 <div className="tl-hotel-badge-reach-l2">{t('hotels.statCountry')}</div>
               </div>
+            </div>
+
+            <div className="tl-hotel-badge-photo">
+              <img src="/images/hotels/hero-room.jpg" alt="" />
+              <span className="tl-hotel-badge-photo-dash" aria-hidden="true" />
             </div>
 
             <div className="tl-hotel-badge-brand">

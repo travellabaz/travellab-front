@@ -2133,6 +2133,33 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-600);
 }
 
+.tl-hotel-badge-photo {
+  position: absolute;
+  right: -20px;
+  top: 130px;
+  width: 150px;
+  background: var(--tl-white);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: var(--tl-shadow);
+}
+
+.tl-hotel-badge-photo img {
+  display: block;
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.tl-hotel-badge-photo-dash {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--tl-gray-400);
+  margin-top: 8px;
+}
+
 .tl-hotel-badge-brand {
   position: absolute;
   left: -16px;
@@ -5348,6 +5375,16 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-hotel-badge-reach {
     top: 12px;
     right: 12px;
+  }
+
+  .tl-hotel-badge-photo {
+    top: 90px;
+    right: 12px;
+    width: 120px;
+  }
+
+  .tl-hotel-badge-photo img {
+    height: 70px;
   }
 
   .tl-hotel-badge-brand {
