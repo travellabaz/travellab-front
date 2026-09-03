@@ -18,6 +18,11 @@ const FEAT_ICONS = {
       <rect x="4" y="10" width="16" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" />
     </svg>
   ),
+  percent: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 18 18 6" /><circle cx="7.5" cy="7.5" r="1.5" /><circle cx="16.5" cy="16.5" r="1.5" />
+    </svg>
+  ),
 };
 
 // NOTE: RateHawk's White Label site sends X-Frame-Options / CSP
@@ -72,10 +77,6 @@ export default function HotelsSection({ asH1 = false }) {
 
             <div className="tl-hotel-cta-row">
               <a href={HOTELS_URL} className="tl-outlink tl-outlink-blue">{t('hotels.searchBtn')}</a>
-              <a href={HOTELS_URL} className="tl-hotel-howitworks">
-                {t('hotels.howItWorks')}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
-              </a>
             </div>
           </div>
 
@@ -106,6 +107,25 @@ export default function HotelsSection({ asH1 = false }) {
               </div>
               <p>{t('hotels.bestPricesDesc')}</p>
             </div>
+          </div>
+        </div>
+
+        <div className="tl-hotel-features-grid">
+          <div className="tl-hotel-features-card">
+            <span className="tl-hotel-features-icon">{FEAT_ICONS.globe}</span>
+            <div className="tl-hotel-features-title">{t('hotels.featCard1Title')}</div>
+          </div>
+          <div className="tl-hotel-features-card">
+            <span className="tl-hotel-features-icon">{FEAT_ICONS.bolt}</span>
+            <div className="tl-hotel-features-title">{t('hotels.featCard2Title')}</div>
+          </div>
+          <div className="tl-hotel-features-card">
+            <span className="tl-hotel-features-icon">{FEAT_ICONS.lock}</span>
+            <div className="tl-hotel-features-title">{t('hotels.featCard3Title')}</div>
+          </div>
+          <div className="tl-hotel-features-card">
+            <span className="tl-hotel-features-icon">{FEAT_ICONS.percent}</span>
+            <div className="tl-hotel-features-title">{t('hotels.featCard4Title')}</div>
           </div>
         </div>
       </div>

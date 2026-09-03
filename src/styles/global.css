@@ -2195,6 +2195,52 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0;
 }
 
+.tl-hotel-features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--tl-gray-200);
+}
+
+.tl-hotel-features-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tl-hotel-features-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+  margin-bottom: 4px;
+}
+
+.tl-hotel-features-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tl-navy);
+}
+
+@media (max-width: 900px) {
+  .tl-hotel-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .tl-hotel-features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── VIZA ── */
 .tl-viza-card {
   background: var(--tl-white);

@@ -114,7 +114,7 @@ function VideoTeaser({ src, poster }) {
   );
 }
 
-function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnLabel, videoSrc, videoPoster }) {
+function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnLabel, btnHref, videoSrc, videoPoster }) {
   return (
     <div className="tl-lp-benefit-card">
       <div className="tl-lp-benefit-text">
@@ -127,7 +127,7 @@ function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnL
             <li key={b}><span className="tl-lp-benefit-check">{CHECK_ICON}</span>{b}</li>
           ))}
         </ul>
-        <a href="https://travellab-point.az/" target="_blank" rel="noopener noreferrer" className="tl-lp-benefit-btn">
+        <a href={btnHref} target="_blank" rel="noopener noreferrer" className="tl-lp-benefit-btn">
           {btnLabel} {ARROW}
         </a>
       </div>
@@ -244,6 +244,7 @@ export default function LabpointSection({ asH1 = false }) {
               t('labpoint.usersBenefit4'),
             ]}
             btnLabel={t('labpoint.usersBtn')}
+            btnHref="https://travellab-point.az/"
             videoSrc="/videos/labpoint/users-teaser.mp4"
             videoPoster="/images/labpoint/users-cover.jpg"
           />
@@ -260,6 +261,7 @@ export default function LabpointSection({ asH1 = false }) {
               t('labpoint.influencersBenefit4'),
             ]}
             btnLabel={t('labpoint.influencersBtn')}
+            btnHref="https://travellab-point.az/influencer"
             videoSrc="/videos/labpoint/influencers-teaser.mp4"
             videoPoster="/images/labpoint/influencers-cover.jpg"
           />
