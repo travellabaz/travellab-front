@@ -185,7 +185,7 @@
   },
   {
     "sku": "TB-008",
-    "name": "Eko‑dəri orqanayzer",
+    "name": "Çanta-qovluq",
     "categories": [
       "Biznes"
     ],
@@ -202,14 +202,14 @@
     "bestseller": true,
     "keywordP1": null,
     "keywordP2": null,
-    "metaFeature": "Sənədlərinizi və kartlarınızı səliqəli saxlayır.",
-    "seoParagraph": "Səyahətlərdə və iş görüşmələrində sənədlərin, plastik kartların, eləcə də digər şəxsi əşyaların hər zaman əlçatan və səliqəli olması həm vaxta qənaət edir, həm də iş prosesini asanlaşdırır. Travellab Shop onlayn mağazasının Biznes kateqoriyasına aid etdiyi eko‑dəri orqanayzer məhz bu ehtiyacları qarşılamaq üçün nəzərdə tutulub. Keyfiyyətli eko-dəri materialdan hazırlanan bu model uzunmüddətli istifadəyə davamlıdır və zərif görünüşü ilə fərqlənir. Kompakt ölçüləri sayəsində çantanızda və ya portfelinizdə çox yer tutmur, lakin lazımi əşyaların hamısını rahatlıqla yerləşdirməyə imkan verir. Gündəlik şəhər həyatında, iş qrafiklərində və ya uzunmüddətli səfərlərdə nizam-intizamı sevənlər üçün ideal seçimdir. Həm peşəkar fəaliyyətində səliqəyə üstünlük verənlər, həm də tez-tez səyahət edənlər bu praktik aksesuarın üstünlüklərini gündəlik həyatlarında hiss edə bilərlər.",
-    "seoCacheKey": "5e53986b65c8",
-    "slug": "eko-deri-orqanayzer"
+    "metaFeature": "Sənədləriniz və əşyalarınız üçün praktik orqanayzer.",
+    "seoParagraph": "Gündəlik iş həyatında və ya ezamiyyətlərdə sənədlərin səliqəli saxlanılması hər zaman vacibdir. Biznes kateqoriyasına aid edilən çanta-qovluq vacib sənədlərinizi, kartlarınızı və digər şəxsi əşyalarınızı bir yerdə, qırışmadan və zədələnmədən daşımağa imkan verir. Keyfiyyətli eko-dəri materialdan hazırlanan bu kompakt model peşəkar görünüşünüzü tamamlayır və uzunmüddətli istifadə üçün nəzərdə tutulub. Travellab Shop olaraq təqdim etdiyimiz bu funksional aksesuar iş adamları, tez-tez səyahət edənlər və həyatını planlı yaşamağı sevənlər üçün ideal seçimdir. Həm ofisdə, həm də yolda işlərinizi asanlaşdıracaq bu praktik həll vasitəsi ilə hər şey hər zaman əlinizin altında olacaq.",
+    "seoCacheKey": "dac5ceb43868",
+    "slug": "canta-qovluq"
   },
   {
     "sku": "TB-009",
-    "name": "Vizitkartlıq",
+    "name": "Vizit kart qabı",
     "categories": [
       "Biznes"
     ],
@@ -226,14 +226,14 @@
     "bestseller": true,
     "keywordP1": null,
     "keywordP2": null,
-    "metaFeature": "Vizit kartlarını cibdə və çantada təhlükəsiz saxlayır.",
-    "seoParagraph": "İş həyatında səliqə və nizam-intizam hər zaman peşəkarlığın əsas göstəricilərindən biri olmuşdur. Travellab Shop onlayn mağazasının Biznes kateqoriyasına aid edilən bu məhsul vizit kartlarını etibarlı şəkildə qorumaq üçün ideal vasitədir. Kompakt dizaynı sayəsində məhsul cibinizdə və ya çantanızda artıq yer tutmur, lazım olduqda kartlara sürətli çıxışı təmin edir. Gündəlik iş görüşləri, səfərlər və konfranslar zamanı vacib əlaqə vasitələrini bir yerdə saxlamaq istəyənlər üçün bu vizitkartlıq olduqca praktiki seçimdir. Sadə və funksional quruluşu sayəsən kartlarınız əzilmədən, təmiz və səliqəli qalır. Həm şəxsi istifadə, həm də iş yoldaşları üçün kiçik və faydalı hədiyyə olaraq uyğundur.",
-    "seoCacheKey": "0644187a9cf6",
-    "slug": "vizitkartliq"
+    "metaFeature": "Vizit kartlarını cibdə və çantada təhlükəsiz daşıyın.",
+    "seoParagraph": "Gündəlik iş həyatında səliqə-sahman və peşəkar görünüş önəmlidir. Biznes kateqoriyasına aid edilən bu vizit kart qabı görüşlər zamanı kartlarınızı əzilməkdən qoruyur və hər zaman əlçatan saxlayır. Kompakt dizaynı sayəsində istənilən cibə və ya çantaya rahatlıqla sığışır, gündəlik istifadə üçün isə son dərəcə praktikdir. Travellab Shop olaraq təqdim etdiyimiz bu funksional aksesuar iş adamları, menecerlər və tez-tez səyahət edən peşəkarlar üçün ideal seçimdir. Kartlarınızın həm səliqəli görünməsi, həm də uzun müddət zədələnmədən qorunması üçün bu məhsul iş rejiminizdə etibarlı köməkçiniz olacaq.",
+    "seoCacheKey": "77eaacd998f3",
+    "slug": "vizit-kart-qabi"
   },
   {
     "sku": "TB-010",
-    "name": "Zontik",
+    "name": "Çətir",
     "categories": [
       "Aksesuarlar"
     ],
@@ -256,10 +256,10 @@
     "bestseller": true,
     "keywordP1": null,
     "keywordP2": null,
-    "metaFeature": "Küləyə və yağışa davamlı kompakt çətir.",
-    "seoParagraph": "Səyahətlər və gündəlik şəhər gəzintiləri zamanı hava şəraitinin dəyişkənliyinə hər zaman hazır olmaq vacibdir. Aksesuarlar kateqoriyamıza daxil olan bu praktik zontik gözlənilməz yağış və küləkli havalarda sizi qorumaq üçün etibarlı seçimdir. Kompakt dizaynı sayəsində onu çantanızda, bel çantasında və ya avtomobildə heç bir yer tutmadan rahatlıqla daşıya bilərsiniz. Keyfiyyətli materialdan hazırlanmış bu model uzunmüddətli istifadə üçün nəzərdə tutulub və hərəkətdə olmağı sevənlərin əvəzolunmaz köməkçisidir. Travellab Shop onlayn mağazasından sifariş edə biləcəyiniz bu zontik səfərlərinizdə və gündəlik həyatınızda rahatlığınızı təmin edəcək.",
-    "seoCacheKey": "0791e90dbe4c",
-    "slug": "zontik"
+    "metaFeature": "Kompakt dizaynı ilə çantada asanlıqla daşınır.",
+    "seoParagraph": "Səyahət zamanı hava şəraitinin necə dəyişəcəyini əvvəlcədən təxmin etmək çətin ola bilər, xüsusilə də gözlənilməz yağışlar planları poza bilər. Travellab Shop onlayn mağazasının Aksesuarlar kateqoriyasına daxil olan bu çətir qeyri-sabit hava şəraitində rahatlığınızı təmin etmək üçün etibarlı seçimdir. Keyfiyyətli materialdan hazırlanmış çətir yağış və küləkdən qorunmağa kömək edir, onun yığcam və yüngül quruluşu isə gündəlik istifadədə, səfərlərdə və ya şəhər gəzintilərində onu çantada və ya avtomobildə yer tutmadan daşımağa imkan verir. Praktik həlləri sevənlər üçün ideal olan bu məhsul həm səyahətçilər, həm də gündəlik olaraq işə və ya universitetə gedənlər üçün faydalı gündəlik geyim tamamlayıcısıdır. Travellab Shop-dan əldə edə biləcəyiniz bu aksesuar ilə istənilən hava şəraitinə hər zaman hazır olun.",
+    "seoCacheKey": "5c3d6aa71c41",
+    "slug": "cetir"
   },
   {
     "sku": "TB-011",

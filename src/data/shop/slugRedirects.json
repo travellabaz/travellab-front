@@ -28,16 +28,22 @@
     "previous": []
   },
   "TB-008": {
-    "current": "eko-deri-orqanayzer",
-    "previous": []
+    "current": "canta-qovluq",
+    "previous": [
+      "eko-deri-orqanayzer"
+    ]
   },
   "TB-009": {
-    "current": "vizitkartliq",
-    "previous": []
+    "current": "vizit-kart-qabi",
+    "previous": [
+      "vizitkartliq"
+    ]
   },
   "TB-010": {
-    "current": "zontik",
-    "previous": []
+    "current": "cetir",
+    "previous": [
+      "zontik"
+    ]
   },
   "TB-011": {
     "current": "termos",
