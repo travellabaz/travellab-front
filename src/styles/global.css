@@ -2216,6 +2216,8 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-hotel-features-card {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 8px;
 }
 
