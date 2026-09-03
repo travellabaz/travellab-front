@@ -5365,36 +5365,41 @@ body:not(.tl-subpage) .tl-about-extra {
     padding: 24px;
   }
 
-  /* Floating badges use negative offsets to spill past the photo on
-     desktop — pull them back inside the card's own padding on mobile so
-     nothing clips against the viewport edge. */
+  /* On desktop these badges float over the photo with absolute
+     positioning. That doesn't scale down cleanly — on a narrow phone
+     the cards' natural widths collide and overlap each other. Instead,
+     drop the absolute positioning on mobile and stack everything
+     (photo, then each badge) as plain full-width blocks. */
   .tl-hotel-collage {
     margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
   }
 
-  .tl-hotel-badge-reach {
-    top: 12px;
-    right: 12px;
+  .tl-hotel-collage-photo {
+    position: static;
+    width: 100%;
+    height: 200px;
   }
 
-  .tl-hotel-badge-photo {
-    top: 90px;
-    right: 12px;
-    width: 120px;
+  .tl-hotel-badge-reach,
+  .tl-hotel-badge-photo,
+  .tl-hotel-badge-brand,
+  .tl-hotel-badge-price {
+    position: static;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
   }
 
   .tl-hotel-badge-photo img {
-    height: 70px;
-  }
-
-  .tl-hotel-badge-brand {
-    left: 12px;
-    bottom: 44px;
-  }
-
-  .tl-hotel-badge-price {
-    right: 12px;
-    bottom: 12px;
+    height: 140px;
   }
 
   .tl-viza-row {
