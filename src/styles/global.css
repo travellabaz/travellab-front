@@ -2006,6 +2006,10 @@ body:not(.tl-subpage) .tl-about-extra {
   box-shadow: var(--tl-shadow);
 }
 
+.tl-hotel-title {
+  margin-bottom: 18px;
+}
+
 .tl-hotel-desc {
   font-size: 15px;
   color: var(--tl-gray-600);
