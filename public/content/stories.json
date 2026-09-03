@@ -10,7 +10,15 @@
         { "id": "turistler-002", "type": "video", "media_url": "/stories/turistler/002.mp4", "duration_seconds": null, "link": null },
         { "id": "turistler-003", "type": "video", "media_url": "/stories/turistler/003.mp4", "duration_seconds": null, "link": null },
         { "id": "turistler-004", "type": "video", "media_url": "/stories/turistler/004.mp4", "duration_seconds": null, "link": null },
-        { "id": "turistler-005", "type": "video", "media_url": "/stories/turistler/005.mp4", "duration_seconds": null, "link": null }
+        { "id": "turistler-005", "type": "video", "media_url": "/stories/turistler/005.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-006", "type": "video", "media_url": "/stories/turistler/006.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-007", "type": "video", "media_url": "/stories/turistler/007.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-008", "type": "video", "media_url": "/stories/turistler/008.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-009", "type": "video", "media_url": "/stories/turistler/009.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-010", "type": "video", "media_url": "/stories/turistler/010.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-011", "type": "video", "media_url": "/stories/turistler/011.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-012", "type": "video", "media_url": "/stories/turistler/012.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-013", "type": "video", "media_url": "/stories/turistler/013.mp4", "duration_seconds": null, "link": null }
       ]
     },
     {
