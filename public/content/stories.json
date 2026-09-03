@@ -8,7 +8,8 @@
       "stories": [
         { "id": "turistler-001", "type": "video", "media_url": "/stories/turistler/001.mp4", "duration_seconds": null, "link": null },
         { "id": "turistler-002", "type": "video", "media_url": "/stories/turistler/002.mp4", "duration_seconds": null, "link": null },
-        { "id": "turistler-003", "type": "video", "media_url": "/stories/turistler/003.mp4", "duration_seconds": null, "link": null }
+        { "id": "turistler-003", "type": "video", "media_url": "/stories/turistler/003.mp4", "duration_seconds": null, "link": null },
+        { "id": "turistler-004", "type": "video", "media_url": "/stories/turistler/004.mp4", "duration_seconds": null, "link": null }
       ]
     },
     {
