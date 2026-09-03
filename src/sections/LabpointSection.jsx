@@ -127,9 +127,9 @@ function BenefitCard({ tag, tagClass, title, accent, accentClass, benefits, btnL
             <li key={b}><span className="tl-lp-benefit-check">{CHECK_ICON}</span>{b}</li>
           ))}
         </ul>
-        <span className="tl-lp-benefit-btn">
+        <a href="https://travellab-point.az/" target="_blank" rel="noopener noreferrer" className="tl-lp-benefit-btn">
           {btnLabel} {ARROW}
-        </span>
+        </a>
       </div>
       <VideoTeaser src={videoSrc} poster={videoPoster} />
     </div>
