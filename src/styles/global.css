@@ -2278,8 +2278,24 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 560px) {
+  /* Stay 2 columns (2 rows) instead of dropping to a single column —
+     4 full-width stacked rows made this take up a huge amount of
+     vertical space on phones. */
   .tl-hotel-features-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 12px;
+    margin-top: 16px;
+    padding-top: 20px;
+  }
+
+  .tl-hotel-features-icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 2px;
+  }
+
+  .tl-hotel-features-title {
+    font-size: 13px;
   }
 }
 
