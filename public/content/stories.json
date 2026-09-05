@@ -155,7 +155,11 @@
       "label": "Rəylər",
       "order": 8,
       "cover_icon": "star",
-      "stories": []
+      "stories": [
+        { "id": "reyler-001", "type": "image", "media_url": "/stories/reyler/001.jpg", "duration_seconds": 6, "link": null },
+        { "id": "reyler-002", "type": "image", "media_url": "/stories/reyler/002.jpg", "duration_seconds": 6, "link": null },
+        { "id": "reyler-003", "type": "image", "media_url": "/stories/reyler/003.jpg", "duration_seconds": 6, "link": null }
+      ]
     },
     {
       "id": "ofis",
