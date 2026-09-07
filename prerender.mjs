@@ -59,6 +59,7 @@ const SEO_KEY_BY_PATH = {
   '/events': 'events',
   '/viza': 'viza',
   '/hediyye-karti': 'giftCard',
+  '/korporativ': 'korporativ',
   '/endirimler': 'endirimler',
   '/shop': 'shop',
 };

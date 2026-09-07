@@ -73,6 +73,11 @@ export default function Nav() {
               {t('nav.shop')}
             </NavLink>
           </li>
+          <li>
+            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-shop-link' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+              {t('nav.korporativ')}
+            </NavLink>
+          </li>
           {/* The top bar's own LanguageSwitcher dropdown is hidden at this
               breakpoint (see .tl-nav-lang-switcher's media rule) — nesting a
               second dropdown inside an already-open menu reads worse than a
@@ -114,6 +119,11 @@ export default function Nav() {
         <li>
           <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')}>
             {t('nav.shop')}
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')}>
+            {t('nav.korporativ')}
           </NavLink>
         </li>
       </ul>
