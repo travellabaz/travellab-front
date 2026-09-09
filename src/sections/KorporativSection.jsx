@@ -90,6 +90,46 @@ const SERVICE_COLORS = {
   shop: { bg: '#EAF3DE', icon: '#3B6D11' },
 };
 
+// One specific client-approved exception to the navy/yellow brand
+// palette used everywhere else on this page — the final CTA card is
+// built to a supplied reference design that uses green (icon circles,
+// buttons), not a styling inconsistency.
+const BENEFIT_KEYS = ['process', 'partner', 'support', 'perks'];
+const BENEFIT_ICONS = {
+  process: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12l19-8-8 19-2-8-9-3z" />
+    </svg>
+  ),
+  partner: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z" /><path d="M9 12l2 2 4-4" />
+    </svg>
+  ),
+  support: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 13a8 8 0 0 1 16 0" /><rect x="3" y="13" width="4" height="6" rx="1.5" /><rect x="17" y="13" width="4" height="6" rx="1.5" /><path d="M20 19a4 4 0 0 1-4 4h-2" />
+    </svg>
+  ),
+  perks: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l2.6 5.9L21 9.6l-4.6 4.2 1.2 7.2-6.2-3.4-5.6 3.4 1.2-7.2L3 9.6l6.4-.7z" />
+    </svg>
+  ),
+};
+
+const SERVICE_OPTION_KEYS = ['flights', 'events', 'viza', 'team', 'giftCard', 'shop', 'labpoint'];
+
+const WHATSAPP_ICON = (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.5 3.5A11 11 0 0 0 3.6 17.3L2 22l4.9-1.5A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-5.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.2-.4.1-.1 0-.3 0-.4-.1-.1-.5-1.3-.7-1.8-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.1 1.5.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2z" />
+  </svg>
+);
+
+const PERSON_ICON = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4" /><path d="M4 20c1-4 4.5-6 8-6s7 2 8 6" /></svg>
+);
+
 const STEP_KEYS = ['signup', 'earn', 'use', 'more'];
 const STEP_ICONS = {
   signup: (
@@ -279,6 +319,108 @@ function CorpContactForm() {
   );
 }
 
+// Replaces the old dark-banner + separate form card at the bottom of the
+// page — single wide card over a real site photo (same plane-wing/clouds
+// shot HotelsSection.jsx uses), with its own form (adds a "which service"
+// dropdown the hero form doesn't have) and a standalone WhatsApp card.
+// Own form state, not a reuse of CorpContactForm above — different field
+// set (adds `service`, drops the free-text message box) and layout.
+function CorpFinalSection() {
+  const { t } = useTranslation();
+  const [form, setForm] = useState({ company: '', name: '', phone: '', email: '', service: '' });
+  const [error, setError] = useState('');
+  const [done, setDone] = useState(false);
+  const [waOpened, setWaOpened] = useState(null);
+
+  const setField = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const submit = (e) => {
+    e.preventDefault();
+    setError('');
+    const { company, name, phone, email, service } = form;
+    if (!name.trim()) return setError(t('korporativ.errorName'));
+    if (!company.trim()) return setError(t('korporativ.errorCompany'));
+    if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
+    if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
+
+    const msg =
+      t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +
+      (service ? t('korporativ.waMessageService', { service: t(`korporativ.serviceOption${service.charAt(0).toUpperCase()}${service.slice(1)}`) }) : '');
+    const win = window.open('https://wa.me/' + CORP_MANAGER.number + '?text=' + encodeURIComponent(msg), '_blank');
+    setWaOpened(!!win);
+    setDone(true);
+  };
+
+  const openWhatsApp = () => {
+    window.open('https://wa.me/' + CORP_MANAGER.number + '?text=' + encodeURIComponent(t('korporativ.waCardMessage')), '_blank');
+  };
+
+  return (
+    <div className="tl-corp-final-cta" style={{ backgroundImage: 'url(/images/hero/plane-wing.jpg)' }}>
+      <div className="tl-corp-final-text">
+        <div className="tl-corp-final-eyebrow">{t('korporativ.ctaEyebrow')}</div>
+        <h2 className="tl-corp-final-heading">
+          {t('korporativ.ctaHeading1')}<br /><span>{t('korporativ.ctaHeading2')}</span>
+        </h2>
+        <p className="tl-corp-final-desc">{t('korporativ.ctaSubtext')}</p>
+        <div className="tl-corp-final-benefits">
+          {BENEFIT_KEYS.map((key) => (
+            <div className="tl-corp-final-benefit" key={key}>
+              <span className="tl-corp-final-benefit-icon">{BENEFIT_ICONS[key]}</span>
+              <span>{t(`korporativ.benefit${key.charAt(0).toUpperCase()}${key.slice(1)}`)}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {done ? (
+        <div className="tl-corp-final-form-card">
+          <h3 className="tl-corp-form-title">{t('korporativ.formDoneTitle')}</h3>
+          <p className="tl-corp-form-desc">{waOpened === false ? t('korporativ.formDoneBlocked') : t('korporativ.formDoneDesc')}</p>
+        </div>
+      ) : (
+        <form className="tl-corp-final-form-card" onSubmit={submit}>
+          <h3 className="tl-corp-form-title">{t('korporativ.formTitle')}</h3>
+          <div className="tl-corp-final-form-grid">
+            <input type="text" placeholder={t('korporativ.formCompany2')} value={form.company} onChange={setField('company')} />
+            <input type="text" placeholder={t('korporativ.formName2')} value={form.name} onChange={setField('name')} />
+            <input type="tel" placeholder={t('korporativ.formPhone2')} value={form.phone} onChange={setField('phone')} />
+            <input type="email" placeholder={t('korporativ.formEmail2')} value={form.email} onChange={setField('email')} />
+          </div>
+          <select className="tl-corp-final-select" value={form.service} onChange={setField('service')}>
+            <option value="">{t('korporativ.serviceSelectPlaceholder')}</option>
+            {SERVICE_OPTION_KEYS.map((key) => (
+              <option key={key} value={key}>{t(`korporativ.serviceOption${key.charAt(0).toUpperCase()}${key.slice(1)}`)}</option>
+            ))}
+          </select>
+          {error && <p className="tl-corp-form-error">{error}</p>}
+          <button type="submit" className="tl-outlink tl-outlink-green tl-corp-form-submit">
+            {t('korporativ.formSubmit')} {ARROW}
+          </button>
+        </form>
+      )}
+
+      <div className="tl-corp-final-wa-card">
+        <span className="tl-corp-final-wa-icon">{WHATSAPP_ICON}</span>
+        <p>{t('korporativ.waCardText')}</p>
+        <button type="button" className="tl-outlink tl-outlink-green tl-corp-final-wa-btn" onClick={openWhatsApp}>
+          {t('korporativ.waCardBtn')} {ARROW}
+        </button>
+        <div className="tl-corp-final-wa-micro">
+          <span className="tl-corp-final-wa-avatars">
+            <span>{PERSON_ICON}</span>
+            <span>{PERSON_ICON}</span>
+          </span>
+          <div>
+            <strong>{t('korporativ.waCardMicro1')}</strong>
+            <span>{t('korporativ.waCardMicro2')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function KorporativSection() {
   const { t } = useTranslation();
 
@@ -399,15 +541,9 @@ export default function KorporativSection() {
 
       <PartnersSection />
 
-      {/* Final CTA + form */}
+      {/* Final CTA */}
       <div className="tl-section">
-        <div className="tl-corp-final-cta">
-          <div>
-            <h2>{t('korporativ.finalCtaTitle')}</h2>
-            <p>{t('korporativ.finalCtaDesc')}</p>
-          </div>
-        </div>
-        <CorpContactForm />
+        <CorpFinalSection />
       </div>
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
