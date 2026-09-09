@@ -817,6 +817,7 @@
     "errorCompany": "Please enter your company name.",
     "errorPhone": "Please enter a valid phone number.",
     "errorEmail": "Please enter a valid email address.",
+    "errorEmailPersonal": "Please enter your company email address.",
     "waMessage": "Hello! I'd like to apply for corporate partnership.\nName: {{name}}\nCompany: {{company}}\nPhone: {{phone}}\nEmail: {{email}}",
     "waMessageNote": "\nMessage: {{note}}",
     "formDoneTitle": "Your request has been sent",

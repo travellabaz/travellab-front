@@ -817,6 +817,7 @@
     "errorCompany": "Zəhmət olmasa şirkət adını daxil edin.",
     "errorPhone": "Zəhmət olmasa düzgün telefon nömrəsi daxil edin.",
     "errorEmail": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin.",
+    "errorEmailPersonal": "Zəhmət olmasa şirkət e-poçtunuzu daxil edin.",
     "waMessage": "Salam! Korporativ əməkdaşlıq üçün müraciət edirəm.\nAd: {{name}}\nŞirkət: {{company}}\nTelefon: {{phone}}\nE-poçt: {{email}}",
     "waMessageNote": "\nMesaj: {{note}}",
     "formDoneTitle": "Müraciətiniz göndərildi",

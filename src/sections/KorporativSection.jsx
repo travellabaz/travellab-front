@@ -12,9 +12,8 @@ import { MANAGERS } from '../utils/managers';
 // GiftCardPage's dedicated manager.
 const CORP_MANAGER = MANAGERS.find((m) => m.name === 'Xəyalə') || MANAGERS[0];
 
-// Corporate forms only accept a company email — free/consumer providers are
-// silently rejected as invalid (same generic error as any other malformed
-// address), no separate message explaining the corporate-only rule.
+// Corporate forms only accept a company email — free/consumer providers
+// are rejected with a distinct "use your company email" message.
 const PERSONAL_EMAIL_DOMAINS = new Set([
   'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.uk', 'hotmail.com',
   'outlook.com', 'live.com', 'msn.com', 'icloud.com', 'me.com', 'aol.com',
@@ -300,7 +299,8 @@ function CorpContactForm() {
     if (!name.trim()) return setError(t('korporativ.errorName'));
     if (!company.trim()) return setError(t('korporativ.errorCompany'));
     if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
-    if (!email.trim() || !email.includes('@') || isPersonalEmail(email)) return setError(t('korporativ.errorEmail'));
+    if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
+    if (isPersonalEmail(email)) return setError(t('korporativ.errorEmailPersonal'));
 
     const msg =
       t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +
@@ -360,7 +360,8 @@ function CorpFinalSection() {
     if (!name.trim()) return setError(t('korporativ.errorName'));
     if (!company.trim()) return setError(t('korporativ.errorCompany'));
     if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
-    if (!email.trim() || !email.includes('@') || isPersonalEmail(email)) return setError(t('korporativ.errorEmail'));
+    if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
+    if (isPersonalEmail(email)) return setError(t('korporativ.errorEmailPersonal'));
 
     const msg =
       t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +
