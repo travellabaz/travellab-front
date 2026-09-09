@@ -9407,9 +9407,16 @@ body:not(.tl-subpage) .tl-about-extra {
   max-width: 480px;
 }
 
+/* Tall enough that the cover-cropped window can span from her face down
+   to the notebook/logo at once — at 320px only ~38% of the source
+   photo's height was ever visible, too short to fit both no matter what
+   object-position was picked. */
 .tl-corp-hero-visual {
   position: relative;
-  min-height: 320px;
+  width: 100%;
+  min-height: 450px;
+  max-width: 420px;
+  margin-left: auto;
   border-radius: var(--tl-r-lg);
   background: linear-gradient(160deg, #ddede7, #a7cdbe);
   overflow: hidden;
@@ -9423,17 +9430,21 @@ body:not(.tl-subpage) .tl-about-extra {
   object-fit: cover;
   /* Source photo is a tall portrait crop — centering vertically (the
      object-fit default) cuts her face off on narrower/shorter
-     containers. Bias the crop toward the top so her face stays framed
-     at every container height. */
-  object-position: 50% 12%;
+     containers, and biasing too far up crops out the notebook/logo she's
+     holding lower in frame. 26% (paired with the taller min-height
+     above) keeps both her face and the notebook+logo in view together. */
+  object-position: 50% 26%;
   border-radius: 12px;
   display: block;
 }
 
+/* Top, not bottom — the notebook/logo sits centered in the lower half
+   of the frame, and the badge is wide enough that either bottom corner
+   still overlapped it. The top strip is clear background either way. */
 .tl-corp-hero-visual-caption {
   position: absolute;
   left: 20px;
-  bottom: 20px;
+  top: 20px;
   font-size: 14px;
   font-weight: 600;
   color: var(--tl-green-dark);
