@@ -9421,6 +9421,11 @@ body:not(.tl-subpage) .tl-about-extra {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Source photo is a tall portrait crop — centering vertically (the
+     object-fit default) cuts her face off on narrower/shorter
+     containers. Bias the crop toward the top so her face stays framed
+     at every container height. */
+  object-position: 50% 12%;
   border-radius: 12px;
   display: block;
 }
