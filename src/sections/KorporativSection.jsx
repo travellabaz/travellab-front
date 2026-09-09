@@ -81,16 +81,44 @@ const SERVICE_ICONS = {
   ),
 };
 const SERVICE_KEYS = ['flights', 'events', 'viza', 'team', 'giftCard', 'shop'];
+const SERVICE_COLORS = {
+  flights: { bg: '#E6F1FB', icon: '#185FA5' },
+  events: { bg: '#FAEEDA', icon: '#854F0B' },
+  viza: { bg: '#E1F5EE', icon: '#0F6E56' },
+  team: { bg: '#FAECE7', icon: '#993C1D' },
+  giftCard: { bg: '#FBEAF0', icon: '#993556' },
+  shop: { bg: '#EAF3DE', icon: '#3B6D11' },
+};
 
 const STEP_KEYS = ['signup', 'earn', 'use', 'more'];
+const STEP_ICONS = {
+  signup: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h6M9 9h2" />
+    </svg>
+  ),
+  earn: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" /><path d="M12 7v10M9.5 9.5c0-1.4 1.2-2 2.5-2s2.5.7 2.5 2c0 2.5-5 1.5-5 4 0 1.3 1.2 2 2.5 2s2.5-.6 2.5-2" />
+    </svg>
+  ),
+  use: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 12l19-8-8 19-2-8-9-3z" />
+    </svg>
+  ),
+  more: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 4h8v4a4 4 0 0 1-8 0V4z" /><path d="M8 5H5a3 3 0 0 0 3 5M16 5h3a3 3 0 0 1-3 5" /><path d="M12 13v3M10 16.5h4v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z" />
+    </svg>
+  ),
+};
 
-// CMS-editable, not hardcoded: exact thresholds (spend levels) and exact
-// perks (discount %, VIP lounge terms) haven't been confirmed by finance
-// yet — each tier is just a title + a short bullet list of plain
-// translation strings, so the numbers can be corrected later by editing
-// src/i18n/locales/*.json (same GitHub-web-editor workflow as everything
-// else on this site) without touching this component.
-const TIER_KEYS = ['bronze', 'silver', 'gold'];
+// Illustrative example balance for the LabPoint Korporativ promo card —
+// same numbers LabpointSection.jsx shows a logged-out visitor, not a real
+// per-company balance (there's no corporate account to read one from here).
+const DEMO_POINTS = '2 500';
+const DEMO_AZN = '2500';
 
 function VideoLightbox({ src, onClose }) {
   const { t } = useTranslation();
@@ -128,6 +156,68 @@ function CorpVideoCard() {
       </button>
       {open && <VideoLightbox src="/videos/korporativ/hero.mp4" onClose={() => setOpen(false)} />}
     </>
+  );
+}
+
+// Reuses LabpointSection's own .tl-lp-card/.tl-lp-cardvis markup and
+// classes verbatim (same design language, per the client's request) —
+// just this page's own tag/heading/copy/buttons on the left, and a
+// non-authenticated illustrative balance on the right (no logged-in
+// company account to read a real one from on this page).
+function CorpLabpointPromo() {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const shareUrl = 'https://travellab-point.az/';
+
+  const share = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="tl-lp-card">
+      <div>
+        <div className="tl-tag">{t('korporativ.lpTag')}</div>
+        <h2 className="tl-lp-headline">{t('korporativ.lpTitle')}</h2>
+        <p className="tl-lp-desc">{t('korporativ.lpDesc')}</p>
+        <div className="tl-lp-actions">
+          <a href="#korporativ-form" className="tl-lp-btn tl-lp-btn-primary">
+            {t('korporativ.lpApplyBtn')} {ARROW}
+          </a>
+          <Link to="/labpoint" className="tl-lp-btn tl-lp-btn-outline">
+            {t('korporativ.lpMoreBtn')} {ARROW}
+          </Link>
+        </div>
+      </div>
+
+      <div className="tl-lp-visual">
+        <div className="tl-lp-glow tl-lp-glow-blue" />
+        <div className="tl-lp-glow tl-lp-glow-green" />
+        <div className="tl-lp-cardvis">
+          <div className="tl-lp-cv-head">
+            <div className="tl-lp-cv-brand">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 2h6M10 2v6.2L5.4 17a2 2 0 0 0 1.8 3h9.6a2 2 0 0 0 1.8-3L14 8.2V2" />
+                <path d="M7.5 14h9" />
+              </svg>
+              LabPoint<sup>™</sup>
+            </div>
+            <button type="button" className="tl-lp-cv-share" onClick={share}>
+              {copied ? t('labpoint.copied') : t('labpoint.share')}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 17L17 7M8 7h9v9" />
+              </svg>
+            </button>
+          </div>
+          <div className="tl-lp-cv-bal-l">{t('labpoint.balance')}</div>
+          <div className="tl-lp-cv-bal">
+            {DEMO_POINTS} <span>LP</span>
+          </div>
+          <div className="tl-lp-cv-azn">≈ {DEMO_AZN} ₼</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -216,7 +306,8 @@ export default function KorporativSection() {
               {t('korporativ.heroCta')} {ARROW}
             </a>
           </div>
-          <div className="tl-corp-hero-visual" aria-hidden="true">
+          <div className="tl-corp-hero-visual">
+            <img src="/images/korporativ/hero-poster.jpg" alt={t('korporativ.heroVisualAlt')} />
             <span className="tl-corp-hero-visual-caption">{t('korporativ.heroVisualCaption')}</span>
           </div>
         </div>
@@ -255,35 +346,23 @@ export default function KorporativSection() {
         <div className="tl-corp-services-grid">
           {SERVICE_KEYS.map((key) => (
             <div className="tl-corp-service-card" key={key}>
-              <span className="tl-corp-service-icon">{SERVICE_ICONS[key]}</span>
+              <span className="tl-corp-service-icon" style={{ background: SERVICE_COLORS[key].bg, color: SERVICE_COLORS[key].icon }}>
+                {SERVICE_ICONS[key]}
+              </span>
               <strong>{t(`korporativ.service${key.charAt(0).toUpperCase()}${key.slice(1)}Title`)}</strong>
               <p>{t(`korporativ.service${key.charAt(0).toUpperCase()}${key.slice(1)}Desc`)}</p>
             </div>
           ))}
         </div>
 
-        {/* LabPoint Korporativ */}
-        <div className="tl-section-header" style={{ marginTop: 40 }}>
-          <div>
-            <div className="tl-tag">{t('korporativ.lpTag')}</div>
-            <h2 className="tl-title">{t('korporativ.lpTitle')}</h2>
-            <p className="tl-corp-subtitle-desc">
-              {t('korporativ.lpDesc')} <Link to="/labpoint" className="tl-viewall">{t('korporativ.lpLink')} {ARROW}</Link>
-            </p>
-          </div>
-        </div>
-        <div className="tl-corp-tiers-grid">
-          {TIER_KEYS.map((key) => (
-            <div className={`tl-corp-tier-card tl-corp-tier-${key}`} key={key}>
-              <span className="tl-corp-tier-badge">{t(`korporativ.tier${key.charAt(0).toUpperCase()}${key.slice(1)}Badge`)}</span>
-              <strong>{t(`korporativ.tier${key.charAt(0).toUpperCase()}${key.slice(1)}Title`)}</strong>
-              <ul>
-                <li>{t(`korporativ.tier${key.charAt(0).toUpperCase()}${key.slice(1)}Perk1`)}</li>
-                <li>{t(`korporativ.tier${key.charAt(0).toUpperCase()}${key.slice(1)}Perk2`)}</li>
-                <li>{t(`korporativ.tier${key.charAt(0).toUpperCase()}${key.slice(1)}Perk3`)}</li>
-              </ul>
-            </div>
-          ))}
+        {/* LabPoint Korporativ — same promo-card design language as the
+            /labpoint hero (LabpointSection.jsx's .tl-lp-card/.tl-lp-cardvis),
+            not the earlier 3-tier Bronze/Silver/Gold layout. The balance
+            shown is a fixed illustrative example (DEMO_POINTS/DEMO_AZN),
+            not a real company balance — there's no per-company account to
+            read a real one from here. */}
+        <div style={{ marginTop: 40 }}>
+          <CorpLabpointPromo />
         </div>
 
         {/* Necə işləyir */}
@@ -296,8 +375,13 @@ export default function KorporativSection() {
         <div className="tl-corp-steps-grid">
           {STEP_KEYS.map((key, i) => (
             <div className="tl-corp-step-card" key={key}>
-              <span className="tl-corp-step-n">{i + 1}</span>
-              <strong>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Title`)}</strong>
+              <span className="tl-corp-step-icon-wrap">
+                <span className="tl-corp-step-icon">{STEP_ICONS[key]}</span>
+              </span>
+              <div className="tl-corp-step-title-row">
+                <span className="tl-corp-step-n">{i + 1}</span>
+                <strong>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Title`)}</strong>
+              </div>
               <p>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Desc`)}</p>
             </div>
           ))}
