@@ -9542,7 +9542,14 @@ body:not(.tl-subpage) .tl-about-extra {
   opacity: 0.9;
 }
 
+/* The row stretches this card to match the taller 9:16 video's height
+   (grid's default align-items: stretch) — flex column + the submit
+   button's margin-top: auto below sinks the button to the bottom of
+   that stretched space instead of leaving it stranded above a dead
+   gap under a short-content card. */
 .tl-corp-form-card {
+  display: flex;
+  flex-direction: column;
   background: #f5fbf8;
   border: 1px solid #dcece5;
   border-radius: var(--tl-r-lg);
@@ -9603,6 +9610,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-corp-form-submit {
   width: 100%;
   justify-content: center;
+  margin-top: auto;
 }
 
 .tl-corp-services-grid {
@@ -9980,5 +9988,19 @@ body:not(.tl-subpage) .tl-about-extra {
   }
   .tl-corp-final-form-grid {
     grid-template-columns: 1fr;
+  }
+  /* "Necə işləyir" — too much scroll as 4 stacked cards on a phone. */
+  .tl-corp-steps-section {
+    display: none;
+  }
+  /* Final CTA — drop the background photo and the icon-benefits row on
+     mobile, keep the text/heading/form/WhatsApp card; swap in a solid
+     brand-navy background so the white text stays readable without it. */
+  .tl-corp-final-cta {
+    background-image: none;
+    background-color: var(--tl-navy);
+  }
+  .tl-corp-final-benefits {
+    display: none;
   }
 }

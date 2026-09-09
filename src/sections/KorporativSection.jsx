@@ -12,6 +12,22 @@ import { MANAGERS } from '../utils/managers';
 // GiftCardPage's dedicated manager.
 const CORP_MANAGER = MANAGERS.find((m) => m.name === 'Xəyalə') || MANAGERS[0];
 
+// Corporate forms only accept a company email — free/consumer providers are
+// silently rejected as invalid (same generic error as any other malformed
+// address), no separate message explaining the corporate-only rule.
+const PERSONAL_EMAIL_DOMAINS = new Set([
+  'gmail.com', 'googlemail.com', 'yahoo.com', 'yahoo.co.uk', 'hotmail.com',
+  'outlook.com', 'live.com', 'msn.com', 'icloud.com', 'me.com', 'aol.com',
+  'protonmail.com', 'proton.me', 'gmx.com', 'mail.ru', 'inbox.ru', 'list.ru',
+  'bk.ru', 'internet.ru', 'rambler.ru', 'yandex.ru', 'yandex.com', 'ya.ru',
+  'qq.com', '163.com', '126.com', 'box.az',
+]);
+
+function isPersonalEmail(email) {
+  const domain = email.trim().toLowerCase().split('@')[1];
+  return !domain || PERSONAL_EMAIL_DOMAINS.has(domain);
+}
+
 const ARROW = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 6l6 6-6 6" />
@@ -120,9 +136,12 @@ const BENEFIT_ICONS = {
 
 const SERVICE_OPTION_KEYS = ['flights', 'events', 'viza', 'team', 'giftCard', 'shop', 'labpoint'];
 
+// The actual WhatsApp glyph (Bootstrap Icons' "whatsapp" path), not a
+// rough approximation — same icon widely used for real "chat with us
+// on WhatsApp" buttons.
 const WHATSAPP_ICON = (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.5 3.5A11 11 0 0 0 3.6 17.3L2 22l4.9-1.5A11 11 0 1 0 20.5 3.5zM12 20a8 8 0 0 1-4-1.1l-.3-.2-3 .9.9-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-5.7c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.2-.4.1-.1 0-.3 0-.4-.1-.1-.5-1.3-.7-1.8-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.6 2.5 4 3.5.6.2 1 .4 1.3.5.6.2 1.1.1 1.5.1.5-.1 1.4-.6 1.6-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2z" />
+  <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
   </svg>
 );
 
@@ -281,7 +300,7 @@ function CorpContactForm() {
     if (!name.trim()) return setError(t('korporativ.errorName'));
     if (!company.trim()) return setError(t('korporativ.errorCompany'));
     if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
-    if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
+    if (!email.trim() || !email.includes('@') || isPersonalEmail(email)) return setError(t('korporativ.errorEmail'));
 
     const msg =
       t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +
@@ -341,7 +360,7 @@ function CorpFinalSection() {
     if (!name.trim()) return setError(t('korporativ.errorName'));
     if (!company.trim()) return setError(t('korporativ.errorCompany'));
     if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
-    if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
+    if (!email.trim() || !email.includes('@') || isPersonalEmail(email)) return setError(t('korporativ.errorEmail'));
 
     const msg =
       t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +
@@ -507,26 +526,29 @@ export default function KorporativSection() {
           <CorpLabpointPromo />
         </div>
 
-        {/* Necə işləyir */}
-        <div className="tl-section-header" style={{ marginTop: 40 }}>
-          <div>
-            <div className="tl-tag">{t('korporativ.stepsTag')}</div>
-            <h2 className="tl-title">{t('korporativ.stepsTitle')}</h2>
-          </div>
-        </div>
-        <div className="tl-corp-steps-grid">
-          {STEP_KEYS.map((key, i) => (
-            <div className="tl-corp-step-card" key={key}>
-              <span className="tl-corp-step-icon-wrap">
-                <span className="tl-corp-step-icon">{STEP_ICONS[key]}</span>
-              </span>
-              <div className="tl-corp-step-title-row">
-                <span className="tl-corp-step-n">{i + 1}</span>
-                <strong>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Title`)}</strong>
-              </div>
-              <p>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Desc`)}</p>
+        {/* Necə işləyir — hidden on mobile (.tl-corp-steps-section), too much
+            scroll for 4 stacked cards on a phone; desktop keeps it. */}
+        <div className="tl-corp-steps-section">
+          <div className="tl-section-header" style={{ marginTop: 40 }}>
+            <div>
+              <div className="tl-tag">{t('korporativ.stepsTag')}</div>
+              <h2 className="tl-title">{t('korporativ.stepsTitle')}</h2>
             </div>
-          ))}
+          </div>
+          <div className="tl-corp-steps-grid">
+            {STEP_KEYS.map((key, i) => (
+              <div className="tl-corp-step-card" key={key}>
+                <span className="tl-corp-step-icon-wrap">
+                  <span className="tl-corp-step-icon">{STEP_ICONS[key]}</span>
+                </span>
+                <div className="tl-corp-step-title-row">
+                  <span className="tl-corp-step-n">{i + 1}</span>
+                  <strong>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Title`)}</strong>
+                </div>
+                <p>{t(`korporativ.step${key.charAt(0).toUpperCase()}${key.slice(1)}Desc`)}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Tədbirlərimizdən */}
