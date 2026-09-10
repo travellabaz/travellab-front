@@ -15,7 +15,7 @@ import i18next from 'i18next';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
 import { VIZA_COUNTRIES, vizaCountrySlug } from './src/data/vizaCountries.js';
 import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
-import { TOUR_SUBCATEGORIES, TOUR_PARENT_SLUGS, getActiveSubcategories, filterToursForSubcategory } from './src/data/tourSubcategories.js';
+import { TOUR_SUBCATEGORIES, TOUR_PARENT_SLUGS, getActiveSubcategories, filterToursForSubcategory, tourParentSlug, tourSubSlug } from './src/data/tourSubcategories.js';
 import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
 import { toAccusative } from './src/utils/ruGrammar.js';
@@ -138,7 +138,7 @@ async function fetchInactiveTourIds() {
 // vite build) — Netlify matches _redirects top to bottom, first rule wins.
 // One rule per language prefix, so a stale /ru/tours/<id> bookmark also
 // redirects correctly instead of falling through to the SPA catch-all.
-function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts) {
+function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours) {
   const redirectsPath = path.join(distDir, '_redirects');
   const existing = fs.existsSync(redirectsPath) ? fs.readFileSync(redirectsPath, 'utf-8') : '';
   const inactiveLines = inactiveTourIds.flatMap((id) =>
@@ -167,6 +167,19 @@ function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts) {
     })
   );
 
+  // Tour sub-category pages: /<lang>/tours/<az-parent>/<az-sub> ->
+  // /<lang>/tours/<lang-parent>/<lang-sub>.
+  const tourSubLines = Object.keys(TOUR_PARENT_SLUGS).flatMap((parentName) =>
+    getActiveSubcategories(activeTours || [], parentName).flatMap((sub) =>
+      LANGUAGES.filter((l) => l !== DEFAULT_LANGUAGE).flatMap((lang) => {
+        const oldPath = `/tours/${TOUR_PARENT_SLUGS[parentName]}/${sub.slug}`;
+        const newPath = `/tours/${tourParentSlug(parentName, lang)}/${tourSubSlug(sub, lang)}`;
+        if (oldPath === newPath) return [];
+        return [`${buildLocalizedPath(oldPath, lang)}  ${buildLocalizedPath(newPath, lang)}  301`];
+      })
+    )
+  );
+
   // Shop URLs moved from SKU (/shop/tb-020) to a name-derived slug
   // (/shop/premium-camadan) — see Shop SEO Paketi. Two redirect sources,
   // both per language prefix:
@@ -187,9 +200,9 @@ function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts) {
     );
   });
 
-  const allLines = [...inactiveLines, ...shopLines, ...blogLines, ...vizaLines].join('\n');
+  const allLines = [...inactiveLines, ...shopLines, ...blogLines, ...vizaLines, ...tourSubLines].join('\n');
   fs.writeFileSync(redirectsPath, allLines ? `${allLines}\n${existing}` : existing);
-  console.log(`wrote ${inactiveLines.length} inactive-tour, ${shopLines.length} shop, ${blogLines.length} blog and ${vizaLines.length} viza slug redirects to dist/_redirects`);
+  console.log(`wrote ${inactiveLines.length} inactive-tour, ${shopLines.length} shop, ${blogLines.length} blog, ${vizaLines.length} viza and ${tourSubLines.length} tour-subcat slug redirects to dist/_redirects`);
 }
 
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
@@ -362,8 +375,12 @@ async function main() {
   // sub-category page appears/disappears as tours come and go.
   for (const [parentName, parentSlug] of Object.entries(TOUR_PARENT_SLUGS)) {
     for (const sub of getActiveSubcategories(activeTours, parentName)) {
+      const barePathByLang = Object.fromEntries(
+        LANGUAGES.map((l) => [l, `/tours/${tourParentSlug(parentName, l)}/${tourSubSlug(sub, l)}`])
+      );
       routeEntries.push({
         bareRoutePath: `/tours/${parentSlug}/${sub.slug}`,
+        barePathByLang,
         kind: 'tourSubcategory',
         parentName,
         sub,
@@ -604,7 +621,7 @@ async function main() {
 
   const inactiveTourIds = await fetchInactiveTourIds();
   const slugHistory = loadShopSlugRedirects();
-  writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts);
+  writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours);
 
   fs.rmSync(ssrDir, { recursive: true, force: true });
 }

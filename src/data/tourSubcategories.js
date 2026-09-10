@@ -52,30 +52,85 @@ const RAW = {
   ],
 };
 
+// Per-language slug overrides, keyed by AZ name. Only the ones that
+// actually differ per language are listed — proper-noun cities
+// (İstanbul, Antalya…) reuse the AZ slug in every language, so they're
+// omitted. Same per-language slug scheme as the blog / viza pages.
+const SUB_SLUGS = {
+  'İstanbul': { ru: 'stambul' },
+  'Kuşadası': { ru: 'kushadasy' },
+  'Fethiye': { ru: 'fethie' },
+  'Kapadokiya': { en: 'cappadocia', ru: 'kappadokiya' },
+  'Macarıstan': { en: 'hungary', ru: 'vengriya' },
+  'Böyük Britaniya': { en: 'united-kingdom', ru: 'velikobritaniya' },
+  'İtaliya': { en: 'italy', ru: 'italiya' },
+  'İspaniya': { en: 'spain', ru: 'ispaniya' },
+  'Fransa': { en: 'france', ru: 'frantsiya' },
+  'Yunanıstan': { en: 'greece', ru: 'gretsiya' },
+  'Gürcüstan': { en: 'georgia', ru: 'gruziya' },
+  'Çexiya': { en: 'czechia', ru: 'chehiya' },
+  'Portuqaliya': { en: 'portugal', ru: 'portugaliya' },
+  'Monteneqro': { en: 'montenegro', ru: 'chernogoriya' },
+  'Tailand': { en: 'thailand' },
+  'Şri-Lanka': { ru: 'shri-lanka' },
+  'BƏƏ': { en: 'uae', ru: 'oae' },
+  'Maldiv': { en: 'maldives', ru: 'maldivy' },
+  'Misir': { en: 'egypt', ru: 'egipet' },
+  'Vyetnam': { en: 'vietnam', ru: 'vetnam' },
+  'Malayziya': { en: 'malaysia' },
+  'Qatar': { ru: 'katar' },
+  'Çin': { en: 'china', ru: 'kitay' },
+  'Yaponiya': { en: 'japan' },
+};
+
 export const TOUR_SUBCATEGORIES = Object.fromEntries(
   Object.entries(RAW).map(([parent, subs]) => [
     parent,
-    subs.map(([name, keywords]) => ({ name, keywords, slug: slugify(name) })),
+    subs.map(([name, keywords]) => {
+      const slug = slugify(name);
+      const o = SUB_SLUGS[name] || {};
+      return { name, keywords, slug, slugs: { az: slug, en: o.en || slug, ru: o.ru || slug } };
+    }),
   ])
 );
 
-// Parent tab name -> its URL slug segment (/tours/<this>/<sub slug>).
-export const TOUR_PARENT_SLUGS = {
-  'Türkiyə': 'turkiye',
-  'Avropa': 'avropa',
-  'Asiya': 'asiya',
+// Parent tab name -> its URL slug segment per language
+// (/<lang>/tours/<parent>/<sub>).
+const PARENT_SLUGS_BY_LANG = {
+  'Türkiyə': { az: 'turkiye', en: 'turkey', ru: 'turtsiya' },
+  'Avropa': { az: 'avropa', en: 'europe', ru: 'evropa' },
+  'Asiya': { az: 'asiya', en: 'asia', ru: 'aziya' },
 };
 
-const PARENT_BY_SLUG = Object.fromEntries(
-  Object.entries(TOUR_PARENT_SLUGS).map(([name, slug]) => [slug, name])
+// Back-compat: the bare AZ parent slug map (used where locale isn't known).
+export const TOUR_PARENT_SLUGS = Object.fromEntries(
+  Object.entries(PARENT_SLUGS_BY_LANG).map(([name, s]) => [name, s.az])
 );
+
+export function tourParentSlug(parentName, locale) {
+  const s = PARENT_SLUGS_BY_LANG[parentName];
+  return s ? s[locale] || s.az : null;
+}
+
+export function tourSubSlug(sub, locale) {
+  return (sub.slugs && sub.slugs[locale]) || sub.slug;
+}
+
+const PARENT_BY_SLUG = {};
+for (const [name, s] of Object.entries(PARENT_SLUGS_BY_LANG)) {
+  for (const slug of Object.values(s)) PARENT_BY_SLUG[slug] = name;
+}
 
 export function getParentBySlug(slug) {
   return PARENT_BY_SLUG[slug] || null;
 }
 
 export function getSubcategory(parentName, subSlug) {
-  return (TOUR_SUBCATEGORIES[parentName] || []).find((s) => s.slug === subSlug) || null;
+  return (
+    (TOUR_SUBCATEGORIES[parentName] || []).find(
+      (s) => s.slug === subSlug || (s.slugs && Object.values(s.slugs).includes(subSlug))
+    ) || null
+  );
 }
 
 export function tourMatchesSubcategory(tour, sub) {

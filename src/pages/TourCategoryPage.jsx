@@ -1,9 +1,11 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
+import { getLocaleFromPathname } from '../utils/locale';
 import {
-  TOUR_PARENT_SLUGS,
+  tourParentSlug,
+  tourSubSlug,
   getParentBySlug,
   getSubcategory,
   getActiveSubcategories,
@@ -23,6 +25,7 @@ export default function TourCategoryPage() {
   const { category: parentSlug, subcategory: subSlug } = useParams();
   const { tours, loading, empty } = useTours();
   const [searchParams, setSearchParams] = useSearchParams();
+  const lang = getLocaleFromPathname(useLocation().pathname);
 
   const parentName = getParentBySlug(parentSlug);
   const sub = parentName ? getSubcategory(parentName, subSlug) : null;
@@ -57,7 +60,7 @@ export default function TourCategoryPage() {
 
   const place = t(`tourSubcategoryLabels.${sub.name}`, sub.name);
   const parentLabel = t(`tourCategoryLabels.${parentName}`);
-  const parentSlugSeg = TOUR_PARENT_SLUGS[parentName];
+  const parentSlugSeg = tourParentSlug(parentName, lang);
 
   const siblings = getActiveSubcategories(tours, parentName);
   const matchedTours = filterToursForSubcategory(tours, parentName, sub);
@@ -110,7 +113,7 @@ export default function TourCategoryPage() {
             {siblings.map((s) => (
               <Link
                 key={s.slug}
-                to={`/tours/${parentSlugSeg}/${s.slug}`}
+                to={`/tours/${parentSlugSeg}/${tourSubSlug(s, lang)}`}
                 className={`tl-blog-filter-pill${s.slug === sub.slug ? ' active' : ''}`}
                 aria-current={s.slug === sub.slug ? 'page' : undefined}
               >

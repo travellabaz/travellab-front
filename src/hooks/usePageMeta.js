@@ -7,7 +7,7 @@ import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug, vizaCountrySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
-import { getParentBySlug, getSubcategory } from '../data/tourSubcategories';
+import { getParentBySlug, getSubcategory, tourParentSlug, tourSubSlug } from '../data/tourSubcategories';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { getProductBySku } from '../data/shop';
 import { toAccusative } from '../utils/ruGrammar';
@@ -100,6 +100,8 @@ export default function usePageMeta() {
     const tourSub = tourSubParent ? getSubcategory(tourSubParent, tourSubMatch[2]) : null;
     const tourSubPlace = tourSub ? t(`tourSubcategoryLabels.${tourSub.name}`, tourSub.name) : null;
     const tourSubParentLabel = tourSubParent ? t(`tourCategoryLabels.${tourSubParent}`) : null;
+    const tourSubPath = (l) =>
+      tourSub && tourSubParent ? `/tours/${tourParentSlug(tourSubParent, l)}/${tourSubSlug(tourSub, l)}` : null;
     // Query-param-driven, not path-driven — prerender.mjs only produces one
     // static file for "/tours" regardless of ?category=, so this switch
     // only reaches JS-executing crawlers/visitors, same limitation every
@@ -132,7 +134,7 @@ export default function usePageMeta() {
     const pageImage = seoKey ? PAGE_META[path === '/' ? '/' : path]?.image : undefined;
 
     const isHome = path === '/';
-    const canonicalBarePath = blogPath || vizaPath || path;
+    const canonicalBarePath = blogPath || vizaPath || tourSubPath(lang) || path;
     const localizedPath = buildLocalizedPath(canonicalBarePath, lang) + (isToursList ? location.search : '');
     const pageUrl = BASE_URL + (localizedPath === '' ? '/' : localizedPath);
     const image = post
@@ -180,7 +182,7 @@ export default function usePageMeta() {
         ? `/blog/${postSlugForLocale(rawPost, l)}`
         : vizaCountry
           ? `/viza/${vizaCountrySlug(vizaCountry, l)}`
-          : path;
+          : tourSubPath(l) || path;
     document.querySelectorAll('link[data-hreflang]').forEach((el) => el.remove());
     availableLangs.forEach((l) => {
       const href = BASE_URL + (buildLocalizedPath(hreflangBarePath(l), l) || '/') + (isToursList ? location.search : '');

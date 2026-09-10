@@ -1,9 +1,10 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
+import { getLocaleFromPathname } from '../utils/locale';
 import { TOUR_CATEGORIES, getTourCategory } from '../utils/tourCategory';
-import { TOUR_PARENT_SLUGS, getActiveSubcategories } from '../data/tourSubcategories';
+import { tourParentSlug, tourSubSlug, getActiveSubcategories } from '../data/tourSubcategories';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../sections/ReviewsSection';
 import FaqSection from '../components/FaqSection';
@@ -17,6 +18,7 @@ export default function ToursPage() {
   const { t } = useTranslation();
   const { tours, loading, empty } = useTours();
   const [searchParams, setSearchParams] = useSearchParams();
+  const lang = getLocaleFromPathname(useLocation().pathname);
 
   const SORT_OPTIONS = [
     { value: '', label: t('offerSearchFilters.categoryAll') },
@@ -114,7 +116,7 @@ export default function ToursPage() {
             </Link>
           </div>
 
-          {TOUR_PARENT_SLUGS[category] && (() => {
+          {tourParentSlug(category, lang) && (() => {
             const subs = getActiveSubcategories(tours, category);
             if (subs.length === 0) return null;
             return (
@@ -122,7 +124,7 @@ export default function ToursPage() {
                 {subs.map((s) => (
                   <Link
                     key={s.slug}
-                    to={`/tours/${TOUR_PARENT_SLUGS[category]}/${s.slug}`}
+                    to={`/tours/${tourParentSlug(category, lang)}/${tourSubSlug(s, lang)}`}
                     className="tl-blog-filter-pill"
                   >
                     {t(`tourSubcategoryLabels.${s.name}`, s.name)}
