@@ -2641,12 +2641,6 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
 }
 
-.tl-instl-card-wordmark {
-  height: 14px;
-  width: auto;
-  display: block;
-}
-
 .tl-instl-card-icon {
   width: 18px;
   height: 18px;
