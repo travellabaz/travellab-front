@@ -192,7 +192,9 @@
     "totalPrice": "Total price",
     "cashback": "cashback",
     "conditionsTitle": "Conditions",
-    "managersTitle": "Get in touch"
+    "managersTitle": "Get in touch",
+    "waHotel": "Selected hotel: {{name}} — {{price}}",
+    "waPrice": "Price: {{price}}"
   },
   "installment": {
     "title": "Installments",

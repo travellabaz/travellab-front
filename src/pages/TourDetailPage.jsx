@@ -101,6 +101,21 @@ export default function TourDetailPage() {
     : parsed?.total || fallbackPrice || null;
   const cashback = currentPrice ? Math.max(1, Math.round(currentPrice.amount * 0.01)) : null;
 
+  // WhatsApp message carries the tour, the selected hotel + its price, and
+  // the post link so the manager sees exactly what the visitor picked.
+  const waText = [
+    t('common.tourInterestMessage', { title: tour.title }),
+    selectedHotel
+      ? t('tourDetail.waHotel', { name: selectedHotel.name, price: formatPrice(selectedHotel.price.amount, selectedHotel.price.currency) })
+      : currentPrice
+        ? t('tourDetail.waPrice', { price: formatPrice(currentPrice.amount, currentPrice.currency) })
+        : '',
+    tour.permalink || '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+  const waHref = (phone) => `https://wa.me/${phone}?text=${encodeURIComponent(waText)}`;
+
   return (
     <main className="tpwl-main">
       <section className="tl-page-top">
@@ -229,7 +244,7 @@ export default function TourDetailPage() {
                       <span className="tl-tourp-manager-actions">
                         <a href={`tel:+${manager.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
                         <a
-                          href={`https://wa.me/${manager.phone}?text=${encodeURIComponent(t('common.tourInterestMessage', { title: tour.title }))}`}
+                          href={waHref(manager.phone)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="wa"
@@ -248,11 +263,13 @@ export default function TourDetailPage() {
               {!expired && (
                 <div className="tl-tourp-cta">
                   <a
-                    href={manager ? `tel:+${manager.phone}` : '#'}
+                    href={manager ? (isMobile() ? waHref(manager.phone) : `tel:+${manager.phone}`) : '#'}
+                    target={isMobile() ? '_blank' : undefined}
+                    rel={isMobile() ? 'noopener noreferrer' : undefined}
                     className="tl-btn-book"
                     style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
                   >
-                    {t('common.call')}
+                    {isMobile() ? t('common.waWrite') : t('common.call')}
                   </a>
                   <button
                     type="button"

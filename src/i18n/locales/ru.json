@@ -192,7 +192,9 @@
     "totalPrice": "Итоговая цена",
     "cashback": "кэшбэк",
     "conditionsTitle": "Условия",
-    "managersTitle": "Для связи"
+    "managersTitle": "Для связи",
+    "waHotel": "Выбранный отель: {{name}} — {{price}}",
+    "waPrice": "Цена: {{price}}"
   },
   "installment": {
     "title": "Рассрочка",
