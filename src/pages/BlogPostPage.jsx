@@ -11,6 +11,41 @@ import { getLocaleFromPathname } from '../utils/locale';
 import Breadcrumb from '../components/Breadcrumb';
 
 const TOC_MIN_WORDS = 800;
+
+// "Getməzdən Əvvəl" posts can carry two optional fields the generator
+// doesn't set — added by hand per post:
+//   "videoUrl": a YouTube link/ID or a direct .mp4/.webm URL
+//   "tourCta":  { "to": "/tours/turkiye/istanbul", "label": "..." }
+// Any post in the "Getməzdən Əvvəl" category still gets a generic
+// "book a tour here" CTA even without its own tourCta.
+const TRIP_GUIDE_CATEGORY = 'Getməzdən Əvvəl';
+const YT_PATTERN = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/;
+
+function VideoEmbed({ url }) {
+  if (!url) return null;
+  const yt = YT_PATTERN.exec(url) || (/^[\w-]{11}$/.test(url) ? [null, url] : null);
+  if (yt) {
+    return (
+      <div className="tl-article-video">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${yt[1]}`}
+          title="video"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+  if (/\.(mp4|webm)(\?|$)/i.test(url)) {
+    return (
+      <div className="tl-article-video">
+        <video src={url} controls playsInline preload="metadata" />
+      </div>
+    );
+  }
+  return null;
+}
 // [anchor text](/path) — only internal, relative paths render as real
 // links; anything else (a hallucinated absolute/external URL, or just
 // literal brackets in the text) falls back to plain text so a bad model
@@ -136,6 +171,7 @@ export default function BlogPostPage() {
               Foto: <a href={post.coverCredit.url} target="_blank" rel="noopener noreferrer">{post.coverCredit.name}</a> / Pexels
             </div>
           )}
+          <VideoEmbed url={post.videoUrl} />
           {showToc && (
             <nav className="tl-article-toc" aria-label={t('blog.tableOfContents')}>
               <div className="tl-article-toc-title">{t('blog.tableOfContents')}</div>
@@ -166,6 +202,19 @@ export default function BlogPostPage() {
               return <p key={i}>{renderParagraph(block.text)}</p>;
             })}
           </div>
+
+          {(post.tourCta || post.category === TRIP_GUIDE_CATEGORY) && (
+            <Link
+              to={(post.tourCta && post.tourCta.to) || '/tours'}
+              className="tl-article-tour-cta"
+            >
+              <span>
+                <strong>{(post.tourCta && post.tourCta.label) || t('blog.tourCtaTitle')}</strong>
+                <span>{t('blog.tourCtaText')}</span>
+              </span>
+              <span className="tl-article-tour-cta-arrow" aria-hidden="true">→</span>
+            </Link>
+          )}
 
           {(endCardPosts.length > 0 || endServiceLink) && (
             <div className="tl-end-related">

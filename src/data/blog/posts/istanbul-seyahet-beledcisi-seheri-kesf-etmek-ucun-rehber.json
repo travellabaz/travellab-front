@@ -9,6 +9,10 @@
     "name": "Said",
     "url": "https://www.pexels.com/photo/a-boat-is-traveling-across-the-water-at-sunset-17713304/"
   },
+  "tourCta": {
+    "to": "/tours/turkiye/istanbul",
+    "label": "İstanbul turları"
+  },
   "az": {
     "title": "İstanbul Səyahət Bələdçisi: Şəhəri Kəşf Etmək Üçün Rəhbər",
     "excerpt": "Hərtərəfli İstanbul səyahət bələdçisi ilə Boğazın sehrli şəhərini kəşf edin: tarixi məkanlar, dadlı təamlar, gizli məhəllələr və ən faydalı praktiki məsləhətlər.",
