@@ -245,6 +245,12 @@
       "p1": "Travellab travel agency offers ready-made tour packages for those who want to travel in a group. Every tour package includes a flight, hotel stay and transfer — at affordable prices, with no extra costs.",
       "p2": "Group tours are ideal for traveling together with friends, family or colleagues. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
     },
+    "Balayı": {
+      "title": "Honeymoon Tours - Romantic Travel Packages | Travellab",
+      "desc": "Honeymoon tour packages for newlyweds. Flight, hotel and transfer included, romantic destinations at affordable prices.",
+      "p1": "Travellab travel agency offers honeymoon tour packages for newlyweds. Every tour package includes a flight, hotel stay and transfer — at affordable prices, with no extra costs.",
+      "p2": "Honeymoon tours are picked for couples seeking a romantic atmosphere and unforgettable memories. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
+    },
     "Türkiyə": {
       "title": "Turkey Tour - Affordable Packages | Travellab",
       "desc": "Affordable tour packages from Baku to Turkey. Flight, hotel and transfer included. Istanbul, Antalya and other cities.",
@@ -257,17 +263,29 @@
       "p1": "Travellab travel agency offers ready-made tour packages to Europe. Every tour package includes a flight, hotel stay and transfer — at affordable prices, with no extra costs.",
       "p2": "Europe tours suit both individual and group travel. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
     },
-    "Ekzotik": {
-      "title": "Exotic Tours - Travel to Faraway Countries | Travellab",
-      "desc": "Ready-made tour packages to exotic destinations like the Maldives, Zanzibar, and Bali. Unforgettable travel at affordable prices.",
-      "p1": "Travellab travel agency offers ready-made tour packages to exotic destinations like the Maldives, Zanzibar, and Bali. Every tour package includes a flight, hotel stay and transfer — at affordable prices, with no extra costs.",
-      "p2": "Exotic tours are ideal for those seeking unforgettable natural scenery and different cultures. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
+    "Asiya": {
+      "title": "Asia Tours - Affordable Tour Packages | Travellab",
+      "desc": "Ready-made tour packages to Thailand, Bali, the Maldives, the UAE and other Asian destinations. Flight, hotel and transfer included.",
+      "p1": "Travellab travel agency offers ready-made tour packages to Thailand, Bali, the Maldives, the UAE (Dubai), Sri Lanka and other Asian destinations. Every tour package includes a flight, hotel stay and transfer — at affordable prices, with no extra costs.",
+      "p2": "Asia tours are ideal for those seeking warm seas, exotic nature and a different culture. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
+    },
+    "İdman Turları": {
+      "title": "Sports Tours - Match and Race Travel | Travellab",
+      "desc": "Travel packages to football matches, the Champions League and other sporting events. Ticket, flight and hotel included.",
+      "p1": "Travellab travel agency arranges trips to football matches, Champions League games and other sporting events. Every tour package includes a flight, hotel stay and transfer.",
+      "p2": "Sports tours suit fans who want to support their favourite team in person. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
     },
     "Viza": {
       "title": "Visa-Supported Tours | Travellab",
       "desc": "Ready-made tour packages with visa service included. Travel without worrying about paperwork.",
       "p1": "Travellab travel agency offers ready-made tour packages with visa support included. We handle the paperwork — you just focus on your trip.",
       "p2": "These tours suit those who want to travel worry-free to destinations that require a visa. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
+    },
+    "Konsertlər": {
+      "title": "Concert Tours - Music Travel | Travellab",
+      "desc": "Travel packages to concerts and festivals abroad. Ticket assistance, flight and hotel included.",
+      "p1": "Travellab travel agency arranges trips to concerts and festivals abroad. Every tour package includes a flight, hotel stay and transfer.",
+      "p2": "Concert tours are picked for music lovers who want to see their favourite artist live. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
     },
     "all": {
       "title": "Tour Packages - Affordable Tours from Baku | Travellab",
@@ -1108,10 +1126,13 @@
   },
   "tourCategoryLabels": {
     "Qrup Turları": "Group Tours",
+    "Balayı": "Honeymoon",
     "Türkiyə": "Turkey",
     "Avropa": "Europe",
-    "Ekzotik": "Exotic",
-    "Viza": "Visa"
+    "Asiya": "Asia",
+    "İdman Turları": "Sports Tours",
+    "Viza": "Visa",
+    "Konsertlər": "Concerts"
   },
   "partners": {
     "tag": "Partners",

@@ -245,6 +245,12 @@
       "p1": "Travellab səyahət agentliyi qrup halında səyahət etmək istəyənlər üçün hazır tur paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli qiymətlərlə, əlavə xərc olmadan.",
       "p2": "Qrup turları dostlar, ailə və ya iş yoldaşları ilə birgə səyahət üçün əlverişlidir. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
     },
+    "Balayı": {
+      "title": "Balayı Turları - Romantik Səyahət Paketləri | Travellab",
+      "desc": "Yeni evlənənlər üçün balayı tur paketləri. Aviabilet, otel və transfer daxil, romantik istiqamətlərə sərfəli qiymətlərlə.",
+      "p1": "Travellab səyahət agentliyi yeni evlənən cütlüklər üçün balayı tur paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli qiymətlərlə, əlavə xərc olmadan.",
+      "p2": "Balayı turları romantik atmosfer və unudulmaz təcrübə axtaran cütlüklər üçün seçilmişdir. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
+    },
     "Türkiyə": {
       "title": "Türkiyə Turu - Sərfəli Paketlər | Travellab",
       "desc": "Bakıdan Türkiyəyə sərfəli tur paketləri. Aviabilet, otel və transfer daxil. İstanbul, Antalya və digər şəhərlər.",
@@ -257,17 +263,29 @@
       "p1": "Travellab səyahət agentliyi Avropaya hazır tur paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli qiymətlərlə, əlavə xərc olmadan.",
       "p2": "Avropa turları həm fərdi, həm qrup səyahətləri üçün uyğundur. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
     },
-    "Ekzotik": {
-      "title": "Ekzotik Turlar - Uzaq Ölkələrə Səyahət | Travellab",
-      "desc": "Maldiv, Zanzibar, Bali kimi ekzotik istiqamətlərə hazır tur paketləri. Sərfəli qiymətlərlə unudulmaz səyahət.",
-      "p1": "Travellab səyahət agentliyi Maldiv, Zanzibar, Bali kimi ekzotik istiqamətlərə hazır tur paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli qiymətlərlə, əlavə xərc olmadan.",
-      "p2": "Ekzotik turlar unudulmaz təbiət mənzərələri və fərqli mədəniyyətlər axtaranlar üçün idealdır. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
+    "Asiya": {
+      "title": "Asiya Turları - Sərfəli Tur Paketləri | Travellab",
+      "desc": "Tailand, Bali, Maldiv, BƏƏ və digər Asiya istiqamətlərinə hazır tur paketləri. Aviabilet, otel və transfer daxil.",
+      "p1": "Travellab səyahət agentliyi Tailand, Bali, Maldiv, BƏƏ (Dubay), Şri-Lanka və digər Asiya istiqamətlərinə hazır tur paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli qiymətlərlə, əlavə xərc olmadan.",
+      "p2": "Asiya turları isti dəniz, ekzotik təbiət və fərqli mədəniyyət axtaranlar üçün idealdır. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
+    },
+    "İdman Turları": {
+      "title": "İdman Turları - Matç və Yarış Səyahətləri | Travellab",
+      "desc": "Futbol matçları, çempionlar liqası və digər idman tədbirlərinə səyahət paketləri. Bilet, aviabilet və otel daxil.",
+      "p1": "Travellab səyahət agentliyi futbol matçları, çempionlar liqası oyunları və digər idman tədbirlərinə səyahət paketləri təşkil edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir.",
+      "p2": "İdman turları sevimli komandasını yerində dəstəkləmək istəyən azarkeşlər üçün uyğundur. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
     },
     "Viza": {
       "title": "Viza Dəstəkli Turlar | Travellab",
       "desc": "Viza xidməti daxil olan hazır tur paketləri. Sənədləşmədən narahat olmadan səyahət edin.",
       "p1": "Travellab səyahət agentliyi viza dəstəyi daxil olan hazır tur paketləri təklif edir. Sənədləşmə prosesini biz aparırıq — siz yalnız səyahətinizi düşünün.",
       "p2": "Bu turlar viza tələb edən istiqamətlərə narahatlıqsız səyahət etmək istəyənlər üçün uyğundur. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
+    },
+    "Konsertlər": {
+      "title": "Konsert Turları - Musiqi Səyahətləri | Travellab",
+      "desc": "Xaricdəki konsert və festivallara səyahət paketləri. Bilet əlaqələndirilməsi, aviabilet və otel daxil.",
+      "p1": "Travellab səyahət agentliyi xaricdə keçirilən konsert və festivallara səyahət paketləri təşkil edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir.",
+      "p2": "Konsert turları sevimli ifaçısını canlı izləmək istəyən musiqisevərlər üçün seçilmişdir. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
     },
     "all": {
       "title": "Tur Paketləri - Sərfəli Turlar Bakıdan | Travellab",
@@ -1108,10 +1126,13 @@
   },
   "tourCategoryLabels": {
     "Qrup Turları": "Qrup Turları",
+    "Balayı": "Balayı",
     "Türkiyə": "Türkiyə",
     "Avropa": "Avropa",
-    "Ekzotik": "Ekzotik",
-    "Viza": "Viza"
+    "Asiya": "Asiya",
+    "İdman Turları": "İdman Turları",
+    "Viza": "Viza",
+    "Konsertlər": "Konsertlər"
   },
   "partners": {
     "tag": "Partnyorlar",
