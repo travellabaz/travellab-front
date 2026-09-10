@@ -4349,6 +4349,37 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 28px;
 }
 
+/* Second row: the destination sub-category pills (/tours/turkiye/...),
+   sits directly under the main tab row so it reads as a drill-down —
+   pulled up tight against it and set a touch smaller/lighter. */
+.tl-tour-subfilter {
+  margin-top: -14px;
+  margin-bottom: 24px;
+}
+
+.tl-tour-subfilter .tl-blog-filter-pill {
+  font-size: 12px;
+  padding: 7px 14px;
+  border-color: var(--tl-gray-100);
+  background: var(--tl-gray-50, #f7f9f8);
+}
+
+.tl-crumbs {
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+  margin-bottom: 14px;
+}
+
+.tl-crumbs a {
+  color: var(--tl-gray-500, #64748b);
+  text-decoration: none;
+}
+
+.tl-crumbs a:hover {
+  color: var(--tl-green);
+  text-decoration: underline;
+}
+
 .tl-blog-filter-pill {
   font-family: 'Geist Sans', sans-serif;
   font-size: 13px;

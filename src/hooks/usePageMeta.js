@@ -7,6 +7,7 @@ import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
+import { getParentBySlug, getSubcategory } from '../data/tourSubcategories';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { getProductBySku } from '../data/shop';
 import { toAccusative } from '../utils/ruGrammar';
@@ -83,6 +84,14 @@ export default function usePageMeta() {
     const flightRouteMatch = /^\/ucuslar\/([^/]+)$/.exec(path);
     const flightRoute = flightRouteMatch ? getFlightRouteBySlug(flightRouteMatch[1]) : null;
     const flightRouteDestination = flightRoute ? t(`flightCities.${flightRoute.cityKey}`, flightRoute.cityKey) : null;
+    // /tours/<parent slug>/<sub slug> — a keyword-derived city/country
+    // page under a destination tab. getParentBySlug returns null for
+    // /tours/search/* so those still fall through to their own handlers.
+    const tourSubMatch = /^\/tours\/([^/]+)\/([^/]+)$/.exec(path);
+    const tourSubParent = tourSubMatch ? getParentBySlug(tourSubMatch[1]) : null;
+    const tourSub = tourSubParent ? getSubcategory(tourSubParent, tourSubMatch[2]) : null;
+    const tourSubPlace = tourSub ? t(`tourSubcategoryLabels.${tourSub.name}`, tourSub.name) : null;
+    const tourSubParentLabel = tourSubParent ? t(`tourCategoryLabels.${tourSubParent}`) : null;
     // Query-param-driven, not path-driven — prerender.mjs only produces one
     // static file for "/tours" regardless of ?category=, so this switch
     // only reaches JS-executing crawlers/visitors, same limitation every
@@ -104,6 +113,8 @@ export default function usePageMeta() {
               ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
               : flightRoute
                 ? { title: t('seo.flightRouteTitle', { origin: t('flights.baku'), destination: flightRouteDestination, defaultValue: `${flightRouteDestination} — Travellab` }), desc: t('seo.flightRouteDesc', { destination: flightRouteDestination, defaultValue: '' }) }
+                : tourSub
+                ? { title: t('seo.tourSubcategoryTitle', { place: tourSubPlace }), desc: t('seo.tourSubcategoryDesc', { place: tourSubPlace }) }
                 : isToursList
                   ? { title: t(`tourCategoryMeta.${categoryMetaKey}.title`), desc: t(`tourCategoryMeta.${categoryMetaKey}.desc`) }
                   : seoKey
@@ -191,6 +202,12 @@ export default function usePageMeta() {
         items.push(
           { name: t('tourSearch.tourSearchCrumb'), url: BASE_URL + buildLocalizedPath('/tours/search', lang) },
           { name: t('tourSearch.countryTitle', { country: tourSearchCountryName }), url: pageUrl }
+        );
+      } else if (tourSub) {
+        items.push(
+          { name: t('nav.tours'), url: BASE_URL + buildLocalizedPath('/tours', lang) },
+          { name: tourSubParentLabel, url: BASE_URL + buildLocalizedPath('/tours', lang) + '?category=' + encodeURIComponent(tourSubParent) },
+          { name: tourSubPlace, url: pageUrl }
         );
       } else if (flightRoute) {
         items.push(

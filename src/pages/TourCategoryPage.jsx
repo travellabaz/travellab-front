@@ -1,9 +1,14 @@
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
-import { TOUR_CATEGORIES, getTourCategory } from '../utils/tourCategory';
-import { TOUR_PARENT_SLUGS, getActiveSubcategories } from '../data/tourSubcategories';
+import {
+  TOUR_PARENT_SLUGS,
+  getParentBySlug,
+  getSubcategory,
+  getActiveSubcategories,
+  filterToursForSubcategory,
+} from '../data/tourSubcategories';
 import TourCard from '../components/TourCard';
 import ReviewsSection from '../sections/ReviewsSection';
 import FaqSection from '../components/FaqSection';
@@ -13,10 +18,14 @@ import SeoBodyText from '../components/SeoBodyText';
 
 const TOURS_PER_PAGE = 12;
 
-export default function ToursPage() {
+export default function TourCategoryPage() {
   const { t } = useTranslation();
+  const { category: parentSlug, subcategory: subSlug } = useParams();
   const { tours, loading, empty } = useTours();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const parentName = getParentBySlug(parentSlug);
+  const sub = parentName ? getSubcategory(parentName, subSlug) : null;
 
   const SORT_OPTIONS = [
     { value: '', label: t('offerSearchFilters.categoryAll') },
@@ -25,51 +34,52 @@ export default function ToursPage() {
     { value: 'date_asc', label: t('toursPage.sortDate') },
   ];
 
-  const categoryParam = searchParams.get('category') || '';
-  // Case-insensitive: the pill buttons always send an exact TOUR_CATEGORIES
-  // name, but a hand-typed or externally-linked URL might not match case.
-  const matchedCategory = TOUR_CATEGORIES.find(
-    (c) => c.name.toLocaleLowerCase('az') === categoryParam.toLocaleLowerCase('az')
-  );
-  const category = matchedCategory ? matchedCategory.name : '';
-  const categoryMetaKey = category || 'all';
-  const filteredTours = matchedCategory ? tours.filter((t) => getTourCategory(t).name === matchedCategory.name) : tours;
+  if (!parentName || !sub) {
+    return (
+      <main className="tpwl-main">
+        <section className="tl-page-top">
+          <div className="tl-section" style={{ textAlign: 'center', padding: '48px 20px' }}>
+            <h1 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 10 }}>
+              {t('toursPage.emptyCategory')}
+            </h1>
+            <Link
+              to="/tours"
+              className="tl-btn-book"
+              style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff' }}
+            >
+              {t('toursSection.viewAll')}
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  const place = t(`tourSubcategoryLabels.${sub.name}`, sub.name);
+  const parentLabel = t(`tourCategoryLabels.${parentName}`);
+  const parentSlugSeg = TOUR_PARENT_SLUGS[parentName];
+
+  const siblings = getActiveSubcategories(tours, parentName);
+  const matchedTours = filterToursForSubcategory(tours, parentName, sub);
 
   const sort = searchParams.get('sort') || '';
-  const sortedTours = sortTours(filteredTours, sort);
+  const sortedTours = sortTours(matchedTours, sort);
 
   const totalPages = Math.max(1, Math.ceil(sortedTours.length / TOURS_PER_PAGE));
   const page = Math.min(totalPages, Math.max(1, parseInt(searchParams.get('page'), 10) || 1));
   const pageTours = sortedTours.slice((page - 1) * TOURS_PER_PAGE, page * TOURS_PER_PAGE);
 
   const goToPage = (n) => {
-    if (n === 1) {
-      searchParams.delete('page');
-    } else {
-      searchParams.set('page', String(n));
-    }
+    if (n === 1) searchParams.delete('page');
+    else searchParams.set('page', String(n));
     setSearchParams(searchParams);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const selectCategory = (name) => {
-    const next = new URLSearchParams(searchParams);
-    if (name) {
-      next.set('category', name);
-    } else {
-      next.delete('category');
-    }
-    next.delete('page');
-    setSearchParams(next);
-  };
-
   const selectSort = (value) => {
     const next = new URLSearchParams(searchParams);
-    if (value) {
-      next.set('sort', value);
-    } else {
-      next.delete('sort');
-    }
+    if (value) next.set('sort', value);
+    else next.delete('sort');
     next.delete('page');
     setSearchParams(next);
   };
@@ -78,61 +88,38 @@ export default function ToursPage() {
     <main className="tpwl-main">
       <section id="tours" className="tl-page-top">
         <div className="tl-section">
+          <nav className="tl-crumbs" aria-label="Breadcrumb">
+            <Link to="/tours">{t('nav.tours')}</Link>
+            <span aria-hidden="true"> › </span>
+            <Link to={`/tours?category=${encodeURIComponent(parentName)}`}>{parentLabel}</Link>
+            <span aria-hidden="true"> › </span>
+            <span aria-current="page">{place}</span>
+          </nav>
+
           <div className="tl-section-header">
             <div>
               <div className="tl-tag">{t('toursPage.tag')}</div>
-              <h1 className="tl-title">{t('toursPage.title')}</h1>
+              <h1 className="tl-title">{t('tourSubcategory.h1', { place })}</h1>
             </div>
           </div>
 
-          <div className="tl-blog-filter" role="tablist" aria-label="Tour categories">
-            <button
-              type="button"
-              className={`tl-blog-filter-pill${category === '' ? ' active' : ''}`}
-              onClick={() => selectCategory('')}
-              aria-pressed={category === ''}
-            >
-              {t('toursPage.allTours')}
-            </button>
-            {TOUR_CATEGORIES.map((c) => (
-              <button
-                type="button"
-                key={c.name}
-                className={`tl-blog-filter-pill${category === c.name ? ' active' : ''}`}
-                onClick={() => selectCategory(c.name)}
-                aria-pressed={category === c.name}
-              >
-                {t(`tourCategoryLabels.${c.name}`)}
-              </button>
-            ))}
-            <Link to="/tours/search" className="tl-search-cta">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2.2" />
-                <path d="M21 21L16.5 16.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-              </svg>
-              {t('toursPage.liveSearch')}
+          <div className="tl-blog-filter tl-tour-subfilter" aria-label="Tour sub-categories">
+            <Link to={`/tours?category=${encodeURIComponent(parentName)}`} className="tl-blog-filter-pill">
+              {t('tourSubcategory.backToParent', { parent: parentLabel })}
             </Link>
+            {siblings.map((s) => (
+              <Link
+                key={s.slug}
+                to={`/tours/${parentSlugSeg}/${s.slug}`}
+                className={`tl-blog-filter-pill${s.slug === sub.slug ? ' active' : ''}`}
+                aria-current={s.slug === sub.slug ? 'page' : undefined}
+              >
+                {t(`tourSubcategoryLabels.${s.name}`, s.name)}
+              </Link>
+            ))}
           </div>
 
-          {TOUR_PARENT_SLUGS[category] && (() => {
-            const subs = getActiveSubcategories(tours, category);
-            if (subs.length === 0) return null;
-            return (
-              <div className="tl-blog-filter tl-tour-subfilter" aria-label="Tour sub-categories">
-                {subs.map((s) => (
-                  <Link
-                    key={s.slug}
-                    to={`/tours/${TOUR_PARENT_SLUGS[category]}/${s.slug}`}
-                    className="tl-blog-filter-pill"
-                  >
-                    {t(`tourSubcategoryLabels.${s.name}`, s.name)}
-                  </Link>
-                ))}
-              </div>
-            );
-          })()}
-
-          {!loading && !empty && (
+          {!loading && !empty && matchedTours.length > 0 && (
             <div className="tl-searchbar-extra-group" style={{ marginBottom: 20 }}>
               <span className="tl-searchbar-extra-label">{t('toursPage.sortLabel')}</span>
               {SORT_OPTIONS.map((opt) => (
@@ -154,12 +141,7 @@ export default function ToursPage() {
               {t('toursSection.loading')}
             </div>
           )}
-          {!loading && empty && (
-            <div style={{ textAlign: 'center', padding: 32, color: 'var(--tl-gray-400)', fontSize: 13 }}>
-              {t('toursSection.empty')}
-            </div>
-          )}
-          {!loading && !empty && pageTours.length === 0 && (
+          {!loading && matchedTours.length === 0 && (
             <p className="tl-blog-empty">{t('toursPage.emptyCategory')}</p>
           )}
 
@@ -173,12 +155,7 @@ export default function ToursPage() {
 
           {totalPages > 1 && (
             <nav className="tl-pagination" aria-label="Tour pages">
-              <button
-                type="button"
-                className="tl-pagination-btn"
-                onClick={() => goToPage(page - 1)}
-                disabled={page === 1}
-              >
+              <button type="button" className="tl-pagination-btn" onClick={() => goToPage(page - 1)} disabled={page === 1}>
                 {t('common.previous')}
               </button>
               <div className="tl-pagination-pages">
@@ -198,12 +175,7 @@ export default function ToursPage() {
                   )
                 )}
               </div>
-              <button
-                type="button"
-                className="tl-pagination-btn"
-                onClick={() => goToPage(page + 1)}
-                disabled={page === totalPages}
-              >
+              <button type="button" className="tl-pagination-btn" onClick={() => goToPage(page + 1)} disabled={page === totalPages}>
                 {t('common.next')}
               </button>
             </nav>
@@ -217,9 +189,9 @@ export default function ToursPage() {
 
       <section>
         <div className="tl-section">
-          <SeoBodyText key={category}>
-            <p>{t(`tourCategoryMeta.${categoryMetaKey}.p1`)}</p>
-            <p>{t(`tourCategoryMeta.${categoryMetaKey}.p2`)}</p>
+          <SeoBodyText key={`${parentSlugSeg}/${sub.slug}`}>
+            <p>{t('tourSubcategory.intro1', { place, parent: parentLabel })}</p>
+            <p>{t('tourSubcategory.intro2', { place })}</p>
           </SeoBodyText>
         </div>
       </section>

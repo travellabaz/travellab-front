@@ -15,6 +15,7 @@ import i18next from 'i18next';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
 import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
 import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
+import { TOUR_SUBCATEGORIES, TOUR_PARENT_SLUGS, getActiveSubcategories, filterToursForSubcategory } from './src/data/tourSubcategories.js';
 import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
 import { toAccusative } from './src/utils/ruGrammar.js';
@@ -317,6 +318,21 @@ async function main() {
   for (const country of TOUR_SEARCH_COUNTRIES) {
     routeEntries.push({ bareRoutePath: `/tours/search/${country.slug}`, kind: 'tourSearchCountry', country, langs: LANGUAGES });
   }
+  // /tours/<parent>/<sub> — only the sub-categories that actually have a
+  // live tour right now (the client's "boş kateqoriya render olunmur"
+  // rule). Re-evaluated every build off the same activeTours list, so a
+  // sub-category page appears/disappears as tours come and go.
+  for (const [parentName, parentSlug] of Object.entries(TOUR_PARENT_SLUGS)) {
+    for (const sub of getActiveSubcategories(activeTours, parentName)) {
+      routeEntries.push({
+        bareRoutePath: `/tours/${parentSlug}/${sub.slug}`,
+        kind: 'tourSubcategory',
+        parentName,
+        sub,
+        langs: LANGUAGES,
+      });
+    }
+  }
   for (const route of FLIGHT_ROUTES) {
     routeEntries.push({ bareRoutePath: `/ucuslar/${route.slug}`, kind: 'flightRoute', flightRoute: route, langs: LANGUAGES });
   }
@@ -376,6 +392,11 @@ async function main() {
         const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);
         title = t('seo.tourSearchCountryTitle', { country: countryName });
         desc = t('seo.tourSearchCountryDesc', { country: countryName });
+        image = DEFAULT_OG_IMAGE;
+      } else if (kind === 'tourSubcategory') {
+        const place = t(`tourSubcategoryLabels.${entry.sub.name}`, entry.sub.name);
+        title = t('seo.tourSubcategoryTitle', { place });
+        desc = t('seo.tourSubcategoryDesc', { place });
         image = DEFAULT_OG_IMAGE;
       } else if (kind === 'flightRoute') {
         const destinationName = t(`flightCities.${entry.flightRoute.cityKey}`, entry.flightRoute.cityKey);
@@ -451,6 +472,14 @@ async function main() {
         breadcrumbItems.push(
           { name: t('tourSearch.tourSearchCrumb'), url: `${BASE_URL}${buildLocalizedPath('/tours/search', lang)}` },
           { name: t('tourSearch.countryTitle', { country: countryName }), url: pageUrl }
+        );
+      } else if (kind === 'tourSubcategory') {
+        const place = t(`tourSubcategoryLabels.${entry.sub.name}`, entry.sub.name);
+        const parentLabel = t(`tourCategoryLabels.${entry.parentName}`);
+        breadcrumbItems.push(
+          { name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` },
+          { name: parentLabel, url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}?category=${encodeURIComponent(entry.parentName)}` },
+          { name: place, url: pageUrl }
         );
       } else if (kind === 'flightRoute') {
         const destinationName = t(`flightCities.${entry.flightRoute.cityKey}`, entry.flightRoute.cityKey);

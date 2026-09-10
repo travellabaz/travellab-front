@@ -962,7 +962,9 @@
     "tourSearchCountryTitle": "{{country}} turları — canlı qiymətlər — Travellab",
     "tourSearchCountryDesc": "{{country}} üçün canlı otel qiymətlərini axtarın — tarix, gecə sayı və ulduza görə filtrləyin, ən uyğun təklifi seçin.",
     "flightRouteTitle": "{{origin}}-{{destination}} Aviabiletləri - Qiymətlər və Cədvəl | Travellab",
-    "flightRouteDesc": "Bakıdan {{destination}} istiqamətinə aviabilet qiymətləri, uçuş müddəti və reys tezliyi haqqında məlumat. Ən sərfəli təklifi Travellab ilə indi tapın və bron edin!"
+    "flightRouteDesc": "Bakıdan {{destination}} istiqamətinə aviabilet qiymətləri, uçuş müddəti və reys tezliyi haqqında məlumat. Ən sərfəli təklifi Travellab ilə indi tapın və bron edin!",
+    "tourSubcategoryTitle": "{{place}} Turu - Sərfəli Paketlər | Travellab",
+    "tourSubcategoryDesc": "{{place}} üçün Bakıdan sərfəli tur paketləri. Aviabilet, otel və transfer daxil. İndi bron edin!"
   },
   "flightCities": {
     "İstanbul": "İstanbul",
@@ -1133,6 +1135,44 @@
     "İdman Turları": "İdman Turları",
     "Viza": "Viza",
     "Konsertlər": "Konsertlər"
+  },
+  "tourSubcategoryLabels": {
+    "İstanbul": "İstanbul",
+    "Antalya": "Antalya",
+    "Bodrum": "Bodrum",
+    "Trabzon": "Trabzon",
+    "Alanya": "Alanya",
+    "Kuşadası": "Kuşadası",
+    "Marmaris": "Marmaris",
+    "Fethiye": "Fethiye",
+    "Kapadokiya": "Kapadokiya",
+    "Macarıstan": "Macarıstan",
+    "Böyük Britaniya": "Böyük Britaniya",
+    "İtaliya": "İtaliya",
+    "İspaniya": "İspaniya",
+    "Fransa": "Fransa",
+    "Yunanıstan": "Yunanıstan",
+    "Gürcüstan": "Gürcüstan",
+    "Çexiya": "Çexiya",
+    "Portuqaliya": "Portuqaliya",
+    "Monteneqro": "Monteneqro",
+    "Tailand": "Tailand",
+    "Şri-Lanka": "Şri-Lanka",
+    "Bali": "Bali",
+    "BƏƏ": "BƏƏ",
+    "Maldiv": "Maldiv",
+    "Misir": "Misir",
+    "Vyetnam": "Vyetnam",
+    "Malayziya": "Malayziya",
+    "Qatar": "Qatar",
+    "Çin": "Çin",
+    "Yaponiya": "Yaponiya"
+  },
+  "tourSubcategory": {
+    "h1": "{{place}} Turları",
+    "backToParent": "← Bütün {{parent}} turları",
+    "intro1": "Travellab səyahət agentliyi {{place}} istiqamətinə hazır tur paketləri təklif edir. Hər tur paketinə aviabilet, otel gecələməsi və transfer daxildir — sərfəli qiymətlərlə, əlavə xərc olmadan.",
+    "intro2": "{{place}} turları həm fərdi, həm qrup səyahətləri üçün uyğundur. Hər tur alışında Labpoint bonus xalları qazanır, növbəti səyahətinizdə istifadə edə bilərsiniz."
   },
   "partners": {
     "tag": "Partnyorlar",

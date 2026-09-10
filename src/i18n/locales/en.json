@@ -962,7 +962,9 @@
     "tourSearchCountryTitle": "Tours to {{country}} — live prices — Travellab",
     "tourSearchCountryDesc": "Search live hotel prices for {{country}} — filter by date, number of nights and star rating, pick the best offer.",
     "flightRouteTitle": "{{origin}}–{{destination}} Flights - Prices and Schedule | Travellab",
-    "flightRouteDesc": "Flight prices, travel time and frequency from Baku to {{destination}}. Find the best deal with Travellab and book now!"
+    "flightRouteDesc": "Flight prices, travel time and frequency from Baku to {{destination}}. Find the best deal with Travellab and book now!",
+    "tourSubcategoryTitle": "{{place}} Tour - Affordable Packages | Travellab",
+    "tourSubcategoryDesc": "Affordable tour packages from Baku to {{place}}. Flight, hotel and transfer included. Book now!"
   },
   "flightCities": {
     "İstanbul": "Istanbul",
@@ -1133,6 +1135,44 @@
     "İdman Turları": "Sports Tours",
     "Viza": "Visa",
     "Konsertlər": "Concerts"
+  },
+  "tourSubcategoryLabels": {
+    "İstanbul": "Istanbul",
+    "Antalya": "Antalya",
+    "Bodrum": "Bodrum",
+    "Trabzon": "Trabzon",
+    "Alanya": "Alanya",
+    "Kuşadası": "Kuşadası",
+    "Marmaris": "Marmaris",
+    "Fethiye": "Fethiye",
+    "Kapadokiya": "Cappadocia",
+    "Macarıstan": "Hungary",
+    "Böyük Britaniya": "United Kingdom",
+    "İtaliya": "Italy",
+    "İspaniya": "Spain",
+    "Fransa": "France",
+    "Yunanıstan": "Greece",
+    "Gürcüstan": "Georgia",
+    "Çexiya": "Czechia",
+    "Portuqaliya": "Portugal",
+    "Monteneqro": "Montenegro",
+    "Tailand": "Thailand",
+    "Şri-Lanka": "Sri Lanka",
+    "Bali": "Bali",
+    "BƏƏ": "UAE",
+    "Maldiv": "Maldives",
+    "Misir": "Egypt",
+    "Vyetnam": "Vietnam",
+    "Malayziya": "Malaysia",
+    "Qatar": "Qatar",
+    "Çin": "China",
+    "Yaponiya": "Japan"
+  },
+  "tourSubcategory": {
+    "h1": "{{place}} Tours",
+    "backToParent": "← All {{parent}} tours",
+    "intro1": "Travellab travel agency offers ready-made tour packages to {{place}}. Every tour package includes a flight, hotel stay and transfer — at affordable prices, with no extra costs.",
+    "intro2": "{{place}} tours suit both individual and group travel. You earn Labpoint bonus points with every tour purchase, which you can use on your next trip."
   },
   "partners": {
     "tag": "Partners",

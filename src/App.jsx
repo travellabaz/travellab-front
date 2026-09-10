@@ -16,6 +16,7 @@ import ToursPage from './pages/ToursPage';
 import TourDetailPage from './pages/TourDetailPage';
 import TourSearchPage from './pages/TourSearchPage';
 import TourSearchCountryPage from './pages/TourSearchCountryPage';
+import TourCategoryPage from './pages/TourCategoryPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
@@ -60,6 +61,7 @@ function localeRouteChildren() {
     <Route key="tours-search" path="tours/search" element={<TourSearchPage />} />,
     <Route key="tours-search-offer" path="tours/search/offer" element={<OfferDetailPage />} />,
     <Route key="tours-search-country" path="tours/search/:country" element={<TourSearchCountryPage />} />,
+    <Route key="tours-subcategory" path="tours/:category/:subcategory" element={<TourCategoryPage />} />,
     <Route key="tours-id" path="tours/:id" element={<TourDetailPage />} />,
     <Route key="labpoint" path="labpoint" element={<LabpointPage />} />,
     <Route key="events" path="events" element={<EventsPage />} />,
