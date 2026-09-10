@@ -26,7 +26,7 @@ const RAW = {
   'Avropa': [
     ['Macarıstan', ['macarıstan', 'budapeş']],
     ['Böyük Britaniya', ['böyük britaniya', 'london', 'ingiltərə', 'britaniya']],
-    ['İtaliya', ['italiya', 'roma', 'milan', 'venesiya', 'florensiya']],
+    ['İtaliya', ['italiya', ' roma', 'romaya', 'romada', 'milan', 'venesiya', 'florensiya']],
     ['İspaniya', ['ispaniya', 'barselona', 'madrid']],
     ['Fransa', ['fransa', 'paris']],
     ['Yunanıstan', ['yunanıstan', 'afina', 'santorini', 'mikonos']],
@@ -44,8 +44,10 @@ const RAW = {
     ['Misir', ['misir', 'şarm', 'hurqada']],
     ['Vyetnam', ['vyetnam', 'nyatranq', 'hanoy']],
     ['Malayziya', ['malayziya', 'kuala-lumpur', 'kuala lumpur']],
-    ['Qatar', ['qatar', 'doha']],
-    ['Çin', ['çin', 'pekin', 'şanxay']],
+    // Not bare 'qatar' — it's also the AZ word for "train" ("qatar
+    // bileti") and appears in "Qatar hava yolları" (airline) transit notes.
+    ['Qatar', ['qatar turu', 'qatara', 'doha turu', 'dohaya']],
+    ['Çin', ['çin turu', 'çində', 'çinə', 'çin səyah', 'pekin', 'şanxay']],
     ['Yaponiya', ['yaponiya', 'tokio', 'osaka']],
   ],
 };
