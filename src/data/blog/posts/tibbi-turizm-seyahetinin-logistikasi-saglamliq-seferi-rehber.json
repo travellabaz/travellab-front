@@ -140,7 +140,8 @@
         "type": "p",
         "text": "Xaricdə tibbi turizm səyahəti düzgün təşkil olunduqda həm dərin tibbi fayda verir, həm də gərginliyi minimuma endirir. Biletlərdən tutmuş otel seçiminə, transferlərdən sənədləşməyə qədər hər bir detal Travellab komandası ilə nəzarət altındadır. Səfərinizi təhlükəsiz, rahat və tam planlı şəkildə həyata keçirmək üçün [about](/about) səhifəmizdən bizimlə əlaqə saxlaya və peşəkar dəstək ala bilərsiniz."
       }
-    ]
+    ],
+    "slug": "tibbi-turizm-seyahetinin-logistikasi-saglamliq-seferi-rehber"
   },
   "ru": {
     "title": "Логистика медицинского туризма: гид по организации поездки",
@@ -273,7 +274,8 @@
         "type": "p",
         "text": "Свяжитесь с нашими специалистами в Баку уже сегодня, чтобы обсудить детали вашей поездки, подобрать билеты, отели и составить индивидуальный маршрут. Заботьтесь о своем здоровье правильно, а всю сложную логистику мы с радостью возьмем на себя!"
       }
-    ]
+    ],
+    "slug": "logistika-meditsinskogo-turizma-gid-po-organizatsii-poezdki"
   },
   "en": {
     "title": "Medical Tourism Logistics: Your Complete Health Travel Guide",
@@ -430,6 +432,7 @@
         "type": "p",
         "text": "At Travellab, we believe that building lasting relationships with our travelers means supporting them from departure to safe return and beyond. To learn more about our agency's mission, philosophy, and dedication to seamless travel coordination, read about us on our [about](/about) page. By managing every logistical detail with professional care, we let you focus entirely on what matters most: your health, healing, and well-being."
       }
-    ]
+    ],
+    "slug": "medical-tourism-logistics-your-complete-health-travel-guide"
   }
 }

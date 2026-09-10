@@ -35,8 +35,27 @@ export function getPostsForLocale(locale) {
   return BLOG_POSTS.filter((p) => isPostAvailableInLocale(p, locale)).map((p) => localizePost(p, locale));
 }
 
+// The slug that this post's URL should use in a given locale. Trilingual
+// posts carry a per-language slug (post.en.slug etc., set by
+// scripts/migrate-blog-slugs.mjs); flat/older posts only have the one AZ
+// slug. Falls back to the canonical AZ slug when a variant has none.
+export function postSlugForLocale(post, locale) {
+  return (hasLocaleVariants(post) && post[locale] && post[locale].slug) || post.slug;
+}
+
+// Every slug this post can be reached by (canonical + each localized one)
+// — used so an old AZ-slug link on /en still resolves before the 301
+// redirect catches up.
+export function allSlugsOf(post) {
+  const slugs = new Set([post.slug]);
+  for (const loc of ['az', 'ru', 'en']) {
+    if (post[loc] && post[loc].slug) slugs.add(post[loc].slug);
+  }
+  return slugs;
+}
+
 export function getPostBySlug(slug, locale) {
-  const post = BLOG_POSTS.find((p) => p.slug === slug);
+  const post = BLOG_POSTS.find((p) => allSlugsOf(p).has(slug));
   if (!post || !isPostAvailableInLocale(post, locale)) return null;
   return localizePost(post, locale);
 }

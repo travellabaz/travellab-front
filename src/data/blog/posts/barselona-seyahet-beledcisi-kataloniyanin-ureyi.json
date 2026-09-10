@@ -120,7 +120,8 @@
         "type": "p",
         "text": "Travellab olaraq əsas məqsədimiz səyahətçilərimizin hər zaman rahat, təhlükəsiz və yaddaqalan tətil keçirməsini təmin etməkdir. Səfər planlarınızda hər hansı sual yaranarsa və ya fərdi marşrut qurmaq istəsəniz, [haqqımızda](/about) səhifəmizdən komandamızla tanış ola bilərsiniz. Gəlin növbəti səyahətinizi birlikdə planlaşdıraq və dünyanın gözəlliklərini kəşf etməyə elə bu gündən başlayaq!"
       }
-    ]
+    ],
+    "slug": "barselona-seyahet-beledcisi-kataloniyanin-ureyi"
   },
   "ru": {
     "title": "Путеводитель по Барселоне: сердце Каталонии от Travellab",
@@ -245,7 +246,8 @@
         "type": "p",
         "text": "Мы в Travellab уверены, что идеальное путешествие строится на деталях и профессиональной заботе о каждом клиенте. Узнать больше о нашей философии и принципах работы можно на странице [о компании Travellab](/about). Позвольте нам стать вашим надежным проводником в мире незабываемых путешествий, и пусть каждая новая поездка открывает для вас горизонты с самой прекрасной стороны!"
       }
-    ]
+    ],
+    "slug": "putevoditel-po-barselone-serdtse-katalonii-ot-travellab"
   },
   "en": {
     "title": "Barcelona Travel Guide: The Heart of Catalonia",
@@ -350,6 +352,7 @@
         "type": "p",
         "text": "Barcelona delivers an intoxicating blend of artistic brilliance, historical depth, and sun-soaked Mediterranean charm that leaves a lasting impression on every visitor. From marveling at Gaudí's soaring spires to savoring tapas in a hidden Gothic square, every moment in Catalonia's capital feels like a discovery. Let Travellab handle the intricate logistics, flight bookings, and personalized itineraries so you can focus entirely on enjoying the journey. To learn more about our agency philosophy and dedicated team, read more [about Travellab](/about)."
       }
-    ]
+    ],
+    "slug": "barcelona-travel-guide-the-heart-of-catalonia"
   }
 }

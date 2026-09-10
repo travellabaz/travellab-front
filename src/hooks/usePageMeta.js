@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
-import { getPostBySlug, isPostAvailableInLocale, BLOG_POSTS } from '../data/blog';
+import { getPostBySlug, isPostAvailableInLocale, BLOG_POSTS, postSlugForLocale, allSlugsOf } from '../data/blog';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug } from '../data/vizaCountries';
@@ -61,6 +61,13 @@ export default function usePageMeta() {
     const path = rawPath === '/' ? '/' : rawPath.replace(/\/$/, '');
     const postSlug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : null;
     const post = postSlug ? getPostBySlug(postSlug, lang) : null;
+    // Raw (un-localized) post — needed to read each language's own slug for
+    // the canonical URL and hreflang alternates. postSlug may be any of
+    // the post's slugs (an old AZ-slug link on /en still resolves).
+    const rawPost = postSlug ? BLOG_POSTS.find((p) => allSlugsOf(p).has(postSlug)) : null;
+    // Canonicalise the path to this locale's own slug, so /en/blog/<az-slug>
+    // (an old link) points its canonical + og:url at /en/blog/<en-slug>.
+    const blogPath = rawPost ? `/blog/${postSlugForLocale(rawPost, lang)}` : null;
     const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
     const shopProductMatch = /^\/shop\/([^/]+)$/.exec(path);
@@ -124,7 +131,8 @@ export default function usePageMeta() {
     const pageImage = seoKey ? PAGE_META[path === '/' ? '/' : path]?.image : undefined;
 
     const isHome = path === '/';
-    const localizedPath = buildLocalizedPath(path, lang) + (isToursList ? location.search : '');
+    const canonicalBarePath = blogPath || path;
+    const localizedPath = buildLocalizedPath(canonicalBarePath, lang) + (isToursList ? location.search : '');
     const pageUrl = BASE_URL + (localizedPath === '' ? '/' : localizedPath);
     const image = post
       ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
@@ -161,15 +169,15 @@ export default function usePageMeta() {
     // Blog posts only get alternates for languages that post actually has
     // (see data/blog/index.js) — no old AZ-only post pretends to have a
     // RU/EN version.
-    const availableLangs = post
-      ? SUPPORTED_LANGUAGES.filter((l) => {
-          const raw = BLOG_POSTS.find((p) => p.slug === postSlug);
-          return raw && isPostAvailableInLocale(raw, l);
-        })
+    const availableLangs = rawPost
+      ? SUPPORTED_LANGUAGES.filter((l) => isPostAvailableInLocale(rawPost, l))
       : SUPPORTED_LANGUAGES;
+    // Each language's alternate points at that language's own slug for a
+    // blog post, not the shared AZ one.
+    const hreflangBarePath = (l) => (rawPost ? `/blog/${postSlugForLocale(rawPost, l)}` : path);
     document.querySelectorAll('link[data-hreflang]').forEach((el) => el.remove());
     availableLangs.forEach((l) => {
-      const href = BASE_URL + (buildLocalizedPath(path, l) || '/') + (isToursList ? location.search : '');
+      const href = BASE_URL + (buildLocalizedPath(hreflangBarePath(l), l) || '/') + (isToursList ? location.search : '');
       const link = document.createElement('link');
       link.rel = 'alternate';
       link.hreflang = l;
@@ -181,7 +189,7 @@ export default function usePageMeta() {
       const defaultLink = document.createElement('link');
       defaultLink.rel = 'alternate';
       defaultLink.hreflang = 'x-default';
-      defaultLink.href = BASE_URL + (path || '/') + (isToursList ? location.search : '');
+      defaultLink.href = BASE_URL + (hreflangBarePath(DEFAULT_LANGUAGE) || '/') + (isToursList ? location.search : '');
       defaultLink.setAttribute('data-hreflang', 'x-default');
       document.head.appendChild(defaultLink);
     }

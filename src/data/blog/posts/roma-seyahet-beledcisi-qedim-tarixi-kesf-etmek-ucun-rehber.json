@@ -144,7 +144,8 @@
         "type": "p",
         "text": "Travellab olaraq hər zaman yanınızdayıq: arzularınızdakı tətili gerçəkliyə çevirmək üçün indi hərəkətə keçin və növbəti sərgüzəştinizi bizimlə planlaşdırın!"
       }
-    ]
+    ],
+    "slug": "roma-seyahet-beledcisi-qedim-tarixi-kesf-etmek-ucun-rehber"
   },
   "ru": {
     "title": "Путеводитель по Риму: как исследовать древнюю историю",
@@ -265,7 +266,8 @@
         "type": "p",
         "text": "Если вы хотите узнать больше о нашей компании, принципах работы и команде профессионалов, загляните в раздел [о компании Travellab](/about). Мы всегда готовы поделиться экспертным опытом и помочь организовать незабываемое путешествие вашей мечты."
       }
-    ]
+    ],
+    "slug": "putevoditel-po-rimu-kak-issledovat-drevnyuyu-istoriyu"
   },
   "en": {
     "title": "Rome Travel Guide: Discovering Ancient History",
@@ -386,6 +388,7 @@
         "type": "p",
         "text": "Rome rewards the curious traveler with layers of history, world-class gastronomy, and unforgettable streetscapes at every turn. Let Travellab take the guesswork out of your logistics so you can experience Italy with complete peace of mind. To learn more about our agency's philosophy, expertise, and personalized client approach, visit our [about](/about) page. Whenever you are ready to turn your travel dreams into reality, reach out to our team and let us craft your ideal Mediterranean getaway."
       }
-    ]
+    ],
+    "slug": "rome-travel-guide-discovering-ancient-history"
   }
 }

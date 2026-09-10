@@ -148,7 +148,8 @@
         "type": "p",
         "text": "Bütün təşkilati qayğıları peşəkarlara həvalə etmək istəyirsinizsə, Travellab komandası sizin üçün fərdi istəklərə uyğun [hazır tur paketləri](/tours) təklif etməyə hazırdır. Biz birbaşa uçuş biletlərinin tənzimlənməsindən rahat otel bronlarına, transfer xidmətlərindən ekskursiya bələdçiliyinə qədər bütün mərhələlərdə yanınızdayıq. Arzuladığınız Dubay tətilini bizimlə planlaşdırın və səyahətin hər anından zövq alın!"
       }
-    ]
+    ],
+    "slug": "dubay-seyahet-beledcisi-ilk-defe-gedenler-ucun-tam-rehber"
   },
   "ru": {
     "title": "Путеводитель по Дубаю: полный гид для тех, кто едет впервые",
@@ -293,7 +294,8 @@
         "type": "p",
         "text": "Обратитесь в офис туристического агентства Travellab в Баку или оставьте заявку на консультацию: мы разработаем безупречную программу вашей поездки, чтобы сказочный Восток открылся вам с самой яркой стороны."
       }
-    ]
+    ],
+    "slug": "putevoditel-po-dubayu-polnyy-gid-dlya-teh-kto-edet-vpervye"
   },
   "en": {
     "title": "Dubai Travel Guide for First-Timers: The Complete Plan",
@@ -442,6 +444,7 @@
         "type": "p",
         "text": "At Travellab, our experienced travel consultants are ready to design your customized Dubai getaway from Baku—complete with curated hotel stays, private transfers, desert safaris, and personalized advice. Contact our team today or visit our Baku office to turn your dream Middle Eastern journey into a reality."
       }
-    ]
+    ],
+    "slug": "dubai-travel-guide-for-first-timers-the-complete-plan"
   }
 }

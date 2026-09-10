@@ -112,7 +112,8 @@
         "type": "p",
         "text": "Tibbi turizm sadəcə xaricdə həkimə getmək deyil; bu, fiziki bərpa, düzgün logistika və peşəkar səyahət planlamasının vəhdətidir. Travellab komandası olaraq biz sizin sağlamlıq səfərinizin hər bir addımında — biletlərdən tutmuş otel seçiminə və viza dəstəyinə qədər — yanınızdayıq. Haqqımızda daha ətraflı öyrənmək üçün [Travellab haqqında](/about) səhifəmizi ziyarət edə bilərsiniz. Unutmayın ki, sağlamlığınız ən qiymətli sərmayənizdir və onu peşəkarlara etibar etmək hər zaman ən doğru qərardır."
       }
-    ]
+    ],
+    "slug": "tibbi-turizm-xaricde-mualice-ve-saglamliq-seferi-beledcisi"
   },
   "ru": {
     "title": "Медицинский туризм: организация лечения за рубежом",
@@ -245,7 +246,8 @@
         "type": "p",
         "text": "Свяжитесь с нашими специалистами уже сегодня, чтобы обсудить детали вашей будущей поездки, подобрать оптимальный маршрут из Баку и сделать медицинский туризм максимально комфортным и безопасным."
       }
-    ]
+    ],
+    "slug": "meditsinskiy-turizm-organizatsiya-lecheniya-za-rubezhom"
   },
   "en": {
     "title": "Medical Tourism Guide: Planning Your Treatment Abroad",
@@ -382,6 +384,7 @@
         "type": "p",
         "text": "Whether you are traveling for a comprehensive preventive check-up, an aesthetic procedure, or specialized wellness therapies, we ensure your journey is comfortable, safe, and aligned with your timetable. Contact our Baku travel specialists today to structure your personalized medical travel itinerary and travel with complete peace of mind."
       }
-    ]
+    ],
+    "slug": "medical-tourism-guide-planning-your-treatment-abroad"
   }
 }

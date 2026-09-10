@@ -160,7 +160,8 @@
         "type": "p",
         "text": "Səyahət agentliyimiz Travellab, İslandiyada fərdi campervan turlarından tutmuş peşəkar bələdçili buzlaq ekspedisiyalarına qədər hər bir detalın planlaşdırılmasında yanınızdadır. Arzularınızdakı ekstremal tətili ertələməyin — bizimlə əlaqə saxlayın və od ilə buz diyarındakı öz şəxsi hekayənizi yazmağa bugün başlayın!"
       }
-    ]
+    ],
+    "slug": "islandiyada-ekstremal-macera-seyaheti-tam-beledci"
   },
   "ru": {
     "title": "Экстремальное путешествие в Исландию: гид от Travellab",
@@ -317,7 +318,8 @@
         "type": "p",
         "text": "Мы подберем идеальные даты, забронируем оптимальные авиабилеты из аэропорта Гейдар Алиев, оформим визовое сопровождение, забронируем спецтехнику и лицензированных англо- или русскоязычных гидов. Доверьте свое экстремальное приключение профессионалам Travellab — свяжитесь с нами прямо сейчас и отправляйтесь покорять край огня и льда с полным чувством уверенности и безопасности!"
       }
-    ]
+    ],
+    "slug": "ekstremalnoe-puteshestvie-v-islandiyu-gid-ot-travellab"
   },
   "en": {
     "title": "Extreme Adventure Travel in Iceland: Ultimate Guide",
@@ -458,6 +460,7 @@
         "type": "p",
         "text": "As a dedicated agency, Travellab takes care of all the complex logistics—from custom itinerary design and 4x4 rental arrangements to guided excursion bookings and Schengen visa assistance. If you are ready to trade ordinary vacations for extraordinary Arctic thrills, explore our curated selection of [Europe tours](/tours?category=Avropa) or visit our Baku office today to start customizing your Icelandic adventure."
       }
-    ]
+    ],
+    "slug": "extreme-adventure-travel-in-iceland-ultimate-guide"
   }
 }

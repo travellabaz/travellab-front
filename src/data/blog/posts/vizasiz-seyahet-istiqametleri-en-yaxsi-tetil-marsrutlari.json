@@ -156,7 +156,8 @@
         "type": "p",
         "text": "Növbəti məzuniyyətinizi və ya həftəsonu istirahətinizi təxirə salmayın. Travellab komandası olaraq biz sizə ən uyğun tətili planlaşdırmaqda kömək etməkdən şad olarıq. Bizimlə əlaqə saxlayın, arzuladığınız istiqaməti seçin və unudulmaz xatirələr toplamaq üçün ilk addımı bu gün atın!"
       }
-    ]
+    ],
+    "slug": "vizasiz-seyahet-istiqametleri-en-yaxsi-tetil-marsrutlari"
   },
   "ru": {
     "title": "Безвизовые страны для граждан Азербайджана: лучшие маршруты",
@@ -333,7 +334,8 @@
         "type": "p",
         "text": "Готовы к новому приключению? Изучите наши [готовые турпакеты](/tours) или свяжитесь с офисом Travellab, чтобы доверить организацию вашего идеального отпуска профессионалам!"
       }
-    ]
+    ],
+    "slug": "bezvizovye-strany-dlya-grazhdan-azerbaydzhana-luchshie"
   },
   "en": {
     "title": "Visa-Free Travel Destinations: Top Vacation Routes from Baku",
@@ -514,6 +516,7 @@
         "type": "p",
         "text": "As a full-service Baku travel agency, Travellab takes care of all the heavy lifting for your trip. We arrange optimal flight routes from GYD, secure hand-picked hotel accommodations, handle private airport transfers, and tailor individual itineraries suited to your exact schedule and budget. Contact our friendly agency team today, and let us turn your next visa-free dream vacation into an effortless reality!"
       }
-    ]
+    ],
+    "slug": "visa-free-travel-destinations-top-vacation-routes-from-baku"
   }
 }

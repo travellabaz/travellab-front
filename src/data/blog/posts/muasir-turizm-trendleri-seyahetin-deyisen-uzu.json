@@ -124,7 +124,8 @@
         "type": "p",
         "text": "Müasir turizm trendləri göstərir ki, uğurlu səyahət düzgün planlaşdırma və etibarlı tərəfdaşdan asılıdır. İstər Avropanın qədim küçələrində gəzmək, istərsə də ekzotik adalarda dincəlmək istəyin, hər bir detal peşəkar yanaşma tələb edir. Ən məşhur Avropa istiqamətləri ilə tanış olmaq üçün [tours?category=Avropa](/tours?category=Avropa) səhifəmizi nəzərdən keçirə bilərsiniz. Unutmayın ki, hər səyahət yeni bir hekayədir və bu hekayəni ən gözəl şəkildə yazmaq sizin əlinizdədir."
       }
-    ]
+    ],
+    "slug": "muasir-turizm-trendleri-seyahetin-deyisen-uzu"
   },
   "ru": {
     "title": "Современные тренды туризма: меняющееся лицо путешествий",
@@ -241,7 +242,8 @@
         "type": "p",
         "text": "Современные тренды туризма доказывают, что путешествовать стало проще технологически, но интереснее и глубже содержательно. Не откладывайте свои мечты на потом — мир полон удивительных мест, готовых к открытию. Доверьте организацию профессионалам туристического агентства Travellab, выберите направление по душе и отправляйтесь навстречу незабываемым эмоциям уже в ближайшие выходные."
       }
-    ]
+    ],
+    "slug": "sovremennye-trendy-turizma-menyayuscheesya-litso"
   },
   "en": {
     "title": "Modern Tourism Trends: The Changing Face of Travel",
@@ -378,6 +380,7 @@
         "type": "p",
         "text": "At Travellab, we combine deep industry expertise with personalized agency care to ensure your next trip exceeds every expectation. To learn more about our philosophy, our dedicated team, and how we craft exceptional journeys from Baku to the world, visit our [about](/about) page. Let us help you navigate the changing face of travel and turn your wanderlust into reality."
       }
-    ]
+    ],
+    "slug": "modern-tourism-trends-the-changing-face-of-travel"
   }
 }

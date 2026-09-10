@@ -144,7 +144,8 @@
         "type": "p",
         "text": "Növbəti macəranızı təxirə salmayın. Xəyallarınızdakı təbiət qoynuna səyahəti planlaşdırmaq üçün [hazır tur paketləri](/tours) təkliflərimizi incələyin və ya peşəkar komandamızla əlaqə saxlayaraq xüsusi marşrut hazırlayın."
       }
-    ]
+    ],
+    "slug": "dag-trekkinqi-ve-ekstremal-macera-seyaheti-beledcisi"
   },
   "ru": {
     "title": "Гид по горному треккингу и экстремальным путешествиям",
@@ -269,7 +270,8 @@
         "type": "p",
         "text": "Команда туристического агентства Travellab готова взять на себя все заботы по организации вашей следующей экспедиции — от логистики и бронирования до профессионального сопровождения на маршруте. Если вы хотите узнать больше о наших стандартах качества и философии компании, прочитайте информацию в разделе [о компании Travellab](/about). А чтобы всегда быть в курсе наших специальных предложений, участвуйте в бонусной программе и копите баллы, используя [бонусная программа Labpoint](/labpoint). Сделайте первый шаг навстречу вершинам уже сегодня!"
       }
-    ]
+    ],
+    "slug": "gid-po-gornomu-trekkingu-i-ekstremalnym-puteshestviyam"
   },
   "en": {
     "title": "Mountain Trekking Guide for Extreme Adventure Travelers",
@@ -366,6 +368,7 @@
         "type": "p",
         "text": "As a dedicated travel agency based in Baku, Travellab is committed to crafting extraordinary, secure, and deeply immersive journeys for every outdoor enthusiast. Whether you are seeking a rugged independent trek or a fully supported expedition, we handle the intricacies so you can focus entirely on the horizon. To discover more about our philosophy and team, visit our [about](/about) page. If you are ready to book comfortable accommodation for your recovery days before or after the trek, explore our curated [hotels](/hotels) selection. Step out of your comfort zone, embrace the wild, and let Travellab guide your next great mountain adventure."
       }
-    ]
+    ],
+    "slug": "mountain-trekking-guide-for-extreme-adventure-travelers"
   }
 }

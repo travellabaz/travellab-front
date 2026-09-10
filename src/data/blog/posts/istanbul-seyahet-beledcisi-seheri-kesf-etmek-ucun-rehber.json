@@ -156,7 +156,8 @@
         "type": "p",
         "text": "Travellab səyahət agentliyi olaraq, hər bir müştərimizin fərdi maraqlarına və istəklərinə uyğun unikal səyahət marşrutları qururuq. Şirkətimizin təcrübəsi və xidmət fəlsəfəsi haqqında daha çox öyrənmək üçün [Travellab haqqında](/about) bölməmizlə tanış ola, hər səyahətinizdə xal toplayaraq növbəti turlarınızda endirimlər qazanmaq üçün isə [Labpoint bonus proqramı](/labpoint) imkanlarından dərhal faydalana bilərsiniz. Çantanızı hazırlayın, İstanbulun sehrli küçələri sizi gözləyir!"
       }
-    ]
+    ],
+    "slug": "istanbul-seyahet-beledcisi-seheri-kesf-etmek-ucun-rehber"
   },
   "ru": {
     "title": "Гид по Стамбулу: подробный путеводитель по городу",
@@ -269,7 +270,8 @@
         "type": "p",
         "text": "Туристическое агентство Travellab всегда готово стать вашим надежным проводником в мире путешествий. Мы поможем спланировать идеальный маршрут, организуем перелет, подберем отель и ответим на любые вопросы. Начните свое незабываемое путешествие уже сегодня: изучите актуальные [туры в Турцию](/tours?category=Türkiyə) или воспользуйтесь разделом [поиск авиабилетов](/search), чтобы сделать первый шаг к своей мечте."
       }
-    ]
+    ],
+    "slug": "gid-po-stambulu-podrobnyy-putevoditel-po-gorodu"
   },
   "en": {
     "title": "Ultimate Istanbul Travel Guide: Discover the Magic",
@@ -382,6 +384,7 @@
         "type": "p",
         "text": "Let Travellab take the stress out of travel planning. Reach out to our agency experts today to discuss bespoke itineraries, or browse our comprehensive [about](/about) page to learn more about how we turn ordinary trips into extraordinary travel experiences."
       }
-    ]
+    ],
+    "slug": "ultimate-istanbul-travel-guide-discover-the-magic"
   }
 }

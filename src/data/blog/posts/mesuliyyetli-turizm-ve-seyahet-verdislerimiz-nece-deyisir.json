@@ -120,7 +120,8 @@
         "type": "p",
         "text": "Əgər siz də növbəti səyahətinizi peşəkar dəstəklə, ekoloji və şüurlu prinsiplərə əsaslanaraq planlaşdırmaq istəyirsinizsə, [about](/about) səhifəmizdən komandamızla tanış ola və xidmətlərimizdən yararlana bilərsiniz. Unutmayın ki, ən gözəl səyahətlər şüurlu başlananlardır."
       }
-    ]
+    ],
+    "slug": "mesuliyyetli-turizm-ve-seyahet-verdislerimiz-nece-deyisir"
   },
   "ru": {
     "title": "Ответственный туризм: как меняются привычки путешественников",
@@ -269,7 +270,8 @@
         "type": "p",
         "text": "Готовы спланировать свою следующую осознанную поездку? Доверьте организацию профессионалам из Travellab — мы подберем для вас лучшие маршруты, отели и билеты, учитывая все ваши пожелания. Свяжитесь с нами сегодня, чтобы сделать первый шаг навстречу незабываемым и экологичным путешествиям!"
       }
-    ]
+    ],
+    "slug": "otvetstvennyy-turizm-kak-menyayutsya-privychki"
   },
   "en": {
     "title": "Responsible Tourism: How Our Travel Habits Are Changing",
@@ -378,6 +380,7 @@
         "type": "p",
         "text": "Ready to plan your next conscious journey? Get in touch with our expert team to design a personalized itinerary that respects both your wanderlust and the planet. Learn more about our philosophy and services on our [about](/about) page, or let us help you take the first step toward a smarter, more sustainable travel experience today."
       }
-    ]
+    ],
+    "slug": "responsible-tourism-how-our-travel-habits-are-changing"
   }
 }

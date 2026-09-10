@@ -201,16 +201,29 @@ async function fetchPexelsPhotos(query, count) {
   }));
 }
 
+// AZ + Cyrillic -> Latin. Mirrors src/utils/slugify.js (kept inline: this
+// script must run standalone under Node with no src/ imports in CI).
 function slugify(title) {
-  const map = { ə: 'e', ı: 'i', ğ: 'g', ş: 's', ç: 'c', ö: 'o', ü: 'u', Ə: 'e', İ: 'i', Ğ: 'g', Ş: 's', Ç: 'c', Ö: 'o', Ü: 'u' };
-  return title
+  const AZ = { ə: 'e', ı: 'i', ğ: 'g', ş: 's', ç: 'c', ö: 'o', ü: 'u', Ə: 'e', İ: 'i', Ğ: 'g', Ş: 's', Ç: 'c', Ö: 'o', Ü: 'u' };
+  const RU = {
+    а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z',
+    и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r',
+    с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch', ш: 'sh',
+    щ: 'sch', ъ: '', ы: 'y', ь: '', э: 'e', ю: 'yu', я: 'ya',
+  };
+  const map = { ...AZ };
+  for (const [k, v] of Object.entries(RU)) { map[k] = v; map[k.toUpperCase()] = v; }
+  const s = (title || '')
     .split('')
     .map((ch) => map[ch] ?? ch)
     .join('')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 60);
+    .replace(/^-+|-+$/g, '');
+  if (s.length <= 60) return s;
+  const cut = s.slice(0, 60);
+  const lastDash = cut.lastIndexOf('-');
+  return (lastDash > 20 ? cut.slice(0, lastDash) : cut).replace(/-+$/, '');
 }
 
 // Old posts are flat {title, ...}; new posts carry {az: {title, ...}, ...}
@@ -600,7 +613,7 @@ async function main() {
     return Array.isArray(draft.imageAltTexts) ? draft.imageAltTexts : [];
   }
 
-  function buildLangContent(draft) {
+  function buildLangContent(draft, langSlug) {
     const alts = altTextsFor(draft);
     const inlinePhotos = inlinePhotosBase.map((photo, i) => ({ ...photo, alt: alts[i + 1] || photo.alt }));
     return {
@@ -609,6 +622,9 @@ async function main() {
       // Falls back to excerpt if the model omits this — a slightly-too-long
       // meta description beats none at all.
       metaDescription: draft.metaDescription || draft.excerpt,
+      // Per-language URL slug (see scripts/migrate-blog-slugs.mjs) — so
+      // /en/ and /ru/ URLs read in their own language, not AZ.
+      slug: langSlug,
       body: insertInlinePhotos(draft.body, inlinePhotos),
     };
   }
@@ -623,9 +639,9 @@ async function main() {
     date: today,
     coverImage: coverPhoto?.src || COVER_IMAGES[dayIndex % COVER_IMAGES.length],
     coverCredit: coverPhoto ? { name: coverPhoto.credit, url: coverPhoto.creditUrl } : null,
-    az: buildLangContent(azDraft),
-    ru: buildLangContent(ruDraft),
-    en: buildLangContent(enDraft),
+    az: buildLangContent(azDraft, slug),
+    ru: buildLangContent(ruDraft, slugify(ruDraft.title)),
+    en: buildLangContent(enDraft, slugify(enDraft.title)),
   };
 
   const outPath = path.join(postsDir, `${slug}.json`);

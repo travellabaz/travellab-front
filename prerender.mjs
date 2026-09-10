@@ -138,12 +138,25 @@ async function fetchInactiveTourIds() {
 // vite build) — Netlify matches _redirects top to bottom, first rule wins.
 // One rule per language prefix, so a stale /ru/tours/<id> bookmark also
 // redirects correctly instead of falling through to the SPA catch-all.
-function writeRedirects(inactiveTourIds, shopProducts, slugHistory) {
+function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts) {
   const redirectsPath = path.join(distDir, '_redirects');
   const existing = fs.existsSync(redirectsPath) ? fs.readFileSync(redirectsPath, 'utf-8') : '';
   const inactiveLines = inactiveTourIds.flatMap((id) =>
     LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`)
   );
+
+  // Blog posts used to live at /<lang>/blog/<AZ-slug> in every language;
+  // trilingual posts now carry a per-language slug, so the old localized
+  // URL 301s to the new one. AZ is unchanged (its slug was always the
+  // canonical one).
+  const blogLines = (blogPosts || []).flatMap((post) => {
+    if (!hasLocaleVariants(post)) return [];
+    return LANGUAGES.filter((l) => l !== DEFAULT_LANGUAGE && isPostAvailableInLocale(post, l)).flatMap((lang) => {
+      const newSlug = postSlugForLocale(post, lang);
+      if (newSlug === post.slug) return [];
+      return [`${buildLocalizedPath(`/blog/${post.slug}`, lang)}  ${buildLocalizedPath(`/blog/${newSlug}`, lang)}  301`];
+    });
+  });
 
   // Shop URLs moved from SKU (/shop/tb-020) to a name-derived slug
   // (/shop/premium-camadan) — see Shop SEO Paketi. Two redirect sources,
@@ -165,9 +178,9 @@ function writeRedirects(inactiveTourIds, shopProducts, slugHistory) {
     );
   });
 
-  const allLines = [...inactiveLines, ...shopLines].join('\n');
+  const allLines = [...inactiveLines, ...shopLines, ...blogLines].join('\n');
   fs.writeFileSync(redirectsPath, allLines ? `${allLines}\n${existing}` : existing);
-  console.log(`wrote ${inactiveLines.length} inactive-tour redirects and ${shopLines.length} shop slug redirects to dist/_redirects`);
+  console.log(`wrote ${inactiveLines.length} inactive-tour redirects, ${shopLines.length} shop slug redirects and ${blogLines.length} blog slug redirects to dist/_redirects`);
 }
 
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
@@ -234,6 +247,20 @@ function localizePost(post, lang) {
   return { ...post, ...(post[lang] || post.az) };
 }
 
+// Per-language slug for a post's URL (post.en.slug etc., from
+// scripts/migrate-blog-slugs.mjs); AZ / flat posts fall back to the
+// canonical slug. Mirrors src/data/blog/index.js.
+function postSlugForLocale(post, lang) {
+  return (hasLocaleVariants(post) && post[lang] && post[lang].slug) || post.slug;
+}
+
+// A route entry can carry a per-language bare path (blog posts do, one per
+// localized slug); everything else uses the same bare path in every
+// language.
+function entryBarePath(entry, lang) {
+  return (entry.barePathByLang && entry.barePathByLang[lang]) || entry.bareRoutePath;
+}
+
 function buildArticleJson(post, pageUrl, lang) {
   return JSON.stringify({
     '@context': 'https://schema.org',
@@ -277,12 +304,12 @@ function buildBreadcrumbJson(items) {
 
 // hreflang alternates for a route: one per language the route actually
 // exists in (see availableLangs per-entry below), plus x-default -> AZ.
-function buildHreflangTags(bareRoutePath, availableLangs, extraQuery = '') {
+function buildHreflangTags(entry, availableLangs, extraQuery = '') {
   const tags = availableLangs.map(
-    (lang) => `<link rel="alternate" hreflang="${lang}" href="${BASE_URL}${buildLocalizedPath(bareRoutePath, lang)}${extraQuery}" />`
+    (lang) => `<link rel="alternate" hreflang="${lang}" href="${BASE_URL}${buildLocalizedPath(entryBarePath(entry, lang), lang)}${extraQuery}" />`
   );
   if (availableLangs.includes(DEFAULT_LANGUAGE)) {
-    tags.push(`<link rel="alternate" hreflang="x-default" href="${BASE_URL}${bareRoutePath}${extraQuery}" />`);
+    tags.push(`<link rel="alternate" hreflang="x-default" href="${BASE_URL}${entryBarePath(entry, DEFAULT_LANGUAGE)}${extraQuery}" />`);
   }
   return tags.join('\n  ');
 }
@@ -310,7 +337,8 @@ async function main() {
   }
   for (const post of blogPosts) {
     const langs = LANGUAGES.filter((l) => isPostAvailableInLocale(post, l));
-    routeEntries.push({ bareRoutePath: `/blog/${post.slug}`, kind: 'blog', slug: post.slug, langs });
+    const barePathByLang = Object.fromEntries(langs.map((l) => [l, `/blog/${postSlugForLocale(post, l)}`]));
+    routeEntries.push({ bareRoutePath: `/blog/${post.slug}`, barePathByLang, kind: 'blog', slug: post.slug, langs });
   }
   for (const country of VIZA_COUNTRIES) {
     routeEntries.push({ bareRoutePath: `/viza/${country.slug}`, kind: 'vizaCountry', country, langs: LANGUAGES });
@@ -360,7 +388,7 @@ async function main() {
 
     for (const lang of langs) {
       const t = translators[lang];
-      const localizedRoutePath = buildLocalizedPath(bareRoutePath, lang);
+      const localizedRoutePath = buildLocalizedPath(entryBarePath(entry, lang), lang);
       const isHome = localizedRoutePath === '' || localizedRoutePath === '/';
       const pageUrl = BASE_URL + (isHome ? '/' : localizedRoutePath);
 
@@ -442,7 +470,7 @@ async function main() {
       html = setAttrById(html, 'twitter-desc', 'content', desc);
       html = setAttrById(html, 'twitter-image', 'content', image);
 
-      const hreflangTags = buildHreflangTags(bareRoutePath, langs);
+      const hreflangTags = buildHreflangTags(entry, langs);
       html = html.replace('</head>', `  ${hreflangTags}\n  </head>`);
 
       const homeHref = BASE_URL + (buildLocalizedPath('/', lang) || '/');
@@ -543,15 +571,15 @@ async function main() {
   // its own hreflang alternate entries (Google's documented multi-language
   // sitemap format) — blog posts only list the languages they actually
   // have, same rule as the prerender loop above.
-  const urlEntries = routeEntries.flatMap(({ bareRoutePath, langs }) =>
-    langs.map((lang) => {
-      const localizedRoutePath = buildLocalizedPath(bareRoutePath, lang);
+  const urlEntries = routeEntries.flatMap((entry) =>
+    entry.langs.map((lang) => {
+      const localizedRoutePath = buildLocalizedPath(entryBarePath(entry, lang), lang);
       const loc = `${BASE_URL}${localizedRoutePath || '/'}`;
-      const alternates = langs
-        .map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${BASE_URL}${buildLocalizedPath(bareRoutePath, l) || '/'}" />`)
+      const alternates = entry.langs
+        .map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${BASE_URL}${buildLocalizedPath(entryBarePath(entry, l), l) || '/'}" />`)
         .join('\n');
-      const defaultAlternate = langs.includes(DEFAULT_LANGUAGE)
-        ? `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}${bareRoutePath}" />`
+      const defaultAlternate = entry.langs.includes(DEFAULT_LANGUAGE)
+        ? `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}${entryBarePath(entry, DEFAULT_LANGUAGE)}" />`
         : '';
       return `  <url>\n    <loc>${loc}</loc>\n${alternates}${defaultAlternate}\n  </url>`;
     })
@@ -566,7 +594,7 @@ async function main() {
 
   const inactiveTourIds = await fetchInactiveTourIds();
   const slugHistory = loadShopSlugRedirects();
-  writeRedirects(inactiveTourIds, shopProducts, slugHistory);
+  writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts);
 
   fs.rmSync(ssrDir, { recursive: true, force: true });
 }

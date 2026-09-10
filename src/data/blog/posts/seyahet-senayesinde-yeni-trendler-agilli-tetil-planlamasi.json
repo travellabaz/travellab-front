@@ -144,7 +144,8 @@
         "type": "p",
         "text": "Travellab olaraq biz sizin səyahət arzularınızı reallığa çevirmək üçün buradayıq. Daha ətraflı məlumat əldə etmək və komandamızla tanış olmaq üçün [about](/about) səhifəmizi ziyarət edə bilərsiniz. Gəlin növbəti səyahətinizi birlikdə planlaşdıraq!"
       }
-    ]
+    ],
+    "slug": "seyahet-senayesinde-yeni-trendler-agilli-tetil-planlamasi"
   },
   "ru": {
     "title": "Умное планирование путешествий: новые тренды сезона",
@@ -317,7 +318,8 @@
         "type": "p",
         "text": "Хотите узнать больше о наших принципах работы, команде и стандартах качества? Приглашаем вас познакомиться с нами поближе на странице [о компании Travellab](/about). Доверьте свой следующий отпуск профессионалам, которые знают о путешествиях абсолютно всё."
       }
-    ]
+    ],
+    "slug": "umnoe-planirovanie-puteshestviy-novye-trendy-sezona"
   },
   "en": {
     "title": "Smart Vacation Planning: New Trends in Travel",
@@ -466,6 +468,7 @@
         "type": "p",
         "text": "Get in touch with the Travellab team today to design your customized itinerary, secure the best rates, and travel with absolute confidence."
       }
-    ]
+    ],
+    "slug": "smart-vacation-planning-new-trends-in-travel"
   }
 }
