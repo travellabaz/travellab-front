@@ -10022,14 +10022,9 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-corp-steps-section {
     display: none;
   }
-  /* Final CTA — drop the background photo and the icon-benefits row on
-     mobile, keep the text/heading/form/WhatsApp card; swap in a solid
-     brand-navy background so the white text stays readable without it. */
-  .tl-corp-final-cta {
-    background-image: none;
-    background-color: var(--tl-navy);
-  }
-  .tl-corp-final-benefits {
+  /* Final CTA — hidden entirely on mobile (client request); desktop keeps
+     the full photo-background card unchanged. */
+  .tl-corp-final-section {
     display: none;
   }
 }

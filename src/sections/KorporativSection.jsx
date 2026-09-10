@@ -562,8 +562,9 @@ export default function KorporativSection() {
         <EventsGallery />
       </div>
 
-      {/* Final CTA */}
-      <div className="tl-section">
+      {/* Final CTA — hidden entirely on mobile (.tl-corp-final-section),
+          desktop unchanged. */}
+      <div className="tl-section tl-corp-final-section">
         <CorpFinalSection />
       </div>
 
