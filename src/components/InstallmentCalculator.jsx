@@ -5,10 +5,11 @@ import { formatPrice } from '../utils/price';
 // Shared across the Tour, Hotel and Shop product pages — same markup and
 // rates everywhere. Rate tables are per the Tour Page brief; YapıKredi is
 // intentionally omitted (not active). Month keys map to the surcharge %.
+// Only round terms are offered — 2 and 9 month options were dropped.
 const CARDS = [
-  { id: 'birkart', label: 'BirKart', color: '#E30613', months: { 2: 4, 3: 5, 6: 9, 9: 12, 12: 15, 18: 20 } },
-  { id: 'tamkart', label: 'TamKart', color: '#EC1C24', months: { 2: 3, 3: 4, 6: 7, 9: 10, 12: 13, 18: 20, 24: 26 } },
-  { id: 'bolkart', label: 'BolKart', color: '#1D2C5B', months: { 3: 4, 6: 7, 9: 10, 12: 12, 18: 17, 24: 21 } },
+  { id: 'birkart', label: 'BirKart', color: '#E30613', months: { 3: 5, 6: 9, 12: 15, 18: 20 } },
+  { id: 'tamkart', label: 'TamKart', color: '#EC1C24', months: { 3: 4, 6: 7, 12: 13, 18: 20, 24: 26 } },
+  { id: 'bolkart', label: 'BolKart', color: '#1D2C5B', months: { 3: 4, 6: 7, 12: 12, 18: 17, 24: 21 } },
 ];
 
 export default function InstallmentCalculator({ basePrice, currency }) {
