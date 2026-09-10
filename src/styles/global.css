@@ -2317,62 +2317,397 @@ body:not(.tl-subpage) .tl-about-extra {
    align-items: start instead of stretch, so it no longer grows to match
    however tall the description text happens to be (that's what made it
    look huge on tours with a long caption). ── */
-.tl-tour-detail {
-  background: var(--tl-white);
-  border-radius: var(--tl-r-xl);
-  overflow: hidden;
-  max-width: 960px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Not stretch — a long description would keep growing the photo taller
-     to match it. Fixed, generous height instead; if the text column ends
-     up taller, the extra space below the photo just stays empty. */
-  align-items: start;
-  border: 1px solid var(--tl-gray-200);
-  box-shadow: var(--tl-shadow);
+/* ── TOUR (PRODUCT) DETAIL PAGE — .tl-tourp-* — structured from the
+   parsed Instagram caption (see utils/parseTourCaption.js). ── */
+.tl-tourp {
+  max-width: 760px;
 }
 
-.tl-tour-detail-img {
-  position: relative;
-  height: 480px;
-  background-size: contain;
-  background-repeat: no-repeat;
+.tl-tourp-hero {
+  height: 320px;
+  border-radius: var(--tl-r-xl);
+  background-size: cover;
   background-position: center;
   background-color: var(--tl-gray-50);
+  position: relative;
+  margin-bottom: 22px;
 }
 
-.tl-tour-detail-body {
-  padding: 40px;
+.tl-tourp-hero .tl-badge-off {
+  position: absolute;
+  top: 14px;
+  left: 14px;
 }
 
-.tl-tour-detail-title {
+.tl-tourp-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 8px 0 12px;
+  line-height: 1.25;
+}
+
+.tl-tourp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 24px;
+}
+
+.tl-tourp-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  color: var(--tl-gray-600);
+}
+
+.tl-tourp-meta svg {
+  color: var(--tl-green);
+}
+
+.tl-tourp-block {
+  margin-bottom: 28px;
+}
+
+.tl-tourp-h2 {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 12px;
+}
+
+.tl-tourp-hotels {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tl-tourp-hotel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  text-align: left;
+  padding: 14px 16px;
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-white);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.tl-tourp-hotel:hover {
+  border-color: var(--tl-green);
+}
+
+.tl-tourp-hotel.active {
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+}
+
+.tl-tourp-hotel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tl-tourp-hotel-info strong {
+  font-size: 14px;
+  color: var(--tl-navy);
+}
+
+.tl-tourp-hotel-info span {
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+}
+
+.tl-tourp-hotel-price {
+  flex-shrink: 0;
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-incl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.tl-tourp-incl-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--tl-gray-600);
+}
+
+.tl-tourp-incl-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 22px;
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-green-light);
+  margin-bottom: 28px;
+}
+
+.tl-tourp-total-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tl-green-dark);
+  margin-bottom: 2px;
+}
+
+.tl-tourp-total strong {
   font-family: 'Geist Sans', sans-serif;
   font-size: 24px;
   font-weight: 800;
-  color: var(--tl-navy);
-  margin: 0 0 16px;
-  line-height: 1.3;
+  color: var(--tl-green-dark);
 }
 
-.tl-tour-detail-desc {
+.tl-tourp-cashback {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: 1px solid var(--tl-green);
+  border-radius: 100px;
+  background: var(--tl-white);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-green-dark);
+  cursor: pointer;
+}
+
+.tl-tourp-cashback:hover {
+  background: var(--tl-green);
+  color: var(--tl-white);
+}
+
+.tl-tourp-conditions {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tl-tourp-conditions li {
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+  line-height: 1.5;
+}
+
+.tl-tourp-managers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tl-tourp-manager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-gray-50, #f7f9f8);
+}
+
+.tl-tourp-manager-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tl-tourp-manager-info strong {
+  font-size: 14px;
+  color: var(--tl-navy);
+}
+
+.tl-tourp-manager-info span {
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+}
+
+.tl-tourp-manager-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tl-tourp-manager-actions a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  color: var(--tl-gray-600);
+  text-decoration: none;
+}
+
+.tl-tourp-manager-actions a:hover {
+  border-color: var(--tl-green);
+  color: var(--tl-green);
+}
+
+.tl-tourp-manager-actions a.wa {
+  background: var(--tl-green-light);
+  border-color: transparent;
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-rawdesc {
   font-size: 14px;
   color: var(--tl-gray-600);
   line-height: 1.8;
   white-space: pre-wrap;
-  margin-bottom: 20px;
 }
 
-@media (max-width: 900px) {
-  .tl-tour-detail {
-    grid-template-columns: 1fr;
-  }
+.tl-tourp-cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
 
-  .tl-tour-detail-img {
-    height: 220px;
-  }
+/* ── Shared installment calculator — .tl-instl-* (Tour / Hotel / Shop) ── */
+.tl-instl-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 4px;
+}
 
-  .tl-tour-detail-body {
-    padding: 24px;
+.tl-instl-sub {
+  font-size: 13px;
+  color: var(--tl-gray-500, #64748b);
+  margin: 0 0 14px;
+}
+
+.tl-instl-cards {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tl-instl-card {
+  flex: 1;
+  padding: 12px 10px;
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-white);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.tl-instl-card:hover {
+  border-color: var(--tl-gray-300, #cbd5e1);
+}
+
+.tl-instl-months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tl-instl-month {
+  padding: 7px 12px;
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: 100px;
+  background: var(--tl-white);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+}
+
+.tl-instl-month span {
+  color: var(--tl-gray-400);
+  font-weight: 500;
+}
+
+.tl-instl-month.active {
+  background: var(--tl-navy);
+  border-color: var(--tl-navy);
+  color: var(--tl-white);
+}
+
+.tl-instl-month.active span {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tl-instl-result {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 12px;
+}
+
+.tl-instl-result-label {
+  display: block;
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+  margin-bottom: 3px;
+}
+
+.tl-instl-result strong {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--tl-navy);
+}
+
+.tl-instl-note {
+  font-size: 12px;
+  color: var(--tl-gray-400);
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .tl-tourp-hero {
+    height: 200px;
+  }
+  .tl-tourp-incl {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .tl-instl-cards {
+    flex-direction: column;
+  }
+  .tl-instl-result {
+    gap: 24px;
   }
 }
 

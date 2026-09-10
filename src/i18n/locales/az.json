@@ -186,7 +186,21 @@
     "notFoundDesc": "Təklif dəyişmiş və ya vaxtı keçmiş ola bilər. Digər turlarımıza baxa bilərsiniz.",
     "backToAll": "Bütün turlara bax",
     "home": "Ana səhifə",
-    "tours": "Turlar"
+    "tours": "Turlar",
+    "hotelsTitle": "Otellər və qiymətlər",
+    "includedTitle": "Qiymətə daxildir",
+    "totalPrice": "Cəmi qiymət",
+    "cashback": "keşbek",
+    "conditionsTitle": "Şərtlər",
+    "managersTitle": "Əlaqə üçün"
+  },
+  "installment": {
+    "title": "Hissəli ödəniş kalkulyatoru",
+    "subtitle": "Kartınızı seçin, aylıq ödənişinizi görün.",
+    "months": "{{count}} ay",
+    "monthly": "Aylıq ödəniş",
+    "total": "Yekun qiymət",
+    "commissionNote": "Sifarişin rəsmiləşdirilməsi zamanı əlavə komissiya tətbiq oluna bilər."
   },
   "offerDetail": {
     "notFoundTitle": "Bu təklif artıq mövcud deyil",

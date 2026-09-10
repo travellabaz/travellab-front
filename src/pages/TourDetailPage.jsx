@@ -1,31 +1,60 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { useTours } from '../context/ToursContext';
-import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
-import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber } from '../utils/managers';
-import { extractMinPrice, formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
+import { useCart } from '../context/CartContext';
+import { isMobile } from '../utils/managers';
+import { extractMinPrice, formatPrice } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
 import { toTourCartItem } from '../utils/tourCartItem';
-import { useCart } from '../context/CartContext';
+import { parseTourCaption } from '../utils/parseTourCaption';
+import InstallmentCalculator from '../components/InstallmentCalculator';
 import Breadcrumb from '../components/Breadcrumb';
+
+const S = (p) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    {p}
+  </svg>
+);
+const INCLUDED_ICONS = {
+  '✈️': S(<path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8 4.8 6.2a.5.5 0 0 0-.5.8L8 11l-3 3H3l-1 1 3 2 2 3 1-1v-2l3-3 3.9 3.7a.5.5 0 0 0 .8-.5Z" />),
+  '🧳': S(<><rect x="5" y="8" width="14" height="12" rx="2" /><path d="M9 8V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3M9 12v4M15 12v4" /></>),
+  '🏩': S(<><path d="M3 21h18M4 21V7l8-4 8 4v14M9 21v-4a3 3 0 0 1 6 0v4" /></>),
+  '🏨': S(<><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 7h.01M13 7h.01M9 11h.01M13 11h.01M9 15h.01M13 15h.01" /></>),
+  '🥧': S(<><path d="M3 11h18M4 11a8 8 0 0 1 16 0M8 21l1-6M16 21l-1-6M6 21h12" /></>),
+  '🥐': S(<><path d="M3 11h18M4 11a8 8 0 0 1 16 0M8 21l1-6M16 21l-1-6M6 21h12" /></>),
+  '🚗': S(<><path d="M5 17h14M6 17l-1-5 2-5h10l2 5-1 5M6 12h12" /><circle cx="7.5" cy="17.5" r="1.5" /><circle cx="16.5" cy="17.5" r="1.5" /></>),
+  '🚉': S(<><rect x="6" y="3" width="12" height="14" rx="2" /><path d="M6 11h12M9 17l-2 4M15 17l2 4M9 7h.01M15 7h.01" /></>),
+  '🚆': S(<><rect x="6" y="3" width="12" height="14" rx="2" /><path d="M6 11h12M9 17l-2 4M15 17l2 4M9 7h.01M15 7h.01" /></>),
+  '🎟️': S(<><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 4 2 2 0 0 1-2 2H5a2 2 0 0 1-2-2 2 2 0 0 0 0-4Z" /><path d="M9 6v12" strokeDasharray="2 2" /></>),
+  '📃': S(<><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" /><path d="M14 2v6h6M9 13h6M9 17h6" /></>),
+};
+
+const PHONE_ICON = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z" />
+  </svg>
+);
+const WA_ICON = (
+  <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
+  </svg>
+);
 
 export default function TourDetailPage() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { tours, loading } = useTours();
-  const { isAuthenticated, profile } = useAuth();
-  const { openManagerContact } = useModals();
+  const { openAuth } = useModals();
   const { addItem } = useCart();
-  const [manager, setManager] = useState(pickManager);
 
-  const tour = tours.find((t) => String(t.id) === id);
+  const tour = tours.find((x) => String(x.id) === id);
+  const parsed = useMemo(() => (tour ? parseTourCaption(tour.description) : null), [tour]);
 
-  useEffect(() => {
-    if (tour) setManager(pickManager());
-  }, [tour]);
+  const [hotelIdx, setHotelIdx] = useState(0);
+  useEffect(() => setHotelIdx(0), [id]);
 
   if (loading) {
     return (
@@ -47,9 +76,7 @@ export default function TourDetailPage() {
             <h1 style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--tl-navy)', marginBottom: 10 }}>
               {t('tourDetail.notFoundTitle')}
             </h1>
-            <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', marginBottom: 20 }}>
-              {t('tourDetail.notFoundDesc')}
-            </p>
+            <p style={{ fontSize: 14, color: 'var(--tl-gray-600)', marginBottom: 20 }}>{t('tourDetail.notFoundDesc')}</p>
             <Link to="/tours" className="tl-btn-book" style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff' }}>
               {t('tourDetail.backToAll')}
             </Link>
@@ -59,11 +86,14 @@ export default function TourDetailPage() {
     );
   }
 
-  const link = managerLink(tour, manager, t);
-  const price = extractMinPrice(tour.description);
-  const reward = price ? calcReward(price) : null;
-  const balanceDiscount = price && isAuthenticated ? calcBalanceDiscount(price, Number(profile.azn) || 0) : null;
   const expired = isTourExpired(tour.description);
+  const hotels = parsed?.hotels || [];
+  const selectedHotel = hotels[hotelIdx] || null;
+  const fallbackPrice = extractMinPrice(tour.description);
+  const currentPrice = selectedHotel
+    ? selectedHotel.price
+    : parsed?.total || fallbackPrice || null;
+  const cashback = currentPrice ? Math.max(1, Math.round(currentPrice.amount * 0.01)) : null;
 
   return (
     <main className="tpwl-main">
@@ -77,71 +107,149 @@ export default function TourDetailPage() {
             ]}
           />
 
-          <div className="tl-tour-detail">
-            <div
-              className="tl-tour-detail-img"
-              role="img"
-              aria-label={tour.title}
-              style={{ backgroundImage: tour.imageUrl ? `url('${tour.imageUrl}')` : 'none' }}
-            >
-              {(expired || reward) && (
-                <div className="tl-pkg-badges">
-                  {expired ? (
-                    <span className="tl-badge tl-badge-off">{t('tourCard.expired')}</span>
-                  ) : (
-                    <span className="tl-badge tl-badge-lp">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 1L7.35 4.15L10.8 4.5L8.2 6.77L8.95 10.15L6 8.35L3.05 10.15L3.8 6.77L1.2 4.5L4.65 4.15L6 1Z" fill="currentColor" />
-                      </svg>
-                      +{formatPoints(reward.points)} {t('tourCard.labPoint')}
+          <div className="tl-tourp">
+            {tour.imageUrl && (
+              <div className="tl-tourp-hero" role="img" aria-label={tour.title} style={{ backgroundImage: `url('${tour.imageUrl}')` }}>
+                {expired && <span className="tl-badge tl-badge-off">{t('tourCard.expired')}</span>}
+              </div>
+            )}
+
+            <div className="tl-tourp-main">
+              <div className="tl-tag">{t('tourDetail.tours')}</div>
+              <h1 className="tl-tourp-title">{tour.title}</h1>
+
+              {(parsed?.dateText || parsed?.destination || parsed?.duration || parsed?.venue) && (
+                <div className="tl-tourp-meta">
+                  {parsed.dateText && (
+                    <span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+                      {parsed.dateText}
+                    </span>
+                  )}
+                  {(parsed.destination || parsed.venue) && (
+                    <span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
+                      {parsed.venue || parsed.destination}
+                    </span>
+                  )}
+                  {parsed.duration && (
+                    <span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                      {parsed.duration}
                     </span>
                   )}
                 </div>
               )}
-            </div>
 
-            <div className="tl-tour-detail-body">
-              <h1 className="tl-tour-detail-title">{tour.title}</h1>
-              <p className="tl-tour-detail-desc">{tour.description}</p>
+              {hotels.length > 0 && (
+                <div className="tl-tourp-block">
+                  <h2 className="tl-tourp-h2">{t('tourDetail.hotelsTitle')}</h2>
+                  <div className="tl-tourp-hotels">
+                    {hotels.map((h, i) => (
+                      <button
+                        type="button"
+                        key={i}
+                        className={`tl-tourp-hotel${i === hotelIdx ? ' active' : ''}`}
+                        onClick={() => setHotelIdx(i)}
+                        aria-pressed={i === hotelIdx}
+                      >
+                        <span className="tl-tourp-hotel-info">
+                          <strong>{h.name}</strong>
+                          {h.location && <span>{h.location}</span>}
+                        </span>
+                        <span className="tl-tourp-hotel-price">{formatPrice(h.price.amount, h.price.currency)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-              {price && (
-                <div style={{ marginBottom: 20 }}>
-                  <span style={{ fontFamily: "'Geist Sans', sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--tl-green)' }}>
-                    {formatPrice(price.amount, price.currency)}
-                  </span>
-                  {balanceDiscount && balanceDiscount.discountAzn > 0 && (
-                    <div className="tl-price-inst">
-                      <span>{t('tourCard.labPointDiscount', { discount: formatPrice(balanceDiscount.discountAzn, 'AZN'), final: formatPrice(balanceDiscount.finalAzn, 'AZN') })}</span>
-                      <svg className="tl-price-inst-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4.5 10.5L8 6L4.5 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
+              {parsed?.included?.length > 0 && (
+                <div className="tl-tourp-block">
+                  <h2 className="tl-tourp-h2">{t('tourDetail.includedTitle')}</h2>
+                  <div className="tl-tourp-incl">
+                    {parsed.included.map((it, i) => (
+                      <div className="tl-tourp-incl-item" key={i}>
+                        <span className="tl-tourp-incl-ico">{INCLUDED_ICONS[it.icon] || <span style={{ fontSize: 18 }}>{it.icon}</span>}</span>
+                        <span>{it.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {currentPrice && (
+                <div className="tl-tourp-total">
+                  <div>
+                    <span className="tl-tourp-total-label">{t('tourDetail.totalPrice')}</span>
+                    <strong>{formatPrice(currentPrice.amount, currentPrice.currency)}</strong>
+                  </div>
+                  {cashback != null && (
+                    <button type="button" className="tl-tourp-cashback" onClick={() => openAuth('register')}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M15 9.5A3.5 3.5 0 0 0 9 12a3.5 3.5 0 0 0 6 2.5" /></svg>
+                      +{cashback} {currentPrice.currency} {t('tourDetail.cashback')}
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+                    </button>
                   )}
                 </div>
               )}
 
+              {currentPrice && (
+                <div className="tl-tourp-block">
+                  <InstallmentCalculator basePrice={currentPrice.amount} currency={currentPrice.currency} />
+                </div>
+              )}
+
+              {parsed?.conditions?.length > 0 && (
+                <div className="tl-tourp-block">
+                  <h2 className="tl-tourp-h2">{t('tourDetail.conditionsTitle')}</h2>
+                  <ul className="tl-tourp-conditions">
+                    {parsed.conditions.map((c, i) => (
+                      <li key={i}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {parsed?.managers?.length > 0 && (
+                <div className="tl-tourp-block">
+                  <h2 className="tl-tourp-h2">{t('tourDetail.managersTitle')}</h2>
+                  <div className="tl-tourp-managers">
+                    {parsed.managers.map((m, i) => (
+                      <div className="tl-tourp-manager" key={i}>
+                        <span className="tl-tourp-manager-info">
+                          <strong>{m.name}</strong>
+                          <span>+{m.phone.replace(/^(\d{3})(\d{2})(\d{3})(\d{2})(\d{2}).*/, '$1 $2 $3 $4 $5')}</span>
+                        </span>
+                        <span className="tl-tourp-manager-actions">
+                          <a href={`tel:+${m.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
+                          <a
+                            href={`https://wa.me/${m.phone}?text=${encodeURIComponent(t('common.tourInterestMessage', { title: tour.title }))}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="wa"
+                            aria-label="WhatsApp"
+                          >
+                            {WA_ICON}
+                          </a>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {!parsed && <p className="tl-tourp-rawdesc">{tour.description}</p>}
+
               {!expired && (
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  {isMobile() ? (
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="tl-btn-book"
-                      style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-                    >
-                      {managerLabel(t)} →
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => openManagerContact(manager)}
-                      className="tl-btn-book"
-                      style={{ border: 'none', cursor: 'pointer', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-                    >
-                      {managerLabel(t)} →
-                    </button>
-                  )}
+                <div className="tl-tourp-cta">
+                  <a
+                    href={parsed?.managers?.[0] ? `tel:+${parsed.managers[0].phone}` : '#'}
+                    className="tl-btn-book"
+                    style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+                  >
+                    {t('common.call')}
+                  </a>
                   <button
                     type="button"
                     onClick={() => addItem(toTourCartItem(tour))}
@@ -152,9 +260,6 @@ export default function TourDetailPage() {
                   </button>
                 </div>
               )}
-              <div style={{ marginTop: 10, fontSize: 12, color: 'var(--tl-gray-400)' }}>
-                {t('common.manager')}: {manager.name} — {formatManagerNumber(manager.number)}
-              </div>
             </div>
           </div>
         </div>

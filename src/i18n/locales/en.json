@@ -186,7 +186,21 @@
     "notFoundDesc": "The offer may have changed or expired. Check out our other tours.",
     "backToAll": "See all tours",
     "home": "Home",
-    "tours": "Tours"
+    "tours": "Tours",
+    "hotelsTitle": "Hotels and prices",
+    "includedTitle": "Included in the price",
+    "totalPrice": "Total price",
+    "cashback": "cashback",
+    "conditionsTitle": "Conditions",
+    "managersTitle": "Get in touch"
+  },
+  "installment": {
+    "title": "Installment calculator",
+    "subtitle": "Pick your card and see the monthly payment.",
+    "months": "{{count}} mo",
+    "monthly": "Monthly payment",
+    "total": "Total amount",
+    "commissionNote": "An additional commission may apply at checkout."
   },
   "offerDetail": {
     "notFoundTitle": "This offer is no longer available",
