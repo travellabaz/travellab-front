@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 // list plus a short line. YapıKredi is intentionally omitted (not active).
 const CARDS = [
   { id: 'birkart', label: 'BirKart', icon: '/images/cards/birkart.jpg' },
-  { id: 'tamkart', label: 'TamKart' },
+  { id: 'tamkart', label: 'TamKart', wordmark: '/images/cards/tamkart.svg' },
   { id: 'bolkart', label: 'BolKart', icon: '/images/cards/bolkart.jpg' },
 ];
 
@@ -23,8 +23,14 @@ export default function InstallmentCalculator({ basePrice }) {
       <div className="tl-instl-cards">
         {CARDS.map((c) => (
           <span key={c.id} className="tl-instl-card">
-            {c.icon && <img src={c.icon} alt="" className="tl-instl-card-icon" />}
-            {c.label}
+            {c.wordmark ? (
+              <img src={c.wordmark} alt={c.label} className="tl-instl-card-wordmark" />
+            ) : (
+              <>
+                <img src={c.icon} alt="" className="tl-instl-card-icon" />
+                {c.label}
+              </>
+            )}
           </span>
         ))}
       </div>
