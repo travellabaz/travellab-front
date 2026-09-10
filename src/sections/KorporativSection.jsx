@@ -376,7 +376,7 @@ function CorpFinalSection() {
   };
 
   return (
-    <div className="tl-corp-final-cta" style={{ backgroundImage: 'url(/images/hero/plane-wing.jpg)' }}>
+    <div className="tl-corp-final-cta">
       <div className="tl-corp-final-text">
         <div className="tl-corp-final-eyebrow">{t('korporativ.ctaEyebrow')}</div>
         <h2 className="tl-corp-final-heading">
@@ -562,12 +562,12 @@ export default function KorporativSection() {
         <EventsGallery />
       </div>
 
-      <PartnersSection />
-
       {/* Final CTA */}
       <div className="tl-section">
         <CorpFinalSection />
       </div>
+
+      <PartnersSection />
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
     </section>

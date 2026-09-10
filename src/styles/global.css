@@ -9387,9 +9387,14 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 560px) {
-  .tl-shop-extra-bar,
   .tl-shop-benefits-bar {
     grid-template-columns: 1fr;
+  }
+  /* The homepage Shop teaser's trust strip (2 500+ customers, packaging,
+     support, payment) — dropped on mobile, it's a tall stack of generic
+     claims between the product card and the Hotels section. */
+  .tl-shop-extra-bar {
+    display: none;
   }
   .tl-product-trust-row {
     grid-template-columns: 1fr;
