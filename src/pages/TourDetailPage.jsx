@@ -56,6 +56,12 @@ export default function TourDetailPage() {
   const [hotelIdx, setHotelIdx] = useState(0);
   useEffect(() => setHotelIdx(0), [id]);
 
+  // Show one manager, not the whole list — picked once per tour view.
+  const manager = useMemo(() => {
+    const list = parsed?.managers || [];
+    return list.length ? list[Math.floor(Math.random() * list.length)] : null;
+  }, [parsed, id]);
+
   if (loading) {
     return (
       <main className="tpwl-main">
@@ -211,30 +217,28 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              {parsed?.managers?.length > 0 && (
+              {manager && (
                 <div className="tl-tourp-block">
                   <h2 className="tl-tourp-h2">{t('tourDetail.managersTitle')}</h2>
                   <div className="tl-tourp-managers">
-                    {parsed.managers.map((m, i) => (
-                      <div className="tl-tourp-manager" key={i}>
-                        <span className="tl-tourp-manager-info">
-                          <strong>{m.name}</strong>
-                          <span>+{m.phone.replace(/^(\d{3})(\d{2})(\d{3})(\d{2})(\d{2}).*/, '$1 $2 $3 $4 $5')}</span>
-                        </span>
-                        <span className="tl-tourp-manager-actions">
-                          <a href={`tel:+${m.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
-                          <a
-                            href={`https://wa.me/${m.phone}?text=${encodeURIComponent(t('common.tourInterestMessage', { title: tour.title }))}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="wa"
-                            aria-label="WhatsApp"
-                          >
-                            {WA_ICON}
-                          </a>
-                        </span>
-                      </div>
-                    ))}
+                    <div className="tl-tourp-manager">
+                      <span className="tl-tourp-manager-info">
+                        <strong>{manager.name}</strong>
+                        <span>+{manager.phone.replace(/^(\d{3})(\d{2})(\d{3})(\d{2})(\d{2}).*/, '$1 $2 $3 $4 $5')}</span>
+                      </span>
+                      <span className="tl-tourp-manager-actions">
+                        <a href={`tel:+${manager.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
+                        <a
+                          href={`https://wa.me/${manager.phone}?text=${encodeURIComponent(t('common.tourInterestMessage', { title: tour.title }))}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="wa"
+                          aria-label="WhatsApp"
+                        >
+                          {WA_ICON}
+                        </a>
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -244,7 +248,7 @@ export default function TourDetailPage() {
               {!expired && (
                 <div className="tl-tourp-cta">
                   <a
-                    href={parsed?.managers?.[0] ? `tel:+${parsed.managers[0].phone}` : '#'}
+                    href={manager ? `tel:+${manager.phone}` : '#'}
                     className="tl-btn-book"
                     style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
                   >

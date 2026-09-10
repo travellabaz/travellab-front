@@ -2627,7 +2627,11 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-instl-card {
   flex: 1;
-  padding: 12px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 12px;
   border: 1.5px solid var(--tl-gray-200);
   border-radius: var(--tl-r-lg);
   background: var(--tl-white);
@@ -2636,11 +2640,17 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700;
   color: var(--tl-navy);
   cursor: pointer;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 }
 
 .tl-instl-card:hover {
   border-color: var(--tl-gray-300, #cbd5e1);
+}
+
+.tl-instl-card-logo {
+  height: 16px;
+  width: auto;
+  display: block;
 }
 
 .tl-instl-months {

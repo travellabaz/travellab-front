@@ -8,7 +8,7 @@ import { formatPrice } from '../utils/price';
 // Only round terms are offered — 2 and 9 month options were dropped.
 const CARDS = [
   { id: 'birkart', label: 'BirKart', color: '#E30613', months: { 3: 5, 6: 9, 12: 15, 18: 20 } },
-  { id: 'tamkart', label: 'TamKart', color: '#EC1C24', months: { 3: 4, 6: 7, 12: 13, 18: 20, 24: 26 } },
+  { id: 'tamkart', label: 'TamKart', color: '#EC1C24', logo: '/images/cards/tamkart.svg', months: { 3: 4, 6: 7, 12: 13, 18: 20, 24: 26 } },
   { id: 'bolkart', label: 'BolKart', color: '#1D2C5B', months: { 3: 4, 6: 7, 12: 12, 18: 17, 24: 21 } },
 ];
 
@@ -49,11 +49,15 @@ export default function InstallmentCalculator({ basePrice, currency }) {
             type="button"
             key={c.id}
             className={`tl-instl-card${c.id === cardId ? ' active' : ''}`}
-            style={c.id === cardId ? { background: c.color, borderColor: c.color, color: '#fff' } : undefined}
+            style={c.id === cardId ? { borderColor: c.color, background: `${c.color}12` } : undefined}
             onClick={() => pickCard(c.id)}
             aria-pressed={c.id === cardId}
           >
-            {c.label}
+            {c.logo ? (
+              <img src={c.logo} alt={c.label} className="tl-instl-card-logo" />
+            ) : (
+              <span style={c.id === cardId ? { color: c.color } : undefined}>{c.label}</span>
+            )}
           </button>
         ))}
       </div>
