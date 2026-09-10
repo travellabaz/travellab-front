@@ -8,6 +8,7 @@ import { isMobile, managerLabel, managerLink, pickManager, formatManagerNumber }
 import { formatPrice, calcReward, formatPoints, calcBalanceDiscount } from '../utils/price';
 import { offerGradient } from '../utils/offerVisual';
 import { formatOfferDate, offerContactShape } from '../components/OfferCard';
+import InstallmentCalculator from '../components/InstallmentCalculator';
 import Breadcrumb from '../components/Breadcrumb';
 
 // Kompas search results are ephemeral (a fresh live query per search, not
@@ -121,6 +122,12 @@ export default function OfferDetailPage() {
                       </svg>
                     </div>
                   )}
+                </div>
+              )}
+
+              {price && (
+                <div style={{ margin: '4px 0 20px' }}>
+                  <InstallmentCalculator basePrice={price.amount} currency={price.currency} />
                 </div>
               )}
 

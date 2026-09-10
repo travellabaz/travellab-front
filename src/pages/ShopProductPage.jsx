@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
+import InstallmentCalculator from '../components/InstallmentCalculator';
 import ProductCard from '../components/ProductCard';
 import ColorDots from '../components/ColorDots';
 import SeoBodyText from '../components/SeoBodyText';
@@ -198,6 +199,12 @@ function ShopProductDetail({ slug }) {
                   {t('shop.addToCart')}
                 </button>
               </div>
+
+              {product.price > 0 && (
+                <div className="tl-product-installment">
+                  <InstallmentCalculator basePrice={product.price} currency={product.currency} />
+                </div>
+              )}
 
               <div className="tl-product-trust-row">
                 <div>

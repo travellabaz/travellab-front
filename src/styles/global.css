@@ -2598,6 +2598,12 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-top: 8px;
 }
 
+.tl-product-installment {
+  margin: 8px 0 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--tl-gray-200);
+}
+
 /* ── Shared installment calculator — .tl-instl-* (Tour / Hotel / Shop) ── */
 .tl-instl-title {
   font-family: 'Geist Sans', sans-serif;
