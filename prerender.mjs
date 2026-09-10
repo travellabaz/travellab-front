@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import i18next from 'i18next';
 import { PAGE_META, BASE_URL } from './src/data/pageMeta.js';
-import { VIZA_COUNTRIES } from './src/data/vizaCountries.js';
+import { VIZA_COUNTRIES, vizaCountrySlug } from './src/data/vizaCountries.js';
 import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
 import { TOUR_SUBCATEGORIES, TOUR_PARENT_SLUGS, getActiveSubcategories, filterToursForSubcategory } from './src/data/tourSubcategories.js';
 import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
@@ -158,6 +158,15 @@ function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts) {
     });
   });
 
+  // Viza country pages: /<lang>/viza/<az-slug> -> /<lang>/viza/<lang-slug>.
+  const vizaLines = VIZA_COUNTRIES.flatMap((country) =>
+    LANGUAGES.filter((l) => l !== DEFAULT_LANGUAGE).flatMap((lang) => {
+      const newSlug = vizaCountrySlug(country, lang);
+      if (newSlug === country.slug) return [];
+      return [`${buildLocalizedPath(`/viza/${country.slug}`, lang)}  ${buildLocalizedPath(`/viza/${newSlug}`, lang)}  301`];
+    })
+  );
+
   // Shop URLs moved from SKU (/shop/tb-020) to a name-derived slug
   // (/shop/premium-camadan) — see Shop SEO Paketi. Two redirect sources,
   // both per language prefix:
@@ -178,9 +187,9 @@ function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts) {
     );
   });
 
-  const allLines = [...inactiveLines, ...shopLines, ...blogLines].join('\n');
+  const allLines = [...inactiveLines, ...shopLines, ...blogLines, ...vizaLines].join('\n');
   fs.writeFileSync(redirectsPath, allLines ? `${allLines}\n${existing}` : existing);
-  console.log(`wrote ${inactiveLines.length} inactive-tour redirects, ${shopLines.length} shop slug redirects and ${blogLines.length} blog slug redirects to dist/_redirects`);
+  console.log(`wrote ${inactiveLines.length} inactive-tour, ${shopLines.length} shop, ${blogLines.length} blog and ${vizaLines.length} viza slug redirects to dist/_redirects`);
 }
 
 // Blog posts aren't in PAGE_META (that's a fixed route list) — they're one
@@ -341,7 +350,8 @@ async function main() {
     routeEntries.push({ bareRoutePath: `/blog/${post.slug}`, barePathByLang, kind: 'blog', slug: post.slug, langs });
   }
   for (const country of VIZA_COUNTRIES) {
-    routeEntries.push({ bareRoutePath: `/viza/${country.slug}`, kind: 'vizaCountry', country, langs: LANGUAGES });
+    const barePathByLang = Object.fromEntries(LANGUAGES.map((l) => [l, `/viza/${vizaCountrySlug(country, l)}`]));
+    routeEntries.push({ bareRoutePath: `/viza/${country.slug}`, barePathByLang, kind: 'vizaCountry', country, langs: LANGUAGES });
   }
   for (const country of TOUR_SEARCH_COUNTRIES) {
     routeEntries.push({ bareRoutePath: `/tours/search/${country.slug}`, kind: 'tourSearchCountry', country, langs: LANGUAGES });

@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import Link from '../components/LocalizedLink';
 import VizaSection from '../sections/VizaSection';
 import VisaGalleryMarquee from '../sections/VisaGalleryMarquee';
 import FaqSection from '../components/FaqSection';
 import { VIZA_FAQ } from '../data/vizaFaq';
-import { VIZA_COUNTRIES } from '../data/vizaCountries';
+import { VIZA_COUNTRIES, vizaCountrySlug } from '../data/vizaCountries';
+import { getLocaleFromPathname } from '../utils/locale';
 
 export default function VizaPage() {
   const { t } = useTranslation();
+  const lang = getLocaleFromPathname(useLocation().pathname);
   return (
     <main className="tpwl-main">
       <section className="tl-section tl-page-top" style={{ paddingBottom: 0 }}>
@@ -19,7 +22,7 @@ export default function VizaPage() {
         </div>
         <div className="tl-blog-filter">
           {VIZA_COUNTRIES.map((c) => (
-            <Link key={c.slug} to={`/viza/${c.slug}`} className="tl-blog-filter-pill">
+            <Link key={c.slug} to={`/viza/${vizaCountrySlug(c, lang)}`} className="tl-blog-filter-pill">
               {t(`countries.${c.name}`)}
             </Link>
           ))}

@@ -5,7 +5,7 @@ import { BASE_URL, PAGE_META } from '../data/pageMeta';
 import { getPostBySlug, isPostAvailableInLocale, BLOG_POSTS, postSlugForLocale, allSlugsOf } from '../data/blog';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
-import { getVizaCountryBySlug } from '../data/vizaCountries';
+import { getVizaCountryBySlug, vizaCountrySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
 import { getParentBySlug, getSubcategory } from '../data/tourSubcategories';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
@@ -85,6 +85,7 @@ export default function usePageMeta() {
     // "Виза в Грецию", not the bare nominative "Виза в Греция" — see
     // utils/ruGrammar.js (AZ/EN pass through unchanged).
     const vizaCountryNameAcc = vizaCountryName ? toAccusative(vizaCountryName, i18n.language) : null;
+    const vizaPath = vizaCountry ? `/viza/${vizaCountrySlug(vizaCountry, lang)}` : null;
     const tourSearchCountryMatch = /^\/tours\/search\/([^/]+)$/.exec(path);
     const tourSearchCountry = tourSearchCountryMatch ? getTourSearchCountryBySlug(tourSearchCountryMatch[1]) : null;
     const tourSearchCountryName = tourSearchCountry ? t(`countries.${tourSearchCountry.nameAz}`, tourSearchCountry.nameAz) : null;
@@ -131,7 +132,7 @@ export default function usePageMeta() {
     const pageImage = seoKey ? PAGE_META[path === '/' ? '/' : path]?.image : undefined;
 
     const isHome = path === '/';
-    const canonicalBarePath = blogPath || path;
+    const canonicalBarePath = blogPath || vizaPath || path;
     const localizedPath = buildLocalizedPath(canonicalBarePath, lang) + (isToursList ? location.search : '');
     const pageUrl = BASE_URL + (localizedPath === '' ? '/' : localizedPath);
     const image = post
@@ -174,7 +175,12 @@ export default function usePageMeta() {
       : SUPPORTED_LANGUAGES;
     // Each language's alternate points at that language's own slug for a
     // blog post, not the shared AZ one.
-    const hreflangBarePath = (l) => (rawPost ? `/blog/${postSlugForLocale(rawPost, l)}` : path);
+    const hreflangBarePath = (l) =>
+      rawPost
+        ? `/blog/${postSlugForLocale(rawPost, l)}`
+        : vizaCountry
+          ? `/viza/${vizaCountrySlug(vizaCountry, l)}`
+          : path;
     document.querySelectorAll('link[data-hreflang]').forEach((el) => el.remove());
     availableLangs.forEach((l) => {
       const href = BASE_URL + (buildLocalizedPath(hreflangBarePath(l), l) || '/') + (isToursList ? location.search : '');
