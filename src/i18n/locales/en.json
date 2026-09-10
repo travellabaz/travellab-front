@@ -1118,20 +1118,28 @@
     "title": "Our Trusted Partners"
   },
   "blogCategoryLabels": {
-    "Məsləhətlər": "Tips",
-    "Bələdçi": "Guide",
+    "Getməzdən Əvvəl": "Before You Go",
+    "Bilet": "Tickets",
+    "Viza": "Visa",
+    "Konsertlər": "Concerts",
+    "Korporativ": "Corporate",
+    "Tibbi Turizm": "Medical Tourism",
+    "Səyahət Fəndləri": "Travel Hacks",
+    "Təbiət": "Nature",
     "Xəbərlər": "News",
-    "Macəra": "Adventure",
-    "Vizasız Ölkələr": "Visa-Free Countries",
-    "Tibbi Turizm": "Medical Tourism"
+    "Macəra": "Adventure"
   },
   "blogServiceLinks": {
-    "Məsləhətlər": "Flight search",
-    "Bələdçi": "Ready-made tour packages",
+    "Getməzdən Əvvəl": "Ready-made tour packages",
+    "Bilet": "Flight search",
+    "Viza": "Visa service",
+    "Konsertlər": "Event tickets",
+    "Korporativ": "Corporate services",
+    "Tibbi Turizm": "About Travellab",
+    "Səyahət Fəndləri": "Flight search",
+    "Təbiət": "Exotic tours",
     "Xəbərlər": "Flight and hotel deals",
-    "Macəra": "Exotic tours",
-    "Vizasız Ölkələr": "Visa service",
-    "Tibbi Turizm": "About Travellab"
+    "Macəra": "Exotic tours"
   },
   "navProfile": {
     "profile": "Profile",

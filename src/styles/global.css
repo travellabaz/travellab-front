@@ -4479,6 +4479,30 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #7C3AED;
 }
 
+/* Added for the 2026-09 blog category restructure (Bilet, Konsertlər,
+   Korporativ, Təbiət) — cat-a/t/n/m/o/q above predate this and cat-m
+   stays defined for tourCategory.js's "Ekzotik" tour tag, which still
+   uses it, even though no blog category does anymore. */
+.cat-b {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.cat-k {
+  background: #FCE4EC;
+  color: #AD1457;
+}
+
+.cat-c {
+  background: #EFF4FC;
+  color: #0D2451;
+}
+
+.cat-e {
+  background: #E0F2F1;
+  color: #00695C;
+}
+
 .tl-blog-date {
   font-size: 11px;
   color: var(--tl-gray-400);

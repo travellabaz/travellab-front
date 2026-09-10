@@ -40,54 +40,77 @@ const endpointFor = (model) => `https://generativelanguage.googleapis.com/v1beta
 
 const LANGUAGES = ['az', 'ru', 'en'];
 
-// CSS only has these category pill colors defined (see .cat-a/.cat-t/
-// .cat-n/.cat-m/.cat-q/.cat-o in global.css) — has to be one of these
-// exact category keys, not something the model invents with no matching
-// style. Category names/guidance are in Azerbaijani (the category label
-// itself is shown as-is on the site regardless of post language, same as
-// before trilingual support — translating category pill labels is a
-// separate, smaller piece of work, not done here).
+// CSS only has these category pill colors defined (see .cat-t/.cat-b/
+// .cat-q/.cat-k/.cat-c/.cat-o/.cat-a/.cat-e/.cat-n in global.css) — has to
+// be one of these exact category keys, not something the model invents
+// with no matching style. Category names/guidance are in Azerbaijani (the
+// category label itself is shown as-is on the site regardless of post
+// language, same as before trilingual support — translating category
+// pill labels is a separate, smaller piece of work, not done here).
 //
 // The category is picked by pickCategory() below, not left to the model —
 // left to itself, Gemini defaulted to "Məsləhətlər" for every single post.
 // Each entry also carries its own topic guidance so the prompt steers
 // toward genuinely different kinds of posts per category, not just a
 // different label on the same "tips" article.
+//
+// 2026-09 restructure (client request): "Bələdçi" renamed to "Getməzdən
+// Əvvəl", "Vizasız Ölkələr" renamed to "Viza" (same guidance, just the
+// label), "Məsləhətlər" renamed to "Səyahət Fəndləri" and its guidance
+// widened to also cover Top 5/records-style content, "Macəra" removed
+// (existing posts are being reassigned to "Təbiət" or "Səyahət Fəndləri"
+// by hand — see categories.js), and "Bilet"/"Konsertlər"/"Korporativ"/
+// "Təbiət" added as new categories.
 const CATEGORIES = {
-  'Məsləhətlər': {
-    class: 'cat-a',
-    guidance:
-      'Praktiki səyahət məsləhətləri: büdcə səyahəti, bagaj/sənəd hazırlığı, səyahət sığortası, ailəvi səyahət, uçuşda rahatlıq, pul qənaəti üsulları, aviabilet axtarışı.',
-  },
-  'Bələdçi': {
+  'Getməzdən Əvvəl': {
     class: 'cat-t',
     guidance:
       'Konkret bir şəhər/ölkə/bölgə bələdçisi (məs. İstanbul, Dubay, Tbilisi, Antalya, Bakı ətrafı gəzinti yerləri). Nə görməli, neçə gün kifayətdir, yerli nəqliyyat necədir, hansı məhəllələr maraqlıdır, yemək mədəniyyəti. Dəqiq qiymət/viza rəqəmləri YAZMA — bunlar tez köhnəlir.',
   },
-  'Xəbərlər': {
-    class: 'cat-n',
+  'Bilet': {
+    class: 'cat-b',
     guidance:
-      'Turizm sənayesində ümumi, HƏMİŞƏ DOĞRU olan tendensiyalar və dəyişikliklər: rəqəmsal check-in, mövsümi tələb dəyişiklikləri, dayanıqlı/məsuliyyətli turizm, hava limanı prosesləri necə asanlaşır. KONKRET tarix, statistika və ya "bu gün elan edildi" tipli iddialar YAZMA (bunlar uydurma olardı) — ümumi trend təsviri ver.',
+      'Təyyarə biletinin özü ilə bağlı praktiki bilgilər: bilet növləri (ekonom/biznes), əlavə baqaj qaydaları, adda səhv düzəlişi, e-bilet və elektron çek-in prosesi, yerdəyişmə/ləğvetmə şərtləri necə oxunur. Konkret aviaşirkət qiyməti və ya tarif rəqəmi YAZMA — bunlar tez dəyişir, ümumi prinsipləri izah et.',
   },
-  'Macəra': {
-    class: 'cat-m',
-    guidance:
-      'Aktiv/macəra səyahəti: dağ trekkinqi, kempinq, su idmanları, solo macəra səyahəti, az tanınan təbiət istiqamətləri, ekstremal və ya qeyri-adi təcrübələr.',
-  },
-  'Vizasız Ölkələr': {
+  'Viza': {
     class: 'cat-q',
     guidance:
       'Azərbaycan vətəndaşlarının vizasız və ya qapıda viza (viza on arrival) ilə gedə biləcəyi ölkələr: hansı ölkələr, nə qədər müddətə qalmaq olar, hansı sənədlər lazımdır (adətən yalnız pasport). Konkret gün sayı və şərtlər ölkədən ölkəyə dəyişə bilər deyə "adətən", "ümumi qayda olaraq" kimi ehtiyatlı ifadələr istifadə et, tarixlə bağlı iddialar YAZMA.',
+  },
+  'Konsertlər': {
+    class: 'cat-k',
+    guidance:
+      'Konsert/festival səyahəti: xaricdə konsert və ya festivala getmək üçün planlama, bilet+səyahət əlaqələndirilməsi, məşhur konsert şəhərləri/məkanları, tədbir üçün nə vaxt yola düşmək lazımdır. Konkret ifaçı adı, tarix və ya bilet qiyməti YAZMA — bunlar tez köhnəlir, ümumi planlama perspektivindən yaz.',
+  },
+  'Korporativ': {
+    class: 'cat-c',
+    guidance:
+      'Korporativ/biznes səyahəti: şirkət səfərlərinin təşkili, komanda tədbirləri (MICE), biznes səyahət siyasəti, xərclərin idarə olunması, korporativ bonus/loyallıq proqramlarının faydası. Konkret şirkət adı və ya qiymət təklifi YAZMA — ümumi korporativ səyahət perspektivindən yaz.',
   },
   'Tibbi Turizm': {
     class: 'cat-o',
     guidance:
       'Tibbi turizm: xaricdə müalicə/estetik prosedurlar üçün səyahət planlaması, hansı ölkələr məşhurdur (Türkiyə, Cənubi Koreya və s.), tibbi turizmdə nələrə diqqət etmək lazımdır, səyahət+müalicə əlaqələndirilməsi. Konkret klinika adı, qiymət və ya tibbi tövsiyə YAZMA — bu, həkim səlahiyyətidir, yalnız səyahət təşkilatı perspektivindən yaz.',
   },
+  'Səyahət Fəndləri': {
+    class: 'cat-a',
+    guidance:
+      'Praktiki səyahət məsləhətləri (büdcə səyahəti, bagaj/sənəd hazırlığı, səyahət sığortası, ailəvi səyahət, uçuşda rahatlıq, pul qənaəti üsulları) VƏ ya əyləncəli "Top 5"/rekord tipli məzmun (məs. dünyanın ən hündür binaları, ən uzun uçuş marşrutları, ən çox ziyarət edilən şəhərlər) — pickAngle bu ikisi arasında növbələşdirir, hər ikisi eyni kateqoriyaya aiddir.',
+  },
+  'Təbiət': {
+    class: 'cat-e',
+    guidance:
+      'Təbiət yönümlü səyahət: milli parklar, mənzərəli təbiət istiqamətləri, ekoturizm, mövsümi təbiət hadisələri (məs. payız yarpaqları, çiçəklənmə mövsümü), az tanınan təbiət guşələri. Ekstremal idman detallarına deyil, təbiəti müşahidə/kəşf etməyə fokuslan.',
+  },
+  'Xəbərlər': {
+    class: 'cat-n',
+    guidance:
+      'Turizm sənayesində ümumi, HƏMİŞƏ DOĞRU olan tendensiyalar və dəyişikliklər: rəqəmsal check-in, mövsümi tələb dəyişiklikləri, dayanıqlı/məsuliyyətli turizm, hava limanı prosesləri necə asanlaşır. KONKRET tarix, statistika və ya "bu gün elan edildi" tipli iddialar YAZMA (bunlar uydurma olardı) — ümumi trend təsviri ver.',
+  },
 };
 
 // Some categories have almost no natural topic variety (unlike e.g.
-// "Bələdçi" where literally any city works) — "Vizasız Ölkələr" is
+// "Getməzdən Əvvəl" where literally any city works) — "Viza" is
 // fundamentally always "which countries can an AZ passport enter without
 // a visa," so leaving topic selection to the model alone produced 5
 // near-identical posts (general list, framed as "budget", "complete
@@ -96,7 +119,7 @@ const CATEGORIES = {
 // fixed set of genuinely disjoint angles forces real variety instead of
 // relying on the model to self-police against its own past output.
 const NARROW_TOPIC_ANGLES = {
-  'Vizasız Ölkələr': [
+  'Viza': [
     'Yalnız Asiya qitəsindəki vizasız/qapıda viza ölkələr (məs. Tailand, Sinqapur, Malayziya, Filippin, Şri-Lanka) — yalnız bu regiona fokuslan, digər qitələrə toxunma',
     'Yalnız Latın Amerikası və Karib hövzəsindəki vizasız ölkələr (məs. Argentina, Peru, Ekvador, Dominikan Respublikası) — yalnız bu regiona fokuslan',
     'Yalnız Afrika qitəsindəki vizasız/qapıda viza ölkələr (məs. Keniya, Tanzaniya, Seyşel adaları, Mavriki, Mərakeş) — yalnız bu qitəyə fokuslan',
@@ -105,6 +128,15 @@ const NARROW_TOPIC_ANGLES = {
     'Az tanınan, kütləvi turist axını olmayan vizasız ölkələr — "gizli", alternativ istiqamətlərə fokuslan, məşhur siyahılardan fərqlən',
     'Qapıda viza (viza on arrival) ilə tam vizasız rejimin fərqi və hansı ölkələr hansı kateqoriyaya düşür — terminoloji/prosedur fərqinə fokuslan',
     'Qısa həftəsonu (2-4 gün) səfərləri üçün Bakıya ən yaxın vizasız ölkələr — məsafə/uçuş müddətinə görə seçilmiş, uzaq istiqamətlərə toxunma',
+  ],
+  // "Səyahət Fəndləri" now covers two genuinely different content styles
+  // (practical how-to tips vs. Top 5/records-style trivia) after the
+  // 2026-09 category merge — alternating between them keeps both actually
+  // showing up instead of the model defaulting to whichever one it drifts
+  // toward, same reasoning as the "Viza" rotation above.
+  'Səyahət Fəndləri': [
+    'Praktiki səyahət fəndi: çamadan/bagaj yığma üsulları, sənəd hazırlığı, uçuşda rahatlıq, pul qənaəti üsulları və ya aviabilet üçün ən sərfəli alış vaxtı kimi konkret, addım-addım tətbiq edilə bilən bir məsləhətə fokuslan.',
+    '"Top 5" və ya rekord tipli əyləncəli siyahı: məsələn dünyanın ən hündür binaları, ən uzun aviamarşrutları, ən böyük hava limanları, ən çox ziyarət edilən şəhərlər kimi maraqlı faktlara fokuslan — praktiki məsləhətə deyil, əyləncəli məlumata yer ver. Yalnız ümumi bilinən, mübahisəsiz faktlardan istifadə et, uydurma rəqəm/statistika YAZMA.',
   ],
 };
 
