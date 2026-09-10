@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 // monthly figure were removed on request, so this is now just the card
 // list plus a short line. YapıKredi is intentionally omitted (not active).
 const CARDS = [
-  { id: 'birkart', label: 'BirKart', color: '#E30613' },
-  { id: 'tamkart', label: 'TamKart', color: '#EC1C24', logo: '/images/cards/tamkart.svg' },
-  { id: 'bolkart', label: 'BolKart', color: '#1D2C5B' },
+  { id: 'birkart', label: 'BirKart', icon: '/images/cards/birkart.jpg' },
+  { id: 'tamkart', label: 'TamKart', wordmark: '/images/cards/tamkart.svg' },
+  { id: 'bolkart', label: 'BolKart', icon: '/images/cards/bolkart.jpg' },
 ];
 
 export default function InstallmentCalculator({ basePrice }) {
@@ -23,10 +23,13 @@ export default function InstallmentCalculator({ basePrice }) {
       <div className="tl-instl-cards">
         {CARDS.map((c) => (
           <span key={c.id} className="tl-instl-card">
-            {c.logo ? (
-              <img src={c.logo} alt={c.label} className="tl-instl-card-logo" />
+            {c.wordmark ? (
+              <img src={c.wordmark} alt={c.label} className="tl-instl-card-wordmark" />
             ) : (
-              c.label
+              <>
+                <img src={c.icon} alt="" className="tl-instl-card-icon" />
+                {c.label}
+              </>
             )}
           </span>
         ))}

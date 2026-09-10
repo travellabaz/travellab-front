@@ -2629,8 +2629,9 @@ body:not(.tl-subpage) .tl-about-extra {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   height: 36px;
-  padding: 0 16px;
+  padding: 0 14px;
   border: 1.5px solid var(--tl-gray-200);
   border-radius: 10px;
   background: var(--tl-white);
@@ -2640,9 +2641,17 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
 }
 
-.tl-instl-card-logo {
-  height: 15px;
+.tl-instl-card-wordmark {
+  height: 14px;
   width: auto;
+  display: block;
+}
+
+.tl-instl-card-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
   display: block;
 }
 
