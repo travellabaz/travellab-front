@@ -2604,7 +2604,7 @@ body:not(.tl-subpage) .tl-about-extra {
   border-top: 1px solid var(--tl-gray-200);
 }
 
-/* ── Shared installment calculator — .tl-instl-* (Tour / Hotel / Shop) ── */
+/* ── Shared installment strip — .tl-instl-* (Tour / Hotel / Shop) ── */
 .tl-instl-title {
   font-family: 'Geist Sans', sans-serif;
   font-size: 17px;
@@ -2616,100 +2616,34 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-instl-sub {
   font-size: 13px;
   color: var(--tl-gray-500, #64748b);
-  margin: 0 0 14px;
+  margin: 0 0 12px;
 }
 
 .tl-instl-cards {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .tl-instl-card {
-  flex: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 10px 12px;
+  height: 36px;
+  padding: 0 16px;
   border: 1.5px solid var(--tl-gray-200);
-  border-radius: var(--tl-r-lg);
+  border-radius: 10px;
   background: var(--tl-white);
   font-family: 'Geist Sans', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--tl-navy);
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.tl-instl-card:hover {
-  border-color: var(--tl-gray-300, #cbd5e1);
 }
 
 .tl-instl-card-logo {
-  height: 16px;
+  height: 15px;
   width: auto;
   display: block;
-}
-
-.tl-instl-months {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.tl-instl-month {
-  padding: 7px 12px;
-  border: 1.5px solid var(--tl-gray-200);
-  border-radius: 100px;
-  background: var(--tl-white);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--tl-navy);
-  cursor: pointer;
-}
-
-.tl-instl-month span {
-  color: var(--tl-gray-400);
-  font-weight: 500;
-}
-
-.tl-instl-month.active {
-  background: var(--tl-navy);
-  border-color: var(--tl-navy);
-  color: var(--tl-white);
-}
-
-.tl-instl-month.active span {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.tl-instl-result {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 12px;
-}
-
-.tl-instl-result-label {
-  display: block;
-  font-size: 12px;
-  color: var(--tl-gray-500, #64748b);
-  margin-bottom: 3px;
-}
-
-.tl-instl-result strong {
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--tl-navy);
-}
-
-.tl-instl-note {
-  font-size: 12px;
-  color: var(--tl-gray-400);
-  margin: 0;
 }
 
 @media (max-width: 560px) {
@@ -2718,12 +2652,6 @@ body:not(.tl-subpage) .tl-about-extra {
   }
   .tl-tourp-incl {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .tl-instl-cards {
-    flex-direction: column;
-  }
-  .tl-instl-result {
-    gap: 24px;
   }
 }
 

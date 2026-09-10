@@ -195,12 +195,8 @@
     "managersTitle": "Get in touch"
   },
   "installment": {
-    "title": "Installment calculator",
-    "subtitle": "Pick your card and see the monthly payment.",
-    "months": "{{count}} mo",
-    "monthly": "Monthly payment",
-    "total": "Total amount",
-    "commissionNote": "An additional commission may apply at checkout."
+    "title": "Installments",
+    "subtitle": "Up to 24-month installments with Bolkart, Tamkart and Birkart."
   },
   "offerDetail": {
     "notFoundTitle": "This offer is no longer available",

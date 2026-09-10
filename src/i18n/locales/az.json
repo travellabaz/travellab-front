@@ -195,12 +195,8 @@
     "managersTitle": "Əlaqə üçün"
   },
   "installment": {
-    "title": "Hissəli ödəniş kalkulyatoru",
-    "subtitle": "Kartınızı seçin, aylıq ödənişinizi görün.",
-    "months": "{{count}} ay",
-    "monthly": "Aylıq ödəniş",
-    "total": "Yekun qiymət",
-    "commissionNote": "Sifarişin rəsmiləşdirilməsi zamanı əlavə komissiya tətbiq oluna bilər."
+    "title": "Hissəli ödəniş",
+    "subtitle": "Bolkart, Tamkart və Birkart ilə 24 ayadək hissəli ödəniş imkanı."
   },
   "offerDetail": {
     "notFoundTitle": "Bu təklif artıq mövcud deyil",
