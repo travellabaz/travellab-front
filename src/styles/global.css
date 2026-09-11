@@ -3005,8 +3005,17 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 @media (max-width: 900px) {
+  /* align-items: flex-start (set for the desktop row layout, so the side
+     panel's top lines up with the main column without stretching to its
+     height) has a nasty side effect once flex-direction flips to column:
+     cross-axis (width) sizing stops stretching to the container and
+     shrinks to each item's own content width instead — .tl-tourp-main
+     was rendering at ~636px (the horizontal product-scroll's natural
+     width) on a 390px screen, pushing the whole page into horizontal
+     overflow. Back to stretch here so both columns fill 100% width. */
   .tl-tourp-layout {
     flex-direction: column;
+    align-items: stretch;
   }
 
   /* Bottom sheet, not an inline block — slides up over the page, doesn't
