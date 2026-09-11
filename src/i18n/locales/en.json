@@ -197,8 +197,9 @@
     "waPrice": "Price: {{price}}"
   },
   "installment": {
-    "title": "Installments",
-    "subtitle": "Up to 24-month installments with Bolkart, Tamkart and Birkart."
+    "title": "Options",
+    "term": "Up to 24-month installments",
+    "cardsLine": "Bolkart, Tamkart and BirKart"
   },
   "offerDetail": {
     "notFoundTitle": "This offer is no longer available",

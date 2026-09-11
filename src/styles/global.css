@@ -2613,16 +2613,58 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 0 4px;
 }
 
-.tl-instl-sub {
+.tl-instl-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 13px;
-  color: var(--tl-gray-500, #64748b);
-  margin: 0 0 12px;
+  color: var(--tl-navy);
+  margin-bottom: 10px;
+}
+
+.tl-instl-row-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+/* Right (card) row wiggles right away, every 3s; the left (term) row's
+   icon joins in — same 3s cycle, started 6s late so from t=6s on both
+   shake together instead of the left one staying still forever. */
+.tl-instl-row-ico:not(.tl-instl-row-ico-delay) {
+  animation: tl-instl-wiggle 3s ease-in-out infinite;
+}
+
+.tl-instl-row-ico-delay {
+  animation: tl-instl-wiggle 3s ease-in-out infinite;
+  animation-delay: 6s;
+}
+
+@keyframes tl-instl-wiggle {
+  0%, 8%, 100% { transform: rotate(0deg); }
+  2% { transform: rotate(-10deg); }
+  4% { transform: rotate(10deg); }
+  6% { transform: rotate(-6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-instl-row-ico,
+  .tl-instl-row-ico-delay {
+    animation: none;
+  }
 }
 
 .tl-instl-cards {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 14px;
 }
 
 .tl-instl-card {

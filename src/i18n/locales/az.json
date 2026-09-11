@@ -197,8 +197,9 @@
     "waPrice": "Qiymət: {{price}}"
   },
   "installment": {
-    "title": "Hissəli ödəniş",
-    "subtitle": "Bolkart, Tamkart və Birkart ilə 24 ayadək hissəli ödəniş imkanı."
+    "title": "İmkanlar",
+    "term": "24 ayadək hissəli ödəniş imkanı",
+    "cardsLine": "Bolkart, Tamkart və BirKart"
   },
   "offerDetail": {
     "notFoundTitle": "Bu təklif artıq mövcud deyil",

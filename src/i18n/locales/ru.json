@@ -197,8 +197,9 @@
     "waPrice": "Цена: {{price}}"
   },
   "installment": {
-    "title": "Рассрочка",
-    "subtitle": "Рассрочка до 24 месяцев по картам Bolkart, Tamkart и Birkart."
+    "title": "Возможности",
+    "term": "Рассрочка до 24 месяцев",
+    "cardsLine": "Bolkart, Tamkart и BirKart"
   },
   "offerDetail": {
     "notFoundTitle": "Это предложение больше недоступно",
