@@ -194,7 +194,13 @@
     "conditionsTitle": "Conditions",
     "managersTitle": "Get in touch",
     "waHotel": "Selected hotel: {{name}} — {{price}}",
-    "waPrice": "Price: {{price}}"
+    "waPrice": "Price: {{price}}",
+    "crossSellTitle": "Get ready for the trip",
+    "crossSellSubtitle": "Products that might come in handy for this tour",
+    "productsTotal": "Products total",
+    "tourPriceLabel": "Tour price",
+    "grandTotal": "Grand total",
+    "addBundleCta": "Add tour + products"
   },
   "installment": {
     "title": "Options",

@@ -194,7 +194,13 @@
     "conditionsTitle": "Условия",
     "managersTitle": "Для связи",
     "waHotel": "Выбранный отель: {{name}} — {{price}}",
-    "waPrice": "Цена: {{price}}"
+    "waPrice": "Цена: {{price}}",
+    "crossSellTitle": "Соберите чемодан",
+    "crossSellSubtitle": "Товары, которые пригодятся для выбранного тура",
+    "productsTotal": "Сумма товаров",
+    "tourPriceLabel": "Цена тура",
+    "grandTotal": "Итого",
+    "addBundleCta": "Добавить тур + товары"
   },
   "installment": {
     "title": "Возможности",

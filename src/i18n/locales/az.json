@@ -194,7 +194,13 @@
     "conditionsTitle": "Şərtlər",
     "managersTitle": "Əlaqə üçün",
     "waHotel": "Seçdiyim otel: {{name}} — {{price}}",
-    "waPrice": "Qiymət: {{price}}"
+    "waPrice": "Qiymət: {{price}}",
+    "crossSellTitle": "Səyahətə hazırlaş",
+    "crossSellSubtitle": "Seçdiyiniz tur üçün lazım ola biləcək məhsullar",
+    "productsTotal": "Məhsulların cəmi",
+    "tourPriceLabel": "Turun qiyməti",
+    "grandTotal": "Ümumi məbləğ",
+    "addBundleCta": "Tura + məhsulları əlavə et"
   },
   "installment": {
     "title": "İmkanlar",

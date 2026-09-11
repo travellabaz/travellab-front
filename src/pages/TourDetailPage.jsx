@@ -11,6 +11,7 @@ import { isTourExpired } from '../utils/tourDate';
 import { toTourCartItem } from '../utils/tourCartItem';
 import { parseTourCaption } from '../utils/parseTourCaption';
 import InstallmentCalculator from '../components/InstallmentCalculator';
+import TravelProductsCrossSell from '../components/TravelProductsCrossSell';
 import Breadcrumb from '../components/Breadcrumb';
 
 const S = (p) => (
@@ -231,6 +232,8 @@ export default function TourDetailPage() {
                   </ul>
                 </div>
               )}
+
+              <TravelProductsCrossSell tour={tour} tourPrice={currentPrice} />
 
               {manager && (
                 <div className="tl-tourp-block">
