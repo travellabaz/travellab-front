@@ -59,9 +59,17 @@ export function parseTourCaption(description) {
     conditions: [],
     paymentNote: null,
     managers: [],
+    intro: null,
   };
 
   let section = null; // 'hotels' | 'included' | 'managers'
+  // Free-form lines the model/poster wrote before the caption settles into
+  // the fixed marker template (e.g. football-tour posts opening with
+  // "REAL MADRID 🆚 FC BARCELONA" before the 🗓️ line) — kept as an "about"
+  // blurb since it's real content this parser would otherwise just drop.
+  // Stops accumulating the moment any real marker is recognised.
+  const introLines = [];
+  let started = false;
 
   for (const line of lines) {
     if (!line) continue;
@@ -72,6 +80,7 @@ export function parseTourCaption(description) {
 
     // Date / destination
     if (lead === '🗓️' || lead === '📅') {
+      started = true;
       const parts = body.split(/\s+[-–—]\s+/);
       result.dateText = parts[0].trim();
       if (parts.length > 1) {
@@ -84,6 +93,7 @@ export function parseTourCaption(description) {
       continue;
     }
     if (lead === '📍') {
+      started = true;
       result.venue = body;
       if (!result.destination) {
         const bits = body.split(',');
@@ -95,12 +105,14 @@ export function parseTourCaption(description) {
 
     const dur = line.match(DURATION_RE);
     if (dur) {
+      started = true;
       result.duration = `${dur[1]} gecə / ${dur[2]} gün`;
       continue;
     }
 
     // Section headers
     if (/^(hotel|otel).*(seçim|siyah|qiymət)/i.test(line) || /^otellər və qiymətlər/i.test(line)) {
+      started = true;
       result.hotelsHeader = line.replace(/:\s*$/, '');
       section = 'hotels';
       continue;
@@ -169,7 +181,18 @@ export function parseTourCaption(description) {
       result.included.push({ icon: lead, text: body });
       continue;
     }
+
+    // Nothing above matched this line — while we're still ahead of the
+    // first recognised marker, it's real free-form lead-in text (e.g. a
+    // football-tour caption opening with "REAL MADRID 🆚 FC BARCELONA"
+    // before the 🗓️ line). Once a marker has fired, an unmatched line is
+    // just noise from the fixed template and is dropped as before.
+    if (!started) {
+      introLines.push(line);
+    }
   }
+
+  result.intro = introLines.length ? introLines.join('\n') : null;
 
   const out = hasContent(result) ? result : null;
   cache.set(description, out);
@@ -177,5 +200,5 @@ export function parseTourCaption(description) {
 }
 
 function hasContent(r) {
-  return !!(r.hotels.length || r.included.length || r.total || r.managers.length || r.duration || r.dateText);
+  return !!(r.hotels.length || r.included.length || r.total || r.managers.length || r.duration || r.dateText || r.intro);
 }

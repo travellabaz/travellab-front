@@ -205,7 +205,20 @@
     "productsTotal": "Products total",
     "tourPriceLabel": "Tour price",
     "grandTotal": "Grand total",
-    "addBundleCta": "Add tour + products"
+    "addBundleCta": "Add tour + products",
+    "aboutTitle": "About this tour",
+    "readMore": "Read more",
+    "readLess": "Show less",
+    "showAllProducts": "Show all",
+    "whatsappRequestTitle": "Want to change the date or passenger count?",
+    "whatsappRequestDesc": "Tours are published as a static pull from Instagram, so there's no live date/price recalculation. Reach our tour manager on WhatsApp and we'll prepare a personal offer for you.",
+    "whatsappRequestBtn": "Send a WhatsApp request",
+    "waChangeMessage": "Hi, I'd like to change the date/passenger count for {{title}}.",
+    "specialOfferNote": "This tour is a special offer shared on Instagram.",
+    "trustSafe": "Safe travel",
+    "trustPartners": "Trusted partners",
+    "trustSupport": "24/7 support",
+    "similarToursTitle": "You might also like these tours"
   },
   "installment": {
     "title": "Options",

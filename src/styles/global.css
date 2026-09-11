@@ -6,7 +6,13 @@ body {
   color: var(--tpwl-main-text);
   background-color: var(--tpwl-search-result-background);
   font-family: var(--tpwl-font-family), 'Geist Sans', sans-serif;
-  overflow-x: hidden;
+  /* clip, not hidden: hidden forces the UA to auto-compute overflow-y as
+     "auto" (per the CSS overflow spec, since only overflow-x was set),
+     which turns body into its own scroll container — and that breaks
+     position:sticky for every descendant (e.g. the tour page's sticky
+     sidebar), since it then sticks relative to a scrollport that isn't
+     the one actually scrolling. clip has no such side effect. */
+  overflow-x: clip;
 }
 
 body a {
@@ -166,8 +172,10 @@ html {
      of the actual visible screen — the element itself isn't misconfigured,
      it just gets anchored to a phantom right edge past what's visible.
      iOS Safari doesn't exhibit this, which is why it only showed up in
-     one browser. This guarantees there's no such overflow to trigger it. */
-  overflow-x: hidden;
+     one browser. This guarantees there's no such overflow to trigger it.
+     clip, not hidden — see the matching comment on body above; hidden's
+     implicit overflow-y:auto breaks position:sticky for every descendant. */
+  overflow-x: clip;
 }
 
 /* Fallback values for the Travelpayouts widget's own CSS variables, for
@@ -2784,12 +2792,78 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-green-dark);
 }
 
-/* ── Sticky "Səyahət məhsulları" side panel — desktop right column ── */
-.tl-tourp-side {
+/* ── Sticky right column — .tl-tourp-sidebar-col owns the sticky
+   behavior (position:sticky, no JS scroll handling needed: with
+   align-items:flex-start on .tl-tourp-layout it pins near the top while
+   the taller left column scrolls, then un-sticks naturally once its own
+   content ends, never riding over the footer). It holds the price/CTA/
+   WhatsApp-request/trust-badge widgets (desktop-only, duplicated from the
+   mobile in-flow copies) plus the existing cross-sell side panel. ── */
+.tl-tourp-sidebar-col {
   flex: 0 0 380px;
   width: 380px;
   position: sticky;
   top: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tl-tourp-sidebar {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-xl);
+  box-shadow: var(--tl-shadow);
+  padding: 22px;
+  background: var(--tl-white);
+}
+
+.tl-tourp-sidebar .tl-tourp-total,
+.tl-tourp-sidebar .tl-tourp-wachange,
+.tl-tourp-sidebar .tl-tourp-offernote,
+.tl-tourp-sidebar .tl-tourp-trust {
+  margin-bottom: 16px;
+}
+
+.tl-tourp-sidebar .tl-tourp-wachange,
+.tl-tourp-sidebar .tl-tourp-offernote {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.tl-tourp-sidebar > *:last-child {
+  margin-bottom: 0;
+}
+
+.tl-tourp-sidebar .tl-tourp-cta {
+  flex-direction: column;
+}
+
+.tl-tourp-sidebar .tl-tourp-cta .tl-btn-book {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Desktop/mobile duplicate-visibility toggle — see .tl-tourp-sidebar-col
+   above and .tl-tourp-layout's mobile rule below. */
+.tl-tourp-desktop-only {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .tl-tourp-desktop-only {
+    display: block;
+  }
+
+  .tl-tourp-mobile-only {
+    display: none;
+  }
+}
+
+/* Now nested inside .tl-tourp-sidebar-col — no longer sizes/sticks itself. */
+.tl-tourp-side {
+  position: static;
+  width: 100%;
 }
 
 .tl-tourp-panel {
@@ -3030,6 +3104,14 @@ body:not(.tl-subpage) .tl-about-extra {
     align-items: stretch;
   }
 
+  /* No box of its own on mobile — .tl-tourp-desktop-only children inside
+     it are display:none anyway, but without this a `flex: 0 0 380px`
+     sidebar-col would still claim 380px of *height* once the layout
+     flips to a column (flex-basis applies to the column's main axis). */
+  .tl-tourp-sidebar-col {
+    display: contents;
+  }
+
   /* Bottom sheet, not an inline block — slides up over the page, doesn't
      push the rest of the content down. */
   .tl-tourp-side {
@@ -3068,6 +3150,165 @@ body:not(.tl-subpage) .tl-about-extra {
     z-index: 69;
     background: rgba(15, 23, 42, 0.45);
   }
+}
+
+/* ── "Tur haqqında" — leading free-form caption text, clamped + read-more ── */
+.tl-tourp-about {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--tl-gray-600);
+  white-space: pre-line;
+  margin: 0;
+}
+
+.tl-tourp-about.clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tl-tourp-readmore {
+  display: block;
+  border: none;
+  background: none;
+  padding: 8px 0 0;
+  color: var(--tl-green-dark);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tl-tourp-showall {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tl-green-dark);
+  text-decoration: none;
+}
+
+/* ── WhatsApp date/passenger-change request card — sidebar on desktop,
+   inline in the mobile flow (tours are a static Instagram pull, so this
+   is the general "anything needs adjusting" escape hatch). ── */
+.tl-tourp-wachange {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-gray-50);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.tl-tourp-wachange h3 {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 6px;
+}
+
+.tl-tourp-wachange p {
+  font-size: 12.5px;
+  color: var(--tl-gray-600);
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.tl-tourp-wachange-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: var(--tl-r-lg);
+  background: #25d366;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tl-tourp-wachange-btn:hover {
+  background: #1ebe5a;
+}
+
+.tl-tourp-offernote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--tl-gray-500, #64748b);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.tl-tourp-offernote svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--tl-green);
+}
+
+.tl-tourp-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: 16px;
+}
+
+.tl-tourp-trust span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--tl-gray-600);
+}
+
+.tl-tourp-trust svg {
+  color: var(--tl-green);
+}
+
+/* ── "Bənzər turlar" — same-category tours, end of page ── */
+.tl-tourp-similar {
+  margin-top: 48px;
+}
+
+.tl-tourp-similar .tl-tourp-h2 {
+  margin-bottom: 18px;
+}
+
+/* ── Plain collapsible section (İmkanlar/Şərtlər no longer sit permanently
+   open and stack into one long scroll) — see components/Accordion.jsx ── */
+.tl-accordion {
+  margin-bottom: 28px;
+}
+
+.tl-accordion-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tl-accordion-head .tl-tourp-h2 {
+  margin: 0;
+}
+
+.tl-accordion-chevron {
+  flex-shrink: 0;
+  color: var(--tl-gray-400);
+  transition: transform 0.2s;
+}
+
+.tl-accordion-chevron.open {
+  transform: rotate(180deg);
+}
+
+.tl-accordion-body {
+  margin-top: 12px;
 }
 
 .tl-product-installment {

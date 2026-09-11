@@ -13,6 +13,9 @@ import { parseTourCaption } from '../utils/parseTourCaption';
 import InstallmentCalculator from '../components/InstallmentCalculator';
 import TravelProductsSidePanel, { TravelProductsPicker, useTravelProductsCart } from '../components/TravelProductsCrossSell';
 import Breadcrumb from '../components/Breadcrumb';
+import Accordion from '../components/Accordion';
+import TourCard from '../components/TourCard';
+import { getTourCategory } from '../utils/tourCategory';
 
 const S = (p) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -56,6 +59,9 @@ export default function TourDetailPage() {
 
   const [hotelIdx, setHotelIdx] = useState(0);
   useEffect(() => setHotelIdx(0), [id]);
+
+  const [aboutExpanded, setAboutExpanded] = useState(false);
+  useEffect(() => setAboutExpanded(false), [id]);
 
   const crossSellCart = useTravelProductsCart();
 
@@ -119,6 +125,101 @@ export default function TourDetailPage() {
     .join('\n');
   const waHref = (phone) => `https://wa.me/${phone}?text=${encodeURIComponent(waText)}`;
 
+  // Date/passenger-count change request — tours are a static Instagram
+  // pull with no live API to re-price against, so this is the general
+  // "anything about this tour needs adjusting" escape hatch, handled by
+  // a human manager over WhatsApp rather than a dedicated flow.
+  const waChangeHref = manager
+    ? `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('tourDetail.waChangeMessage', { title: tour.title }))}`
+    : null;
+
+  const category = getTourCategory(tour);
+  const categoryLabel = category.name !== 'Digər' ? t(`tourCategoryLabels.${category.name}`) : null;
+
+  const similarTours = tours
+    .filter((x) => x.id !== tour.id && getTourCategory(x).name === category.name)
+    .slice(0, 6);
+
+  // These blocks render twice — inline in the mobile single column (unchanged
+  // position/behavior) and again inside the sticky desktop sidebar — so they're
+  // built once here and toggled with .tl-tourp-mobile-only / .tl-tourp-desktop-only.
+  const priceCard = currentPrice && (
+    <div className="tl-tourp-total">
+      <div>
+        <span className="tl-tourp-total-label">{t('tourDetail.totalPrice')}</span>
+        <strong>{formatPrice(currentPrice.amount, currentPrice.currency)}</strong>
+      </div>
+      {cashback != null && (
+        <button type="button" className="tl-tourp-cashback" onClick={() => openAuth('register')}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M15 9.5A3.5 3.5 0 0 0 9 12a3.5 3.5 0 0 0 6 2.5" /></svg>
+          +{cashback} {currentPrice.currency} {t('tourDetail.cashback')}
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+        </button>
+      )}
+    </div>
+  );
+
+  const ctaButtons = !expired && (
+    <div className="tl-tourp-cta">
+      <a
+        href={manager ? (isMobile() ? waHref(manager.phone) : `tel:+${manager.phone}`) : '#'}
+        target={isMobile() ? '_blank' : undefined}
+        rel={isMobile() ? 'noopener noreferrer' : undefined}
+        className="tl-btn-book"
+        style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
+      >
+        {isMobile() ? t('common.waWrite') : t('common.call')}
+      </a>
+      <button
+        type="button"
+        onClick={() => addItem(toTourCartItem(tour))}
+        className="tl-btn-book"
+        style={{ border: '1px solid var(--tl-gray-200)', cursor: 'pointer', background: '#fff', color: 'var(--tl-navy)', padding: '13px 26px' }}
+      >
+        {t('shop.addToCart')}
+      </button>
+    </div>
+  );
+
+  const waChangeCard = waChangeHref && (
+    <div className="tl-tourp-wachange">
+      <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
+      <p>{t('tourDetail.whatsappRequestDesc')}</p>
+      <a href={waChangeHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-wachange-btn">
+        {WA_ICON}
+        {t('tourDetail.whatsappRequestBtn')}
+      </a>
+    </div>
+  );
+
+  const infoNote = (
+    <p className="tl-tourp-offernote">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" /></svg>
+      {t('tourDetail.specialOfferNote')}
+    </p>
+  );
+
+  const trustBadges = (
+    <div className="tl-tourp-trust">
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.4 8 11 4.6-2.6 8-6 8-11V5Z" /><path d="m9 12 2 2 4-4" /></svg>
+        {t('tourDetail.trustSafe')}
+      </span>
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+        {t('tourDetail.trustPartners')}
+      </span>
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+        {t('tourDetail.trustSupport')}
+      </span>
+    </div>
+  );
+
+  const INTRO_PREVIEW_LEN = 220;
+  const introText = parsed?.intro || null;
+  const introIsLong = introText && introText.length > INTRO_PREVIEW_LEN;
+
   return (
     <main className="tpwl-main">
       <section className="tl-page-top">
@@ -127,6 +228,7 @@ export default function TourDetailPage() {
             items={[
               { name: t('tourDetail.home'), to: '/' },
               { name: t('tourDetail.tours'), to: '/tours' },
+              ...(categoryLabel ? [{ name: categoryLabel, to: `/tours?category=${encodeURIComponent(category.name)}` }] : []),
               { name: tour.title },
             ]}
           />
@@ -140,7 +242,7 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              <div className="tl-tag">{t('tourDetail.tours')}</div>
+              <div className="tl-tag">{categoryLabel || t('tourDetail.tours')}</div>
               <h1 className="tl-tourp-title">{tour.title}</h1>
 
               {(parsed?.dateText || parsed?.destination || parsed?.duration || parsed?.venue) && (
@@ -203,21 +305,19 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              {currentPrice && (
-                <div className="tl-tourp-total">
-                  <div>
-                    <span className="tl-tourp-total-label">{t('tourDetail.totalPrice')}</span>
-                    <strong>{formatPrice(currentPrice.amount, currentPrice.currency)}</strong>
-                  </div>
-                  {cashback != null && (
-                    <button type="button" className="tl-tourp-cashback" onClick={() => openAuth('register')}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M15 9.5A3.5 3.5 0 0 0 9 12a3.5 3.5 0 0 0 6 2.5" /></svg>
-                      +{cashback} {currentPrice.currency} {t('tourDetail.cashback')}
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+              {introText && (
+                <div className="tl-tourp-block">
+                  <h2 className="tl-tourp-h2">{t('tourDetail.aboutTitle')}</h2>
+                  <p className={`tl-tourp-about${introIsLong && !aboutExpanded ? ' clamped' : ''}`}>{introText}</p>
+                  {introIsLong && (
+                    <button type="button" className="tl-tourp-readmore" onClick={() => setAboutExpanded((v) => !v)}>
+                      {aboutExpanded ? t('tourDetail.readLess') : t('tourDetail.readMore')}
                     </button>
                   )}
                 </div>
               )}
+
+              <div className="tl-tourp-mobile-only">{priceCard}</div>
 
               {currentPrice && (
                 <div className="tl-tourp-block">
@@ -226,17 +326,21 @@ export default function TourDetailPage() {
               )}
 
               {parsed?.conditions?.length > 0 && (
-                <div className="tl-tourp-block">
-                  <h2 className="tl-tourp-h2">{t('tourDetail.conditionsTitle')}</h2>
+                <Accordion title={t('tourDetail.conditionsTitle')}>
                   <ul className="tl-tourp-conditions">
                     {parsed.conditions.map((c, i) => (
                       <li key={i}>{c}</li>
                     ))}
                   </ul>
-                </div>
+                </Accordion>
               )}
 
-              <TravelProductsPicker cart={crossSellCart} />
+              {crossSellCart.products.length > 0 && (
+                <div className="tl-tourp-block">
+                  <TravelProductsPicker cart={crossSellCart} />
+                  <Link to="/shop" className="tl-tourp-showall">{t('tourDetail.showAllProducts')} →</Link>
+                </div>
+              )}
 
               {manager && (
                 <div className="tl-tourp-block">
@@ -266,32 +370,39 @@ export default function TourDetailPage() {
 
               {!parsed && <p className="tl-tourp-rawdesc">{tour.description}</p>}
 
-              {!expired && (
-                <div className="tl-tourp-cta">
-                  <a
-                    href={manager ? (isMobile() ? waHref(manager.phone) : `tel:+${manager.phone}`) : '#'}
-                    target={isMobile() ? '_blank' : undefined}
-                    rel={isMobile() ? 'noopener noreferrer' : undefined}
-                    className="tl-btn-book"
-                    style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
-                  >
-                    {isMobile() ? t('common.waWrite') : t('common.call')}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => addItem(toTourCartItem(tour))}
-                    className="tl-btn-book"
-                    style={{ border: '1px solid var(--tl-gray-200)', cursor: 'pointer', background: '#fff', color: 'var(--tl-navy)', padding: '13px 26px' }}
-                  >
-                    {t('shop.addToCart')}
-                  </button>
-                </div>
-              )}
+              <div className="tl-tourp-mobile-only">
+                {waChangeCard}
+                {trustBadges}
+                {infoNote}
+                {ctaButtons}
+              </div>
             </div>
 
-            <TravelProductsSidePanel cart={crossSellCart} tour={tour} tourPrice={currentPrice} />
+            <div className="tl-tourp-sidebar-col">
+              <div className="tl-tourp-sidebar tl-tourp-desktop-only">
+                {priceCard}
+                {ctaButtons}
+              </div>
+              <TravelProductsSidePanel cart={crossSellCart} tour={tour} tourPrice={currentPrice} />
+              <div className="tl-tourp-sidebar tl-tourp-desktop-only">
+                {waChangeCard}
+                {infoNote}
+                {trustBadges}
+              </div>
+            </div>
             </div>
           </div>
+
+          {similarTours.length > 0 && (
+            <div className="tl-tourp-similar">
+              <h2 className="tl-tourp-h2">{t('tourDetail.similarToursTitle')}</h2>
+              <div className="tl-pkg-grid">
+                {similarTours.map((st) => (
+                  <TourCard key={st.id} tour={st} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </main>

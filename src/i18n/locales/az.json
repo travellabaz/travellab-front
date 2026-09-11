@@ -205,7 +205,20 @@
     "productsTotal": "Məhsulların cəmi",
     "tourPriceLabel": "Turun qiyməti",
     "grandTotal": "Ümumi məbləğ",
-    "addBundleCta": "Tura + məhsulları əlavə et"
+    "addBundleCta": "Tura + məhsulları əlavə et",
+    "aboutTitle": "Tur haqqında",
+    "readMore": "Daha çox oxu",
+    "readLess": "Daha az göstər",
+    "showAllProducts": "Hamısını göstər",
+    "whatsappRequestTitle": "Tarix və ya sərnişin sayını dəyişmək istəyirsiniz?",
+    "whatsappRequestDesc": "Turlar Instagram-dan statik çəkildiyi üçün canlı tarix/qiymət yenidən hesablama yoxdur. Tur menecerimizlə WhatsApp üzərindən əlaqə saxlayın, sizə fərdi təklif hazırlayaq.",
+    "whatsappRequestBtn": "WhatsApp ilə sorğu göndər",
+    "waChangeMessage": "Salam, {{title}} üçün tarix/sərnişin sayında dəyişiklik etmək istəyirəm.",
+    "specialOfferNote": "Bu tur Instagram-da paylaşılan xüsusi təklifdir.",
+    "trustSafe": "Təhlükəsiz səyahət",
+    "trustPartners": "Etibarlı tərəfdaşlar",
+    "trustSupport": "24/7 dəstək",
+    "similarToursTitle": "Bu turlar da maraqınıza gələ bilər"
   },
   "installment": {
     "title": "İmkanlar",

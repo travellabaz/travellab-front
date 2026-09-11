@@ -205,7 +205,20 @@
     "productsTotal": "Сумма товаров",
     "tourPriceLabel": "Цена тура",
     "grandTotal": "Итого",
-    "addBundleCta": "Добавить тур + товары"
+    "addBundleCta": "Добавить тур + товары",
+    "aboutTitle": "О туре",
+    "readMore": "Читать полностью",
+    "readLess": "Свернуть",
+    "showAllProducts": "Показать все",
+    "whatsappRequestTitle": "Хотите изменить дату или количество человек?",
+    "whatsappRequestDesc": "Туры публикуются статично из Instagram, поэтому живого пересчёта даты/цены нет. Свяжитесь с менеджером тура через WhatsApp — подготовим для вас индивидуальное предложение.",
+    "whatsappRequestBtn": "Отправить запрос в WhatsApp",
+    "waChangeMessage": "Здравствуйте, хочу изменить дату/количество человек для тура {{title}}.",
+    "specialOfferNote": "Этот тур — специальное предложение, опубликованное в Instagram.",
+    "trustSafe": "Безопасное путешествие",
+    "trustPartners": "Надёжные партнёры",
+    "trustSupport": "Поддержка 24/7",
+    "similarToursTitle": "Вам также может быть интересно"
   },
   "installment": {
     "title": "Возможности",
