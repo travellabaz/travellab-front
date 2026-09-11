@@ -132,14 +132,14 @@ export default function TourDetailPage() {
           />
 
           <div className="tl-tourp">
-            {tour.imageUrl && (
-              <div className="tl-tourp-hero" role="img" aria-label={tour.title} style={{ backgroundImage: `url('${tour.imageUrl}')` }}>
-                {expired && <span className="tl-badge tl-badge-off">{t('tourCard.expired')}</span>}
-              </div>
-            )}
-
             <div className="tl-tourp-layout">
             <div className="tl-tourp-main">
+              {tour.imageUrl && (
+                <div className="tl-tourp-hero" role="img" aria-label={tour.title} style={{ backgroundImage: `url('${tour.imageUrl}')` }}>
+                  {expired && <span className="tl-badge tl-badge-off">{t('tourCard.expired')}</span>}
+                </div>
+              )}
+
               <div className="tl-tag">{t('tourDetail.tours')}</div>
               <h1 className="tl-tourp-title">{tour.title}</h1>
 

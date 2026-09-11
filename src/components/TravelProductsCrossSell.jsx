@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import { useCart } from '../context/CartContext';
@@ -90,8 +90,21 @@ export default function TravelProductsSidePanel({ cart, tour, tourPrice }) {
   const { t } = useTranslation();
   const { addItem } = useCart();
   const { selected, qtyBySku, inc, dec, productsTotal, productsCurrency, dismissed, setDismissed } = cart;
+  const open = selected.length > 0 && !dismissed;
 
-  if (selected.length === 0 || dismissed) return null;
+  // Mobile only — the panel is a fixed bottom sheet there, so lock body
+  // scroll while it's open (same pattern as EventsGallery's lightbox).
+  // Desktop keeps it as a plain sticky sidebar, page scroll stays normal.
+  useEffect(() => {
+    if (!open || typeof window === 'undefined') return undefined;
+    if (!window.matchMedia('(max-width: 900px)').matches) return undefined;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
+  if (!open) return null;
 
   const addBundle = () => {
     addItem(toTourCartItem(tour));
@@ -103,8 +116,14 @@ export default function TravelProductsSidePanel({ cart, tour, tourPrice }) {
   };
 
   return (
-    <aside className="tl-tourp-side">
+    <>
+      {/* Backdrop — only rendered/visible on mobile, where the panel
+          becomes a fixed bottom sheet (see the ≤900px rule in
+          global.css); harmless on desktop since it's display:none there. */}
+      <div className="tl-tourp-side-backdrop" onClick={() => setDismissed(true)} />
+      <aside className="tl-tourp-side">
       <div className="tl-tourp-panel">
+        <span className="tl-tourp-panel-handle" aria-hidden="true" />
         <div className="tl-tourp-panel-head">
           <span className="tl-tourp-panel-head-ico">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -178,6 +197,7 @@ export default function TravelProductsSidePanel({ cart, tour, tourPrice }) {
           {t('tourDetail.addBundleCta')}
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
