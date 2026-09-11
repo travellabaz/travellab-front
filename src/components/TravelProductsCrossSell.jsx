@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import { useCart } from '../context/CartContext';
-import { getProductBySku, productSlug, toCartItem } from '../data/shop';
+import { getProductBySku, productSlug, toBundleCartItem } from '../data/shop';
 import { toTourCartItem } from '../utils/tourCartItem';
 import { formatPrice } from '../utils/price';
 
@@ -65,7 +65,12 @@ export function TravelProductsPicker({ cart }) {
               </Link>
               <div className="tl-tourp-crosssell-name">{p.name}</div>
               <div className="tl-tourp-crosssell-row">
-                <span className="tl-tourp-crosssell-price">{formatPrice(p.price, p.currency)}</span>
+                <span className="tl-tourp-crosssell-prices">
+                  <span className="tl-tourp-crosssell-price">{formatPrice(p.price, p.currency)}</span>
+                  {p.standalonePrice > p.price && (
+                    <span className="tl-tourp-crosssell-strike">{formatPrice(p.standalonePrice, p.currency)}</span>
+                  )}
+                </span>
                 {qty > 0 ? (
                   <span className="tl-tourp-crosssell-stepper">
                     <button type="button" onClick={() => dec(p.sku)} aria-label={t('shop.qtyDecrease')}>−</button>
@@ -108,7 +113,7 @@ export default function TravelProductsSidePanel({ cart, tour, tourPrice }) {
 
   const addBundle = () => {
     addItem(toTourCartItem(tour));
-    selected.forEach((p) => addItem(toCartItem(p), qtyBySku[p.sku]));
+    selected.forEach((p) => addItem(toBundleCartItem(p), qtyBySku[p.sku]));
   };
 
   const scrollToPicker = () => {

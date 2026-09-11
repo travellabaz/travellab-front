@@ -140,7 +140,7 @@ function ShopProductDetail({ slug }) {
             <div className="tl-product-info">
               <div className="tl-product-category-tag">{product.categories.join(' · ')}</div>
               <h1 className="tl-product-name">{group.name}</h1>
-              <div className="tl-product-price">{product.price} {product.currency}</div>
+              <div className="tl-product-price">{product.standalonePrice ?? product.price} {product.currency}</div>
 
               {group.variants.length > 1 && (
                 <div className="tl-product-field">
@@ -200,9 +200,9 @@ function ShopProductDetail({ slug }) {
                 </button>
               </div>
 
-              {product.price > 0 && (
+              {(product.standalonePrice ?? product.price) > 0 && (
                 <div className="tl-product-installment">
-                  <InstallmentCalculator basePrice={product.price} currency={product.currency} />
+                  <InstallmentCalculator basePrice={product.standalonePrice ?? product.price} currency={product.currency} />
                 </div>
               )}
 

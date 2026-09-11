@@ -466,12 +466,17 @@ async function main() {
       } else if (kind === 'shopProduct') {
         const product = entry.product;
         const displayName = productDisplayName(product.name);
+        // The standalone price — what Google/a visitor actually sees and
+        // pays buying this on its own via Shop. The cheaper bundle price
+        // only applies inside a tour purchase and stays out of SEO/schema
+        // (see the Tour + Shop Bundle System brief).
+        const shopPrice = product.standalonePrice ?? product.price;
         // "{name} - {price} {currency} | Travellab Shop" — Shop SEO Paketi's
         // required title shape; no year here (a single product doesn't get
         // stale the way a "Collection 2026"-style category page would).
-        title = `${displayName} - ${product.price} ${product.currency} | Travellab Shop`;
+        title = `${displayName} - ${shopPrice} ${product.currency} | Travellab Shop`;
         const feature = product.metaFeature || truncate(product.description, 60) || '';
-        desc = t('seo.shopProductDesc', { name: displayName, price: product.price, currency: product.currency, feature }).replace(/\s+/g, ' ').trim();
+        desc = t('seo.shopProductDesc', { name: displayName, price: shopPrice, currency: product.currency, feature }).replace(/\s+/g, ' ').trim();
         image = product.images[0] || DEFAULT_OG_IMAGE;
       } else if (kind === 'shopCategory') {
         const { category } = entry;
@@ -567,7 +572,7 @@ async function main() {
             '@type': 'Offer',
             url: pageUrl,
             priceCurrency: product.currency,
-            price: String(product.price),
+            price: String(product.standalonePrice ?? product.price),
             availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             seller: { '@type': 'Organization', name: 'Travellab' },
           },

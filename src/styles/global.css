@@ -2667,11 +2667,23 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 8px;
 }
 
+.tl-tourp-crosssell-prices {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .tl-tourp-crosssell-price {
   font-family: 'Geist Sans', sans-serif;
   font-size: 13px;
   font-weight: 800;
-  color: var(--tl-navy);
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-crosssell-strike {
+  font-size: 11px;
+  color: var(--tl-gray-400);
+  text-decoration: line-through;
 }
 
 .tl-tourp-crosssell-add {

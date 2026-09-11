@@ -197,7 +197,7 @@ function splitList(value) {
 // "did anything relevant change" without the two call sites (write here,
 // compare in loadPreviousSeoBySku) having to agree field-by-field.
 function seoCacheKey(product) {
-  return crypto.createHash('sha1').update(`${product.name}|${product.categories.join(',')}|${product.price}|${product.description}`).digest('hex').slice(0, 12);
+  return crypto.createHash('sha1').update(`${product.name}|${product.categories.join(',')}|${product.standalonePrice}|${product.description}`).digest('hex').slice(0, 12);
 }
 
 function loadPreviousSeoBySku() {
@@ -250,7 +250,7 @@ async function generateProductSeoCopy(product) {
 
 Məhsul: "${name}"
 Kateqoriya: ${product.categories.join(', ') || 'Ümumi'}
-Qiymət: ${product.price} ${product.currency}
+Qiymət: ${product.standalonePrice} ${product.currency}
 Mövcud təsvir: ${product.description || '(yoxdur)'}
 
 Bu məhsul üçün İKİ mətn yaz, Azərbaycan dilində:
@@ -356,6 +356,13 @@ async function main() {
     // (undefined -> '' -> null) rather than assume they're there.
     keywordP1: col('Açar söz P1'),
     keywordP2: col('Açar söz P2'),
+    // Optional — same "tolerate col() === -1" pattern as the keyword
+    // columns above. "Qiymət" is the bundle price (what a tour-page
+    // visitor pays adding this alongside a tour); the standalone Shop
+    // price is that price marked up by this percent, computed once here
+    // rather than duplicated as a second manually-typed Sheet column
+    // (which would drift — see the Tour + Shop Bundle System brief).
+    markupPercent: col('Standalone Markup %'),
   };
 
   fs.mkdirSync(IMAGES_DIR, { recursive: true });
@@ -372,11 +379,20 @@ async function main() {
     // eslint-disable-next-line no-await-in-loop
     const images = await downloadProductImages(rawImages, sku);
 
+    const price = Number(row[idx.price]) || 0;
+    // Blank/missing column -> 25% default (see the brief). Rounded to the
+    // nearest 0.1 — every hand-typed Sheet price already follows that
+    // convention (19.9, 74.9…), so the derived one matches the look.
+    const markupPercent = Number(row[idx.markupPercent]) || 25;
+    const standalonePrice = Math.round(price * (1 + markupPercent / 100) * 10) / 10;
+
     products.push({
       sku,
       name,
       categories: splitList(row[idx.category]),
-      price: Number(row[idx.price]) || 0,
+      price,
+      markupPercent,
+      standalonePrice,
       currency: (row[idx.currency] || 'AZN').trim(),
       colors: splitList(row[idx.colors]),
       images,

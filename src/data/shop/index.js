@@ -72,7 +72,23 @@ export function getCategoryBySlug(slug) {
 
 // Snapshot shape CartContext/WishlistContext store — sku doubles as the
 // cart/wishlist line id, `product:${sku}` unique across both item kinds.
+// Standalone price by default — this is the "bought on its own, via the
+// Shop" path (listing/detail/wishlist). Bought alongside a tour instead
+// (TravelProductsCrossSell) uses toBundleCartItem below, at the cheaper
+// bundle price — see the Tour + Shop Bundle System brief.
 export function toCartItem(product) {
+  return {
+    kind: 'product',
+    id: product.sku,
+    title: product.name,
+    price: product.standalonePrice ?? product.price,
+    currency: product.currency,
+    image: product.images[0] || null,
+    url: `/shop/${productSlug(product)}`,
+  };
+}
+
+export function toBundleCartItem(product) {
   return {
     kind: 'product',
     id: product.sku,
@@ -104,7 +120,7 @@ export function getProductGroups() {
     g.defaultVariant = g.variants[0];
     g.bestseller = g.variants.some((v) => v.bestseller);
     g.inStock = g.variants.some((v) => v.inStock);
-    g.minPrice = Math.min(...g.variants.map((v) => v.price));
+    g.minPrice = Math.min(...g.variants.map((v) => v.standalonePrice ?? v.price));
     g.colors = Array.from(new Set(g.variants.flatMap((v) => v.colors)));
     return g;
   });
