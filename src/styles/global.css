@@ -3215,9 +3215,13 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-tourp-wachange-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 11px 18px;
   border-radius: var(--tl-r-lg);
   background: #25d366;
@@ -3225,6 +3229,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 13.5px;
   font-weight: 700;
   text-decoration: none;
+  text-align: center;
 }
 
 .tl-tourp-wachange-btn:hover {
