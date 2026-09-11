@@ -1765,6 +1765,12 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-btn-book {
+  /* <button> gets border-box from the UA stylesheet by default, <a>
+     doesn't — without this, an <a class="tl-btn-book"> sized via a fixed
+     width (e.g. the sidebar's width:100% CTA buttons) renders its own
+     padding on top of that width instead of inside it, and overflows its
+     container by exactly the horizontal padding. */
+  box-sizing: border-box;
   flex: 1;
   padding: 9px 0;
   border-radius: var(--tl-r-sm);
