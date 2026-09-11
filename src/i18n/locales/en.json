@@ -17,7 +17,8 @@
     "call": "Call",
     "copyNumber": "Copy number",
     "copied": "Copied!",
-    "tourInterestMessage": "Hello! I'm interested in the \"{{title}}\" tour."
+    "tourInterestMessage": "Hello! I'm interested in the \"{{title}}\" tour.",
+    "close": "Close"
   },
   "nav": {
     "flights": "Flights",
@@ -197,6 +198,10 @@
     "waPrice": "Price: {{price}}",
     "crossSellTitle": "Get ready for the trip",
     "crossSellSubtitle": "Products that might come in handy for this tour",
+    "crossSellPanelTitle": "Travel products",
+    "crossSellPanelSubtitle": "Everything you need for the trip in one place",
+    "crossSellUpsellTitle": "Make your trip more comfortable!",
+    "crossSellUpsellDesc": "Add the products you need and order everything together.",
     "productsTotal": "Products total",
     "tourPriceLabel": "Tour price",
     "grandTotal": "Grand total",

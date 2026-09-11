@@ -11,7 +11,7 @@ import { isTourExpired } from '../utils/tourDate';
 import { toTourCartItem } from '../utils/tourCartItem';
 import { parseTourCaption } from '../utils/parseTourCaption';
 import InstallmentCalculator from '../components/InstallmentCalculator';
-import TravelProductsCrossSell from '../components/TravelProductsCrossSell';
+import TravelProductsSidePanel, { TravelProductsPicker, useTravelProductsCart } from '../components/TravelProductsCrossSell';
 import Breadcrumb from '../components/Breadcrumb';
 
 const S = (p) => (
@@ -56,6 +56,8 @@ export default function TourDetailPage() {
 
   const [hotelIdx, setHotelIdx] = useState(0);
   useEffect(() => setHotelIdx(0), [id]);
+
+  const crossSellCart = useTravelProductsCart();
 
   // Show one manager, not the whole list — picked once per tour view.
   const manager = useMemo(() => {
@@ -136,6 +138,7 @@ export default function TourDetailPage() {
               </div>
             )}
 
+            <div className="tl-tourp-layout">
             <div className="tl-tourp-main">
               <div className="tl-tag">{t('tourDetail.tours')}</div>
               <h1 className="tl-tourp-title">{tour.title}</h1>
@@ -233,7 +236,7 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              <TravelProductsCrossSell tour={tour} tourPrice={currentPrice} />
+              <TravelProductsPicker cart={crossSellCart} />
 
               {manager && (
                 <div className="tl-tourp-block">
@@ -284,6 +287,9 @@ export default function TourDetailPage() {
                   </button>
                 </div>
               )}
+            </div>
+
+            <TravelProductsSidePanel cart={crossSellCart} tour={tour} tourPrice={currentPrice} />
             </div>
           </div>
         </div>

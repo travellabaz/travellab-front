@@ -17,7 +17,8 @@
     "call": "Позвонить",
     "copyNumber": "Скопировать номер",
     "copied": "Скопировано!",
-    "tourInterestMessage": "Здравствуйте! Меня интересует тур \"{{title}}\"."
+    "tourInterestMessage": "Здравствуйте! Меня интересует тур \"{{title}}\".",
+    "close": "Закрыть"
   },
   "nav": {
     "flights": "Авиабилеты",
@@ -197,6 +198,10 @@
     "waPrice": "Цена: {{price}}",
     "crossSellTitle": "Соберите чемодан",
     "crossSellSubtitle": "Товары, которые пригодятся для выбранного тура",
+    "crossSellPanelTitle": "Товары для путешествия",
+    "crossSellPanelSubtitle": "Всё необходимое для поездки в одном месте",
+    "crossSellUpsellTitle": "Сделайте поездку комфортнее!",
+    "crossSellUpsellDesc": "Добавьте нужные товары и оформите всё одним заказом.",
     "productsTotal": "Сумма товаров",
     "tourPriceLabel": "Цена тура",
     "grandTotal": "Итого",

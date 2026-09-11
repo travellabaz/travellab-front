@@ -17,7 +17,8 @@
     "call": "Zəng et",
     "copyNumber": "Nömrəni kopyala",
     "copied": "Kopyalandı!",
-    "tourInterestMessage": "Salam! \"{{title}}\" turu ilə maraqlanıram."
+    "tourInterestMessage": "Salam! \"{{title}}\" turu ilə maraqlanıram.",
+    "close": "Bağla"
   },
   "nav": {
     "flights": "Uçuşlar",
@@ -197,6 +198,10 @@
     "waPrice": "Qiymət: {{price}}",
     "crossSellTitle": "Səyahətə hazırlaş",
     "crossSellSubtitle": "Seçdiyiniz tur üçün lazım ola biləcək məhsullar",
+    "crossSellPanelTitle": "Səyahət məhsulları",
+    "crossSellPanelSubtitle": "Səfəriniz üçün lazım olan hər şey bir yerdə",
+    "crossSellUpsellTitle": "Səfərini daha komfortlu et!",
+    "crossSellUpsellDesc": "İstədiyin məhsulları əlavə et, hamısını eyni sifarişdə al.",
     "productsTotal": "Məhsulların cəmi",
     "tourPriceLabel": "Turun qiyməti",
     "grandTotal": "Ümumi məbləğ",

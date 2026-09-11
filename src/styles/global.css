@@ -2320,10 +2320,11 @@ body:not(.tl-subpage) .tl-about-extra {
 /* ── TOUR (PRODUCT) DETAIL PAGE — .tl-tourp-* — structured from the
    parsed Instagram caption (see utils/parseTourCaption.js). ── */
 .tl-tourp {
-  max-width: 760px;
+  max-width: 1160px;
 }
 
 .tl-tourp-hero {
+  max-width: 760px;
   height: 320px;
   border-radius: var(--tl-r-xl);
   background-size: cover;
@@ -2331,6 +2332,12 @@ body:not(.tl-subpage) .tl-about-extra {
   background-color: var(--tl-gray-50);
   position: relative;
   margin-bottom: 22px;
+}
+
+.tl-tourp-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
 }
 
 .tl-tourp-hero .tl-badge-off {
@@ -2365,6 +2372,12 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-tourp-meta svg {
   color: var(--tl-green);
+}
+
+.tl-tourp-main {
+  flex: 1;
+  min-width: 0;
+  max-width: 760px;
 }
 
 .tl-tourp-block {
@@ -2711,13 +2724,6 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
 }
 
-.tl-tourp-crosssell-summary {
-  margin-top: 16px;
-  padding: 16px 18px;
-  border-radius: var(--tl-r-lg);
-  background: var(--tl-green-light);
-}
-
 .tl-tourp-crosssell-summary-row {
   display: flex;
   align-items: center;
@@ -2764,6 +2770,241 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-tourp-crosssell-cta:hover {
   background: var(--tl-green-dark);
+}
+
+/* ── Sticky "Səyahət məhsulları" side panel — desktop right column ── */
+.tl-tourp-side {
+  flex: 0 0 340px;
+  width: 340px;
+  position: sticky;
+  top: 90px;
+}
+
+.tl-tourp-panel {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-xl);
+  box-shadow: var(--tl-shadow);
+  padding: 20px;
+  background: var(--tl-white);
+}
+
+.tl-tourp-panel-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tl-tourp-panel-head-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-panel-head > span:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tl-tourp-panel-head strong {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  color: var(--tl-navy);
+}
+
+.tl-tourp-panel-sub {
+  font-size: 11px;
+  color: var(--tl-gray-500, #64748b);
+  line-height: 1.4;
+}
+
+.tl-tourp-panel-close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--tl-gray-400);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tl-tourp-panel-close:hover {
+  color: var(--tl-navy);
+}
+
+.tl-tourp-panel-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.tl-tourp-panel-item {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.tl-tourp-panel-item-img {
+  grid-row: 1 / 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--tl-gray-50);
+}
+
+.tl-tourp-panel-item-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tl-tourp-panel-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.tl-tourp-panel-item-info strong {
+  font-size: 12.5px;
+  color: var(--tl-navy);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tl-tourp-panel-item-info span {
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+}
+
+.tl-tourp-panel-item-remove {
+  border: none;
+  background: transparent;
+  color: var(--tl-gray-400);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.tl-tourp-panel-item-remove:hover {
+  color: #d9302f;
+}
+
+.tl-tourp-panel-item-stepper {
+  grid-column: 2 / 4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tl-tourp-panel-item-stepper button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: 50%;
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.tl-tourp-panel-item-stepper span {
+  min-width: 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tl-navy);
+}
+
+.tl-tourp-panel-upsell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: none;
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-green-light);
+  text-align: left;
+  cursor: pointer;
+}
+
+.tl-tourp-panel-upsell-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--tl-white);
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-panel-upsell > span:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tl-tourp-panel-upsell strong {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 12.5px;
+  color: var(--tl-navy);
+}
+
+.tl-tourp-panel-upsell span span {
+  font-size: 11px;
+  color: var(--tl-gray-600);
+  line-height: 1.3;
+}
+
+.tl-tourp-panel-upsell svg {
+  flex-shrink: 0;
+  color: var(--tl-green-dark);
+}
+
+.tl-tourp-panel-totals {
+  padding-top: 12px;
+  border-top: 1px solid var(--tl-gray-200);
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  .tl-tourp-layout {
+    flex-direction: column;
+  }
+  .tl-tourp-side {
+    position: static;
+    width: 100%;
+    flex-basis: auto;
+  }
 }
 
 .tl-product-installment {
