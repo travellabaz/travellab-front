@@ -127,6 +127,14 @@ export default function TicketNetworkEventsPage() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [quantity, setQuantity] = useState(1);
 
+  // Asked upfront, the moment an event page opens — matches Expedia's
+  // "how many tickets?" prompt before browsing the seat list. Narrows the
+  // ticket list to groups that can actually fulfil that quantity (Mercury
+  // groups only sell in specific bundle sizes, see purchasableQuantities)
+  // instead of letting the visitor pick a group and find out afterward.
+  const [showQuantityPopup, setShowQuantityPopup] = useState(false);
+  const [desiredQuantity, setDesiredQuantity] = useState(null);
+
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -202,6 +210,8 @@ export default function TicketNetworkEventsPage() {
     let cancelled = false;
     setSelectedGroup(null);
     setQuantity(1);
+    setDesiredQuantity(null);
+    setShowQuantityPopup(true);
     setResult(null);
     setLoadingGroups(true);
     setCustomerName(profile ? `${profile.name} ${profile.surname}`.trim() : '');
@@ -237,10 +247,40 @@ export default function TicketNetworkEventsPage() {
 
   const selectGroup = (group) => {
     setSelectedGroup(group);
-    setQuantity(group.purchasableQuantities?.[0] || 1);
+    const preferredQuantity = desiredQuantity && (group.purchasableQuantities || []).includes(desiredQuantity)
+      ? desiredQuantity
+      : (group.purchasableQuantities?.[0] || 1);
+    setQuantity(preferredQuantity);
     setDeliveryMethod(group.deliveryMethods?.[0] || '');
     setResult(null);
   };
+
+  useEffect(() => {
+    if (!showQuantityPopup) return undefined;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => {
+      if (e.key === 'Escape') setShowQuantityPopup(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [showQuantityPopup]);
+
+  const confirmQuantity = (q) => {
+    setDesiredQuantity(q);
+    setQuantity(q);
+    setShowQuantityPopup(false);
+  };
+
+  // Groups that can't actually fulfil the requested quantity are hidden
+  // rather than shown-then-disabled — Mercury only sells a group in
+  // specific bundle sizes (purchasableQuantities), so a group that can't
+  // match isn't a real option for this visitor at all.
+  const visibleTicketGroups = desiredQuantity
+    ? ticketGroups.filter((tg) => (tg.purchasableQuantities || []).includes(desiredQuantity))
+    : ticketGroups;
 
   const submitPurchase = async (e) => {
     e.preventDefault();
@@ -354,6 +394,28 @@ export default function TicketNetworkEventsPage() {
             </>
           )}
 
+          {selectedEvent && showQuantityPopup && (
+            <div
+              className="tl-evt-qty-overlay"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setShowQuantityPopup(false);
+              }}
+            >
+              <div className="tl-evt-qty-box">
+                <button type="button" className="tl-evt-qty-close" onClick={() => setShowQuantityPopup(false)}>×</button>
+                <h3 className="tl-evt-sidebar-title" style={{ marginBottom: 4 }}>Neçə bilet lazımdır?</h3>
+                <p className="tl-evt-tickets-sub" style={{ marginBottom: 20 }}>{selectedEvent.name}</p>
+                <div className="tl-evt-qty-grid">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((q) => (
+                    <button key={q} type="button" className="tl-evt-qty-btn" onClick={() => confirmQuantity(q)}>
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           {selectedEvent && (
             <>
               <button type="button" className="tl-evt-back" onClick={backToResults}>
@@ -384,21 +446,35 @@ export default function TicketNetworkEventsPage() {
                     <SeaticsSeatMap eventId={selectedEvent.id} />
                   </div>
 
-                  <h2 className="tl-evt-tickets-head">Mövcud biletlər</h2>
-                  <p className="tl-evt-tickets-sub">Bir seçim edin, sağdakı bölmədə davam edin.</p>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
+                    <div>
+                      <h2 className="tl-evt-tickets-head">Mövcud biletlər</h2>
+                      <p className="tl-evt-tickets-sub" style={{ marginBottom: 0 }}>Bir seçim edin, sağdakı bölmədə davam edin.</p>
+                    </div>
+                    {desiredQuantity && (
+                      <button type="button" className="tl-evt-qty-pill" onClick={() => setShowQuantityPopup(true)}>
+                        {desiredQuantity} bilet · Dəyiş
+                      </button>
+                    )}
+                  </div>
 
                   {loadingGroups && (
-                    <div className="tl-evt-tickets">
+                    <div className="tl-evt-tickets" style={{ marginTop: 16 }}>
                       {Array.from({ length: 4 }).map((_, i) => <TicketRowSkeleton key={i} />)}
                     </div>
                   )}
                   {!loadingGroups && ticketGroups.length === 0 && (
-                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Bu tədbir üçün real bilet tapılmadı.</p>
+                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>Bu tədbir üçün real bilet tapılmadı.</p>
+                  )}
+                  {!loadingGroups && ticketGroups.length > 0 && visibleTicketGroups.length === 0 && (
+                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>
+                      {desiredQuantity} bilet birlikdə mövcud deyil. <button type="button" className="tl-evt-inline-link" onClick={() => setShowQuantityPopup(true)}>Sayı dəyişin</button>
+                    </p>
                   )}
 
-                  {!loadingGroups && ticketGroups.length > 0 && (
-                    <div className="tl-evt-tickets">
-                      {ticketGroups.map((tg) => {
+                  {!loadingGroups && visibleTicketGroups.length > 0 && (
+                    <div className="tl-evt-tickets" style={{ marginTop: 16 }}>
+                      {visibleTicketGroups.map((tg) => {
                         const isSelected = selectedGroup?.ticketGroupId === tg.ticketGroupId;
                         return (
                           <button

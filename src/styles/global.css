@@ -11708,6 +11708,105 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-400);
 }
 
+/* "How many tickets?" popup — same overlay/card pattern as the other
+   modals (ManagerContactModal.jsx etc.), shown the moment an event page
+   opens, before the visitor browses the ticket list. */
+.tl-evt-qty-overlay {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(13, 21, 32, 0.92);
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.tl-evt-qty-box {
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  box-shadow: var(--tl-shadow);
+  border-radius: var(--tl-r-xl);
+  width: 100%;
+  max-width: 380px;
+  padding: 32px;
+  position: relative;
+  animation: authPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.tl-evt-qty-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--tl-gray-100);
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  color: var(--tl-navy);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-evt-qty-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.tl-evt-qty-btn {
+  height: 52px;
+  border-radius: var(--tl-r-sm);
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tl-evt-qty-btn:hover {
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+}
+
+.tl-evt-qty-pill {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 100px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tl-evt-qty-pill:hover {
+  border-color: var(--tl-green);
+  color: var(--tl-green-dark);
+}
+
+.tl-evt-inline-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--tl-green);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /* Skeleton loading state for the search grid and ticket list — replaces
    plain "Yüklənir..." text with Expedia-style shimmering placeholders. */
 @keyframes tl-evt-shimmer {
