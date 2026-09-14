@@ -218,7 +218,18 @@
     "trustSafe": "Təhlükəsiz səyahət",
     "trustPartners": "Etibarlı tərəfdaşlar",
     "trustSupport": "24/7 dəstək",
-    "similarToursTitle": "Bu turlar da maraqınıza gələ bilər"
+    "similarToursTitle": "Bu turlar da maraqınıza gələ bilər",
+    "viewItinerary": "Ətraflı proqrama bax"
+  },
+  "tourItinerary": {
+    "crumbLabel": "Ətraflı Proqram",
+    "pageTitleSuffix": "Ətraflı Proqram",
+    "metaDesc": "{{title}} — otel seçimləri, qiymətə daxil olanlar və şərtlər daxil olmaqla tam səyahət proqramı.",
+    "staleBanner": "Bu, proqram nümunəsidir — aktual tarix və qiymət üçün bizimlə əlaqə saxlayın.",
+    "staleBannerCta": "Əlaqə saxla",
+    "staleBannerMessage": "Salam, {{title}} proqramı ilə maraqlanıram — aktual tarix və qiymət barədə məlumat almaq istəyirəm.",
+    "cityGuideLabel": "Şəhər haqqında",
+    "bookCta": "Turu sifariş et"
   },
   "installment": {
     "title": "İmkanlar",

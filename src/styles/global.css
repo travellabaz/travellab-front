@@ -3322,6 +3322,193 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-top: 12px;
 }
 
+/* ── "Ətraflı Proqram" link on the product page — points to the
+   itinerary page (see TourItineraryPage.jsx). ── */
+.tl-tourp-itinerary-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: -6px 0 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--tl-green-dark);
+  text-decoration: none;
+}
+
+/* ── Itinerary page (/tours/:id/itinerary) — TourItineraryPage.jsx.
+   Single-column, informational: reuses the product page's .tl-tourp-*
+   block/heading classes for a consistent look, with its own narrower
+   width (no sticky sidebar here) and a few page-specific pieces below. ── */
+.tl-itin {
+  max-width: 760px;
+}
+
+.tl-itin-eyebrow {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--tl-gray-500, #64748b);
+  margin: 2px 0 6px;
+}
+
+.tl-itin-hotel-row {
+  cursor: default;
+}
+
+.tl-itin-payment-note {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  color: var(--tl-gray-600);
+  line-height: 1.5;
+}
+
+.tl-itin-guide-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  margin-bottom: 28px;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-gray-50);
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.tl-itin-guide-card:hover {
+  border-color: var(--tl-green);
+}
+
+.tl-itin-guide-label {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--tl-gray-500, #64748b);
+}
+
+.tl-itin-guide-title {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tl-itin-guide-card svg {
+  flex-shrink: 0;
+  color: var(--tl-green-dark);
+}
+
+.tl-itin-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--tl-gray-200);
+}
+
+.tl-itin-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.tl-itin-manager {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Staleness banner — shown when the tour's own date has passed; the
+   page stays up (see prerender.mjs's noindex handling) but this makes
+   clear the content is a sample, not a live offer. In-flow, not fixed/
+   overlaid, so it never covers the page's real content. ── */
+.tl-itin-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #fde68a;
+  border-radius: var(--tl-r-lg);
+  background: #fffbeb;
+}
+
+.tl-itin-banner-text {
+  flex: 1;
+  min-width: 200px;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.4;
+}
+
+.tl-itin-banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: var(--tl-r-lg);
+  background: #25d366;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tl-itin-banner-close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #92400e;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .tl-itin-cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tl-itin-cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tl-itin-cta-actions .tl-btn-book {
+    width: 100%;
+  }
+
+  .tl-itin-manager {
+    justify-content: space-between;
+  }
+
+  .tl-itin-guide-card {
+    flex-wrap: wrap;
+  }
+
+  .tl-itin-guide-title {
+    white-space: normal;
+    flex-basis: 100%;
+    order: 3;
+  }
+}
+
 .tl-product-installment {
   margin: 8px 0 20px;
   padding-top: 20px;

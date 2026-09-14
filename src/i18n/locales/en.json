@@ -218,7 +218,18 @@
     "trustSafe": "Safe travel",
     "trustPartners": "Trusted partners",
     "trustSupport": "24/7 support",
-    "similarToursTitle": "You might also like these tours"
+    "similarToursTitle": "You might also like these tours",
+    "viewItinerary": "View full itinerary"
+  },
+  "tourItinerary": {
+    "crumbLabel": "Full Itinerary",
+    "pageTitleSuffix": "Full Itinerary",
+    "metaDesc": "{{title}} — full trip itinerary: hotel options, what's included in the price, and terms.",
+    "staleBanner": "This is a sample itinerary — contact us for current dates and pricing.",
+    "staleBannerCta": "Contact us",
+    "staleBannerMessage": "Hi, I'm interested in the {{title}} itinerary — I'd like to check the current dates and price.",
+    "cityGuideLabel": "About this city",
+    "bookCta": "Book this tour"
   },
   "installment": {
     "title": "Options",

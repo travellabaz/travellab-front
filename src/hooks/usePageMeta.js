@@ -10,6 +10,7 @@ import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
 import { getParentBySlug, getSubcategory, tourParentSlug, tourSubSlug } from '../data/tourSubcategories';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { getProductBySku } from '../data/shop';
+import { isTourExpired } from '../utils/tourDate';
 import { toAccusative } from '../utils/ruGrammar';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../i18n';
 import { getLocaleFromPathname, stripLocalePrefix, buildLocalizedPath } from '../utils/locale';
@@ -70,6 +71,9 @@ export default function usePageMeta() {
     const blogPath = rawPost ? `/blog/${postSlugForLocale(rawPost, lang)}` : null;
     const tourIdMatch = /^\/tours\/([^/]+)$/.exec(path);
     const tour = tourIdMatch ? tours.find((t) => String(t.id) === tourIdMatch[1]) : null;
+    const tourItineraryMatch = /^\/tours\/([^/]+)\/itinerary$/.exec(path);
+    const tourForItinerary = tourItineraryMatch ? tours.find((t) => String(t.id) === tourItineraryMatch[1]) : null;
+    const tourItineraryNotFound = !!tourItineraryMatch && !toursLoading && !tourForItinerary;
     const shopProductMatch = /^\/shop\/([^/]+)$/.exec(path);
     const shopProduct = shopProductMatch ? getProductBySku(shopProductMatch[1]) : null;
     // Only true once the live tours list has actually loaded — while it's
@@ -115,7 +119,9 @@ export default function usePageMeta() {
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour
         ? { title: tour.metaTitle || `${tour.title} — Travellab`, desc: tour.metaDescription || truncate(tour.description, 160) }
-        : shopProduct
+        : tourForItinerary
+          ? { title: `${tourForItinerary.title} — ${t('tourItinerary.pageTitleSuffix')} | Travellab`, desc: t('tourItinerary.metaDesc', { title: tourForItinerary.title }) }
+          : shopProduct
           ? { title: `${shopProduct.name} — Travellab Shop`, desc: truncate(shopProduct.description, 160) || t('seo.shop.desc') }
           : vizaCountry
             ? { title: t('seo.vizaCountryTitle', { country: vizaCountryNameAcc, defaultValue: `${vizaCountryNameAcc} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryNameAcc, defaultValue: '' }) }
@@ -141,7 +147,9 @@ export default function usePageMeta() {
       ? (post.coverImage.startsWith('http') ? post.coverImage : BASE_URL + post.coverImage)
       : tour && tour.imageUrl
         ? tour.imageUrl
-        : shopProduct && shopProduct.images[0]
+        : tourForItinerary && tourForItinerary.imageUrl
+          ? tourForItinerary.imageUrl
+          : shopProduct && shopProduct.images[0]
           ? shopProduct.images[0]
           : pageImage
           ? (pageImage.startsWith('http') ? pageImage : BASE_URL + pageImage)
@@ -165,7 +173,11 @@ export default function usePageMeta() {
     setMeta('twitter-desc', 'content', page.desc);
     setMeta('twitter-image', 'content', image);
     setMeta('canonical', 'href', pageUrl);
-    setMeta('meta-robots', 'content', tourNotFound ? 'noindex, follow' : 'index, follow');
+    // Itinerary pages stay up (not deleted) once a tour's date has passed —
+    // per the Itinerary brief they just drop out of the index instead,
+    // with a banner pointing visitors to a manager for current dates.
+    const itineraryStale = !!tourForItinerary && isTourExpired(tourForItinerary.description);
+    setMeta('meta-robots', 'content', tourNotFound || tourItineraryNotFound || itineraryStale ? 'noindex, follow' : 'index, follow');
 
     // hreflang alternates — one per supported language pointing at the
     // equivalent page, plus x-default (-> AZ, the unprefixed default).
@@ -210,6 +222,12 @@ export default function usePageMeta() {
         items.push({ name: t('footer.blog'), url: BASE_URL + buildLocalizedPath('/blog', lang) }, { name: post.title, url: pageUrl });
       } else if (tour) {
         items.push({ name: t('nav.tours'), url: BASE_URL + buildLocalizedPath('/tours', lang) }, { name: tour.title, url: pageUrl });
+      } else if (tourForItinerary) {
+        items.push(
+          { name: t('nav.tours'), url: BASE_URL + buildLocalizedPath('/tours', lang) },
+          { name: tourForItinerary.title, url: BASE_URL + buildLocalizedPath(`/tours/${tourForItinerary.id}`, lang) },
+          { name: t('tourItinerary.crumbLabel'), url: pageUrl }
+        );
       } else if (shopProduct) {
         items.push({ name: t('shop.breadcrumb'), url: BASE_URL + buildLocalizedPath('/shop', lang) }, { name: shopProduct.name, url: pageUrl });
       } else if (vizaCountry) {

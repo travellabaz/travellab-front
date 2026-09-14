@@ -305,6 +305,11 @@ export default function TourDetailPage() {
                 </div>
               )}
 
+              <Link to={`/tours/${tour.id}/itinerary`} className="tl-tourp-itinerary-link">
+                {t('tourDetail.viewItinerary')}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
+              </Link>
+
               {introText && (
                 <div className="tl-tourp-block">
                   <h2 className="tl-tourp-h2">{t('tourDetail.aboutTitle')}</h2>

@@ -20,6 +20,7 @@ import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
 import { toAccusative } from './src/utils/ruGrammar.js';
 import { slugify } from './src/utils/slugify.js';
+import { isTourExpired } from './src/utils/tourDate.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -141,9 +142,10 @@ async function fetchInactiveTourIds() {
 function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours) {
   const redirectsPath = path.join(distDir, '_redirects');
   const existing = fs.existsSync(redirectsPath) ? fs.readFileSync(redirectsPath, 'utf-8') : '';
-  const inactiveLines = inactiveTourIds.flatMap((id) =>
-    LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`)
-  );
+  const inactiveLines = inactiveTourIds.flatMap((id) => [
+    ...LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`),
+    ...LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}/itinerary`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`),
+  ]);
 
   // Blog posts used to live at /<lang>/blog/<AZ-slug> in every language;
   // trilingual posts now carry a per-language slug, so the old localized
@@ -393,6 +395,11 @@ async function main() {
   }
   for (const tour of activeTours) {
     routeEntries.push({ bareRoutePath: `/tours/${tour.id}`, kind: 'tour', tourId: String(tour.id), langs: LANGUAGES });
+    // Itinerary page follows the exact same lifecycle as the product page
+    // (both live only while the tour is still in activeTours) — it just
+    // gets noindexed, not deleted, once the tour's own date has passed
+    // (see the noindex/robots + sitemap-filter handling below).
+    routeEntries.push({ bareRoutePath: `/tours/${tour.id}/itinerary`, kind: 'tourItinerary', tourId: String(tour.id), langs: LANGUAGES });
   }
   for (const product of shopProducts) {
     // slug (not SKU) is the public URL now — see productSlug() in
@@ -463,6 +470,11 @@ async function main() {
         title = tour.metaTitle || `${tour.title} — Travellab`;
         desc = tour.metaDescription || truncate(tour.description, 160) || t(`seo.tours.desc`);
         image = tour.imageUrl || DEFAULT_OG_IMAGE;
+      } else if (kind === 'tourItinerary') {
+        tour = toursById[entry.tourId];
+        title = `${tour.title} — ${t('tourItinerary.pageTitleSuffix')} | Travellab`;
+        desc = t('tourItinerary.metaDesc', { title: tour.title });
+        image = tour.imageUrl || DEFAULT_OG_IMAGE;
       } else if (kind === 'shopProduct') {
         const product = entry.product;
         const displayName = productDisplayName(product.name);
@@ -501,6 +513,9 @@ async function main() {
       html = setAttrById(html, 'twitter-title', 'content', title);
       html = setAttrById(html, 'twitter-desc', 'content', desc);
       html = setAttrById(html, 'twitter-image', 'content', image);
+      if (kind === 'tourItinerary' && isTourExpired(tour.description)) {
+        html = setAttrById(html, 'meta-robots', 'content', 'noindex, follow');
+      }
 
       const hreflangTags = buildHreflangTags(entry, langs);
       html = html.replace('</head>', `  ${hreflangTags}\n  </head>`);
@@ -511,6 +526,12 @@ async function main() {
         breadcrumbItems.push({ name: t('footer.blog'), url: `${BASE_URL}${buildLocalizedPath('/blog', lang)}` }, { name: post.title, url: pageUrl });
       } else if (kind === 'tour') {
         breadcrumbItems.push({ name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` }, { name: tour.title, url: pageUrl });
+      } else if (kind === 'tourItinerary') {
+        breadcrumbItems.push(
+          { name: t('nav.tours'), url: `${BASE_URL}${buildLocalizedPath('/tours', lang)}` },
+          { name: tour.title, url: `${BASE_URL}${buildLocalizedPath(`/tours/${tour.id}`, lang)}` },
+          { name: t('tourItinerary.crumbLabel'), url: pageUrl }
+        );
       } else if (kind === 'shopProduct') {
         breadcrumbItems.push({ name: t('shop.breadcrumb'), url: `${BASE_URL}${buildLocalizedPath('/shop', lang)}` });
         const productCategory = entry.product.categories[0];
@@ -603,19 +624,24 @@ async function main() {
   // its own hreflang alternate entries (Google's documented multi-language
   // sitemap format) — blog posts only list the languages they actually
   // have, same rule as the prerender loop above.
-  const urlEntries = routeEntries.flatMap((entry) =>
-    entry.langs.map((lang) => {
-      const localizedRoutePath = buildLocalizedPath(entryBarePath(entry, lang), lang);
-      const loc = `${BASE_URL}${localizedRoutePath || '/'}`;
-      const alternates = entry.langs
-        .map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${BASE_URL}${buildLocalizedPath(entryBarePath(entry, l), l) || '/'}" />`)
-        .join('\n');
-      const defaultAlternate = entry.langs.includes(DEFAULT_LANGUAGE)
-        ? `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}${entryBarePath(entry, DEFAULT_LANGUAGE)}" />`
-        : '';
-      return `  <url>\n    <loc>${loc}</loc>\n${alternates}${defaultAlternate}\n  </url>`;
-    })
-  );
+  const urlEntries = routeEntries
+    // Noindexed itinerary pages (tour date has passed) shouldn't be listed
+    // as indexable URLs — they still get their own static HTML above, just
+    // not a sitemap entry.
+    .filter((entry) => !(entry.kind === 'tourItinerary' && isTourExpired(toursById[entry.tourId].description)))
+    .flatMap((entry) =>
+      entry.langs.map((lang) => {
+        const localizedRoutePath = buildLocalizedPath(entryBarePath(entry, lang), lang);
+        const loc = `${BASE_URL}${localizedRoutePath || '/'}`;
+        const alternates = entry.langs
+          .map((l) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${BASE_URL}${buildLocalizedPath(entryBarePath(entry, l), l) || '/'}" />`)
+          .join('\n');
+        const defaultAlternate = entry.langs.includes(DEFAULT_LANGUAGE)
+          ? `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}${entryBarePath(entry, DEFAULT_LANGUAGE)}" />`
+          : '';
+        return `  <url>\n    <loc>${loc}</loc>\n${alternates}${defaultAlternate}\n  </url>`;
+      })
+    );
   const sitemap =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +

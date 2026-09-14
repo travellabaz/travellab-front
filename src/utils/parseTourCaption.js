@@ -78,8 +78,9 @@ export function parseTourCaption(description) {
 
     if (line.startsWith('#')) continue;
 
-    // Date / destination
-    if (lead === '🗓️' || lead === '📅') {
+    // Date / destination — 🗒️ (spiral notepad) shows up as a date marker
+    // on a couple of real captions alongside the usual 🗓️/📅.
+    if (lead === '🗓️' || lead === '📅' || lead === '🗒️') {
       started = true;
       const parts = body.split(/\s+[-–—]\s+/);
       result.dateText = parts[0].trim();
