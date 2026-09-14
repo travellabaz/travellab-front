@@ -11366,3 +11366,289 @@ body:not(.tl-subpage) .tl-about-extra {
     display: none;
   }
 }
+
+/* ── Event ticket detail (TicketNetworkEventsPage.jsx) — Expedia-style
+   seat-map + ticket-list layout, dressed in Travellab's own tokens.
+   Mirrors .tl-tourp-layout/.tl-tourp-sidebar-col's sticky two-column
+   pattern (see above) rather than inventing a new one. ── */
+.tl-evt-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tl-gray-600);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 18px;
+}
+
+.tl-evt-back:hover {
+  color: var(--tl-green);
+}
+
+.tl-evt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--tl-gray-600);
+  font-size: 14px;
+  margin: 10px 0 18px;
+}
+
+.tl-evt-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tl-evt-meta-item svg {
+  color: var(--tl-green);
+  flex-shrink: 0;
+}
+
+.tl-evt-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.tl-evt-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tl-green-dark);
+  background: var(--tl-green-light);
+  border-radius: 100px;
+  padding: 7px 14px;
+}
+
+.tl-evt-trust-item svg {
+  flex-shrink: 0;
+}
+
+.tl-evt-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.tl-evt-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tl-evt-map-card {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-xl);
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.tl-evt-tickets-head {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 4px;
+}
+
+.tl-evt-tickets-sub {
+  font-size: 13px;
+  color: var(--tl-gray-400);
+  margin: 0 0 16px;
+}
+
+.tl-evt-tickets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tl-evt-ticket-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  background: var(--tl-white);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.tl-evt-ticket-row:hover {
+  border-color: var(--tl-green);
+}
+
+.tl-evt-ticket-row.tl-evt-ticket-row-selected {
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+}
+
+.tl-evt-ticket-section {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tl-navy);
+}
+
+.tl-evt-ticket-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tl-gray-400);
+  margin-top: 3px;
+}
+
+.tl-evt-ticket-price {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.tl-evt-ticket-price strong {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  display: block;
+}
+
+.tl-evt-ticket-price span {
+  font-size: 11px;
+  color: var(--tl-gray-400);
+}
+
+/* ── Sticky order-summary sidebar — same sticky mechanics as
+   .tl-tourp-sidebar-col (position:sticky on the column, no JS). ── */
+.tl-evt-sidebar-col {
+  flex: 0 0 380px;
+  width: 380px;
+  position: sticky;
+  top: 90px;
+}
+
+.tl-evt-sidebar {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-xl);
+  box-shadow: var(--tl-shadow);
+  padding: 24px;
+  background: var(--tl-white);
+}
+
+.tl-evt-sidebar-empty {
+  text-align: center;
+  padding: 24px 8px;
+  color: var(--tl-gray-400);
+  font-size: 13px;
+}
+
+.tl-evt-sidebar-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 16px;
+}
+
+.tl-evt-sidebar-selection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--tl-gray-200);
+}
+
+.tl-evt-sidebar-selection strong {
+  font-size: 14px;
+  color: var(--tl-navy);
+}
+
+.tl-evt-input,
+.tl-evt-select {
+  width: 100%;
+  height: 46px;
+  background: var(--tl-gray-100);
+  border: 1.5px solid var(--tl-gray-200);
+  border-radius: 12px;
+  padding: 0 14px;
+  color: var(--tl-navy);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Geist Sans', sans-serif;
+  outline: none;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+
+.tl-evt-input:focus,
+.tl-evt-select:focus {
+  border-color: var(--tl-green);
+  background: rgba(4, 149, 72, 0.06);
+}
+
+.tl-evt-sidebar-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 14px 0 16px;
+}
+
+.tl-evt-sidebar-total-label {
+  font-size: 13px;
+  color: var(--tl-gray-600);
+}
+
+.tl-evt-sidebar-total-value {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--tl-navy);
+}
+
+.tl-evt-sidebar-cta {
+  width: 100%;
+  justify-content: center;
+  padding: 13px 0;
+}
+
+.tl-evt-result {
+  border-radius: var(--tl-r-md);
+  padding: 16px;
+  font-size: 13px;
+}
+
+.tl-evt-result-ok {
+  background: var(--tl-green-light);
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.tl-evt-result-fail {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+@media (max-width: 900px) {
+  .tl-evt-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tl-evt-sidebar-col {
+    position: static;
+    width: 100%;
+    flex-basis: auto;
+  }
+}
