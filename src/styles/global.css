@@ -11652,3 +11652,17 @@ body:not(.tl-subpage) .tl-about-extra {
     flex-basis: auto;
   }
 }
+
+/* Skeleton loading state for the search grid and ticket list — replaces
+   plain "Yüklənir..." text with Expedia-style shimmering placeholders. */
+@keyframes tl-evt-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.tl-evt-skel {
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--tl-gray-100) 25%, var(--tl-gray-200) 37%, var(--tl-gray-100) 63%);
+  background-size: 400% 100%;
+  animation: tl-evt-shimmer 1.4s ease infinite;
+}

@@ -27,6 +27,27 @@ function formatEventDate(iso) {
   }
 }
 
+// Whole-dollar display for marketing prices (card price range, ticket-row
+// price) — matches Expedia's "From $89" style. Checkout totals use
+// formatMoney below instead, which keeps cents.
+function formatPrice(value, currency) {
+  if (value == null) return '';
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+  } catch {
+    return `${value} ${currency || ''}`.trim();
+  }
+}
+
+function formatMoney(value, currency) {
+  if (value == null) return '';
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD' }).format(value);
+  } catch {
+    return `${value.toFixed(2)} ${currency || ''}`.trim();
+  }
+}
+
 function CalendarIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -59,6 +80,30 @@ function BackArrowIcon() {
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+function EventCardSkeleton() {
+  return (
+    <div className="tl-pkg-card">
+      <div className="tl-pkg-body">
+        <div className="tl-evt-skel" style={{ height: 15, width: '80%', marginBottom: 10 }} />
+        <div className="tl-evt-skel" style={{ height: 12, width: '60%', marginBottom: 14 }} />
+        <div className="tl-evt-skel" style={{ height: 17, width: '40%' }} />
+      </div>
+    </div>
+  );
+}
+
+function TicketRowSkeleton() {
+  return (
+    <div className="tl-evt-ticket-row" style={{ cursor: 'default' }}>
+      <span style={{ flex: 1 }}>
+        <div className="tl-evt-skel" style={{ height: 14, width: '50%', marginBottom: 8 }} />
+        <div className="tl-evt-skel" style={{ height: 11, width: '35%' }} />
+      </span>
+      <div className="tl-evt-skel" style={{ height: 17, width: 60 }} />
+    </div>
   );
 }
 
@@ -138,7 +183,8 @@ export default function TicketNetworkEventsPage() {
       .then(([event, groups]) => {
         if (cancelled) return;
         if (event) setSelectedEvent(event);
-        setTicketGroups(groups || []);
+        // Cheapest first — matches Expedia's ticket-list ordering.
+        setTicketGroups((groups || []).slice().sort((a, b) => (a.retailPrice ?? 0) - (b.retailPrice ?? 0)));
       })
       .catch((err) => {
         console.error('ActionLog.ticketNetworkEvents.openEventFailed', err);
@@ -215,12 +261,16 @@ export default function TicketNetworkEventsPage() {
                 </button>
               </form>
 
-              {loadingEvents && <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Yüklənir...</p>}
+              {loadingEvents && (
+                <div className="tl-pkg-grid">
+                  {Array.from({ length: 8 }).map((_, i) => <EventCardSkeleton key={i} />)}
+                </div>
+              )}
               {!loadingEvents && searched && events.length === 0 && (
                 <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Nəticə tapılmadı.</p>
               )}
 
-              {events.length > 0 && (
+              {!loadingEvents && events.length > 0 && (
                 <div className="tl-pkg-grid">
                   {events.map((ev) => (
                     <div className="tl-pkg-card" key={ev.id} onClick={() => openEvent(ev)} style={{ cursor: 'pointer' }}>
@@ -233,7 +283,7 @@ export default function TicketNetworkEventsPage() {
                         </div>
                         {ev.lowPrice != null && (
                           <div style={{ fontWeight: 700, color: 'var(--tl-navy)' }}>
-                            {ev.lowPrice} – {ev.highPrice} {ev.currencyCode}
+                            {formatPrice(ev.lowPrice, ev.currencyCode)}-dən başlayaraq
                           </div>
                         )}
                         {!ev.mercuryEligible && (
@@ -280,12 +330,16 @@ export default function TicketNetworkEventsPage() {
                   <h2 className="tl-evt-tickets-head">Mövcud biletlər</h2>
                   <p className="tl-evt-tickets-sub">Bir seçim edin, sağdakı bölmədə davam edin.</p>
 
-                  {loadingGroups && <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Biletlər yüklənir...</p>}
+                  {loadingGroups && (
+                    <div className="tl-evt-tickets">
+                      {Array.from({ length: 4 }).map((_, i) => <TicketRowSkeleton key={i} />)}
+                    </div>
+                  )}
                   {!loadingGroups && ticketGroups.length === 0 && (
                     <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Bu tədbir üçün real bilet tapılmadı.</p>
                   )}
 
-                  {ticketGroups.length > 0 && (
+                  {!loadingGroups && ticketGroups.length > 0 && (
                     <div className="tl-evt-tickets">
                       {ticketGroups.map((tg) => {
                         const isSelected = selectedGroup?.ticketGroupId === tg.ticketGroupId;
@@ -303,7 +357,7 @@ export default function TicketNetworkEventsPage() {
                               </span>
                             </span>
                             <span className="tl-evt-ticket-price">
-                              <strong>{tg.retailPrice} {tg.currencyCode}</strong>
+                              <strong>{formatPrice(tg.retailPrice, tg.currencyCode)}</strong>
                               <span>bilet başına</span>
                             </span>
                           </button>
@@ -328,7 +382,7 @@ export default function TicketNetworkEventsPage() {
                             <strong>{selectedGroup.section || 'Section n/a'}{selectedGroup.row ? `, Row ${selectedGroup.row}` : ''}</strong>
                             <span className="tl-evt-ticket-sub">{deliveryMethod}</span>
                           </span>
-                          <strong>{selectedGroup.retailPrice} {selectedGroup.currencyCode}</strong>
+                          <strong>{formatPrice(selectedGroup.retailPrice, selectedGroup.currencyCode)}</strong>
                         </div>
 
                         <form onSubmit={submitPurchase}>
@@ -354,7 +408,7 @@ export default function TicketNetworkEventsPage() {
 
                           <div className="tl-evt-sidebar-total">
                             <span className="tl-evt-sidebar-total-label">Cəmi ({quantity} bilet)</span>
-                            <span className="tl-evt-sidebar-total-value">{(selectedGroup.retailPrice * quantity).toFixed(2)} {selectedGroup.currencyCode}</span>
+                            <span className="tl-evt-sidebar-total-value">{formatMoney(selectedGroup.retailPrice * quantity, selectedGroup.currencyCode)}</span>
                           </div>
 
                           <button type="submit" className="tl-btn-book tl-evt-sidebar-cta" disabled={purchasing}>
