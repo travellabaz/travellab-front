@@ -15,6 +15,7 @@ import HotelsPage from './pages/HotelsPage';
 import ToursPage from './pages/ToursPage';
 import TourDetailPage from './pages/TourDetailPage';
 import TourItineraryPage from './pages/TourItineraryPage';
+import TicketNetworkEventsPage from './pages/TicketNetworkEventsPage';
 import TourSearchPage from './pages/TourSearchPage';
 import TourSearchCountryPage from './pages/TourSearchCountryPage';
 import TourCategoryPage from './pages/TourCategoryPage';
@@ -67,6 +68,11 @@ function localeRouteChildren() {
     <Route key="tours-id" path="tours/:id" element={<TourDetailPage />} />,
     <Route key="labpoint" path="labpoint" element={<LabpointPage />} />,
     <Route key="events" path="events" element={<EventsPage />} />,
+    // Not in Nav — internal test page for the TicketNetwork integration,
+    // gated to one phone number in the page itself (see
+    // TicketNetworkEventsPage.jsx) while payment is still mocked.
+    <Route key="tickets-test" path="tickets" element={<TicketNetworkEventsPage />} />,
+    <Route key="tickets-test-event" path="tickets/:eventId" element={<TicketNetworkEventsPage />} />,
     <Route key="viza" path="viza" element={<VizaPage />} />,
     <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
     <Route key="about" path="about" element={<AboutPage />} />,
