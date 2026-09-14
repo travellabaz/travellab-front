@@ -1,23 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_BASE } from '../api/client';
 import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 
-// Internal test page for the TicketNetwork integration (Catalog search ->
-// Mercury ticket groups -> mock-paid purchase -> Ticket Vault e-ticket) —
-// not linked from Nav, and gated to one phone number while the payment
-// gateway is still a mock. This is a soft/UI-only gate: the backend
-// endpoints themselves don't enforce auth yet (see TicketNetworkOrderController),
-// so it only hides the page from casual browsing, not a real access
-// control boundary.
-const ALLOWED_PHONE = '994555060402';
-
-function normalizePhone(phone) {
-  return (phone || '').replace(/\D/g, '');
-}
-
+// The TicketNetwork integration (Catalog search -> Mercury ticket groups
+// -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
+// public /events route — see EventsPage.jsx, which decides whether to
+// show this or the existing Ticketmaster-based EventsSection, gated to
+// one phone number while the payment gateway is still a mock. Purely a
+// content component now (no <main> wrapper, no gate/redirect of its own —
+// EventsPage.jsx owns both), since it shares the /events URL with the
+// original page rather than living at its own route.
 function formatEventDate(iso) {
   if (!iso) return '';
   try {
@@ -28,7 +23,7 @@ function formatEventDate(iso) {
 }
 
 export default function TicketNetworkEventsPage() {
-  const { profile, isAuthenticated, loading: authLoading } = useAuth();
+  const { profile } = useAuth();
   const { eventId } = useParams();
   const navigate = useLocalizedNavigate();
 
@@ -69,9 +64,9 @@ export default function TicketNetworkEventsPage() {
     }
   };
 
-  // The event stays in the URL (/tickets/:eventId) so it's a real,
+  // The event stays in the URL (/events/:eventId) so it's a real,
   // shareable/bookmarkable page on travellab.az — not just React state.
-  const openEvent = (event) => navigate(`/tickets/${event.id}`);
+  const openEvent = (event) => navigate(`/events/${event.id}`);
 
   // Loads whichever event is currently in the URL — reached either by
   // clicking a search result (openEvent navigates here) or by a direct
@@ -154,11 +149,6 @@ export default function TicketNetworkEventsPage() {
     }
   };
 
-  if (authLoading) return null;
-  if (!isAuthenticated || normalizePhone(profile?.phone) !== ALLOWED_PHONE) {
-    return <Navigate to="/" replace />;
-  }
-
   const inputStyle = {
     width: '100%',
     height: 44,
@@ -173,7 +163,6 @@ export default function TicketNetworkEventsPage() {
   };
 
   return (
-    <main className="tpwl-main">
       <section className="tl-page-top">
         <div className="tl-section">
           <div className="tl-tag">Daxili test</div>
@@ -334,6 +323,5 @@ export default function TicketNetworkEventsPage() {
           )}
         </div>
       </section>
-    </main>
   );
 }
