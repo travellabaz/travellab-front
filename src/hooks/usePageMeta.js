@@ -114,7 +114,12 @@ export default function usePageMeta() {
     const category = isToursList ? new URLSearchParams(location.search).get('category') || '' : null;
     const categoryMetaKey = category || 'all';
 
-    const seoKey = SEO_KEY_BY_PATH[path];
+    // /events/:eventId has no dedicated meta of its own (the event's real
+    // name is only known client-side, inside TicketNetworkEventsPage's own
+    // fetch) — falls back to the generic /events title/desc instead of the
+    // "page not found" default every other unmatched path gets.
+    const isEventDetail = /^\/events\/[^/]+$/.test(path);
+    const seoKey = SEO_KEY_BY_PATH[path] || (isEventDetail ? 'events' : undefined);
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
       : tour

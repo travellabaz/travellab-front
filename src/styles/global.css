@@ -11653,6 +11653,61 @@ body:not(.tl-subpage) .tl-about-extra {
   }
 }
 
+/* Search-as-you-type dropdown (TicketNetworkEventsPage.jsx) — floats
+   below the search input, same card/shadow tokens as .tl-evt-sidebar. */
+.tl-evt-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.tl-evt-suggest {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  box-shadow: var(--tl-shadow-lg);
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.tl-evt-suggest-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--tl-gray-100);
+  text-align: left;
+  cursor: pointer;
+}
+
+.tl-evt-suggest-item:last-child {
+  border-bottom: none;
+}
+
+.tl-evt-suggest-item:hover {
+  background: var(--tl-gray-50);
+}
+
+.tl-evt-suggest-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+}
+
+.tl-evt-suggest-meta {
+  font-size: 11px;
+  color: var(--tl-gray-400);
+}
+
 /* Skeleton loading state for the search grid and ticket list — replaces
    plain "Yüklənir..." text with Expedia-style shimmering placeholders. */
 @keyframes tl-evt-shimmer {

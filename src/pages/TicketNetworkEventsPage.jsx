@@ -117,6 +117,9 @@ export default function TicketNetworkEventsPage() {
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [searched, setSearched] = useState(false);
 
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [ticketGroups, setTicketGroups] = useState([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
@@ -153,6 +156,38 @@ export default function TicketNetworkEventsPage() {
   // shareable/bookmarkable page on travellab.az — not just React state.
   const openEvent = (event) => navigate(`/events/${event.id}`);
   const backToResults = () => navigate('/events');
+
+  // Search-as-you-type, debounced — Catalog's dedicated /suggest endpoint
+  // (lighter than a full /search), matches Expedia's autocomplete. Picking
+  // a suggestion jumps straight to that event, skipping the search step.
+  useEffect(() => {
+    if (!keyword.trim() || keyword.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      fetch(API_BASE + '/tickets/events/suggest?keyword=' + encodeURIComponent(keyword.trim()))
+        .then((res) => (res.ok ? res.json() : []))
+        .then((data) => {
+          if (!cancelled) setSuggestions(data || []);
+        })
+        .catch((err) => {
+          console.error('ActionLog.ticketNetworkEvents.suggestFailed', err);
+          if (!cancelled) setSuggestions([]);
+        });
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [keyword]);
+
+  const openSuggestion = (suggestion) => {
+    setShowSuggestions(false);
+    setKeyword(suggestion.name || '');
+    navigate(`/events/${suggestion.id}`);
+  };
 
   // Loads whichever event is currently in the URL — reached either by
   // clicking a search result (openEvent navigates here) or by a direct
@@ -248,14 +283,36 @@ export default function TicketNetworkEventsPage() {
               </p>
 
               <form style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }} onSubmit={searchEvents}>
-                <input
-                  type="text"
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="Search events (e.g. Hamilton, Yankees, Madrid)"
-                  className="tl-evt-input"
-                  style={{ flex: 1, minWidth: 220, marginBottom: 0 }}
-                />
+                <div className="tl-evt-search-wrap">
+                  <input
+                    type="text"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                    placeholder="Search events (e.g. Hamilton, Yankees, Madrid)"
+                    className="tl-evt-input"
+                    style={{ marginBottom: 0 }}
+                    autoComplete="off"
+                  />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="tl-evt-suggest">
+                      {suggestions.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          className="tl-evt-suggest-item"
+                          onMouseDown={() => openSuggestion(s)}
+                        >
+                          <span className="tl-evt-suggest-name">{s.name}</span>
+                          <span className="tl-evt-suggest-meta">
+                            {[s.date, [s.venue, s.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button type="submit" className="tl-fbtn active" style={{ border: 'none', cursor: 'pointer' }}>
                   Axtar
                 </button>
