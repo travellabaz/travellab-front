@@ -21,6 +21,8 @@ import TourCategoryPage from './pages/TourCategoryPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentErrorPage from './pages/PaymentErrorPage';
 import VizaPage from './pages/VizaPage';
 import VizaCountryPage from './pages/VizaCountryPage';
 import FlightRoutePage from './pages/FlightRoutePage';
@@ -71,6 +73,10 @@ function localeRouteChildren() {
     // number, see EventsPage.jsx) whether to show the TicketNetwork
     // integration or the existing Ticketmaster-based EventsSection.
     <Route key="events-id" path="events/:eventId" element={<EventsPage />} />,
+    // Epoint redirects the browser here after a checkout attempt — see
+    // EpointProperties.successRedirectUrl/errorRedirectUrl.
+    <Route key="payment-success" path="events/payment/success" element={<PaymentSuccessPage />} />,
+    <Route key="payment-error" path="events/payment/error" element={<PaymentErrorPage />} />,
     <Route key="viza" path="viza" element={<VizaPage />} />,
     <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
     <Route key="about" path="about" element={<AboutPage />} />,

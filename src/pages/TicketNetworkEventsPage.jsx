@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { API_BASE } from '../api/client';
+import { API_BASE, authFetch } from '../api/client';
 import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 
@@ -282,13 +282,20 @@ export default function TicketNetworkEventsPage() {
     ? ticketGroups.filter((tg) => (tg.purchasableQuantities || []).includes(desiredQuantity))
     : ticketGroups;
 
+  // Epoint is a redirect flow, not an inline mock charge — success here
+  // means "the tickets are locked and a payment session is ready", not
+  // "the purchase is done". A successful response takes the browser to
+  // Epoint's hosted payment page; the actual outcome (paid + ticket
+  // confirmed) is only known once the visitor lands back on
+  // /events/payment/success and that page polls the order status (see
+  // PaymentSuccessPage.jsx) — Epoint's webhook confirms it asynchronously.
   const submitPurchase = async (e) => {
     e.preventDefault();
     if (!selectedEvent || !selectedGroup) return;
     setPurchasing(true);
     setResult(null);
     try {
-      const res = await fetch(API_BASE + '/tickets/orders', {
+      const res = await authFetch('/tickets/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -301,7 +308,15 @@ export default function TicketNetworkEventsPage() {
           customerPhone,
         }),
       });
+      if (!res) {
+        setResult({ success: false, failureReason: 'Sessiya bitib — yenidən daxil olun.' });
+        return;
+      }
       const data = await res.json();
+      if (data.success && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
       setResult(data);
     } catch (err) {
       console.error('ActionLog.ticketNetworkEvents.purchaseFailed', err);
@@ -319,7 +334,7 @@ export default function TicketNetworkEventsPage() {
               <div className="tl-tag">Daxili test</div>
               <h1 className="tl-title">Tədbir biletləri — TEST</h1>
               <p style={{ color: 'var(--tl-gray-500)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
-                Ödəniş MOCK rejimindədir — real pul köçürülmür. Yalnız sizin üçün açıqdır.
+                Ödəniş Epoint üzərindən aparılır. Yalnız sizin üçün açıqdır.
               </p>
 
               <form style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }} onSubmit={searchEvents}>
@@ -545,33 +560,19 @@ export default function TicketNetworkEventsPage() {
                           </div>
 
                           <button type="submit" className="tl-btn-book tl-evt-sidebar-cta" disabled={purchasing}>
-                            {purchasing ? 'İşlənir...' : 'Al (mock ödəniş)'}
+                            {purchasing ? 'Yönləndirilir...' : 'Ödənişə keç'}
                           </button>
                         </form>
                       </>
                     )}
 
-                    {result && (
-                      <div className={`tl-evt-result ${result.success ? 'tl-evt-result-ok' : 'tl-evt-result-fail'}`} style={{ marginTop: 16 }}>
-                        {result.success ? (
-                          <>
-                            <strong>Sifariş uğurlu! Mercury Transaction ID: {result.mercuryTransactionId}</strong>
-                            {result.eticketPdfBase64 && (
-                              <p style={{ marginTop: 8 }}>E-ticket PDF alındı ({Math.round(result.eticketPdfBase64.length / 1024)} KB, base64).</p>
-                            )}
-                            {result.mobileTransferUrls?.length > 0 && (
-                              // No raw link out to TicketNetwork/the transfer
-                              // domain — everything stays on travellab.az. This
-                              // just confirms the transfer is ready; getting it
-                              // to the customer without exposing that URL
-                              // directly (proxy it, embed it, email it, etc.) is
-                              // still open — see the note below.
-                              <p style={{ marginTop: 8 }}>Mobil transfer bileti hazırdır.</p>
-                            )}
-                          </>
-                        ) : (
-                          <strong>Xəta: {result.failureReason}</strong>
-                        )}
+                    {/* A successful response redirects the browser to Epoint
+                        immediately (see submitPurchase) — this only ever
+                        renders the failure case, e.g. the tickets sold out
+                        before the lock, or Epoint's session couldn't start. */}
+                    {result && !result.success && (
+                      <div className="tl-evt-result tl-evt-result-fail" style={{ marginTop: 16 }}>
+                        <strong>Xəta: {result.failureReason}</strong>
                       </div>
                     )}
                   </div>
