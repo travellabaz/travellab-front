@@ -33,9 +33,19 @@ export default function SeaticsSeatMap({ eventId }) {
   // The Seatics framework script expects jQuery to already be on the page
   // (throws "jQuery is not defined" otherwise, confirmed live) — it's a
   // legacy widget, doesn't bundle its own copy.
+  // Seatics' own framework script pulls several of its follow-up
+  // resources (Css/customUI, Javascript/featureFlag, trackingProcessing,
+  // riskified, etc.) over hardcoded http:// URLs — confirmed live that
+  // the same host serves all of them over https:// too, so instead of
+  // waiting on TicketNetwork to fix their SDK, upgrade-insecure-requests
+  // has the browser silently rewrite those to https:// before sending,
+  // avoiding the mixed-content block that was breaking the map in
+  // Chrome/Edge (Brave doesn't enforce it as strictly, which is why the
+  // map loaded there but nowhere else during testing).
   const srcDoc = `<!DOCTYPE html>
 <html>
 <head>
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <style>body{margin:0;font-family:sans-serif;}</style>
 </head>
 <body>
