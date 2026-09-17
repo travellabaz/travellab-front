@@ -15,6 +15,7 @@ import TravelProductsSidePanel, { TravelProductsPicker, useTravelProductsCart } 
 import Breadcrumb from '../components/Breadcrumb';
 import Accordion from '../components/Accordion';
 import TourCard from '../components/TourCard';
+import TourStickyBar from '../components/TourStickyBar';
 import { getTourCategory } from '../utils/tourCategory';
 
 const S = (p) => (
@@ -436,6 +437,14 @@ export default function TourDetailPage() {
           )}
         </div>
       </section>
+
+      {!expired && (
+        <TourStickyBar
+          price={currentPrice}
+          cashback={cashback}
+          waHref={manager ? waHref(manager.phone) : '#'}
+        />
+      )}
     </main>
   );
 }
