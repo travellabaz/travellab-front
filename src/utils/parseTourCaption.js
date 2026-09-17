@@ -77,7 +77,7 @@ function parseCityNames(text) {
 // (the leg lines' city names aren't reliably parseable back out, see
 // above). Falls back to splitting the overall dateText/duration evenly
 // only when no explicit per-leg dates were found at all.
-function computeCityLegs(cityNames, legDateRanges, dateText, duration) {
+function computeCityLegs(cityNames, legDateRanges, legHotels, dateText, duration) {
   if (!cityNames) return null;
 
   if (legDateRanges.length > 0) {
@@ -87,6 +87,7 @@ function computeCityLegs(cityNames, legDateRanges, dateText, duration) {
         name,
         nights: leg ? leg.end - leg.start : null,
         dateRange: leg ? `${leg.start}-${leg.end} ${leg.month}` : null,
+        hotel: legHotels[i] || null,
       };
     });
   }
@@ -114,7 +115,7 @@ function computeCityLegs(cityNames, legDateRanges, dateText, duration) {
       dateRange = `${cursor}-${endDay} ${month}`;
       cursor = endDay;
     }
-    return { name, nights, dateRange };
+    return { name, nights, dateRange, hotel: null };
   });
 }
 
@@ -151,6 +152,7 @@ export function parseTourCaption(description) {
   let started = false;
   let cityNames = null;
   const legDateRanges = [];
+  const legHotels = [];
 
   for (const line of lines) {
     if (!line) continue;
@@ -236,6 +238,16 @@ export function parseTourCaption(description) {
       continue;
     }
 
+    // The hotel line right after a leg date, e.g. "13-15 noyabr - Roma"
+    // -> "🏨 Raeli Hotel Floridia" — no price (multi-city legs don't
+    // break the price out per city), so the regular priced-hotel check
+    // below would never catch it. One per leg, in the same order as
+    // legDateRanges.
+    if (cityNames && (lead === '🏩' || lead === '🏨') && legHotels.length < legDateRanges.length) {
+      legHotels.push(body.replace(/^(hotel|otel)\s*[-–—:]\s*/i, '').trim());
+      continue;
+    }
+
     // Hotel lines: "🏩 Name (Location) - 1,400 USD" or "🏩 Name - 1239 USD"
     if ((lead === '🏩' || lead === '🏨') && /[-–—]\s*.*\d.*(USD|EUR|AZN|\$|€|₼)/i.test(body)) {
       const withLoc = body.match(/^(.+?)\s*\((.+?)\)\s*[-–—]\s*(.+)$/);
@@ -305,7 +317,7 @@ export function parseTourCaption(description) {
   result.intro = introLines.length ? introLines.join('\n') : null;
   // Computed after the loop, not inline where cityNames is set — dateText/
   // duration usually come from lines later in the caption than the title.
-  result.cities = computeCityLegs(cityNames, legDateRanges, result.dateText, result.duration);
+  result.cities = computeCityLegs(cityNames, legDateRanges, legHotels, result.dateText, result.duration);
 
   const out = hasContent(result) ? result : null;
   cache.set(description, out);

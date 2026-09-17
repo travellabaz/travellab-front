@@ -3492,6 +3492,155 @@ body:not(.tl-subpage) .tl-about-extra {
   cursor: default;
 }
 
+/* Day-by-day (really leg-by-leg — see parseTourCaption.js's cities)
+   timeline — vertical line + one dot per leg, date on the left, photo +
+   description on the right. Single column on mobile (image on top of
+   text, not beside it — brief explicitly calls out side-by-side as too
+   cramped on a phone), handled by the max-width:560px override below. */
+.tl-itin-timeline {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.tl-itin-timeline::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 71px;
+  width: 2px;
+  background: var(--tl-gray-200);
+}
+
+.tl-itin-timeline-item {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  padding-bottom: 24px;
+}
+
+.tl-itin-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.tl-itin-timeline-date {
+  flex: 0 0 56px;
+  padding-top: 2px;
+  text-align: right;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  line-height: 1.3;
+}
+
+.tl-itin-timeline-dot {
+  position: absolute;
+  left: 68px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tl-green);
+  border: 2px solid var(--tl-white);
+  box-shadow: 0 0 0 2px var(--tl-green);
+}
+
+.tl-itin-timeline-card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  background: var(--tl-white);
+}
+
+.tl-itin-timeline-img {
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--tl-r-md);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--tl-gray-100);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.tl-itin-timeline-body {
+  min-width: 0;
+}
+
+.tl-itin-timeline-city {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 4px;
+}
+
+.tl-itin-timeline-nights {
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
+  margin-bottom: 6px;
+}
+
+.tl-itin-timeline-hotel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--tl-gray-600);
+}
+
+.tl-itin-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 20, 15, 0.85);
+  padding: 20px;
+  cursor: zoom-out;
+}
+
+.tl-itin-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--tl-r-md);
+}
+
+@media (max-width: 560px) {
+  .tl-itin-timeline::before {
+    left: 15px;
+  }
+
+  .tl-itin-timeline-item {
+    gap: 12px;
+  }
+
+  .tl-itin-timeline-date {
+    display: none;
+  }
+
+  .tl-itin-timeline-dot {
+    left: 12px;
+  }
+
+  .tl-itin-timeline-card {
+    flex-direction: column;
+  }
+
+  .tl-itin-timeline-img {
+    width: 100%;
+    height: 140px;
+  }
+}
+
 .tl-itin-payment-note {
   margin: 14px 0 0;
   font-size: 13.5px;

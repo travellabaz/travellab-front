@@ -33,6 +33,9 @@ export default function TourItineraryPage() {
   const [bannerDismissed, setBannerDismissed] = useState(false);
   useEffect(() => setBannerDismissed(false), [id]);
 
+  const [lightboxImage, setLightboxImage] = useState(null);
+  useEffect(() => setLightboxImage(null), [id]);
+
   // Prefer a manager actually named in this tour's caption; fall back to
   // the site-wide pool so the page always has a working WhatsApp contact
   // even for a caption the parser couldn't read managers out of.
@@ -156,6 +159,50 @@ export default function TourItineraryPage() {
               </div>
             )}
 
+            {parsed?.cities?.length > 0 && (
+              <div className="tl-tourp-block">
+                <h2 className="tl-tourp-h2">{t('tourDetail.itineraryTitle')}</h2>
+                <div className="tl-itin-timeline">
+                  {parsed.cities.map((c, i) => {
+                    // Same reasoning as TourDetailPage.jsx's
+                    // hasDistinctCityImages — a repeated identical photo on
+                    // every leg reads as a bug, so this only shows a photo
+                    // when the carousel actually has more than one.
+                    const img = tour.images?.length > 1 ? (tour.images[i] || tour.images[0]) : null;
+                    return (
+                      <div className="tl-itin-timeline-item" key={i}>
+                        <div className="tl-itin-timeline-date">{c.dateRange}</div>
+                        <span className="tl-itin-timeline-dot" />
+                        <div className="tl-itin-timeline-card">
+                          {img && (
+                            <button
+                              type="button"
+                              className="tl-itin-timeline-img"
+                              style={{ backgroundImage: `url('${img}')` }}
+                              aria-label={c.name}
+                              onClick={() => setLightboxImage(img)}
+                            />
+                          )}
+                          <div className="tl-itin-timeline-body">
+                            <h3 className="tl-itin-timeline-city">{c.name}</h3>
+                            <div className="tl-itin-timeline-nights">
+                              {c.dateRange}{c.nights != null ? ` · ${t('tourDetail.nightsCount', { n: c.nights })}` : ''}
+                            </div>
+                            {c.hotel && (
+                              <div className="tl-itin-timeline-hotel">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M4 21V7l8-4 8 4v14M9 21v-4a3 3 0 0 1 6 0v4" /></svg>
+                                {c.hotel}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {hotels.length > 0 && (
               <div className="tl-tourp-block">
                 <h2 className="tl-tourp-h2">{t('tourDetail.hotelsTitle')}</h2>
@@ -241,6 +288,12 @@ export default function TourItineraryPage() {
           </div>
         </div>
       </section>
+
+      {lightboxImage && (
+        <div className="tl-itin-lightbox" onClick={() => setLightboxImage(null)}>
+          <img src={lightboxImage} alt="" />
+        </div>
+      )}
     </main>
   );
 }

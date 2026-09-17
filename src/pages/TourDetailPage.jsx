@@ -103,6 +103,12 @@ export default function TourDetailPage() {
   }
 
   const expired = isTourExpired(tour.description);
+  // A real photo per city leg needs the carousel's actual images — with
+  // just one (or none, before the backend change deploys), every leg card
+  // would show the identical cover photo, which reads as a bug rather
+  // than a feature. City name/date/nights alone look intentional; a
+  // repeated photo doesn't.
+  const hasDistinctCityImages = tour.images?.length > 1;
   const hotels = parsed?.hotels || [];
   const selectedHotel = hotels[hotelIdx] || null;
   const fallbackPrice = extractMinPrice(tour.description);
@@ -275,12 +281,14 @@ export default function TourDetailPage() {
                   <div className="tl-tourp-cities">
                     {parsed.cities.map((c, i) => (
                       <div className="tl-tourp-city-card" key={i}>
-                        <div
-                          className="tl-tourp-city-img"
-                          role="img"
-                          aria-label={c.name}
-                          style={{ backgroundImage: `url('${tour.images?.[i] || tour.imageUrl}')` }}
-                        />
+                        {hasDistinctCityImages && (
+                          <div
+                            className="tl-tourp-city-img"
+                            role="img"
+                            aria-label={c.name}
+                            style={{ backgroundImage: `url('${tour.images[i] || tour.images[0]}')` }}
+                          />
+                        )}
                         <div className="tl-tourp-city-body">
                           <h3 className="tl-tourp-city-name">{c.name}</h3>
                           <div className="tl-tourp-city-meta">
