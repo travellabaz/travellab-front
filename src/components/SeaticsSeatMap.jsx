@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { API_BASE } from '../api/client';
 
 // Embeds TicketNetwork's Seatics/MapWidget interactive seat map for one
@@ -10,8 +10,31 @@ import { API_BASE } from '../api/client';
 // the markup (including its <script> tags) is parsed natively as that
 // iframe's own document, exactly like a normal server-rendered page would
 // be, so document.write works as the widget expects.
-export default function SeaticsSeatMap({ eventId }) {
+//
+// Seatics doesn't expose any postMessage/callback API for section clicks
+// (checked their framework/js2 bundles — no postMessage, no
+// window.parent calls anywhere), so onSectionSelect is wired up entirely
+// on our side: the injected <script> below finds each section's <path
+// id="sec_..."> once the map draws it (a MutationObserver, since those
+// paths are added asynchronously by the widget's own scripts, well after
+// this srcDoc first parses) and posts its id to the parent window on
+// click. TicketNetworkEventsPage.jsx matches that id against ticketGroup
+// section names to update the sidebar price, the same way Expedia's own
+// embed of this widget drives its ticket list from map clicks.
+export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
   const [config, setConfig] = useState(null);
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    if (!onSectionSelect) return undefined;
+    const handleMessage = (event) => {
+      if (event.source !== iframeRef.current?.contentWindow) return;
+      if (event.data?.source !== 'tl-seatics-map' || event.data?.type !== 'section-click') return;
+      onSectionSelect(event.data.sectionId);
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onSectionSelect]);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,6 +65,41 @@ export default function SeaticsSeatMap({ eventId }) {
   // avoiding the mixed-content block that was breaking the map in
   // Chrome/Edge (Brave doesn't enforce it as strictly, which is why the
   // map loaded there but nowhere else during testing).
+  // Wires clicks on each section shape to the parent page without
+  // touching Seatics' own click handling — it keeps whatever built-in
+  // hover/select behavior it already has, this just adds a second
+  // listener alongside it. Runs as a MutationObserver rather than a
+  // one-shot querySelectorAll because the widget's own scripts draw
+  // these <path> elements well after this document first parses.
+  const clickBridgeScript = `
+<style>path[id^="sec_"].tl-selected{stroke:#059669!important;stroke-width:3px!important;}</style>
+<script>
+(function(){
+  function normalize(id){ return id.replace(/^sec_/,'').replace(/_/g,'').toLowerCase(); }
+  var lastSelected = null;
+  function wire(){
+    var paths = document.querySelectorAll('path[id^="sec_"]');
+    if (!paths.length) return false;
+    paths.forEach(function(p){
+      if (p.dataset.tlWired) return;
+      p.dataset.tlWired = '1';
+      p.style.cursor = 'pointer';
+      p.addEventListener('click', function(){
+        if (lastSelected) lastSelected.classList.remove('tl-selected');
+        p.classList.add('tl-selected');
+        lastSelected = p;
+        window.parent.postMessage({ source: 'tl-seatics-map', type: 'section-click', sectionId: normalize(p.id) }, '*');
+      });
+    });
+    return true;
+  }
+  if (!wire()) {
+    var obs = new MutationObserver(function(){ if (wire()) obs.disconnect(); });
+    obs.observe(document.body, { childList: true, subtree: true });
+  }
+})();
+</script>`;
+
   const srcDoc = `<!DOCTYPE html>
 <html>
 <head>
@@ -53,11 +111,13 @@ export default function SeaticsSeatMap({ eventId }) {
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="${config.frameworkUrl}"></script>
 <script src="${mapUrl}"></script>
+${clickBridgeScript}
 </body>
 </html>`;
 
   return (
     <iframe
+      ref={iframeRef}
       title="Seat map"
       srcDoc={srcDoc}
       style={{ width: '100%', height: 480, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}

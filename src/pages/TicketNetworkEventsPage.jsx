@@ -39,6 +39,16 @@ function formatPrice(value, currency) {
   }
 }
 
+// Loose match on purpose: Seatics' section <path id> and Mercury's
+// ticketGroup.section come from two unrelated systems (their venue map
+// vs. our inventory feed), so exact equality would miss cases like
+// "sec_mn_flr_mn_flr" vs. "Mn$Flr" — stripping to bare alphanumerics and
+// checking containment either direction covers that without needing a
+// hardcoded per-venue mapping.
+function normalizeSection(value) {
+  return (value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 function formatMoney(value, currency) {
   if (value == null) return '';
   try {
@@ -255,6 +265,22 @@ export default function TicketNetworkEventsPage() {
     setResult(null);
   };
 
+  // Map-click -> ticket selection bridge — see the comment on
+  // SeaticsSeatMap's onSectionSelect prop for why this is a fuzzy
+  // containment match rather than an exact one. Prefers a group that
+  // can still fulfil the requested quantity, but falls back to any
+  // matching group so a click always does *something* rather than
+  // silently no-op'ing when the desired quantity narrows it out.
+  const selectGroupBySection = (sectionId) => {
+    const candidates = ticketGroups.filter((tg) => {
+      const tgNorm = normalizeSection(tg.section);
+      return tgNorm && (sectionId.includes(tgNorm) || tgNorm.includes(sectionId));
+    });
+    if (!candidates.length) return;
+    const match = candidates.find((tg) => visibleTicketGroups.includes(tg)) || candidates[0];
+    selectGroup(match);
+  };
+
   useEffect(() => {
     if (!showQuantityPopup) return undefined;
     document.body.style.overflow = 'hidden';
@@ -458,7 +484,7 @@ export default function TicketNetworkEventsPage() {
               <div className="tl-evt-layout">
                 <div className="tl-evt-main">
                   <div className="tl-evt-map-card">
-                    <SeaticsSeatMap eventId={selectedEvent.id} />
+                    <SeaticsSeatMap eventId={selectedEvent.id} onSectionSelect={selectGroupBySection} />
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
