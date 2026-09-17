@@ -219,7 +219,9 @@
     "trustPartners": "Etibarlı tərəfdaşlar",
     "trustSupport": "24/7 dəstək",
     "similarToursTitle": "Bu turlar da maraqınıza gələ bilər",
-    "viewItinerary": "Ətraflı proqrama bax"
+    "viewItinerary": "Ətraflı proqrama bax",
+    "itineraryTitle": "Səyahət proqramı",
+    "nightsCount": "{{n}} gecə"
   },
   "tourItinerary": {
     "crumbLabel": "Ətraflı Proqram",

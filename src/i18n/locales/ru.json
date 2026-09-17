@@ -219,7 +219,9 @@
     "trustPartners": "Надёжные партнёры",
     "trustSupport": "Поддержка 24/7",
     "similarToursTitle": "Вам также может быть интересно",
-    "viewItinerary": "Смотреть полную программу"
+    "viewItinerary": "Смотреть полную программу",
+    "itineraryTitle": "Программа поездки",
+    "nightsCount": "{{n}} ночей"
   },
   "tourItinerary": {
     "crumbLabel": "Полная программа",

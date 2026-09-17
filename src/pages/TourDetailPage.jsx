@@ -268,6 +268,32 @@ export default function TourDetailPage() {
                 </div>
               )}
 
+              {parsed?.cities?.length > 0 && (
+                <div className="tl-tourp-block">
+                  <h2 className="tl-tourp-h2">{t('tourDetail.itineraryTitle')}</h2>
+                  <div className="tl-tourp-cities">
+                    {parsed.cities.map((c, i) => (
+                      <div className="tl-tourp-city-card" key={i}>
+                        <div
+                          className="tl-tourp-city-img"
+                          role="img"
+                          aria-label={c.name}
+                          style={{ backgroundImage: `url('${tour.images?.[i] || tour.imageUrl}')` }}
+                        />
+                        <div className="tl-tourp-city-body">
+                          <h3 className="tl-tourp-city-name">{c.name}</h3>
+                          <div className="tl-tourp-city-meta">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+                            {c.dateRange && <span>{c.dateRange}</span>}
+                            {c.nights != null && <span>· {t('tourDetail.nightsCount', { n: c.nights })}</span>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {hotels.length > 0 && (
                 <div className="tl-tourp-block">
                   <h2 className="tl-tourp-h2">{t('tourDetail.hotelsTitle')}</h2>

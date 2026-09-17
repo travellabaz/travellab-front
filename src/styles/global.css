@@ -2460,31 +2460,90 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-green-dark);
 }
 
+/* Vertical list, not a grid — each row clearly separated (padding + a
+   thin divider) so "Qiymətə daxildir" never reads as a cramped icon
+   cluster. .tl-tourp-incl-extra (üzərinə əlavə) reuses the same row
+   styling for "Əlavə seçimlər" (see TravelProductsPicker) so the two
+   sections look related but stay visually distinct blocks — never one
+   merged list. */
 .tl-tourp-incl {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  overflow: hidden;
 }
 
 .tl-tourp-incl-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--tl-gray-600);
+  gap: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  border-bottom: 1px solid var(--tl-gray-100);
+}
+
+.tl-tourp-incl-item:last-child {
+  border-bottom: none;
 }
 
 .tl-tourp-incl-ico {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--tl-green-light);
   color: var(--tl-green-dark);
+}
+
+/* "Səyahət proqramı" — one card per city leg (multi-city tours only, see
+   parseTourCaption.js's computeCityLegs). Kept high in the page (right
+   after the meta row, above hotels/included) per the brief — this is the
+   one thing a multi-city visitor needs to see without scrolling: which
+   city, which nights. */
+.tl-tourp-cities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.tl-tourp-city-card {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-lg);
+  overflow: hidden;
+  background: var(--tl-white);
+}
+
+.tl-tourp-city-img {
+  height: 110px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--tl-gray-100);
+}
+
+.tl-tourp-city-body {
+  padding: 10px 12px;
+}
+
+.tl-tourp-city-name {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 4px;
+}
+
+.tl-tourp-city-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--tl-gray-500, #64748b);
 }
 
 .tl-tourp-total {
@@ -3611,9 +3670,6 @@ body:not(.tl-subpage) .tl-about-extra {
 @media (max-width: 560px) {
   .tl-tourp-hero {
     height: 200px;
-  }
-  .tl-tourp-incl {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 

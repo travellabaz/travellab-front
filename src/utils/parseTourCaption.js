@@ -40,6 +40,84 @@ function leadEmoji(line) {
 
 const DURATION_RE = /(\d+)\s*gecə\s*\/\s*(\d+)\s*gün/i;
 
+// Multi-city tours are already titled "Roma - Lizbon - Barselona turu" /
+// "London-Edinburq turu" today — no new marker needed there. What follows
+// in the body is real per-city data too, just not uniformly formatted —
+// confirmed against live captions:
+//   "13-15 noyabr - Roma"
+//   "10-14 oktyabr, London gecələmə"
+//   "22-25 noyabr, Budapeştdə gecələmə"
+// (note the last two suffix the city name with an Azerbaijani locative
+// case ending — "Budapeşt" + "də" — which is why leg dates are matched by
+// ORDER against the clean title-derived names, not by parsing the name
+// back out of these lines). Nights per leg come straight from each line's
+// own date range (13-15 = 2, 10-14 = 4 — real tours are NOT evenly split,
+// e.g. London 4 nights / Edinburgh 3), never computed.
+const CITY_TITLE_RE = /^(.+?)\s+turu\s*$/i;
+const CITY_SPLIT_RE = /\s*-\s*/;
+const DATE_RANGE_RE = /^(\d{1,2})\s*[-–—]\s*(\d{1,2})\s+(\S+?),?\s*$/;
+// Same shape as DATE_RANGE_RE but without the end anchor — these lines
+// have trailing text ("- Roma", ", London gecələmə") after the date.
+const CITY_LEG_DATE_RE = /^(\d{1,2})\s*[-–—]\s*(\d{1,2})\s+(\S+)/;
+const NIGHTS_RE = /^(\d+)\s*gecə/i;
+
+function parseCityNames(text) {
+  const segments = text.split(CITY_SPLIT_RE).map((s) => s.trim()).filter(Boolean);
+  if (segments.length < 2) return null;
+  // Guard against matching an unrelated "X - Y turu"-shaped line: every
+  // segment should look like a place name (starts with a capital letter,
+  // no digits, not absurdly long).
+  const looksLikeCity = (s) => /^\p{Lu}/u.test(s) && !/\d/.test(s) && s.length <= 30;
+  return segments.every(looksLikeCity) ? segments : null;
+}
+
+// legDateRanges: [{start, end, month}, ...] collected in the order
+// encountered in the caption body (see the main loop) — zipped against
+// cityNames by position, since that's the only link between the two
+// (the leg lines' city names aren't reliably parseable back out, see
+// above). Falls back to splitting the overall dateText/duration evenly
+// only when no explicit per-leg dates were found at all.
+function computeCityLegs(cityNames, legDateRanges, dateText, duration) {
+  if (!cityNames) return null;
+
+  if (legDateRanges.length > 0) {
+    return cityNames.map((name, i) => {
+      const leg = legDateRanges[i];
+      return {
+        name,
+        nights: leg ? leg.end - leg.start : null,
+        dateRange: leg ? `${leg.start}-${leg.end} ${leg.month}` : null,
+      };
+    });
+  }
+
+  const nightsMatch = duration && duration.match(NIGHTS_RE);
+  const totalNights = nightsMatch ? Number(nightsMatch[1]) : null;
+  const n = cityNames.length;
+  const nightsPerCity = totalNights != null && totalNights >= n
+    ? (() => {
+        const base = Math.floor(totalNights / n);
+        const remainder = totalNights % n;
+        return cityNames.map((_, i) => base + (i < remainder ? 1 : 0));
+      })()
+    : null;
+
+  const dateMatch = dateText && dateText.match(DATE_RANGE_RE);
+  let cursor = dateMatch ? Number(dateMatch[1]) : null;
+  const month = dateMatch ? dateMatch[3] : null;
+
+  return cityNames.map((name, i) => {
+    const nights = nightsPerCity ? nightsPerCity[i] : null;
+    let dateRange = null;
+    if (cursor != null && nights != null && month) {
+      const endDay = cursor + nights;
+      dateRange = `${cursor}-${endDay} ${month}`;
+      cursor = endDay;
+    }
+    return { name, nights, dateRange };
+  });
+}
+
 export function parseTourCaption(description) {
   if (!description) return null;
   if (cache.has(description)) return cache.get(description);
@@ -60,6 +138,7 @@ export function parseTourCaption(description) {
     paymentNote: null,
     managers: [],
     intro: null,
+    cities: null,
   };
 
   let section = null; // 'hotels' | 'included' | 'managers'
@@ -70,6 +149,8 @@ export function parseTourCaption(description) {
   // Stops accumulating the moment any real marker is recognised.
   const introLines = [];
   let started = false;
+  let cityNames = null;
+  const legDateRanges = [];
 
   for (const line of lines) {
     if (!line) continue;
@@ -77,6 +158,21 @@ export function parseTourCaption(description) {
     const body = stripLeadEmoji(line);
 
     if (line.startsWith('#')) continue;
+
+    // "📍 Roma - Lizbon - Barselona turu" / "London-Edinburq turu" — real
+    // captions lead this with 📍 (matched against body, emoji already
+    // stripped) as often as not, so this has to run before the plain 📍
+    // venue handler below claims the line first. See computeCityLegs for
+    // how this combines with dateText/duration once the loop is done.
+    if (!cityNames) {
+      const titleMatch = body.match(CITY_TITLE_RE);
+      const names = titleMatch && parseCityNames(titleMatch[1]);
+      if (names) {
+        cityNames = names;
+        started = true;
+        continue;
+      }
+    }
 
     // Date / destination — 🗒️ (spiral notepad) shows up as a date marker
     // on a couple of real captions alongside the usual 🗓️/📅.
@@ -102,6 +198,19 @@ export function parseTourCaption(description) {
       }
       section = null;
       continue;
+    }
+
+    // Per-city leg date, multi-city tours only — "13-15 noyabr - Roma" /
+    // "10-14 oktyabr, London gecələmə". No emoji lead in real captions
+    // (unlike the 🗓️ overall-date line above, already consumed by now),
+    // collected in encounter order and zipped against cityNames in
+    // computeCityLegs once the loop is done.
+    if (cityNames && !lead) {
+      const legMatch = body.match(CITY_LEG_DATE_RE);
+      if (legMatch) {
+        legDateRanges.push({ start: Number(legMatch[1]), end: Number(legMatch[2]), month: legMatch[3].replace(/,$/, '') });
+        continue;
+      }
     }
 
     const dur = line.match(DURATION_RE);
@@ -194,6 +303,9 @@ export function parseTourCaption(description) {
   }
 
   result.intro = introLines.length ? introLines.join('\n') : null;
+  // Computed after the loop, not inline where cityNames is set — dateText/
+  // duration usually come from lines later in the caption than the title.
+  result.cities = computeCityLegs(cityNames, legDateRanges, result.dateText, result.duration);
 
   const out = hasContent(result) ? result : null;
   cache.set(description, out);
@@ -201,5 +313,5 @@ export function parseTourCaption(description) {
 }
 
 function hasContent(r) {
-  return !!(r.hotels.length || r.included.length || r.total || r.managers.length || r.duration || r.dateText || r.intro);
+  return !!(r.hotels.length || r.included.length || r.total || r.managers.length || r.duration || r.dateText || r.intro || r.cities);
 }

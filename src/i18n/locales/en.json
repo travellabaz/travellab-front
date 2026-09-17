@@ -219,7 +219,9 @@
     "trustPartners": "Trusted partners",
     "trustSupport": "24/7 support",
     "similarToursTitle": "You might also like these tours",
-    "viewItinerary": "View full itinerary"
+    "viewItinerary": "View full itinerary",
+    "itineraryTitle": "Trip itinerary",
+    "nightsCount": "{{n}} nights"
   },
   "tourItinerary": {
     "crumbLabel": "Full Itinerary",
