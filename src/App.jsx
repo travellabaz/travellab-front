@@ -21,6 +21,7 @@ import TourCategoryPage from './pages/TourCategoryPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
+import TicketNetworkPreviewPage from './pages/TicketNetworkPreviewPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
 import VizaPage from './pages/VizaPage';
@@ -73,6 +74,11 @@ function localeRouteChildren() {
     // number, see EventsPage.jsx) whether to show the TicketNetwork
     // integration or the existing Ticketmaster-based EventsSection.
     <Route key="events-id" path="events/:eventId" element={<EventsPage />} />,
+    // No login gate — a URL handed directly to TicketNetwork's own
+    // integration support so they can see the MapWidget/checkout flow
+    // themselves, see TicketNetworkPreviewPage.jsx. Never linked from
+    // anywhere in the site, not in prerender.mjs's PAGE_META either.
+    <Route key="events-preview" path="events/integration-preview/:eventId" element={<TicketNetworkPreviewPage />} />,
     // Epoint redirects the browser here after a checkout attempt — see
     // EpointProperties.successRedirectUrl/errorRedirectUrl.
     <Route key="payment-success" path="events/payment/success" element={<PaymentSuccessPage />} />,
