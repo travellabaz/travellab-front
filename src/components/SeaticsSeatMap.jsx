@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { API_BASE } from '../api/client';
 
 // Embeds TicketNetwork's Seatics/MapWidget interactive seat map for one
@@ -22,7 +22,13 @@ import { API_BASE } from '../api/client';
 // be, so document.write works as the widget expects.
 export default function SeaticsSeatMap({ eventId }) {
   const [config, setConfig] = useState(null);
-  const [height, setHeight] = useState(480);
+  // null = still measuring (iframe rendered off-screen, real size unknown
+  // yet); once set, the map is revealed already at its final size instead
+  // of visibly growing into it — see the height message handler below.
+  const [height, setHeight] = useState(null);
+  const [measureWidth, setMeasureWidth] = useState(null);
+  const placeholderRef = useRef(null);
+  const heightLockedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,18 +47,37 @@ export default function SeaticsSeatMap({ eventId }) {
   // isn't mounted until config loads, but the postMessage listener needs to
   // exist before it does so no wheel-scroll or height message from the
   // iframe's very first frame gets missed.
+  //
+  // Only the FIRST height report is ever applied (heightLockedRef) —
+  // confirmed live that later ones do keep arriving as the widget's own
+  // (permanently-loading, since our OAuth scope doesn't cover its ticket
+  // panel) right-hand list keeps re-laying-out, and applying every one of
+  // those would resize the iframe — and reflow everything below it on the
+  // page — repeatedly under the visitor, which read as the exact same
+  // "running away" complaint the sizing fix was meant to solve.
   useEffect(() => {
     const onMessage = (e) => {
       if (!e.data) return;
       if (e.data.type === 'seatics-wheel') {
         window.scrollBy(0, e.data.deltaY);
-      } else if (e.data.type === 'seatics-height') {
-        setHeight((h) => (Math.abs(h - e.data.height) > 4 ? e.data.height : h));
+      } else if (e.data.type === 'seatics-height' && !heightLockedRef.current) {
+        heightLockedRef.current = true;
+        setHeight(e.data.height);
       }
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
   }, []);
+
+  // Width to render the (still off-screen) iframe at while measuring, so
+  // the measured height matches what it'll actually be once shown at
+  // width:100% in this same spot — read from the placeholder taking its
+  // place in the layout meanwhile, so it matches on mobile too.
+  useEffect(() => {
+    if (placeholderRef.current) {
+      setMeasureWidth(placeholderRef.current.getBoundingClientRect().width);
+    }
+  }, [config, eventId]);
 
   if (!config || !eventId) return null;
 
@@ -123,11 +148,30 @@ setInterval(reportHeight, 500);
 </body>
 </html>`;
 
+  // One iframe element throughout (same position in the tree both before
+  // and after height is known) so srcDoc is only ever loaded once — only
+  // its style changes, from off-screen/invisible while measuring to
+  // visible in place once we know its real size. The placeholder is what
+  // actually occupies the layout slot during that phase; the iframe itself
+  // is fixed-positioned off-screen so it can render (and report its real
+  // height) without affecting page layout or being visible mid-measurement.
   return (
-    <iframe
-      title="Seat map"
-      srcDoc={srcDoc}
-      style={{ width: '100%', height, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
-    />
+    <div style={{ marginBottom: 24 }}>
+      {height === null && (
+        <div
+          ref={placeholderRef}
+          style={{ width: '100%', height: 480, border: '1px solid var(--tl-gray-200)', borderRadius: 12, background: 'var(--tl-gray-50)' }}
+        />
+      )}
+      <iframe
+        title="Seat map"
+        srcDoc={srcDoc}
+        style={
+          height === null
+            ? { position: 'fixed', top: 0, left: -99999, width: measureWidth || 994, height: 2000, border: 0, visibility: 'hidden', pointerEvents: 'none' }
+            : { width: '100%', height, border: '1px solid var(--tl-gray-200)', borderRadius: 12, display: 'block' }
+        }
+      />
+    </div>
   );
 }
