@@ -2,27 +2,24 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Link from './LocalizedLink';
 import { useCart } from '../context/CartContext';
-import { getProductBySku, productSlug, toBundleCartItem } from '../data/shop';
+import { getSuggestedCrossSellProducts, productSlug, toBundleCartItem } from '../data/shop';
 import { toTourCartItem } from '../utils/tourCartItem';
 import { formatPrice } from '../utils/price';
-
-// Real Shop SKUs picked for relevance to a trip (neck pillow, power bank,
-// passport cover, a small hygiene set) — not a generic "related products"
-// pull, and not fabricated items; anything out of stock is skipped.
-const SUGGESTED_SKUS = ['TB-002', 'TB-001', 'TB-006', 'TB-004'];
 
 // Shared by the bottom picker (main column) and the sticky side panel —
 // same selection state, two views of it. Panel shows once anything is
 // selected and can be dismissed (X) without losing the picks; adding
 // another item re-opens it.
-export function useTravelProductsCart() {
+//
+// tourId as a memo key (not just []) — re-rolls the suggested products
+// when the visitor navigates client-side from one tour to another, not
+// only on a hard reload, matching how `manager` is re-derived per tour
+// elsewhere on this page.
+export function useTravelProductsCart(tourId) {
   const [qtyBySku, setQtyBySku] = useState({});
   const [dismissed, setDismissed] = useState(false);
 
-  const products = useMemo(
-    () => SUGGESTED_SKUS.map((sku) => getProductBySku(sku)).filter((p) => p && p.inStock),
-    []
-  );
+  const products = useMemo(() => getSuggestedCrossSellProducts(), [tourId]);
 
   const inc = (sku) => {
     setQtyBySku((q) => ({ ...q, [sku]: (q[sku] || 0) + 1 }));
@@ -52,7 +49,10 @@ export function TravelProductsPicker({ cart }) {
 
   return (
     <div className="tl-tourp-block" id="travel-products-picker">
-      <h2 className="tl-tourp-h2">{t('tourDetail.crossSellTitle')}</h2>
+      <div className="tl-tourp-crosssell-head">
+        <h2 className="tl-tourp-h2">{t('tourDetail.crossSellTitle')}</h2>
+        <Link to="/shop" className="tl-tourp-showall">{t('tourDetail.showAllProducts')}</Link>
+      </div>
       <p className="tl-tourp-crosssell-sub">{t('tourDetail.crossSellSubtitle')}</p>
 
       <div className="tl-tourp-crosssell-scroll">
@@ -116,10 +116,6 @@ export default function TravelProductsSidePanel({ cart, tour, tourPrice }) {
     selected.forEach((p) => addItem(toBundleCartItem(p), qtyBySku[p.sku]));
   };
 
-  const scrollToPicker = () => {
-    document.getElementById('travel-products-picker')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
   return (
     <>
       {/* Backdrop — only rendered/visible on mobile, where the panel
@@ -165,17 +161,6 @@ export default function TravelProductsSidePanel({ cart, tour, tourPrice }) {
             </div>
           ))}
         </div>
-
-        <button type="button" className="tl-tourp-panel-upsell" onClick={scrollToPicker}>
-          <span className="tl-tourp-panel-upsell-ico">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6" /><path d="M12 2v13M8 6l4-4 4 4" /></svg>
-          </span>
-          <span>
-            <strong>{t('tourDetail.crossSellUpsellTitle')}</strong>
-            <span>{t('tourDetail.crossSellUpsellDesc')}</span>
-          </span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l6 6-6 6" /></svg>
-        </button>
 
         <div className="tl-tourp-panel-totals">
           <div className="tl-tourp-crosssell-summary-row">

@@ -194,6 +194,9 @@ export default function TourItineraryPage() {
                                 {c.hotel}
                               </div>
                             )}
+                            {tour.itineraryDayDescriptions?.[i] && (
+                              <p className="tl-itin-timeline-desc">{tour.itineraryDayDescriptions[i]}</p>
+                            )}
                           </div>
                         </div>
                       </div>

@@ -2475,6 +2475,28 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 28px;
 }
 
+/* ── Qiymətə daxildir / İmkanlar / Şərtlər — three independent blocks,
+   side by side on desktop instead of stacked (was a lot of empty space
+   and felt disorganized as one long vertical list). ── */
+.tl-tourp-triple {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.tl-tourp-triple .tl-tourp-block,
+.tl-tourp-triple .tl-accordion {
+  margin-bottom: 0;
+}
+
+@media (min-width: 901px) {
+  .tl-tourp-triple {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+  }
+}
+
 .tl-tourp-h2 {
   font-family: 'Geist Sans', sans-serif;
   font-size: 17px;
@@ -3167,57 +3189,6 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-navy);
 }
 
-.tl-tourp-panel-upsell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 16px;
-  border: none;
-  border-radius: var(--tl-r-lg);
-  background: var(--tl-green-light);
-  text-align: left;
-  cursor: pointer;
-}
-
-.tl-tourp-panel-upsell-ico {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--tl-white);
-  color: var(--tl-green-dark);
-}
-
-.tl-tourp-panel-upsell > span:nth-child(2) {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  flex: 1;
-  min-width: 0;
-}
-
-.tl-tourp-panel-upsell strong {
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 12.5px;
-  color: var(--tl-navy);
-}
-
-.tl-tourp-panel-upsell span span {
-  font-size: 11px;
-  color: var(--tl-gray-600);
-  line-height: 1.3;
-}
-
-.tl-tourp-panel-upsell svg {
-  flex-shrink: 0;
-  color: var(--tl-green-dark);
-}
-
 .tl-tourp-panel-totals {
   padding-top: 12px;
   border-top: 1px solid var(--tl-gray-200);
@@ -3321,13 +3292,41 @@ body:not(.tl-subpage) .tl-about-extra {
   cursor: pointer;
 }
 
+/* ── Cross-sell section header ("Səyahətə hazırlaş" + "Hamısını göstər")
+   — see TravelProductsPicker in TravelProductsCrossSell.jsx. ── */
+.tl-tourp-crosssell-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tl-tourp-crosssell-head .tl-tourp-h2 {
+  margin: 0;
+}
+
+/* Blue pill button, same visual language as .tl-shop-loadmore on the Shop
+   page — blue, not green, since this is a secondary navigational action,
+   not the primary booking CTA. */
 .tl-tourp-showall {
-  display: inline-block;
-  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  border-radius: 100px;
+  padding: 8px 16px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--tl-green-dark);
+  color: var(--tl-blue-dark);
   text-decoration: none;
+}
+
+.tl-tourp-showall:hover {
+  border-color: var(--tl-blue);
 }
 
 /* ── WhatsApp date/passenger-change request card — sidebar on desktop,
@@ -3459,7 +3458,9 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* ── "Ətraflı Proqram" link on the product page — points to the
-   itinerary page (see TourItineraryPage.jsx). ── */
+   itinerary page (see TourItineraryPage.jsx). Blue, not green: green is
+   reserved for the primary booking CTA elsewhere on this page, this is a
+   secondary navigational link. ── */
 .tl-tourp-itinerary-link {
   display: inline-flex;
   align-items: center;
@@ -3467,7 +3468,7 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: -6px 0 22px;
   font-size: 13.5px;
   font-weight: 700;
-  color: var(--tl-green-dark);
+  color: var(--tl-blue-dark);
   text-decoration: none;
 }
 
@@ -3593,6 +3594,15 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   gap: 6px;
   font-size: 12.5px;
+  color: var(--tl-gray-600);
+}
+
+/* Hand-written per-day text, when one exists for this tour — see
+   TourDto.itineraryDayDescriptions / tour-itinerary-content.json. */
+.tl-itin-timeline-desc {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
   color: var(--tl-gray-600);
 }
 

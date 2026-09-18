@@ -64,7 +64,7 @@ export default function TourDetailPage() {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   useEffect(() => setAboutExpanded(false), [id]);
 
-  const crossSellCart = useTravelProductsCart();
+  const crossSellCart = useTravelProductsCart(id);
 
   // Show one manager, not the whole list — picked once per tour view.
   const manager = useMemo(() => {
@@ -326,19 +326,40 @@ export default function TourDetailPage() {
                 </div>
               )}
 
-              {parsed?.included?.length > 0 && (
-                <div className="tl-tourp-block">
-                  <h2 className="tl-tourp-h2">{t('tourDetail.includedTitle')}</h2>
-                  <div className="tl-tourp-incl">
-                    {parsed.included.map((it, i) => (
-                      <div className="tl-tourp-incl-item" key={i}>
-                        <span className="tl-tourp-incl-ico">{INCLUDED_ICONS[it.icon] || <span style={{ fontSize: 18 }}>{it.icon}</span>}</span>
-                        <span>{it.text}</span>
-                      </div>
-                    ))}
+              {/* Qiymətə daxildir / İmkanlar / Şərtlər side by side on
+                  desktop — three independent blocks, not really a single
+                  component, so just grouped in one grid wrapper. */}
+              <div className="tl-tourp-triple">
+                {parsed?.included?.length > 0 && (
+                  <div className="tl-tourp-block">
+                    <h2 className="tl-tourp-h2">{t('tourDetail.includedTitle')}</h2>
+                    <div className="tl-tourp-incl">
+                      {parsed.included.map((it, i) => (
+                        <div className="tl-tourp-incl-item" key={i}>
+                          <span className="tl-tourp-incl-ico">{INCLUDED_ICONS[it.icon] || <span style={{ fontSize: 18 }}>{it.icon}</span>}</span>
+                          <span>{it.text}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
+                {currentPrice && (
+                  <div className="tl-tourp-block">
+                    <InstallmentCalculator basePrice={currentPrice.amount} currency={currentPrice.currency} />
+                  </div>
+                )}
+
+                {parsed?.conditions?.length > 0 && (
+                  <Accordion title={t('tourDetail.conditionsTitle')}>
+                    <ul className="tl-tourp-conditions">
+                      {parsed.conditions.map((c, i) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </Accordion>
+                )}
+              </div>
 
               <Link to={`/tours/${tour.id}/itinerary`} className="tl-tourp-itinerary-link">
                 {t('tourDetail.viewItinerary')}
@@ -359,28 +380,7 @@ export default function TourDetailPage() {
 
               <div className="tl-tourp-mobile-only">{priceCard}</div>
 
-              {currentPrice && (
-                <div className="tl-tourp-block">
-                  <InstallmentCalculator basePrice={currentPrice.amount} currency={currentPrice.currency} />
-                </div>
-              )}
-
-              {parsed?.conditions?.length > 0 && (
-                <Accordion title={t('tourDetail.conditionsTitle')}>
-                  <ul className="tl-tourp-conditions">
-                    {parsed.conditions.map((c, i) => (
-                      <li key={i}>{c}</li>
-                    ))}
-                  </ul>
-                </Accordion>
-              )}
-
-              {crossSellCart.products.length > 0 && (
-                <div className="tl-tourp-block">
-                  <TravelProductsPicker cart={crossSellCart} />
-                  <Link to="/shop" className="tl-tourp-showall">{t('tourDetail.showAllProducts')} →</Link>
-                </div>
-              )}
+              {crossSellCart.products.length > 0 && <TravelProductsPicker cart={crossSellCart} />}
 
               {manager && (
                 <div className="tl-tourp-block">
@@ -391,17 +391,13 @@ export default function TourDetailPage() {
                         <strong>{manager.name}</strong>
                         <span>+{manager.phone.replace(/^(\d{3})(\d{2})(\d{3})(\d{2})(\d{2}).*/, '$1 $2 $3 $4 $5')}</span>
                       </span>
+                      {/* Just the phone icon — the WhatsApp icon here used to
+                          be a plain duplicate of the main CTA button above
+                          (same waHref(manager.phone) link, no distinct
+                          intent), unlike the date/passenger-change request
+                          card, which carries its own different message. */}
                       <span className="tl-tourp-manager-actions">
                         <a href={`tel:+${manager.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
-                        <a
-                          href={waHref(manager.phone)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="wa"
-                          aria-label="WhatsApp"
-                        >
-                          {WA_ICON}
-                        </a>
                       </span>
                     </div>
                   </div>

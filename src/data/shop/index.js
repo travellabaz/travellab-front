@@ -146,6 +146,28 @@ export function getCategories() {
   return Array.from(set);
 }
 
+// Cross-sell picks for the tour product page — one product per distinct
+// category (via groups, so two sizes of the same item never both show,
+// see getProductGroups), reshuffled on every call so a page load doesn't
+// always show the exact same 4 items. Falls short of `count` only if
+// there are fewer than `count` categories with an in-stock group.
+export function getSuggestedCrossSellProducts(count = 4) {
+  const shuffledCategories = [...getCategories()].sort(() => Math.random() - 0.5);
+  const usedGroupIds = new Set();
+  const picks = [];
+  for (const category of shuffledCategories) {
+    if (picks.length >= count) break;
+    const candidates = getProductGroups().filter(
+      (g) => g.inStock && g.categories.includes(category) && !usedGroupIds.has(g.id)
+    );
+    if (candidates.length === 0) continue;
+    const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+    usedGroupIds.add(chosen.id);
+    picks.push(chosen.defaultVariant);
+  }
+  return picks;
+}
+
 export function getRelatedProductGroups(group, limit = 4) {
   return getProductGroups()
     .filter((g) => g.id !== group.id && g.categories.some((c) => group.categories.includes(c)))
