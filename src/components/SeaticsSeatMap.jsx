@@ -136,8 +136,18 @@ document.addEventListener('wheel', function (e) {
 // of the map at all. Reporting the real content height here and resizing
 // the iframe to match — instead of guessing a fixed px value — means the
 // whole venue renders at once, so there's nothing left to pan or crop.
+// body/documentElement.scrollHeight alone isn't enough — confirmed live
+// the widget's own root (.seatics) can be taller than either of those
+// while they stay unchanged, since an absolutely-positioned element
+// doesn't grow its own parent's scrollHeight. Checking .seatics directly
+// (when it exists yet) catches that case too.
 function reportHeight() {
-  var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+  var seatics = document.querySelector('.seatics');
+  var h = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    seatics ? seatics.getBoundingClientRect().height : 0
+  );
   window.parent.postMessage({ type: 'seatics-height', height: h }, '*');
 }
 setInterval(reportHeight, 500);
