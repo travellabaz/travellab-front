@@ -22,23 +22,22 @@ import { API_BASE } from '../api/client';
 // be, so document.write works as the widget expects.
 export default function SeaticsSeatMap({ eventId }) {
   const [config, setConfig] = useState(null);
-  // A generous default, not a small one — every venue seen so far (ours,
-  // up to 1404px for this exact event, and, checked live, Expedia's own
-  // Seatics embed at ~756px) fits well under this, so growing past it
-  // should now be rare — and even when it does grow, that's still a
-  // single one-time jump, confirmed live to read as "the map running
-  // away" if a visitor is already scrolling/reading when it lands (the
-  // real content height only becomes known sometime after mount, not
-  // instantly, so there's no way to guarantee this happens before they
-  // start interacting). Tried measuring the real height off-screen first
-  // and revealing at the final size in one step instead of guessing —
-  // worse on both counts: confirmed live the map sometimes never
-  // rendered at all for tens of seconds (browsers deprioritize rendering
-  // work for off-screen elements), and when it did, the "measured"
-  // height came back as exactly the off-screen iframe's own oversized
-  // ceiling rather than the real content height. Simple and visible
-  // beats clever and hidden.
-  const [height, setHeight] = useState(1600);
+  // A generous default — confirmed live this event's own real height
+  // alone ranges from ~1400px to ~2300px across different loads (its
+  // internal ticket panel never finishes loading, since our OAuth scope
+  // doesn't cover it, and how far that gets before settling seems to
+  // vary per load), so "generous" has to mean comfortably above the
+  // worst case seen, not just above a typical one. Even so this is a
+  // starting point, not a promise — see the growth window below, the
+  // real backstop for whatever this default doesn't cover. Tried
+  // measuring the real height off-screen first and revealing at the
+  // final size in one step instead of guessing — worse: confirmed live
+  // the map sometimes never rendered at all for tens of seconds
+  // (browsers deprioritize rendering work for off-screen elements), and
+  // when it did, the "measured" height came back as exactly the
+  // off-screen iframe's own oversized ceiling rather than the real
+  // content height. Simple and visible beats clever and hidden.
+  const [height, setHeight] = useState(2400);
   const heightLockedRef = useRef(false);
 
   useEffect(() => {
@@ -73,7 +72,7 @@ export default function SeaticsSeatMap({ eventId }) {
   // first few seconds, then freezing, gets the real settled size without
   // chasing that indefinitely.
   useEffect(() => {
-    const growUntil = Date.now() + 6000;
+    const growUntil = Date.now() + 8000;
     const onMessage = (e) => {
       if (!e.data) return;
       if (e.data.type === 'seatics-wheel') {
