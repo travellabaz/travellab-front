@@ -59,20 +59,30 @@ export default function SeaticsSeatMap({ eventId }) {
   // exist before it does so no wheel-scroll or height message from the
   // iframe's very first frame gets missed.
   //
-  // Only the FIRST height report is ever applied (heightLockedRef) —
-  // confirmed live that later ones do keep arriving as the widget's own
-  // (permanently-loading, since our OAuth scope doesn't cover its ticket
-  // panel) right-hand list keeps re-laying-out, and applying every one of
-  // those would resize the iframe — and reflow everything below it on the
-  // page — repeatedly under the visitor, which read as the exact same
-  // "running away" complaint the sizing fix was meant to solve.
+  // Height reports are only accepted for a short window after mount, not
+  // forever, then locked — confirmed live both extremes are real bugs:
+  // accepting only the very first one locked in a too-small height, since
+  // the widget's content keeps growing for a couple of seconds after its
+  // first report (its real height came back as 1924px while body/
+  // documentElement briefly under-reported it well after that first
+  // message had already locked things in); accepting every report forever
+  // resizes the iframe — and reflows everything below it — indefinitely,
+  // since the widget's own (permanently-loading, our OAuth scope doesn't
+  // cover its ticket panel) right-hand list keeps re-laying-out for as
+  // long as the map stays mounted. Growing (never shrinking) for the
+  // first few seconds, then freezing, gets the real settled size without
+  // chasing that indefinitely.
   useEffect(() => {
+    const growUntil = Date.now() + 6000;
     const onMessage = (e) => {
       if (!e.data) return;
       if (e.data.type === 'seatics-wheel') {
         window.scrollBy(0, e.data.deltaY);
       } else if (e.data.type === 'seatics-height' && !heightLockedRef.current) {
-        heightLockedRef.current = true;
+        if (Date.now() >= growUntil) {
+          heightLockedRef.current = true;
+          return;
+        }
         // max, not a plain set — never shrink below the safe default even
         // if a report somehow comes back smaller than it.
         setHeight((h) => Math.max(h, e.data.height));
