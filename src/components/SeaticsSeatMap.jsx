@@ -51,11 +51,17 @@ export default function SeaticsSeatMap({ eventId }) {
   // has the browser silently rewrite those to https:// before sending,
   // avoiding the mixed-content block that otherwise broke the map in
   // Chrome/Edge.
+  // The widget opens on a "fly out" animation — starts zoomed in on the
+  // stage, pans/scales out to the full venue over a couple of seconds
+  // (its own CSS transitions, e.g. .venue-map's transition:.3s and
+  // similar rules in light-desktop.css). Disabling all transitions/
+  // animations inside the iframe skips straight to the settled final
+  // view instead.
   const srcDoc = `<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-<style>body{margin:0;font-family:sans-serif;}</style>
+<style>body{margin:0;font-family:sans-serif;}*{transition:none!important;animation:none!important;}</style>
 </head>
 <body>
 <div id="seatics-map"></div>
