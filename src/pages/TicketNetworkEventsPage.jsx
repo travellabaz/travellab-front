@@ -172,7 +172,23 @@ export default function TicketNetworkEventsPage() {
 
   // The event stays in the URL (/events/:eventId) so it's a real,
   // shareable/bookmarkable page on travellab.az — not just React state.
-  const openEvent = (event) => navigate(`/events/${event.id}`);
+  //
+  // scrollTo(0,0) here, synchronously before navigate(), not left to
+  // useScrollTopOnRouteChange's post-paint effect: Seatics' framework
+  // script starts running (via the iframe's srcDoc) as soon as
+  // SeaticsSeatMap mounts, which can beat that effect to the punch on a
+  // client-side transition — if the search results were scrolled down,
+  // the widget appears to read the parent page's still-stale scroll
+  // position while sizing its own seating chart, and draws the SVG
+  // hundreds of thousands of pixels below the visible area (confirmed
+  // live: a fresh full-page load, always at scrollY 0 from the start,
+  // never showed this; clicking through from a scrolled search list
+  // did, reliably, with an offset roughly tracking the prior scroll
+  // depth). Landing on the event page already at the top sidesteps it.
+  const openEvent = (event) => {
+    window.scrollTo(0, 0);
+    navigate(`/events/${event.id}`);
+  };
   const backToResults = () => navigate('/events');
 
   // Search-as-you-type, debounced — Catalog's dedicated /suggest endpoint
@@ -204,6 +220,7 @@ export default function TicketNetworkEventsPage() {
   const openSuggestion = (suggestion) => {
     setShowSuggestions(false);
     setKeyword(suggestion.name || '');
+    window.scrollTo(0, 0); // see the comment on openEvent's scrollTo
     navigate(`/events/${suggestion.id}`);
   };
 
