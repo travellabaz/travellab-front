@@ -124,6 +124,14 @@ export default function App() {
   // (which pre-fills this same persistent widget — see
   // FlightRoutePage.jsx / utils/flightWidgetFill.js).
   const showHero = barePath === '/' || barePath === '/search' || !!flightRoute;
+  // Google's One Tap prompt is a native browser-chrome overlay, not page
+  // DOM — its appearance/disappearance mid-flow was confirmed live to
+  // coincide with the ticket page's map/page jumping around (screen
+  // recording showed the "Sign in with Google" bubble popping up right
+  // over the "how many tickets?" dialog). Suppressing it on /events
+  // avoids interrupting that flow the same way AddPhoneModal is already
+  // delayed elsewhere rather than firing over active browsing.
+  const suppressOneTap = /^\/events(\/|$)/.test(barePath);
   // HeroSearch's own default covers "/" — only override for "/search" and
   // /ucuslar/:route, matching SEO Paketi v2's per-route H1 (HeroSearch
   // itself keeps a single persistent DOM instance regardless, see the
@@ -174,7 +182,7 @@ export default function App() {
       <ManagerContactModal />
       <CartDrawer />
       <WishlistDrawer />
-      <GoogleOneTap />
+      {!suppressOneTap && <GoogleOneTap />}
     </>
   );
 }
