@@ -160,6 +160,68 @@ function reportHeight() {
   window.parent.postMessage({ type: 'seatics-height', height: h }, '*');
 }
 setInterval(reportHeight, 500);
+
+// Confirmed live via screen recording (repeatedly, in a clean Incognito
+// window too — not an extension conflict): the map doesn't just settle
+// once and stay put. Its own JS keeps recalculating and rewriting the
+// seating chart's transform in the background — frame to frame, the
+// same load cycled through the full venue, the stage area, and a blank/
+// off-screen position, with nothing the visitor did in between. Most
+// likely tied to its internal ticket-price panel retrying forever (our
+// OAuth scope doesn't cover it, see TicketNetwork email), each retry
+// apparently re-triggering a fit/resize pass that doesn't always land
+// somewhere sane. We can't stop that retry loop from here, but we can
+// stop it from being visible: lock the chart's transform to the first
+// value it settles on, and revert anything that changes it afterward
+// unless it follows an actual click/touch inside the iframe (the +/-
+// zoom buttons, a drag) within the last half second — genuine
+// interaction still works, the widget's own unprompted rewrites don't.
+(function () {
+  var lastGesture = 0;
+  document.addEventListener('mousedown', function () { lastGesture = Date.now(); }, true);
+  document.addEventListener('touchstart', function () { lastGesture = Date.now(); }, true);
+
+  var locked = null;
+  var guarding = false;
+  var svg = null;
+  var observer = null;
+
+  function onTransformChanged() {
+    if (guarding || !svg) return;
+    var current = svg.style.transform;
+    if (current === locked) return;
+    if (Date.now() - lastGesture < 500) {
+      // Real interaction (a zoom button, a drag) — accept the new state
+      // as the new baseline to protect.
+      locked = current;
+      return;
+    }
+    guarding = true;
+    svg.style.transform = locked;
+    guarding = false;
+  }
+
+  function findAndWatchSvg() {
+    var found = document.querySelector('.seatics svg') || document.querySelector('svg');
+    if (!found) {
+      requestAnimationFrame(findAndWatchSvg);
+      return;
+    }
+    if (found !== svg) {
+      if (observer) observer.disconnect();
+      svg = found;
+      locked = svg.style.transform;
+      observer = new MutationObserver(onTransformChanged);
+      observer.observe(svg, { attributes: true, attributeFilter: ['style'] });
+    }
+    // Keep checking — confirmed live the widget can also swap in a whole
+    // new <svg> element (not just restyle the old one) partway through a
+    // retry cycle, which would silently orphan an observer bound to the
+    // original node.
+    setTimeout(findAndWatchSvg, 1000);
+  }
+  findAndWatchSvg();
+})();
 </script>
 </head>
 <body>
