@@ -93,10 +93,28 @@ export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
     });
     return true;
   }
-  if (!wire()) {
-    var obs = new MutationObserver(function(){ if (wire()) obs.disconnect(); });
-    obs.observe(document.body, { childList: true, subtree: true });
-  }
+  if (wire()) return;
+  // Coalesced via rAF rather than scanning on every single mutation —
+  // a busy arena map (Seatics redrawing hover tooltips, zoom, etc.)
+  // fires childList mutations continuously, and re-running
+  // querySelectorAll on the whole document for each one froze the page
+  // solid during testing. requestAnimationFrame batches any number of
+  // mutations within a frame into one scan. The 20s hard timeout is a
+  // second safety net independent of that: some venue/skin combos may
+  // never draw a <path id="sec_..."> at all, and without it the
+  // observer would keep running, and keep costing a scan per frame,
+  // for the lifetime of the page.
+  var scheduled = false;
+  var obs = new MutationObserver(function(){
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(function(){
+      scheduled = false;
+      if (wire()) obs.disconnect();
+    });
+  });
+  obs.observe(document.body, { childList: true, subtree: true });
+  setTimeout(function(){ obs.disconnect(); }, 20000);
 })();
 </script>`;
 
