@@ -174,7 +174,15 @@ setInterval(reportHeight, 500);
     <iframe
       title="Seat map"
       srcDoc={srcDoc}
-      style={{ width: '100%', height, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
+      // scrolling="no" — if the height guess above ever falls short of the
+      // real content again despite the growth window, this keeps that a
+      // clean crop instead of leaving the iframe with its own scrollbar
+      // and scroll position, which anything inside it (an autofocus, a
+      // scrollIntoView the widget does on load) could then move on its
+      // own, under the visitor, independent of the page's own scroll —
+      // another way to produce the same "the map moved by itself" report.
+      scrolling="no"
+      style={{ width: '100%', height, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24, overflow: 'hidden' }}
     />
   );
 }
