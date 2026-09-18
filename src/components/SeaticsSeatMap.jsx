@@ -22,27 +22,22 @@ import { API_BASE } from '../api/client';
 // section names to update the sidebar price, the same way Expedia's own
 // embed of this widget drives its ticket list from map clicks.
 //
-// FIXED_WIDTH: Seatics picks its "mobile" vs "desktop" CSS bucket by
-// some rule we couldn't pin down (not simply the iframe's own width —
-// confirmed live it can load light-desktop.css even down to 326px), but
-// it always lays out the same two-column desktop-style markup either
-// way, so a "mobile" pick just means desktop markup with the wrong CSS
-// applied — blank, unstyled shapes. Rather than fight their detection,
-// the iframe always renders at a fixed width comfortably clear of every
-// breakpoint we saw them use, and the wrapper below scales it down with
-// a CSS transform to fit whatever real width it's given — same
-// approach a fixed-width print layout uses to fit a screen. This is
-// also what makes the map fit on phones without a horizontal
-// scrollbar, and removes any dependency on the surrounding page layout
-// being some minimum width.
-const FIXED_WIDTH = 1000;
-const FIXED_HEIGHT = 480;
-
+// Plain width:100%, no fixed-size + CSS transform scaling — that was
+// tried to dodge Seatics' mobile/desktop CSS breakpoint, but TicketNetwork's
+// own integration guide says explicitly not to fight their sizing:
+// "Remove any previous references to the MapWidget stylesheet. The API
+// will automatically add the styles needed for the map and its
+// components" (Guide - Updating to the MapWidget3 API v2.1, TicketNetwork
+// 2017) — the widget is meant to size itself. The transform-scale
+// version also coincided with the map's own SVG rendering itself
+// thousands of pixels below the visible area on some events (confirmed
+// live: computed top offset in the hundreds of thousands of pixels) —
+// plausibly the widget reading its own frameElement's scaled
+// getBoundingClientRect() for a zoom-to-fit calculation and dividing by
+// something close to zero. Simpler and doc-aligned wins here.
 export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
   const [config, setConfig] = useState(null);
   const iframeRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     if (!onSectionSelect) return undefined;
@@ -67,19 +62,6 @@ export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return undefined;
-    const updateScale = () => {
-      const width = wrapper.getBoundingClientRect().width;
-      setScale(width > 0 ? Math.min(1, width / FIXED_WIDTH) : 1);
-    };
-    updateScale();
-    const observer = new ResizeObserver(updateScale);
-    observer.observe(wrapper);
-    return () => observer.disconnect();
-  }, [config, eventId]);
 
   if (!config || !eventId) return null;
 
@@ -166,29 +148,11 @@ ${clickBridgeScript}
 </html>`;
 
   return (
-    <div
-      ref={wrapperRef}
-      style={{
-        width: '100%',
-        height: FIXED_HEIGHT * scale,
-        overflow: 'hidden',
-        border: '1px solid var(--tl-gray-200)',
-        borderRadius: 12,
-        marginBottom: 24,
-      }}
-    >
-      <iframe
-        ref={iframeRef}
-        title="Seat map"
-        srcDoc={srcDoc}
-        style={{
-          width: FIXED_WIDTH,
-          height: FIXED_HEIGHT,
-          border: 'none',
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
-        }}
-      />
-    </div>
+    <iframe
+      ref={iframeRef}
+      title="Seat map"
+      srcDoc={srcDoc}
+      style={{ width: '100%', height: 480, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
+    />
   );
 }
