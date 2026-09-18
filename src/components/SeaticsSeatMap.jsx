@@ -36,6 +36,20 @@ export default function SeaticsSeatMap({ eventId }) {
     };
   }, []);
 
+  // Registered unconditionally (ahead of the early return below) — the map
+  // isn't mounted until config loads, but the postMessage listener needs to
+  // exist before it does so no wheel-scroll message from the iframe's very
+  // first frame gets missed.
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.data && e.data.type === 'seatics-wheel') {
+        window.scrollBy(0, e.data.deltaY);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
   if (!config || !eventId) return null;
 
   const mapUrl = `${config.baseUrl}/MapAndLayout?websiteConfigId=${config.websiteConfigId}&consumerKey=${encodeURIComponent(config.consumerKey)}&eventId=${eventId}`;
@@ -62,6 +76,25 @@ export default function SeaticsSeatMap({ eventId }) {
 <head>
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <style>body{margin:0;font-family:sans-serif;}*{transition:none!important;animation:none!important;}</style>
+<script>
+// Seatics treats any wheel/trackpad scroll over the map as a zoom/pan
+// command (confirmed against their own QA docs — expected behavior on
+// their side, not something websiteConfigId can turn off). Since the
+// iframe sits inline in the page, a visitor scrolling the page with the
+// cursor resting over the map gets that scroll hijacked into the map
+// zooming/panning out from under them instead — confirmed live via
+// screen recording: the view silently pans from the full venue to the
+// balcony section with the cursor motionless, nothing else on the page
+// changing. Capturing wheel events here, before Seatics' own handler
+// (registered on document in the capture phase, ahead of anything its
+// own scripts add below), and forwarding the delta to the parent page
+// turns that into a normal page scroll instead.
+document.addEventListener('wheel', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  window.parent.postMessage({ type: 'seatics-wheel', deltaY: e.deltaY }, '*');
+}, { passive: false, capture: true });
+</script>
 </head>
 <body>
 <div id="seatics-map"></div>
