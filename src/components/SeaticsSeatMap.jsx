@@ -37,7 +37,26 @@ import { API_BASE } from '../api/client';
 // something close to zero. Simpler and doc-aligned wins here.
 export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
   const [config, setConfig] = useState(null);
+  const [ready, setReady] = useState(false);
   const iframeRef = useRef(null);
+
+  // Resetting scroll before navigate() (see openEvent in
+  // TicketNetworkEventsPage.jsx) cut the bad offset down but didn't
+  // zero it out, so scrollY alone isn't the whole story — something
+  // about page/layout state right after a client-side route change is
+  // still unsettled when Seatics' framework script starts sizing the
+  // map. Two rAFs (one for the post-navigation layout to flush, one for
+  // the browser to actually paint it) before the iframe is created at
+  // all is a blunter, mechanism-agnostic fix: by the time Seatics' own
+  // script runs, the page has had at least one real paint in its
+  // post-navigation state to measure.
+  useEffect(() => {
+    setReady(false);
+    let raf1 = requestAnimationFrame(() => {
+      raf1 = requestAnimationFrame(() => setReady(true));
+    });
+    return () => cancelAnimationFrame(raf1);
+  }, [eventId]);
 
   useEffect(() => {
     if (!onSectionSelect) return undefined;
@@ -63,7 +82,7 @@ export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
     };
   }, []);
 
-  if (!config || !eventId) return null;
+  if (!config || !eventId || !ready) return null;
 
   const mapUrl = `${config.baseUrl}/MapAndLayout?websiteConfigId=${config.websiteConfigId}&consumerKey=${encodeURIComponent(config.consumerKey)}&eventId=${eventId}`;
 
