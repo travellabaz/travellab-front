@@ -22,6 +22,7 @@ import { API_BASE } from '../api/client';
 // be, so document.write works as the widget expects.
 export default function SeaticsSeatMap({ eventId }) {
   const [config, setConfig] = useState(null);
+  const [height, setHeight] = useState(480);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,12 +39,15 @@ export default function SeaticsSeatMap({ eventId }) {
 
   // Registered unconditionally (ahead of the early return below) — the map
   // isn't mounted until config loads, but the postMessage listener needs to
-  // exist before it does so no wheel-scroll message from the iframe's very
-  // first frame gets missed.
+  // exist before it does so no wheel-scroll or height message from the
+  // iframe's very first frame gets missed.
   useEffect(() => {
     const onMessage = (e) => {
-      if (e.data && e.data.type === 'seatics-wheel') {
+      if (!e.data) return;
+      if (e.data.type === 'seatics-wheel') {
         window.scrollBy(0, e.data.deltaY);
+      } else if (e.data.type === 'seatics-height') {
+        setHeight((h) => (Math.abs(h - e.data.height) > 4 ? e.data.height : h));
       }
     };
     window.addEventListener('message', onMessage);
@@ -94,6 +98,21 @@ document.addEventListener('wheel', function (e) {
   e.stopPropagation();
   window.parent.postMessage({ type: 'seatics-wheel', deltaY: e.deltaY }, '*');
 }, { passive: false, capture: true });
+
+// Confirmed live: at Seatics' own minimum zoom (its "Zoom Out" control was
+// already disabled — this is its full, uncropped venue view, not a
+// "recommended section" focus), the rendered map is well over 1000px tall
+// for this venue, while our iframe was a fixed 480px. With nothing telling
+// visitors they could pan inside that cropped box, the wheel fix above
+// (scroll-over-map now scrolls the page) left them unable to see the rest
+// of the map at all. Reporting the real content height here and resizing
+// the iframe to match — instead of guessing a fixed px value — means the
+// whole venue renders at once, so there's nothing left to pan or crop.
+function reportHeight() {
+  var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+  window.parent.postMessage({ type: 'seatics-height', height: h }, '*');
+}
+setInterval(reportHeight, 500);
 </script>
 </head>
 <body>
@@ -108,7 +127,7 @@ document.addEventListener('wheel', function (e) {
     <iframe
       title="Seat map"
       srcDoc={srcDoc}
-      style={{ width: '100%', height: 480, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
+      style={{ width: '100%', height, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
     />
   );
 }
