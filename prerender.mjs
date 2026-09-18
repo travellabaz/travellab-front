@@ -341,6 +341,20 @@ function buildHreflangTags(entry, availableLangs, extraQuery = '') {
 async function main() {
   const { render } = await import(path.join(ssrDir, 'entry-server.js'));
   const template = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
+  // The home route ('/') writes its prerendered output to this same
+  // dist/index.html below (outDir === distDir for isHome) — but
+  // public/_redirects points every unmatched path at /index.html as the
+  // generic SPA fallback (any route this script doesn't prerender, e.g.
+  // /events/:eventId, /tours/:id for an id not in PAGE_META, etc.). Once
+  // the home page overwrites it, that fallback silently starts serving
+  // the homepage's own prerendered markup instead of a real generic
+  // shell, and React's hydrateRoot on those other routes then crashes
+  // reconciling the wrong DOM against the actual page's component tree
+  // (minified error #418/#423/#425 — confirmed live in production
+  // console output). Saving the pristine pre-prerender template here,
+  // before home overwrites dist/index.html, gives _redirects a real
+  // generic shell to fall back to instead.
+  fs.writeFileSync(path.join(distDir, 'app-shell.html'), template);
   const translators = loadTranslators();
 
   const blogPosts = loadBlogPosts();
