@@ -11726,26 +11726,10 @@ body:not(.tl-subpage) .tl-about-extra {
   min-width: 0;
 }
 
-/* min-width: 992px — Seatics' own framework script picks its
-   "mobile" vs "desktop" CSS bucket by checking whether the iframe
-   it's running in is >= 992px wide (their light-desktop.css media
-   query, confirmed live), but it always lays out the same two-column
-   desktop-style markup regardless of which bucket it picked. Our
-   two-column .tl-evt-layout squeezes this card to ~786px on any
-   laptop window between the 900px mobile breakpoint and roughly
-   1350px, so Seatics loads mobile CSS onto desktop markup and the
-   seat map renders as unstyled blank shapes — confirmed by widening
-   the card past 992px and watching it request light-desktop.css
-   instead. overflow-x lets the card scroll horizontally instead of
-   breaking the page on windows narrower than 992px + sidebar; reverted
-   below 900px, where .tl-evt-layout already stacks to a single column
-   and Seatics should get its real mobile CSS on an actual phone. */
 .tl-evt-map-card {
   border: 1px solid var(--tl-gray-200);
   border-radius: var(--tl-r-xl);
   overflow: hidden;
-  overflow-x: auto;
-  min-width: 992px;
   margin-bottom: 28px;
 }
 
@@ -11948,14 +11932,6 @@ body:not(.tl-subpage) .tl-about-extra {
     position: static;
     width: 100%;
     flex-basis: auto;
-  }
-
-  /* Real phones stack to one column already, so let Seatics see its
-     true (narrow) width and load its real mobile CSS — see the
-     min-width: 992px comment above .tl-evt-map-card. */
-  .tl-evt-map-card {
-    min-width: 0;
-    overflow-x: visible;
   }
 }
 
