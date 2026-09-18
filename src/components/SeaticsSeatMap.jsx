@@ -37,25 +37,7 @@ import { API_BASE } from '../api/client';
 // something close to zero. Simpler and doc-aligned wins here.
 export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
   const [config, setConfig] = useState(null);
-  const [ready, setReady] = useState(false);
   const iframeRef = useRef(null);
-
-  // Resetting scroll before navigate() (see openEvent in
-  // TicketNetworkEventsPage.jsx) cut the bad off-screen-SVG offset down
-  // but didn't zero it out on a scrolled-search-list -> click test, and
-  // neither did gating on 2 rAFs alone (52581px -> 13471px -> 8151px
-  // across the two fixes, live measurements — trending toward zero but
-  // not there). Whatever layout/page state Seatics' script reads is
-  // taking longer than a couple of frames to settle after a client-side
-  // route change, so this waits out a real clock delay instead of a
-  // frame count — cheap relative to how long the map already takes to
-  // load its own resources, and invisible to the visitor since the
-  // "Seatics map" loading skeleton is already showing regardless.
-  useEffect(() => {
-    setReady(false);
-    const timer = setTimeout(() => setReady(true), 300);
-    return () => clearTimeout(timer);
-  }, [eventId]);
 
   useEffect(() => {
     if (!onSectionSelect) return undefined;
@@ -81,7 +63,7 @@ export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
     };
   }, []);
 
-  if (!config || !eventId || !ready) return null;
+  if (!config || !eventId) return null;
 
   const mapUrl = `${config.baseUrl}/MapAndLayout?websiteConfigId=${config.websiteConfigId}&consumerKey=${encodeURIComponent(config.consumerKey)}&eventId=${eventId}`;
 

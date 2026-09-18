@@ -173,21 +173,22 @@ export default function TicketNetworkEventsPage() {
   // The event stays in the URL (/events/:eventId) so it's a real,
   // shareable/bookmarkable page on travellab.az — not just React state.
   //
-  // scrollTo(0,0) here, synchronously before navigate(), not left to
-  // useScrollTopOnRouteChange's post-paint effect: Seatics' framework
-  // script starts running (via the iframe's srcDoc) as soon as
-  // SeaticsSeatMap mounts, which can beat that effect to the punch on a
-  // client-side transition — if the search results were scrolled down,
-  // the widget appears to read the parent page's still-stale scroll
-  // position while sizing its own seating chart, and draws the SVG
-  // hundreds of thousands of pixels below the visible area (confirmed
-  // live: a fresh full-page load, always at scrollY 0 from the start,
-  // never showed this; clicking through from a scrolled search list
-  // did, reliably, with an offset roughly tracking the prior scroll
-  // depth). Landing on the event page already at the top sidesteps it.
+  // A real full-page navigation (window.location), not React Router's
+  // client-side navigate(): confirmed live, repeatedly, that Seatics'
+  // framework script draws its seating-chart SVG hundreds of thousands
+  // of pixels below the visible area specifically when the event page
+  // is reached via a client-side route change — scrollTo(0,0) before
+  // navigate() and delaying the map iframe's creation by increasing
+  // amounts (two rAFs, then a flat 300ms) each measurably reduced the
+  // bad offset without ever reaching zero, and it reproduced even in a
+  // brand-new tab on the very first click, ruling out "leftover state
+  // from a previous map load in this tab" too — whatever Seatics reads
+  // to size itself, a client-side transition leaves it in a state a
+  // full page load never does. A real navigation sidesteps the whole
+  // question: every direct-URL/full-reload test this session, without
+  // exception, rendered the map correctly.
   const openEvent = (event) => {
-    window.scrollTo(0, 0);
-    navigate(`/events/${event.id}`);
+    window.location.href = `/events/${event.id}`;
   };
   const backToResults = () => navigate('/events');
 
@@ -218,10 +219,7 @@ export default function TicketNetworkEventsPage() {
   }, [keyword]);
 
   const openSuggestion = (suggestion) => {
-    setShowSuggestions(false);
-    setKeyword(suggestion.name || '');
-    window.scrollTo(0, 0); // see the comment on openEvent's scrollTo
-    navigate(`/events/${suggestion.id}`);
+    window.location.href = `/events/${suggestion.id}`; // see the comment on openEvent
   };
 
   // Loads whichever event is currently in the URL — reached either by
