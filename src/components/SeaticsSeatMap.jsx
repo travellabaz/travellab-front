@@ -41,21 +41,20 @@ export default function SeaticsSeatMap({ eventId, onSectionSelect }) {
   const iframeRef = useRef(null);
 
   // Resetting scroll before navigate() (see openEvent in
-  // TicketNetworkEventsPage.jsx) cut the bad offset down but didn't
-  // zero it out, so scrollY alone isn't the whole story — something
-  // about page/layout state right after a client-side route change is
-  // still unsettled when Seatics' framework script starts sizing the
-  // map. Two rAFs (one for the post-navigation layout to flush, one for
-  // the browser to actually paint it) before the iframe is created at
-  // all is a blunter, mechanism-agnostic fix: by the time Seatics' own
-  // script runs, the page has had at least one real paint in its
-  // post-navigation state to measure.
+  // TicketNetworkEventsPage.jsx) cut the bad off-screen-SVG offset down
+  // but didn't zero it out on a scrolled-search-list -> click test, and
+  // neither did gating on 2 rAFs alone (52581px -> 13471px -> 8151px
+  // across the two fixes, live measurements — trending toward zero but
+  // not there). Whatever layout/page state Seatics' script reads is
+  // taking longer than a couple of frames to settle after a client-side
+  // route change, so this waits out a real clock delay instead of a
+  // frame count — cheap relative to how long the map already takes to
+  // load its own resources, and invisible to the visitor since the
+  // "Seatics map" loading skeleton is already showing regardless.
   useEffect(() => {
     setReady(false);
-    let raf1 = requestAnimationFrame(() => {
-      raf1 = requestAnimationFrame(() => setReady(true));
-    });
-    return () => cancelAnimationFrame(raf1);
+    const timer = setTimeout(() => setReady(true), 300);
+    return () => clearTimeout(timer);
   }, [eventId]);
 
   useEffect(() => {
