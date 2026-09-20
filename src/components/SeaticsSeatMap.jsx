@@ -176,15 +176,27 @@ setInterval(reportHeight, 500);
 // unless it follows an actual click/touch inside the iframe (the +/-
 // zoom buttons, a drag) within the last half second — genuine
 // interaction still works, the widget's own unprompted rewrites don't.
+// Also confirmed live: whatever zoom level the widget happens to settle
+// on the very first time varies a lot — sometimes its own equivalent of
+// "fully zoomed out" (a compact ~750-1400px chart), sometimes noticeably
+// more zoomed in (2400-2800px), seemingly at random, not tied to
+// anything a visitor does. Since the height fix means our iframe grows
+// to fit whatever height it locks onto, an unlucky zoomed-in lock reads
+// as "the map block is huge" — a real complaint even though nothing's
+// cropped. Clicking its own Zoom Out control (#venue-map-zoom-out) down
+// to the minimum it allows before locking anything gets the same,
+// compact result every time instead of leaving it to chance.
 (function () {
   var lastGesture = 0;
-  document.addEventListener('mousedown', function () { lastGesture = Date.now(); }, true);
-  document.addEventListener('touchstart', function () { lastGesture = Date.now(); }, true);
+  function markGesture() { lastGesture = Date.now(); }
+  document.addEventListener('mousedown', markGesture, true);
+  document.addEventListener('touchstart', markGesture, true);
 
   var locked = null;
   var guarding = false;
   var svg = null;
   var observer = null;
+  var zoomedOut = false;
 
   function onTransformChanged() {
     if (guarding || !svg) return;
@@ -201,6 +213,20 @@ setInterval(reportHeight, 500);
     guarding = false;
   }
 
+  function clickZoomOutThenLock(attemptsLeft) {
+    var btn = document.getElementById('venue-map-zoom-out');
+    var disabled = !btn || btn.classList.contains('sea-disabled');
+    if (disabled || attemptsLeft <= 0) {
+      locked = svg.style.transform;
+      return;
+    }
+    markGesture();
+    btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    setTimeout(function () { clickZoomOutThenLock(attemptsLeft - 1); }, 150);
+  }
+
   function findAndWatchSvg() {
     var found = document.querySelector('.seatics svg') || document.querySelector('svg');
     if (!found) {
@@ -213,6 +239,12 @@ setInterval(reportHeight, 500);
       locked = svg.style.transform;
       observer = new MutationObserver(onTransformChanged);
       observer.observe(svg, { attributes: true, attributeFilter: ['style'] });
+      if (!zoomedOut) {
+        zoomedOut = true;
+        // A beat for the zoom-out button itself to exist/attach its own
+        // handlers before the first simulated click.
+        setTimeout(function () { clickZoomOutThenLock(20); }, 300);
+      }
     }
     // Keep checking — confirmed live the widget can also swap in a whole
     // new <svg> element (not just restyle the old one) partway through a
