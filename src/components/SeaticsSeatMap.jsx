@@ -176,48 +176,91 @@ setInterval(reportHeight, 500);
 // unless it follows an actual click/touch inside the iframe (the +/-
 // zoom buttons, a drag) within the last half second — genuine
 // interaction still works, the widget's own unprompted rewrites don't.
-// Also confirmed live: whatever zoom level the widget happens to settle
-// on the very first time varies a lot — sometimes its own equivalent of
-// "fully zoomed out" (a compact ~750-1400px chart), sometimes noticeably
-// more zoomed in (2400-2800px), seemingly at random, not tied to
-// anything a visitor does. Since the height fix means our iframe grows
-// to fit whatever height it locks onto, an unlucky zoomed-in lock reads
-// as "the map block is huge" — a real complaint even though nothing's
-// cropped. Clicking its own Zoom Out control (#venue-map-zoom-out) down
-// to the minimum it allows before locking anything gets the same,
-// compact result every time instead of leaving it to chance.
+// Also confirmed live, tracing the actual DOM: the huge container wasn't
+// the seating chart needing that much room at all. .sea-map-inner (the
+// SVG's direct parent) gets an explicit inline height set by the
+// widget's own JS — 2599px in one load — while the two <svg> children it
+// actually contains are a fixed ~670px tall. That mismatched inline
+// height is what our earlier "measure the real content" fix was
+// faithfully matching and growing the iframe to fit, not a genuine
+// content requirement. Freezing it to the chart's real size (plus a
+// little room for the zoom controls/branding link that sit alongside
+// the SVG in the same container) removes that dead space instead of
+// reserving it.
 (function () {
   var lastGesture = 0;
   function markGesture() { lastGesture = Date.now(); }
   document.addEventListener('mousedown', markGesture, true);
   document.addEventListener('touchstart', markGesture, true);
 
-  var locked = null;
-  var guarding = false;
   var svg = null;
-  var observer = null;
+  var mapInner = null;
+  var lockedTransform = null;
+  var lockedInnerHeight = null;
+  var guarding = false;
+  var svgObserver = null;
+  var innerObserver = null;
   var zoomedOut = false;
 
   function onTransformChanged() {
     if (guarding || !svg) return;
     var current = svg.style.transform;
-    if (current === locked) return;
+    if (current === lockedTransform) return;
     if (Date.now() - lastGesture < 500) {
       // Real interaction (a zoom button, a drag) — accept the new state
       // as the new baseline to protect.
-      locked = current;
+      lockedTransform = current;
       return;
     }
     guarding = true;
-    svg.style.transform = locked;
+    svg.style.transform = lockedTransform;
     guarding = false;
+  }
+
+  function onInnerHeightChanged() {
+    if (guarding || !mapInner || lockedInnerHeight === null) return;
+    if (mapInner.style.height === lockedInnerHeight) return;
+    guarding = true;
+    mapInner.style.height = lockedInnerHeight;
+    guarding = false;
+  }
+
+  // Same scale, translate pinned to the top instead of wherever the
+  // widget happened to place it — see zeroOutTranslateY's job here isn't
+  // sizing (that's handled by capping .sea-map-inner below), just
+  // getting the chart to actually sit inside the space we keep for it
+  // instead of starting hundreds of pixels down and running off the
+  // bottom.
+  function zeroOutTranslateY(transform) {
+    return transform.replace(/translate\(([^,]+),\s*[^)]+\)/, function (_, x) {
+      return 'translate(' + x + ', 0px)';
+    });
+  }
+
+  function finalizeLock() {
+    lockedTransform = zeroOutTranslateY(svg.style.transform);
+    guarding = true;
+    svg.style.transform = lockedTransform;
+    guarding = false;
+
+    mapInner = svg.closest('.sea-map-inner') || svg.parentElement;
+    if (mapInner) {
+      var svgHeight = Math.max(svg.getBoundingClientRect().height, 1);
+      lockedInnerHeight = Math.ceil(svgHeight + 120) + 'px'; // +120: zoom controls/branding link room
+      guarding = true;
+      mapInner.style.height = lockedInnerHeight;
+      guarding = false;
+      if (innerObserver) innerObserver.disconnect();
+      innerObserver = new MutationObserver(onInnerHeightChanged);
+      innerObserver.observe(mapInner, { attributes: true, attributeFilter: ['style'] });
+    }
   }
 
   function clickZoomOutThenLock(attemptsLeft) {
     var btn = document.getElementById('venue-map-zoom-out');
     var disabled = !btn || btn.classList.contains('sea-disabled');
     if (disabled || attemptsLeft <= 0) {
-      locked = svg.style.transform;
+      finalizeLock();
       return;
     }
     markGesture();
@@ -234,11 +277,11 @@ setInterval(reportHeight, 500);
       return;
     }
     if (found !== svg) {
-      if (observer) observer.disconnect();
+      if (svgObserver) svgObserver.disconnect();
       svg = found;
-      locked = svg.style.transform;
-      observer = new MutationObserver(onTransformChanged);
-      observer.observe(svg, { attributes: true, attributeFilter: ['style'] });
+      lockedTransform = svg.style.transform;
+      svgObserver = new MutationObserver(onTransformChanged);
+      svgObserver.observe(svg, { attributes: true, attributeFilter: ['style'] });
       if (!zoomedOut) {
         zoomedOut = true;
         // A beat for the zoom-out button itself to exist/attach its own
