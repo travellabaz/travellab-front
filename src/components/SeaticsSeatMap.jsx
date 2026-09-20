@@ -194,13 +194,16 @@ setInterval(reportHeight, 500);
   document.addEventListener('touchstart', markGesture, true);
 
   var svg = null;
-  var mapInner = null;
   var lockedTransform = null;
-  var lockedInnerHeight = null;
   var guarding = false;
   var svgObserver = null;
-  var innerObserver = null;
   var zoomedOut = false;
+  // Elements whose inline height we've capped, and what we've capped
+  // each one to — a plain array since more than one needs this (see
+  // finalizeLock: .sea-map-inner AND .list-ctn, the ticket-price panel
+  // sitting next to the map, both need to stop being tall for the whole
+  // row to actually shrink).
+  var cappedHeights = [];
 
   function onTransformChanged() {
     if (guarding || !svg) return;
@@ -217,12 +220,22 @@ setInterval(reportHeight, 500);
     guarding = false;
   }
 
-  function onInnerHeightChanged() {
-    if (guarding || !mapInner || lockedInnerHeight === null) return;
-    if (mapInner.style.height === lockedInnerHeight) return;
+  function capHeight(el, px) {
+    if (!el) return;
+    var value = Math.ceil(px) + 'px';
     guarding = true;
-    mapInner.style.height = lockedInnerHeight;
+    el.style.height = value;
     guarding = false;
+    var entry = { el: el, value: value };
+    cappedHeights.push(entry);
+    var obs = new MutationObserver(function () {
+      if (guarding) return;
+      if (el.style.height === entry.value) return;
+      guarding = true;
+      el.style.height = entry.value;
+      guarding = false;
+    });
+    obs.observe(el, { attributes: true, attributeFilter: ['style'] });
   }
 
   // Same scale, translate pinned to the top instead of wherever the
@@ -243,17 +256,21 @@ setInterval(reportHeight, 500);
     svg.style.transform = lockedTransform;
     guarding = false;
 
-    mapInner = svg.closest('.sea-map-inner') || svg.parentElement;
-    if (mapInner) {
-      var svgHeight = Math.max(svg.getBoundingClientRect().height, 1);
-      lockedInnerHeight = Math.ceil(svgHeight + 120) + 'px'; // +120: zoom controls/branding link room
-      guarding = true;
-      mapInner.style.height = lockedInnerHeight;
-      guarding = false;
-      if (innerObserver) innerObserver.disconnect();
-      innerObserver = new MutationObserver(onInnerHeightChanged);
-      innerObserver.observe(mapInner, { attributes: true, attributeFilter: ['style'] });
-    }
+    var mapInner = svg.closest('.sea-map-inner') || svg.parentElement;
+    var targetHeight = Math.max(svg.getBoundingClientRect().height, 1) + 120; // +120: zoom controls/branding link room
+    if (mapInner) capHeight(mapInner, targetHeight);
+
+    // Confirmed live: .list-ctn (the widget's own ticket-price panel,
+    // permanently stuck on a skeleton placeholder since it never
+    // receives real ticket data — see addTicketData() in the
+    // integration guide, a separate follow-up) sits in a flex row next
+    // to the map and stretches to match whichever sibling is taller.
+    // With .sea-map-inner now small, that stretch runs the other way —
+    // .list-ctn's own runaway skeleton height was what the whole row
+    // (and everything above it) was actually inheriting. Capping it
+    // too, not just the map side, is what actually shrinks the block.
+    var listCtn = document.querySelector('.list-ctn');
+    if (listCtn) capHeight(listCtn, targetHeight);
   }
 
   function clickZoomOutThenLock(attemptsLeft) {
