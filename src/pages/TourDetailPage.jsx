@@ -166,6 +166,23 @@ export default function TourDetailPage() {
     </div>
   );
 
+  const addToCartBtn = (
+    <button
+      type="button"
+      onClick={() => addItem(toTourCartItem(tour))}
+      className="tl-btn-book"
+      style={{ border: '1px solid var(--tl-gray-200)', cursor: 'pointer', background: '#fff', color: 'var(--tl-navy)', padding: '13px 26px' }}
+    >
+      {t('shop.addToCart')}
+    </button>
+  );
+
+  // Desktop only — mobile has its own trimmed-down copy below. Mobile used
+  // to carry this same WhatsApp/call link too, but that meant three
+  // separate WhatsApp buttons could all be on screen at once while
+  // scrolling this section (this one, the date-change card's, and
+  // TourStickyBar's) — confirmed live, it read as redundant. TourStickyBar
+  // is the one persistent WhatsApp touchpoint on mobile now.
   const ctaButtons = !expired && (
     <div className="tl-tourp-cta">
       <a
@@ -177,17 +194,18 @@ export default function TourDetailPage() {
       >
         {isMobile() ? t('common.waWrite') : t('common.call')}
       </a>
-      <button
-        type="button"
-        onClick={() => addItem(toTourCartItem(tour))}
-        className="tl-btn-book"
-        style={{ border: '1px solid var(--tl-gray-200)', cursor: 'pointer', background: '#fff', color: 'var(--tl-navy)', padding: '13px 26px' }}
-      >
-        {t('shop.addToCart')}
-      </button>
+      {addToCartBtn}
     </div>
   );
 
+  const ctaButtonsMobile = !expired && (
+    <div className="tl-tourp-cta">
+      {addToCartBtn}
+    </div>
+  );
+
+  // Desktop only — see waChangeCardMobile below for the mobile copy
+  // (same explanation text, button dropped for the same reason as above).
   const waChangeCard = waChangeHref && (
     <div className="tl-tourp-wachange">
       <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
@@ -196,6 +214,13 @@ export default function TourDetailPage() {
         {WA_ICON}
         {t('tourDetail.whatsappRequestBtn')}
       </a>
+    </div>
+  );
+
+  const waChangeCardMobile = waChangeHref && (
+    <div className="tl-tourp-wachange">
+      <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
+      <p>{t('tourDetail.whatsappRequestDesc')}</p>
     </div>
   );
 
@@ -407,10 +432,10 @@ export default function TourDetailPage() {
               {!parsed && <p className="tl-tourp-rawdesc">{tour.description}</p>}
 
               <div className="tl-tourp-mobile-only">
-                {waChangeCard}
+                {waChangeCardMobile}
                 {trustBadges}
                 {infoNote}
-                {ctaButtons}
+                {ctaButtonsMobile}
               </div>
             </div>
 

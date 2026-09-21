@@ -3373,6 +3373,12 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 0 14px;
 }
 
+/* Mobile's copy of this card has no button below the text (see
+   waChangeCardMobile in TourDetailPage.jsx) — no trailing gap to reserve. */
+.tl-tourp-wachange p:last-child {
+  margin-bottom: 0;
+}
+
 .tl-tourp-wachange-btn {
   display: flex;
   align-items: center;
