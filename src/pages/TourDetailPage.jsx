@@ -436,6 +436,8 @@ export default function TourDetailPage() {
 
               <div className="tl-tourp-mobile-only">
                 {waChangeCard}
+                {trustBadges}
+                {infoNote}
                 {manager && (
                   <div className="tl-tourp-block">
                     <h2 className="tl-tourp-h2">{t('tourDetail.managersTitle')}</h2>
@@ -452,8 +454,6 @@ export default function TourDetailPage() {
                     </div>
                   </div>
                 )}
-                {trustBadges}
-                {infoNote}
                 {ctaButtonsMobile}
               </div>
             </div>
