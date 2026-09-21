@@ -138,6 +138,27 @@ export default function SeaticsSeatMap({ eventId, ticketGroups, ticketGroupsLoad
 //   Setting it explicitly guarantees the documented (off) behavior
 //   regardless of whatever our websiteConfigId currently has stored.
 window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } };
+
+// EXPERIMENT — the map's pan/zoom position was confirmed (live, via
+// devtools network) to reset itself every few seconds even with the
+// config above, in step with a long-lived EventSource connection the
+// widget opens to growthbookproxy.tn-apis.com (TicketNetwork's own
+// GrowthBook feature-flag stream). Blocking just that one connection
+// with a stub — real EventSource is untouched for every other host —
+// tests whether the widget falls back to its default flags and stops
+// re-rendering, without otherwise touching how it works. If Ticket-
+// Network's own fix (see the email sent to Yuliya) lands first, or if
+// this turns out to break something else the flag stream controls,
+// this block should come back out.
+(function () {
+  var RealEventSource = window.EventSource;
+  window.EventSource = function (url, opts) {
+    if (typeof url === 'string' && url.indexOf('growthbookproxy') !== -1) {
+      return { url: url, readyState: 2, close: function () {}, addEventListener: function () {}, removeEventListener: function () {} };
+    }
+    return new RealEventSource(url, opts);
+  };
+})();
 </script>
 </head>
 <body>
