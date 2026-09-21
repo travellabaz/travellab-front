@@ -144,6 +144,17 @@ window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } 
 <div id="seatics-map"></div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="${config.frameworkUrl}"></script>
+<script>
+// Seatics.SmallScreenMapOptions is defined by the framework bootstrap
+// above, so this can't be set in the pre-declared config block — it has
+// to run after the framework script but before the Maps script below
+// actually renders anything. Without this, the guide's own documented
+// default (HiddenWithPreview) applies on narrow screens: only a thin
+// sliver of the map shows, behind a "Show Venue Map" tap target — on
+// this site that left mobile visitors seeing just the ticket list with
+// no visible map at all. FullyShown matches what desktop already gets.
+Seatics.config.smallScreenMapLayout = Seatics.SmallScreenMapOptions.FullyShown;
+</script>
 <script src="${mapUrl}"></script>
 <script>
 // Below the Maps script, per the guide — feeds the widget's own
