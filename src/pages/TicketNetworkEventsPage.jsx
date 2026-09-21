@@ -546,6 +546,10 @@ export default function TicketNetworkEventsPage() {
                             </span>
                             <span className="tl-evt-ticket-price">
                               <strong>{formatPrice(tg.retailPrice, tg.currencyCode)}</strong>
+                              {/* Checkout charges AZN (Epoint doesn't take USD) — shown
+                                  here so the amount on Epoint's own payment page isn't
+                                  a surprise. */}
+                              {tg.retailPriceAzn != null && <span className="tl-evt-ticket-price-azn">≈ {formatMoney(tg.retailPriceAzn, 'AZN')}</span>}
                               <span>bilet başına</span>
                             </span>
                           </button>
@@ -598,6 +602,16 @@ export default function TicketNetworkEventsPage() {
                             <span className="tl-evt-sidebar-total-label">Cəmi ({quantity} bilet)</span>
                             <span className="tl-evt-sidebar-total-value">{formatMoney(selectedGroup.retailPrice * quantity, selectedGroup.currencyCode)}</span>
                           </div>
+                          {/* What Ödənişə keç actually charges — Epoint is AZN-only,
+                              so the USD total above isn't what gets billed. Shown
+                              explicitly rather than leaving that discovery for
+                              Epoint's own payment page. */}
+                          {selectedGroup.retailPriceAzn != null && (
+                            <div className="tl-evt-sidebar-total tl-evt-sidebar-total-azn">
+                              <span className="tl-evt-sidebar-total-label">Kartdan tutulacaq (AZN)</span>
+                              <span className="tl-evt-sidebar-total-value">{formatMoney(selectedGroup.retailPriceAzn * quantity, 'AZN')}</span>
+                            </div>
+                          )}
 
                           <button type="submit" className="tl-btn-book tl-evt-sidebar-cta" disabled={purchasing}>
                             {purchasing ? 'Yönləndirilir...' : 'Ödənişə keç'}

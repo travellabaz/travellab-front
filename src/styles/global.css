@@ -11897,6 +11897,10 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-400);
 }
 
+.tl-evt-ticket-price-azn {
+  display: block;
+}
+
 /* ── Sticky order-summary sidebar — same sticky mechanics as
    .tl-tourp-sidebar-col (position:sticky on the column, no JS). ── */
 .tl-evt-sidebar-col {
@@ -11984,6 +11988,21 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 22px;
   font-weight: 800;
   color: var(--tl-navy);
+}
+
+/* The actual Epoint charge (AZN) — distinct from the USD quote above it,
+   so it doesn't read as just a repeated/duplicate total. */
+.tl-evt-sidebar-total-azn {
+  margin-top: -8px;
+}
+
+.tl-evt-sidebar-total-azn .tl-evt-sidebar-total-label {
+  color: var(--tl-green-dark);
+}
+
+.tl-evt-sidebar-total-azn .tl-evt-sidebar-total-value {
+  font-size: 16px;
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-sidebar-cta {
