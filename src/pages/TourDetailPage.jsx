@@ -204,13 +204,10 @@ export default function TourDetailPage() {
     </div>
   );
 
-  // Shared between the desktop sidebar and the mobile-only block below —
-  // on mobile it's rendered ahead of the manager card instead of the
-  // reverse (see the mobile-only block further down). This card's own
-  // WhatsApp button was dropped for mobile at one point to cut down to a
-  // single WhatsApp CTA (TourStickyBar), but a card with no button read
-  // as a dead-end "question with no answer" — kept the button, reordered
-  // the surrounding cards instead.
+  // Desktop sidebar only — this card went through button-removed,
+  // reordered-instead, and finally dropped entirely on mobile (each a
+  // separate explicit ask), landing on: mobile relies solely on
+  // TourStickyBar's WhatsApp CTA, this card doesn't render there at all.
   const waChangeCard = waChangeHref && (
     <div className="tl-tourp-wachange">
       <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
@@ -435,7 +432,6 @@ export default function TourDetailPage() {
               {!parsed && <p className="tl-tourp-rawdesc">{tour.description}</p>}
 
               <div className="tl-tourp-mobile-only">
-                {waChangeCard}
                 {trustBadges}
                 {infoNote}
                 {manager && (
