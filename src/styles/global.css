@@ -3851,7 +3851,11 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 17px;
   font-weight: 800;
   color: var(--tl-navy);
-  margin: 0 0 12px; /* matches .tl-tourp-h2 — was 4px, read as glued to the row below it */
+  /* .tl-tourp-h2's own 12px plus a bit more — Qiymətə daxildir's and
+     Şərtlər's first rows sit inside their own bordered/padded box, which
+     reads as more breathing room than a plain heading margin alone; this
+     approximates that same gap here without needing a border. */
+  margin: 0 0 18px;
 }
 
 .tl-instl-row {
