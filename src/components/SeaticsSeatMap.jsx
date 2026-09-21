@@ -126,7 +126,17 @@ export default function SeaticsSeatMap({ eventId, ticketGroups, ticketGroupsLoad
 <html>
 <head>
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-<style>body{margin:0;font-family:sans-serif;}</style>
+<style>
+/* Per TicketNetwork support's own suggestion for the periodic
+   pan/zoom-reset issue (already reported, see the email thread) — cap
+   the iframe document's own height so an internal resize-driven redraw
+   loop, if that's the cause, has nothing to keep growing into. Doesn't
+   affect layout otherwise: this document is already sized by our fixed
+   900px iframe, not by 100vh (100vh here means the iframe's own
+   viewport, not the outer page's). */
+body{margin:0;font-family:sans-serif;max-height:100vh;overflow:hidden;}
+#seatics-map{max-height:100vh;overflow:hidden;}
+</style>
 <script>
 // Pre-declared before the framework script loads — its own bootstrap is
 // "var Seatics = Seatics || {}", so whatever we set here survives and
