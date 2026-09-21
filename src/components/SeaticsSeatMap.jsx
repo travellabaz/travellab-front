@@ -30,7 +30,37 @@ import { API_BASE } from '../api/client';
 // "traditional" mode the guide describes as "wrapped in its own
 // container" — actually sized to and contained by the box we give it,
 // no JS-side measuring or locking required.
-export default function SeaticsSeatMap({ eventId }) {
+// Maps our own TicketGroupDto shape (see TicketNetworkEventsPage.jsx,
+// GET /tickets/events/:id/ticketgroups — a thin, Mercury-backed DTO,
+// deliberately retail-price-only) onto the Seatics addTicketData() input
+// shape from the "Seatics Maps API Integration Guide" (v3.18). Without
+// this, the widget's own ticket/price panel has nothing to show — it was
+// never an OAuth-scope gap on TicketNetwork's side, just a call we'd
+// never made. tgUserSeats (exact seat numbers) isn't included — our own
+// DTO doesn't carry high/low seat numbers, and it's optional either way.
+// tgType isn't set either — the guide defaults untyped groups to plain
+// Event Tickets, which covers everything our own inventory sells today.
+function toSeaticsTicketData(ticketGroups) {
+  return (ticketGroups || []).map((tg) => {
+    const entry = {
+      tgUserSec: tg.section || '',
+      tgUserRow: tg.row || '',
+      tgQty: tg.availableQuantity ?? 0,
+      tgPrice: tg.retailPrice ?? 0,
+      tgID: tg.ticketGroupId,
+    };
+    // tgSplitsBitmap — only the visitor-purchasable quantities Mercury
+    // actually allows, not "any quantity up to tgQty" (the widget's own
+    // default, split rule 1). Bit i (0-indexed) set means quantity i+1
+    // is valid — see the guide's "Splits Bitmap" section.
+    if (Array.isArray(tg.purchasableQuantities) && tg.purchasableQuantities.length > 0) {
+      entry.tgSplitsBitmap = tg.purchasableQuantities.reduce((bits, qty) => bits | (1 << (qty - 1)), 0);
+    }
+    return entry;
+  });
+}
+
+export default function SeaticsSeatMap({ eventId, ticketGroups, onBuyClick }) {
   const [config, setConfig] = useState(null);
 
   useEffect(() => {
@@ -46,9 +76,26 @@ export default function SeaticsSeatMap({ eventId }) {
     };
   }, []);
 
+  // The guide requires overriding Seatics.Presentation.redirectToCheckout
+  // (called when the widget's own "Buy" button is clicked) — left
+  // undefined, clicking Buy inside the map would throw rather than do
+  // anything. Forwarded to the parent page instead of handled here: this
+  // component doesn't have the actual purchase flow (the quantity modal,
+  // the order form) — TicketNetworkEventsPage.jsx does, via onBuyClick.
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.data?.type === 'seatics-buy') {
+        onBuyClick?.(e.data.tgID, e.data.quantity);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [onBuyClick]);
+
   if (!config || !eventId) return null;
 
   const mapUrl = `${config.baseUrl}/MapAndLayout?websiteConfigId=${config.websiteConfigId}&consumerKey=${encodeURIComponent(config.consumerKey)}&eventId=${eventId}`;
+  const ticketDataJson = JSON.stringify(toSeaticsTicketData(ticketGroups));
 
   // The Seatics framework script expects jQuery to already be on the page
   // (throws "jQuery is not defined" otherwise, confirmed live) — it's a
@@ -84,6 +131,21 @@ window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="${config.frameworkUrl}"></script>
 <script src="${mapUrl}"></script>
+<script>
+// Below the Maps script, per the guide — feeds the widget's own
+// ticket/price panel our real inventory instead of leaving it to
+// skeleton-load forever waiting for data nothing was ever going to send.
+Seatics.addTicketData(${ticketDataJson});
+
+// Required override per the guide — without it, clicking the widget's
+// own "Buy" button throws instead of doing anything. tgID round-trips
+// the ticketGroupId we passed into addTicketData above, so the parent
+// page can find the matching row in its own list and continue the real
+// purchase flow there (this component has no order form of its own).
+Seatics.Presentation.redirectToCheckout = function (ticketGroup, quantity) {
+  window.parent.postMessage({ type: 'seatics-buy', tgID: ticketGroup.tgID, quantity: quantity }, '*');
+};
+</script>
 </body>
 </html>`;
 

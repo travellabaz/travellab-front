@@ -473,7 +473,16 @@ export default function TicketNetworkEventsPage() {
               <div className="tl-evt-layout">
                 <div className="tl-evt-main">
                   <div className="tl-evt-map-card">
-                    <SeaticsSeatMap eventId={selectedEvent.id} />
+                    <SeaticsSeatMap
+                      eventId={selectedEvent.id}
+                      ticketGroups={ticketGroups}
+                      onBuyClick={(tgID, tgQuantity) => {
+                        const group = ticketGroups.find((tg) => tg.ticketGroupId === tgID);
+                        if (!group) return;
+                        selectGroup(group);
+                        if ((group.purchasableQuantities || []).includes(tgQuantity)) setQuantity(tgQuantity);
+                      }}
+                    />
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
