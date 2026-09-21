@@ -204,8 +204,13 @@ export default function TourDetailPage() {
     </div>
   );
 
-  // Desktop only — see waChangeCardMobile below for the mobile copy
-  // (same explanation text, button dropped for the same reason as above).
+  // Shared between the desktop sidebar and the mobile-only block below —
+  // on mobile it's rendered ahead of the manager card instead of the
+  // reverse (see the mobile-only block further down). This card's own
+  // WhatsApp button was dropped for mobile at one point to cut down to a
+  // single WhatsApp CTA (TourStickyBar), but a card with no button read
+  // as a dead-end "question with no answer" — kept the button, reordered
+  // the surrounding cards instead.
   const waChangeCard = waChangeHref && (
     <div className="tl-tourp-wachange">
       <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
@@ -214,13 +219,6 @@ export default function TourDetailPage() {
         {WA_ICON}
         {t('tourDetail.whatsappRequestBtn')}
       </a>
-    </div>
-  );
-
-  const waChangeCardMobile = waChangeHref && (
-    <div className="tl-tourp-wachange">
-      <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
-      <p>{t('tourDetail.whatsappRequestDesc')}</p>
     </div>
   );
 
@@ -407,8 +405,13 @@ export default function TourDetailPage() {
 
               {crossSellCart.products.length > 0 && <TravelProductsPicker cart={crossSellCart} />}
 
+              {/* Desktop only — mobile shows the same block further down,
+                  after the date-change card instead of before it (see the
+                  mobile-only block below): the date-change question reads
+                  better leading into "here's who to ask", rather than the
+                  other way around. */}
               {manager && (
-                <div className="tl-tourp-block">
+                <div className="tl-tourp-block tl-tourp-desktop-only">
                   <h2 className="tl-tourp-h2">{t('tourDetail.managersTitle')}</h2>
                   <div className="tl-tourp-managers">
                     <div className="tl-tourp-manager">
@@ -432,7 +435,23 @@ export default function TourDetailPage() {
               {!parsed && <p className="tl-tourp-rawdesc">{tour.description}</p>}
 
               <div className="tl-tourp-mobile-only">
-                {waChangeCardMobile}
+                {waChangeCard}
+                {manager && (
+                  <div className="tl-tourp-block">
+                    <h2 className="tl-tourp-h2">{t('tourDetail.managersTitle')}</h2>
+                    <div className="tl-tourp-managers">
+                      <div className="tl-tourp-manager">
+                        <span className="tl-tourp-manager-info">
+                          <strong>{manager.name}</strong>
+                          <span>+{manager.phone.replace(/^(\d{3})(\d{2})(\d{3})(\d{2})(\d{2}).*/, '$1 $2 $3 $4 $5')}</span>
+                        </span>
+                        <span className="tl-tourp-manager-actions">
+                          <a href={`tel:+${manager.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {trustBadges}
                 {infoNote}
                 {ctaButtonsMobile}
