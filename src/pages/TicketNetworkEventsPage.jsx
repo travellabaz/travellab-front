@@ -476,6 +476,7 @@ export default function TicketNetworkEventsPage() {
                     <SeaticsSeatMap
                       eventId={selectedEvent.id}
                       ticketGroups={ticketGroups}
+                      ticketGroupsLoading={loadingGroups}
                       onBuyClick={(tgID, tgQuantity) => {
                         const group = ticketGroups.find((tg) => tg.ticketGroupId === tgID);
                         if (!group) return;

@@ -60,7 +60,7 @@ function toSeaticsTicketData(ticketGroups) {
   });
 }
 
-export default function SeaticsSeatMap({ eventId, ticketGroups, onBuyClick }) {
+export default function SeaticsSeatMap({ eventId, ticketGroups, ticketGroupsLoading, onBuyClick }) {
   const [config, setConfig] = useState(null);
 
   useEffect(() => {
@@ -92,7 +92,16 @@ export default function SeaticsSeatMap({ eventId, ticketGroups, onBuyClick }) {
     return () => window.removeEventListener('message', onMessage);
   }, [onBuyClick]);
 
-  if (!config || !eventId) return null;
+  // Wait for the parent's ticket-group fetch to finish before mounting the
+  // iframe at all. srcDoc (below) bakes ticketDataJson into the widget's
+  // one-time addTicketData() call — if ticketGroups arrived after the iframe
+  // already mounted with stale (empty) data, the srcDoc string would change
+  // and the browser would silently reload the entire iframe document to
+  // apply it (confirmed live: the map flashed blank and rebuilt itself a few
+  // seconds after first appearing, right as the real ticket data landed).
+  // Mounting only once real data is in hand means the widget loads exactly
+  // once, with the right data already baked in.
+  if (!config || !eventId || ticketGroupsLoading) return null;
 
   const mapUrl = `${config.baseUrl}/MapAndLayout?websiteConfigId=${config.websiteConfigId}&consumerKey=${encodeURIComponent(config.consumerKey)}&eventId=${eventId}`;
   const ticketDataJson = JSON.stringify(toSeaticsTicketData(ticketGroups));
