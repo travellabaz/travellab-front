@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useModals } from '../context/ModalContext';
 import { API_BASE, authFetch } from '../api/client';
 import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
+import { getLocaleFromPathname } from '../utils/locale';
 
 // The TicketNetwork integration (Catalog search -> Mercury ticket groups
 // -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
@@ -108,7 +110,8 @@ function TicketRowSkeleton() {
 }
 
 export default function TicketNetworkEventsPage() {
-  const { profile } = useAuth();
+  const { profile, isAuthenticated } = useAuth();
+  const { openAuth } = useModals();
   const { eventId } = useParams();
   const navigate = useLocalizedNavigate();
 
@@ -307,12 +310,21 @@ export default function TicketNetworkEventsPage() {
   const submitPurchase = async (e) => {
     e.preventDefault();
     if (!selectedEvent || !selectedGroup) return;
+    // Ticket orders now require an account (POST /v1/tickets/orders is no
+    // longer in the security allowlist's public set) — catch this before
+    // even making the request rather than letting it fail and showing a
+    // buried error, so a logged-out visitor gets the login/register modal
+    // directly off their "Ödənişə keç" click.
+    if (!isAuthenticated) {
+      openAuth('login');
+      return;
+    }
     setPurchasing(true);
     setResult(null);
     try {
       const res = await authFetch('/tickets/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Accept-Language': getLocaleFromPathname(window.location.pathname) },
         body: JSON.stringify({
           eventId: selectedEvent.id,
           ticketGroupId: selectedGroup.ticketGroupId,
@@ -324,6 +336,9 @@ export default function TicketNetworkEventsPage() {
         }),
       });
       if (!res) {
+        // Session expired between page load and this click (stale/expired
+        // token) — same recovery as the logged-out case above.
+        openAuth('login');
         setResult({ success: false, failureReason: 'Sessiya bitib — yenidən daxil olun.' });
         return;
       }
