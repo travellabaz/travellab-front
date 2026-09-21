@@ -3226,25 +3226,30 @@ body:not(.tl-subpage) .tl-about-extra {
   }
 
   /* Bottom sheet, not an inline block — slides up over the page, doesn't
-     push the rest of the content down. */
+     push the rest of the content down. Stops above the fixed tab bar /
+     TourStickyBar (66px + safe-area, same reserved height as body's own
+     padding-bottom above) instead of running to bottom:0 — it used to sit
+     UNDER those bars (z-index 70 vs. their 110/111), which let the bar
+     paint over and hide the sheet's own totals row instead of leaving
+     both visible and the price/WhatsApp CTA reachable. */
   .tl-tourp-side {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: calc(66px + env(safe-area-inset-bottom));
     width: 100%;
     flex-basis: auto;
     z-index: 70;
-    max-height: 82vh;
+    max-height: calc(82vh - 66px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .tl-tourp-side .tl-tourp-panel {
     border: none;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.18);
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(15, 23, 42, 0.18);
+    padding-bottom: 20px;
   }
 
   .tl-tourp-panel-handle {
@@ -3256,10 +3261,16 @@ body:not(.tl-subpage) .tl-about-extra {
     margin: 0 auto 14px;
   }
 
+  /* Stops at the same boundary as .tl-tourp-side above it — the tab bar /
+     TourStickyBar stays undimmed and tappable while the sheet is open,
+     instead of being covered by the backdrop too. */
   .tl-tourp-side-backdrop {
     display: block;
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: calc(66px + env(safe-area-inset-bottom));
     z-index: 69;
     background: rgba(15, 23, 42, 0.45);
   }
