@@ -6,6 +6,18 @@ import { getSuggestedCrossSellProducts, productSlug, toBundleCartItem } from '..
 import { toTourCartItem } from '../utils/tourCartItem';
 import { formatPrice } from '../utils/price';
 
+// "Hamısını göstər" rotates through the brand palette per tour (hashed
+// from tourId, stable for a given tour rather than changing on every
+// re-render) instead of always being the same color everywhere on the
+// site. orange-dark, not orange — plain --tl-orange is too light for
+// white button text to stay readable.
+const SHOWALL_COLORS = ['green', 'blue', 'orange', 'navy'];
+function hashToIndex(str, mod) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return h % mod;
+}
+
 // Shared by the bottom picker (main column) and the sticky side panel —
 // same selection state, two views of it. Panel shows once anything is
 // selected and can be dismissed (X) without losing the picks; adding
@@ -20,6 +32,7 @@ export function useTravelProductsCart(tourId) {
   const [dismissed, setDismissed] = useState(false);
 
   const products = useMemo(() => getSuggestedCrossSellProducts(), [tourId]);
+  const showAllColor = useMemo(() => SHOWALL_COLORS[hashToIndex(String(tourId), SHOWALL_COLORS.length)], [tourId]);
 
   const inc = (sku) => {
     setQtyBySku((q) => ({ ...q, [sku]: (q[sku] || 0) + 1 }));
@@ -38,12 +51,12 @@ export function useTravelProductsCart(tourId) {
   const productsTotal = selected.reduce((sum, p) => sum + p.price * qtyBySku[p.sku], 0);
   const productsCurrency = selected[0]?.currency || 'AZN';
 
-  return { products, qtyBySku, inc, dec, selected, productsTotal, productsCurrency, dismissed, setDismissed };
+  return { products, qtyBySku, inc, dec, selected, productsTotal, productsCurrency, dismissed, setDismissed, showAllColor };
 }
 
 export function TravelProductsPicker({ cart }) {
   const { t } = useTranslation();
-  const { products, qtyBySku, inc, dec } = cart;
+  const { products, qtyBySku, inc, dec, showAllColor } = cart;
 
   if (products.length === 0) return null;
 
@@ -51,7 +64,7 @@ export function TravelProductsPicker({ cart }) {
     <div className="tl-tourp-block" id="travel-products-picker">
       <div className="tl-tourp-crosssell-head">
         <h2 className="tl-tourp-h2">{t('tourDetail.crossSellTitle')}</h2>
-        <Link to="/shop" className="tl-tourp-showall">{t('tourDetail.showAllProducts')}</Link>
+        <Link to="/shop" className={`tl-tourp-showall tl-tourp-showall-${showAllColor}`}>{t('tourDetail.showAllProducts')}</Link>
       </div>
       <p className="tl-tourp-crosssell-sub">{t('tourDetail.crossSellSubtitle')}</p>
 

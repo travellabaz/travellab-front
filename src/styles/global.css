@@ -3307,27 +3307,34 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0;
 }
 
-/* Blue pill button, same visual language as .tl-shop-loadmore on the Shop
-   page — blue, not green, since this is a secondary navigational action,
-   not the primary booking CTA. */
+/* Filled pill button, same pill shape as .tl-shop-loadmore on the Shop
+   page. Color rotates through the brand palette per tour (see
+   SHOWALL_COLORS in TravelProductsCrossSell.jsx) rather than being the
+   same color on every tour page site-wide. */
 .tl-tourp-showall {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  border: 1px solid var(--tl-gray-200);
-  background: var(--tl-white);
+  border: none;
   border-radius: 100px;
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--tl-blue-dark);
+  color: var(--tl-white);
   text-decoration: none;
+  transition: opacity 0.15s;
 }
 
 .tl-tourp-showall:hover {
-  border-color: var(--tl-blue);
+  opacity: 0.88;
 }
+
+.tl-tourp-showall-green { background: var(--tl-green); }
+.tl-tourp-showall-blue { background: var(--tl-blue); }
+/* --tl-orange itself is too light for white text to stay readable */
+.tl-tourp-showall-orange { background: var(--tl-orange-dark); }
+.tl-tourp-showall-navy { background: var(--tl-navy); }
 
 /* ── WhatsApp date/passenger-change request card — sidebar on desktop,
    inline in the mobile flow (tours are a static Instagram pull, so this
@@ -3816,16 +3823,18 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 17px;
   font-weight: 800;
   color: var(--tl-navy);
-  margin: 0 0 4px;
+  margin: 0 0 12px; /* matches .tl-tourp-h2 — was 4px, read as glued to the row below it */
 }
 
 .tl-instl-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* was center — with a 2-line row (e.g. "24 ayadək
+    hissəli ödəniş imkanı") next to a 1-line row, centering made the icons
+    land at different heights and the whole block read as misaligned */
   gap: 10px;
   font-size: 13px;
   color: var(--tl-navy);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .tl-instl-row-ico {
