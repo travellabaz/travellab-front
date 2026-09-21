@@ -38,8 +38,12 @@ import { API_BASE } from '../api/client';
 // never an OAuth-scope gap on TicketNetwork's side, just a call we'd
 // never made. tgUserSeats (exact seat numbers) isn't included — our own
 // DTO doesn't carry high/low seat numbers, and it's optional either way.
-// tgType isn't set either — the guide defaults untyped groups to plain
-// Event Tickets, which covers everything our own inventory sells today.
+// tgType:1 (plain Event Ticket) is set explicitly even though the guide
+// calls it optional and defaults untyped groups to Event Ticket anyway —
+// every single example in the guide sets it regardless, and leaving it out
+// was confirmed live to leave the Ticket Details Slide Out's own Quantity
+// Selector blank (no 1/2/etc buttons), even though the ticket group itself
+// still lists and prices correctly without it.
 function toSeaticsTicketData(ticketGroups) {
   return (ticketGroups || []).map((tg) => {
     const entry = {
@@ -48,6 +52,7 @@ function toSeaticsTicketData(ticketGroups) {
       tgQty: tg.availableQuantity ?? 0,
       tgPrice: tg.retailPrice ?? 0,
       tgID: tg.ticketGroupId,
+      tgType: 1,
     };
     // tgSplitsBitmap — only the visitor-purchasable quantities Mercury
     // actually allows, not "any quantity up to tgQty" (the widget's own
