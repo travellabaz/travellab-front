@@ -3,14 +3,8 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
-import { getLocaleFromPathname, buildLocalizedPath, stripLocalePrefix } from '../utils/locale';
+import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 import useScrollDirection from '../hooks/useScrollDirection';
-
-// Tour PRODUCT pages only (not /tours/:id/itinerary) — TourDetailPage
-// renders its own sticky price/LP/WhatsApp bar (TourStickyBar.jsx) that
-// takes over down here on scroll-down, so this needs to know when to get
-// out of the way. Every other page keeps the tab bar permanently visible.
-const TOUR_PRODUCT_PATH_RE = /^\/tours\/[^/]+$/;
 
 function HomeIcon() {
   return (
@@ -80,9 +74,12 @@ export default function MobileTabBar() {
   const lang = getLocaleFromPathname(location.pathname);
   const localize = (path) => buildLocalizedPath(path, lang);
 
-  const isTourProductPage = TOUR_PRODUCT_PATH_RE.test(stripLocalePrefix(location.pathname));
+  // turbo.az-style hide-on-scroll-down/show-on-scroll-up, on every page.
+  // On tour product pages this hands the bottom slot to TourStickyBar.jsx
+  // (which shows on the same scroll-down condition) — everywhere else the
+  // slot's just empty while scrolling, same as turbo.az's own listing pages.
   const scrollDirection = useScrollDirection();
-  const hidden = isTourProductPage && scrollDirection === 'down';
+  const hidden = scrollDirection === 'down';
 
   return (
     <>

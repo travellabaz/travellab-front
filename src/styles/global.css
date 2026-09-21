@@ -246,6 +246,8 @@ html {
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--tl-gray-200);
   box-shadow: 0 2px 20px rgba(10, 30, 25, 0.05);
+  transform: translateY(0);
+  transition: transform 0.25s ease;
   /* Grid, not flex + space-between: a true-centered middle column (the
      nav links) needs the two side columns to never overlap it, which
      justify-content: space-between doesn't guarantee once the outer
@@ -255,6 +257,15 @@ html {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 0 32px;
+}
+
+/* Mobile only — turbo.az-style hide-on-scroll-down/show-on-scroll-up
+   (see Nav.jsx's navHidden). Desktop keeps the header permanently
+   visible; screen space isn't at the same premium there. */
+@media (max-width: 900px) {
+  .tl-nav-hidden {
+    transform: translateY(-100%);
+  }
 }
 
 .tl-logo {

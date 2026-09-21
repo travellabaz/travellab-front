@@ -11,6 +11,7 @@ import { useModals } from '../context/ModalContext';
 import { useCart } from '../context/CartContext';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
+import useScrollDirection from '../hooks/useScrollDirection';
 
 const LANG_SHORT_LABEL = { az: 'AZ', ru: 'RU', en: 'EN' };
 
@@ -38,6 +39,13 @@ export default function Nav() {
   const { t } = useTranslation();
   const lang = getLocaleFromPathname(location.pathname);
   const localize = (path) => buildLocalizedPath(path, lang);
+
+  // Mobile only (see .tl-nav-hidden's media query) — turbo.az-style
+  // hide-on-scroll-down, show-on-scroll-up, on every page including tour
+  // product pages (only the bottom sticky price/order bar there is
+  // exempted from this, see MobileTabBar.jsx / TourStickyBar.jsx).
+  const scrollDirection = useScrollDirection();
+  const navHidden = scrollDirection === 'down' && !mobileOpen;
 
   const handleLogoClick = () => {
     setMobileOpen(false);
@@ -104,7 +112,7 @@ export default function Nav() {
     : null;
 
   return (
-    <nav className="tl-nav">
+    <nav className={'tl-nav' + (navHidden ? ' tl-nav-hidden' : '')}>
       <Link to={localize('/')} className="tl-logo" onClick={handleLogoClick}>
         <LogoFull className="tl-logo-svg" style={{ height: 29, width: 'auto' }} />
       </Link>
