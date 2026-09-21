@@ -19,6 +19,7 @@ import {
   categorySlug,
   toCartItem,
 } from '../data/shop';
+import { getSpotlightVideo } from '../data/shop/spotlightVideos';
 import { orderProductWhatsappUrl } from '../utils/shopWhatsapp';
 import { useCart } from '../context/CartContext';
 import { getLocaleFromPathname } from '../utils/locale';
@@ -56,6 +57,10 @@ function ShopProductDetail({ slug }) {
   const [color, setColor] = useState(product?.colors[0] || null);
   const [qty, setQty] = useState(1);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  // A hand-picked demo clip, not every product has one (see
+  // spotlightVideos.js) — shown as an extra selectable thumbnail
+  // alongside the photos rather than replacing any of them.
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     if (!lightboxOpen) return undefined;
@@ -89,9 +94,11 @@ function ShopProductDetail({ slug }) {
     if (colorImagesAligned) setActiveImage(product.colors.indexOf(c));
   };
   const selectImage = (i) => {
+    setShowVideo(false);
     setActiveImage(i);
     if (colorImagesAligned) setColor(product.colors[i]);
   };
+  const spotlightVideo = getSpotlightVideo(product.sku);
 
   return (
     <main className="tpwl-main">
@@ -112,7 +119,11 @@ function ShopProductDetail({ slug }) {
         <div className="tl-section" style={{ paddingTop: 12 }}>
           <div className="tl-product-detail">
             <div className="tl-product-gallery">
-              {product.images[activeImage] ? (
+              {showVideo && spotlightVideo ? (
+                <div className="tl-product-gallery-main tl-product-gallery-video">
+                  <video src={spotlightVideo.video} poster={spotlightVideo.poster} controls playsInline />
+                </div>
+              ) : product.images[activeImage] ? (
                 <button type="button" className="tl-product-gallery-main tl-product-gallery-zoom" onClick={() => setLightboxOpen(true)} aria-label={t('shop.galleryZoom')}>
                   <img src={product.images[activeImage]} alt={imgAlt} />
                 </button>
@@ -121,13 +132,24 @@ function ShopProductDetail({ slug }) {
                   <span className="tl-product-card-noimg" aria-hidden="true" />
                 </div>
               )}
-              {product.images.length > 1 && (
+              {(product.images.length > 1 || spotlightVideo) && (
                 <div className="tl-product-gallery-thumbs">
+                  {spotlightVideo && (
+                    <button
+                      type="button"
+                      className={'tl-product-gallery-thumb tl-product-gallery-thumb-video' + (showVideo ? ' active' : '')}
+                      onClick={() => setShowVideo(true)}
+                      aria-label={t('shop.galleryVideo')}
+                    >
+                      <img src={spotlightVideo.poster} alt={imgAlt} />
+                      <span className="tl-product-gallery-thumb-play" aria-hidden="true">▶</span>
+                    </button>
+                  )}
                   {product.images.map((src, i) => (
                     <button
                       key={src}
                       type="button"
-                      className={'tl-product-gallery-thumb' + (i === activeImage ? ' active' : '')}
+                      className={'tl-product-gallery-thumb' + (!showVideo && i === activeImage ? ' active' : '')}
                       onClick={() => selectImage(i)}
                     >
                       <img src={src} alt={imgAlt} />

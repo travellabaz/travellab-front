@@ -10609,6 +10609,31 @@ body:not(.tl-subpage) .tl-about-extra {
   display: block;
 }
 
+/* Portrait (9:16) source clips inside the same square frame the photos
+   use — cover-cropped like the thumb/main photos already are, so
+   switching between video and photos doesn't reflow the gallery. */
+.tl-product-gallery-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tl-product-gallery-thumb-video {
+  position: relative;
+}
+
+.tl-product-gallery-thumb-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.35);
+  color: var(--tl-white);
+  font-size: 14px;
+}
+
 .tl-product-category-tag {
   font-size: 11px;
   font-weight: 700;
