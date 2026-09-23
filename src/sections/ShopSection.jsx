@@ -58,6 +58,7 @@ const LIFESTYLE_IMAGES = [
   '/images/shop/lifestyle-couple.jpg',
   '/images/shop/lifestyle-woman.jpg',
   '/images/shop/lifestyle-man.jpg',
+  '/images/shop/lifestyle-bottle.jpg',
 ];
 
 export default function ShopSection() {
