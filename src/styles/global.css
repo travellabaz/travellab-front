@@ -11966,10 +11966,19 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 0 16px;
 }
 
+/* Contained scroll, not "grow the whole page" — an event with 40-50+
+   ticket groups used to stretch the page to 6000+px, pushing the sticky
+   sidebar/buy button so far below the fold that reaching checkout meant
+   scrolling through the entire list first. Capping this to roughly the
+   map's own height keeps map + list + sidebar all reachable together,
+   same pattern Expedia's own ticket panel uses. */
 .tl-evt-tickets {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 900px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
 .tl-evt-ticket-row {
