@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import LogoFull from './LogoFull';
 import NavProfile from './NavProfile';
 import LanguageSwitcher from './LanguageSwitcher';
-import AuthMenu from './AuthMenu';
+import NavIcon from '../utils/navIcons';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 import { useCart } from '../context/CartContext';
@@ -16,12 +16,12 @@ import useScrollDirection from '../hooks/useScrollDirection';
 const LANG_SHORT_LABEL = { az: 'AZ', ru: 'RU', en: 'EN' };
 
 const NAV_LINK_PATHS = [
-  { path: '/search', key: 'flights' },
-  { path: '/hotels', key: 'hotels' },
-  { path: '/tours', key: 'tours' },
-  { path: '/labpoint', key: 'labpoint' },
-  { path: '/events', key: 'events' },
-  { path: '/viza', key: 'viza' },
+  { path: '/search', key: 'flights', icon: 'plane' },
+  { path: '/hotels', key: 'hotels', icon: 'bed' },
+  { path: '/tours', key: 'tours', icon: 'palm' },
+  { path: '/labpoint', key: 'labpoint', icon: 'star', badge: true },
+  { path: '/events', key: 'events', icon: 'calendar' },
+  { path: '/viza', key: 'viza', icon: 'passport' },
 ];
 
 // Nav is mounted as a sibling of <Routes> in App.jsx, not nested inside
@@ -55,6 +55,11 @@ export default function Nav() {
     }
   };
 
+  const openCartFromMenu = () => {
+    setMobileOpen(false);
+    openDrawer();
+  };
+
   // Portaled straight to <body> instead of rendering inline inside <nav> —
   // .tl-nav is a CSS Grid container (grid-template-columns) and this list
   // used to be one of its grid items (grid-column: 2) before switching to
@@ -67,46 +72,84 @@ export default function Nav() {
   // Chrome. A portal sidesteps the whole class of bug: this list is never
   // a grid item in the first place, so there's no stale grid-area
   // containing block to inherit.
+  //
+  // Login/Register live inside this panel too (not a separate header
+  // trigger) — the closed mobile header only ever shows logo, cart,
+  // language and the burger, so there's nothing else fighting for space
+  // there when logged out.
   const mobileMenu = mobileOpen
     ? createPortal(
         <ul className="tl-mobile-menu">
-          {NAV_LINK_PATHS.map(({ path, key }) => (
+          {NAV_LINK_PATHS.map(({ path, key, icon, badge }) => (
             <li key={path}>
-              <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
-                {t(`nav.${key}`)}
+              <NavLink to={localize(path)} className={({ isActive }) => 'tl-mobile-menu-row' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+                <NavIcon name={icon} className="tl-mobile-menu-row-icon" />
+                <span className="tl-mobile-menu-row-label">{t(`nav.${key}`)}</span>
+                {badge && <span className="tl-mobile-menu-row-badge">{t('nav.newBadge')}</span>}
+                <NavIcon name="chevronRight" className="tl-mobile-menu-row-chevron" />
               </NavLink>
             </li>
           ))}
-          <li>
-            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-link' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+          <li className="tl-mobile-menu-pill-row">
+            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+              <NavIcon name="bag" />
               {t('nav.shop')}
             </NavLink>
           </li>
-          <li>
-            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-shop-link' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+          <li className="tl-mobile-menu-pill-row">
+            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+              <NavIcon name="briefcase" />
               {t('nav.korporativ')}
             </NavLink>
           </li>
-          {/* The top bar's own LanguageSwitcher dropdown is hidden at this
-              breakpoint (see .tl-nav-lang-switcher's media rule) — nesting a
-              second dropdown inside an already-open menu reads worse than a
-              flat AZ/RU/EN row, the usual pattern for language options
-              inside a mobile hamburger menu. */}
-          <li className="tl-nav-mobile-lang">
-            {/* Plain <a>, not <Link> — see LanguageSwitcher.jsx for why a
-                real page reload is what makes the search widget actually
-                open in the picked language. */}
-            {SUPPORTED_LANGUAGES.map((l) => (
-              <a
-                key={l}
-                href={buildLocalizedPath(location.pathname, l) + location.search}
-                className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
-                onClick={() => setMobileOpen(false)}
-              >
-                {LANG_SHORT_LABEL[l]}
-              </a>
-            ))}
+          <li className="tl-mobile-menu-utility-row">
+            <button type="button" className="tl-mobile-menu-cart-btn" onClick={openCartFromMenu}>
+              <NavIcon name="cart" />
+              {t('nav.cart')}
+              {count > 0 && <span className="tl-mobile-menu-cart-count">{count}</span>}
+            </button>
+            {/* The top bar's own LanguageSwitcher dropdown is hidden at this
+                breakpoint (see .tl-nav-lang-switcher's media rule) — nesting a
+                second dropdown inside an already-open menu reads worse than a
+                flat AZ/RU/EN row, the usual pattern for language options
+                inside a mobile hamburger menu. */}
+            <div className="tl-nav-mobile-lang">
+              {/* Plain <a>, not <Link> — see LanguageSwitcher.jsx for why a
+                  real page reload is what makes the search widget actually
+                  open in the picked language. */}
+              {SUPPORTED_LANGUAGES.map((l) => (
+                <a
+                  key={l}
+                  href={buildLocalizedPath(location.pathname, l) + location.search}
+                  className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {LANG_SHORT_LABEL[l]}
+                </a>
+              ))}
+            </div>
           </li>
+          {!isAuthenticated && (
+            <li className="tl-mobile-menu-auth">
+              <a
+                href="#"
+                className="tl-mobile-menu-row tl-mobile-menu-login-row"
+                onClick={(e) => { e.preventDefault(); setMobileOpen(false); openAuth('login'); }}
+              >
+                <NavIcon name="user" className="tl-mobile-menu-row-icon" />
+                <span className="tl-mobile-menu-row-label">{t('nav.login')}</span>
+                <NavIcon name="chevronRight" className="tl-mobile-menu-row-chevron" />
+              </a>
+              <a
+                href="#"
+                className="tl-mobile-menu-register-btn"
+                onClick={(e) => { e.preventDefault(); setMobileOpen(false); openAuth('register'); }}
+              >
+                <NavIcon name="userPlus" />
+                {t('nav.register')}
+              </a>
+            </li>
+          )}
         </ul>,
         document.body
       )
@@ -115,23 +158,34 @@ export default function Nav() {
   return (
     <nav className={'tl-nav' + (navHidden ? ' tl-nav-hidden' : '')}>
       <Link to={localize('/')} className="tl-logo" onClick={handleLogoClick}>
-        <LogoFull className="tl-logo-svg" style={{ height: 29, width: 'auto' }} />
+        <LogoFull className="tl-logo-svg" style={{ height: 33, width: 'auto' }} />
       </Link>
       <ul className="tl-nav-links">
-        {NAV_LINK_PATHS.map(({ path, key }) => (
+        {NAV_LINK_PATHS.map(({ path, key, badge }) => (
           <li key={path}>
             <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
-              {t(`nav.${key}`)}
+              {badge ? (
+                <span className="tl-nav-link-badged">
+                  {t(`nav.${key}`)}
+                  <span className="tl-nav-link-dot" aria-hidden="true">
+                    <NavIcon name="star" />
+                  </span>
+                </span>
+              ) : (
+                t(`nav.${key}`)
+              )}
             </NavLink>
           </li>
         ))}
         <li>
           <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')}>
+            <NavIcon name="bag" />
             {t('nav.shop')}
           </NavLink>
         </li>
         <li>
           <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')}>
+            <NavIcon name="briefcase" />
             {t('nav.korporativ')}
           </NavLink>
         </li>
@@ -139,12 +193,7 @@ export default function Nav() {
       {mobileMenu}
       <div className="tl-nav-right">
         <button type="button" className="tl-nav-cart" aria-label={t('nav.cart')} onClick={openDrawer}>
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 6h15l-1.5 9h-12z" />
-            <path d="M6 6L5 3H2" />
-            <circle cx="9" cy="20" r="1.4" />
-            <circle cx="18" cy="20" r="1.4" />
-          </svg>
+          <NavIcon name="cart" />
           {count > 0 && <span className="tl-nav-cart-badge">{count}</span>}
         </button>
         <LanguageSwitcher className="tl-nav-lang-switcher" />
@@ -152,17 +201,14 @@ export default function Nav() {
         {isAuthenticated ? (
           <NavProfile />
         ) : (
-          <>
-            <div className="tl-nav-auth-desktop">
-              <a href="#" className="tl-btn-login" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>
-                {t('nav.login')}
-              </a>
-              <a href="#" className="tl-btn-cta" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>
-                {t('nav.register')}
-              </a>
-            </div>
-            <AuthMenu className="tl-nav-auth-mobile" onOpen={() => setMobileOpen(false)} />
-          </>
+          <div className="tl-nav-auth-desktop">
+            <a href="#" className="tl-btn-login" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>
+              {t('nav.login')}
+            </a>
+            <a href="#" className="tl-btn-cta" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>
+              {t('nav.register')}
+            </a>
+          </div>
         )}
         {/* Rightmost on purpose (mobile task: the burger used to sit
             before the account block, ahead of it) — see .tl-nav-burger's

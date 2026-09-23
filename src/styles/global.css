@@ -298,7 +298,7 @@ html {
 .tl-nav-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -313,8 +313,8 @@ html {
   color: var(--tl-gray-600);
   text-decoration: none;
   font-size: 15px;
-  font-weight: 500;
-  padding: 10px 18px;
+  font-weight: 400;
+  padding: 10px 14px;
   border-radius: 100px;
   transition: all 0.2s;
 }
@@ -329,6 +329,32 @@ html {
   color: #fff;
   background: var(--tl-green);
   font-weight: 700;
+}
+
+/* LabPoint's little "new feature" marker — a small star-in-circle sitting
+   as a superscript over the link text's top-right corner, not a second
+   inline element competing with the label for space. */
+.tl-nav-link-badged {
+  position: relative;
+}
+
+.tl-nav-link-dot {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--tl-green);
+  color: #fff;
+}
+
+.tl-nav-link-dot svg {
+  width: 8px;
+  height: 8px;
 }
 
 /* Mobile menu toggle — hidden on desktop, shown ≤900px (where
@@ -1039,23 +1065,21 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
 }
 
-.tl-nav-auth-mobile {
-  display: none;
-}
-
+/* Plain text link, not a bordered button — next to Qeydiyyat's solid
+   green pill, a second heavy button here just competed with it instead
+   of reading as the lighter, secondary action it actually is. */
 .tl-btn-login {
   color: var(--tl-gray-600);
   text-decoration: none;
   font-size: 14px;
-  padding: 9px 18px;
-  border-radius: 8px;
-  border: 1px solid var(--tl-gray-200);
-  transition: all 0.2s;
+  font-weight: 500;
+  padding: 9px 6px;
+  white-space: nowrap;
+  transition: color 0.2s;
 }
 
 .tl-btn-login:hover {
   color: var(--tl-navy);
-  background: var(--tl-gray-100);
   text-decoration: none;
 }
 
@@ -6976,6 +7000,130 @@ body:not(.tl-subpage) .tl-about-extra {
   border-bottom: none;
 }
 
+/* Icon + label + chevron rows (main nav links, plus the Daxil ol row) —
+   overrides the plain-text .tl-mobile-menu a block above via the extra
+   .tl-mobile-menu ancestor scope bumping specificity. */
+.tl-mobile-menu .tl-mobile-menu-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 8px;
+  border-bottom: 1px solid var(--tl-gray-100);
+  color: var(--tl-navy);
+}
+
+.tl-mobile-menu .tl-mobile-menu-row.active {
+  color: var(--tl-green-dark);
+}
+
+.tl-mobile-menu-row-icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--tl-gray-600);
+}
+
+.tl-mobile-menu .tl-mobile-menu-row.active .tl-mobile-menu-row-icon {
+  color: var(--tl-green-dark);
+}
+
+.tl-mobile-menu-row-label {
+  flex: 1;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.tl-mobile-menu-row-badge {
+  flex-shrink: 0;
+  background: var(--tl-green);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.tl-mobile-menu-row-chevron {
+  flex-shrink: 0;
+  color: var(--tl-gray-300, #cbd5e1);
+}
+
+.tl-mobile-menu-utility-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0 4px;
+}
+
+.tl-mobile-menu-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  cursor: pointer;
+}
+
+.tl-mobile-menu-cart-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 100px;
+  background: var(--tl-green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.tl-mobile-menu-utility-row .tl-nav-mobile-lang {
+  flex: 1;
+  width: auto;
+  padding: 0;
+}
+
+.tl-mobile-menu-auth {
+  margin-top: 10px;
+}
+
+.tl-mobile-menu .tl-mobile-menu-login-row {
+  border-bottom: none;
+}
+
+.tl-mobile-menu .tl-mobile-menu-register-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  padding: 0;
+  border-bottom: none;
+  border-radius: 100px;
+  background: var(--tl-green);
+  color: #fff;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.tl-mobile-menu .tl-mobile-menu-register-btn:hover {
+  background: var(--tl-green-dark);
+  color: #fff;
+  text-decoration: none;
+}
+
 .tl-mobile-menu .tl-nav-mobile-lang {
   display: flex;
   width: 100%;
@@ -7048,10 +7196,6 @@ body:not(.tl-subpage) .tl-about-extra {
 
   .tl-nav-auth-desktop {
     display: none;
-  }
-
-  .tl-nav-auth-mobile {
-    display: block;
   }
 
   /* The bottom tab bar already has its own "Hesab" entry — the full
@@ -8963,6 +9107,20 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-shrink: 0;
 }
 
+/* Header instance only — no pill border/background, just icon + text +
+   chevron sitting plainly in the row. The right side of the header
+   already has enough visual weight (Shop/Korporativ pills, cart badge,
+   Qeydiyyat button); this one doesn't need its own outline too. */
+.tl-nav-lang-switcher .tl-lang-switcher-trigger {
+  padding: 6px 4px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.tl-nav-lang-switcher .tl-lang-switcher-trigger:hover {
+  background: var(--tl-gray-100);
+}
+
 .tl-lang-switcher-popover {
   position: absolute;
   top: calc(100% + 10px);
@@ -9003,83 +9161,6 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-lang-switcher-option.active {
   background: var(--tl-green-light);
   color: var(--tl-green-dark);
-}
-
-/* ── AUTH MENU (AuthMenu.jsx, mobile-only) ── */
-.tl-auth-menu {
-  position: relative;
-}
-
-.tl-auth-menu-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--tl-gray-200);
-  border-radius: 100px;
-  background: var(--tl-white);
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.tl-auth-menu-trigger:hover {
-  border-color: var(--tl-gray-300, #cbd5e1);
-  background: var(--tl-gray-100);
-}
-
-.tl-auth-menu-popover {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  /* .tl-mobile-menu (the hamburger dropdown) is portaled to <body> at
-     z-index: 99, a sibling of .tl-nav rather than a descendant of it —
-     .tl-nav's own z-index: 100 already keeps this popover (nested inside
-     .tl-nav) painting above it, since a positioned ancestor's z-index
-     governs the whole stacking context as a unit against outside
-     siblings. This z-index: 110 is a safety net for that relationship
-     changing, not what makes it work today (AuthMenu.jsx also closes the
-     hamburger menu on open, so the two are never simultaneously open in
-     practice). */
-  z-index: 110;
-  width: 160px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: var(--tl-white);
-  border: 1px solid var(--tl-gray-200);
-  border-radius: 14px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
-  padding: 8px;
-}
-
-.tl-auth-menu-option {
-  border: none;
-  background: transparent;
-  text-align: left;
-  padding: 9px 10px;
-  border-radius: 8px;
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--tl-navy);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.tl-auth-menu-option:hover {
-  background: var(--tl-gray-100);
-}
-
-.tl-auth-menu-option-cta {
-  background: var(--tl-green);
-  color: var(--tl-white);
-}
-
-.tl-auth-menu-option-cta:hover {
-  background: var(--tl-green-dark);
 }
 
 /* ── VISA GALLERY MARQUEE (VisaGalleryMarquee.jsx) ── */
@@ -9359,6 +9440,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-nav-links .tl-nav-shop-pill {
   display: flex;
   align-items: center;
+  gap: 6px;
   height: 40px;
   padding: 0 18px;
   border: 1px solid var(--tl-green);
@@ -9388,6 +9470,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-nav-links .tl-nav-korporativ-pill {
   display: flex;
   align-items: center;
+  gap: 6px;
   height: 40px;
   padding: 0 18px;
   border-radius: 100px;
@@ -9405,6 +9488,40 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-green-dark);
   color: var(--tl-white);
   text-decoration: none;
+}
+
+/* Same two pills, reused standalone (not inside .tl-nav-links) as
+   full-width rows in the mobile hamburger menu. */
+.tl-mobile-menu-pill-row {
+  padding: 6px 0;
+  border-bottom: none !important;
+}
+
+.tl-mobile-menu-pill-row .tl-nav-shop-pill,
+.tl-mobile-menu-pill-row .tl-nav-korporativ-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 46px;
+  border-radius: 100px;
+  font-size: 14.5px;
+  font-weight: 700;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.tl-mobile-menu-pill-row .tl-nav-shop-pill {
+  border: 1px solid var(--tl-green);
+  color: var(--tl-green-dark);
+  background: transparent;
+}
+
+.tl-mobile-menu-pill-row .tl-nav-korporativ-pill {
+  border: none;
+  color: var(--tl-white);
+  background: var(--tl-green);
 }
 
 .tl-nav-cart {

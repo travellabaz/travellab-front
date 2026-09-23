@@ -35,7 +35,8 @@
     "register": "Sign up",
     "giftCard": "Gift Card",
     "korporativ": "Corporate",
-    "account": "Account"
+    "account": "Account",
+    "newBadge": "new"
   },
   "mobileTabBar": {
     "home": "Home",

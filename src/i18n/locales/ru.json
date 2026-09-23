@@ -35,7 +35,8 @@
     "register": "Регистрация",
     "giftCard": "Подарочная карта",
     "korporativ": "Корпоративным",
-    "account": "Аккаунт"
+    "account": "Аккаунт",
+    "newBadge": "новое"
   },
   "mobileTabBar": {
     "home": "Главная",
