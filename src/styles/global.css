@@ -259,13 +259,10 @@ html {
   padding: 0 32px;
 }
 
-/* Mobile only — turbo.az-style hide-on-scroll-down/show-on-scroll-up
-   (see Nav.jsx's navHidden). Desktop keeps the header permanently
-   visible; screen space isn't at the same premium there. */
-@media (max-width: 900px) {
-  .tl-nav-hidden {
-    transform: translateY(-100%);
-  }
+/* turbo.az-style hide-on-scroll-down/show-on-scroll-up (see Nav.jsx's
+   navHidden) — applies at every width, desktop included. */
+.tl-nav-hidden {
+  transform: translateY(-100%);
 }
 
 .tl-logo {
@@ -301,7 +298,7 @@ html {
 .tl-nav-links {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -315,9 +312,9 @@ html {
   gap: 6px;
   color: var(--tl-gray-600);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
-  padding: 7px 14px;
+  padding: 10px 18px;
   border-radius: 100px;
   transition: all 0.2s;
 }
@@ -7057,6 +7054,19 @@ body:not(.tl-subpage) .tl-about-extra {
     display: block;
   }
 
+  /* The bottom tab bar already has its own "Hesab" entry — the full
+     name here was pure duplication eating header width. Avatar + LP
+     badge alone stay, tightened up now that there's no name to pad
+     out to. */
+  .nav-profile-name {
+    display: none;
+  }
+
+  .nav-profile-btn {
+    gap: 6px;
+    padding: 5px 8px;
+  }
+
   .tl-pkg-grid,
   .tl-idea-grid,
   .tl-blog-grid {
@@ -8949,6 +8959,10 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-600);
 }
 
+.tl-lang-switcher-globe {
+  flex-shrink: 0;
+}
+
 .tl-lang-switcher-popover {
   position: absolute;
   top: calc(100% + 10px);
@@ -9345,12 +9359,12 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-nav-links .tl-nav-shop-pill {
   display: flex;
   align-items: center;
-  height: 34px;
-  padding: 0 16px;
+  height: 40px;
+  padding: 0 18px;
   border: 1px solid var(--tl-green);
   border-radius: 100px;
   color: var(--tl-green-dark);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
@@ -9374,11 +9388,11 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-nav-links .tl-nav-korporativ-pill {
   display: flex;
   align-items: center;
-  height: 34px;
-  padding: 0 16px;
+  height: 40px;
+  padding: 0 18px;
   border-radius: 100px;
   color: var(--tl-white);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;

@@ -40,10 +40,11 @@ export default function Nav() {
   const lang = getLocaleFromPathname(location.pathname);
   const localize = (path) => buildLocalizedPath(path, lang);
 
-  // Mobile only (see .tl-nav-hidden's media query) — turbo.az-style
-  // hide-on-scroll-down, show-on-scroll-up, on every page including tour
-  // product pages (only the bottom sticky price/order bar there is
-  // exempted from this, see MobileTabBar.jsx / TourStickyBar.jsx).
+  // turbo.az-style hide-on-scroll-down, show-on-scroll-up, on every page
+  // and at every width (desktop included, not just mobile — see
+  // .tl-nav-hidden) including tour product pages (only the bottom sticky
+  // price/order bar there is exempted from this, see
+  // MobileTabBar.jsx / TourStickyBar.jsx).
   const scrollDirection = useScrollDirection();
   const navHidden = scrollDirection === 'down' && !mobileOpen;
 
@@ -148,14 +149,6 @@ export default function Nav() {
         </button>
         <LanguageSwitcher className="tl-nav-lang-switcher" />
         <span className="tl-nav-divider" aria-hidden="true" />
-        <button
-          type="button"
-          className="tl-nav-burger"
-          aria-label={t('nav.menu')}
-          onClick={() => setMobileOpen((o) => !o)}
-        >
-          <span />
-        </button>
         {isAuthenticated ? (
           <NavProfile />
         ) : (
@@ -171,6 +164,17 @@ export default function Nav() {
             <AuthMenu className="tl-nav-auth-mobile" onOpen={() => setMobileOpen(false)} />
           </>
         )}
+        {/* Rightmost on purpose (mobile task: the burger used to sit
+            before the account block, ahead of it) — see .tl-nav-burger's
+            display:none/flex media rule for when it's actually visible. */}
+        <button
+          type="button"
+          className="tl-nav-burger"
+          aria-label={t('nav.menu')}
+          onClick={() => setMobileOpen((o) => !o)}
+        >
+          <span />
+        </button>
       </div>
     </nav>
   );

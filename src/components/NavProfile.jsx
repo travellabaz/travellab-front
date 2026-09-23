@@ -29,7 +29,11 @@ export default function NavProfile() {
     <div style={{ position: 'relative' }} ref={rootRef}>
       <button type="button" className="nav-profile-btn" onClick={() => setOpen((o) => !o)}>
         <div className="nav-avatar">{profile.initials}</div>
-        <span>{profile.name || t('navProfile.profile')}</span>
+        {/* Hidden on mobile (see .nav-profile-name's media rule) — the
+            bottom tab bar already has its own dedicated "Hesab" entry,
+            so the full name here was pure duplication eating header
+            width; avatar + LP badge alone stay as the compact identity. */}
+        <span className="nav-profile-name">{profile.name || t('navProfile.profile')}</span>
         <span className="nav-lp-badge">{profile.points} LP</span>
       </button>
       <div className={'nav-dd' + (open ? ' open' : '')}>

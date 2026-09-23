@@ -26,7 +26,12 @@ export default function LanguageSwitcher({ className }) {
   return (
     <div className={'tl-lang-switcher' + (className ? ' ' + className : '')} ref={rootRef}>
       <button type="button" className="tl-lang-switcher-trigger" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        🌐 {SHORT_LABEL[current]}
+        <svg className="tl-lang-switcher-globe" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18" />
+          <path d="M12 3c2.8 2.6 4.4 5.7 4.4 9s-1.6 6.4-4.4 9c-2.8-2.6-4.4-5.7-4.4-9s1.6-6.4 4.4-9z" />
+        </svg>
+        {SHORT_LABEL[current]}
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M6 9l6 6 6-6" />
         </svg>
