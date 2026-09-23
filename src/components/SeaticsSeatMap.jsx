@@ -149,6 +149,70 @@ body{margin:0;font-family:sans-serif;max-height:100vh;overflow:hidden;}
 //   regardless of whatever our websiteConfigId currently has stored.
 window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } };
 </script>
+<script>
+// Workaround for a bug in the widget itself, confirmed live via DevTools
+// (not something mapContained above fixes): div.sea-map-inner's own
+// height keeps growing without bound — 300px at load, ~4000px within a
+// couple seconds, tens of thousands of px if left running, triggered by
+// resize/scroll events feeding what looks like a "current + delta"
+// calculation instead of an absolute one. The visible symptom (the map
+// going blank / seeming to "reset") isn't the container collapsing —
+// it's that the map's own <svg class="venue-map-svg"> picks up a stale,
+// huge inline transform: translate(...) as a side effect of that same
+// runaway calculation, physically rendering the map thousands of pixels
+// below the visible area. Reported to TicketNetwork support; this is a
+// client-side mitigation, not a real fix — it can't correct their
+// internal click/hit-testing state, only what's visibly on screen.
+//
+// Runs before jQuery/the framework script below so it's observing from
+// the very first mutation, not reacting after growth has already
+// compounded — capping only after the fact does nothing (confirmed
+// live: the stale transform on the SVG doesn't get recalculated just
+// because the container's height is reset afterward).
+(function () {
+  var HEIGHT_CAP = 900; // matches this iframe's own fixed height
+  var TRANSLATE_CAP = 400; // generous headroom over any legitimate pan
+
+  function clampHeight(el) {
+    var h = parseFloat(el.style.height);
+    if (h > HEIGHT_CAP) el.style.setProperty('height', HEIGHT_CAP + 'px', 'important');
+  }
+
+  function clampTransform(el) {
+    var t = el.style.transform;
+    if (!t) return;
+    var m = /translate\\(([-\\d.]+)px,\\s*([-\\d.]+)px\\)/.exec(t);
+    if (!m) return;
+    var tx = parseFloat(m[1]), ty = parseFloat(m[2]);
+    if (Math.abs(tx) > TRANSLATE_CAP || Math.abs(ty) > TRANSLATE_CAP) {
+      el.style.setProperty('transform', t.replace(/translate\\([^)]*\\)/, 'translate(0px, 0px)'), 'important');
+    }
+  }
+
+  function watch(el) {
+    if (el.classList && el.classList.contains('sea-map-inner')) {
+      clampHeight(el);
+      new MutationObserver(function () { clampHeight(el); }).observe(el, { attributes: true, attributeFilter: ['style'] });
+    }
+    if (el.tagName === 'svg' || el.tagName === 'SVG') {
+      clampTransform(el);
+      new MutationObserver(function () { clampTransform(el); }).observe(el, { attributes: true, attributeFilter: ['style'] });
+    }
+  }
+
+  new MutationObserver(function (records) {
+    records.forEach(function (r) {
+      r.addedNodes && r.addedNodes.forEach(function (n) {
+        if (n.nodeType !== 1) return;
+        watch(n);
+        if (n.querySelectorAll) {
+          n.querySelectorAll('.sea-map-inner, svg').forEach(watch);
+        }
+      });
+    });
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
 </head>
 <body>
 <div id="seatics-map"></div>
