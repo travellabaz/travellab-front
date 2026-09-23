@@ -170,7 +170,7 @@ window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } 
 // live: the stale transform on the SVG doesn't get recalculated just
 // because the container's height is reset afterward).
 (function () {
-  var HEIGHT_CAP = 900; // matches this iframe's own fixed height
+  var HEIGHT_CAP = 1100; // matches this iframe's own fixed height
   var TRANSLATE_CAP = 400; // generous headroom over any legitimate pan
 
   function clampHeight(el) {
@@ -252,7 +252,7 @@ Seatics.Presentation.redirectToCheckout = function (ticketGroup, quantity) {
     <iframe
       title="Seat map"
       srcDoc={srcDoc}
-      style={{ width: '100%', height: 900, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
+      style={{ width: '100%', height: 1100, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
     />
   );
 }
