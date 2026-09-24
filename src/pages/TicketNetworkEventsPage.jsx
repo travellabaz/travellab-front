@@ -356,10 +356,38 @@ export default function TicketNetworkEventsPage() {
     }
   };
 
+  // A direct link (/events/:id) fetches that one event before anything
+  // else exists to show — without this, the brief window before the
+  // fetch resolves fell through to the generic search UI below, which
+  // reads as "nothing here" to anyone opening the link fresh (confirmed
+  // this is exactly what TicketNetwork support saw testing a shared
+  // link). Split into "still loading" vs. "genuinely not found" so a
+  // slow network doesn't get misread as a dead link, and a truly
+  // expired/removed event says so instead of silently showing the
+  // unrelated search page.
+  const awaitingDeepLink = !!eventId && !selectedEvent && loadingGroups;
+  const deepLinkNotFound = !!eventId && !selectedEvent && !loadingGroups;
+
   return (
       <section className="tl-page-top">
         <div className="tl-section">
-          {!selectedEvent && (
+          {awaitingDeepLink && (
+            <div className="tl-evt-tickets" style={{ marginTop: 16 }}>
+              {Array.from({ length: 4 }).map((_, i) => <TicketRowSkeleton key={i} />)}
+            </div>
+          )}
+
+          {deepLinkNotFound && (
+            <>
+              <div className="tl-tag">Daxili test</div>
+              <h1 className="tl-title">Bu tədbir artıq mövcud deyil</h1>
+              <p style={{ color: 'var(--tl-gray-500)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
+                Tədbir satışdan çıxıb və ya linkin müddəti bitib. Aşağıdakı axtarışdan aktual bir tədbir seçin.
+              </p>
+            </>
+          )}
+
+          {!selectedEvent && !awaitingDeepLink && (
             <>
               <div className="tl-tag">Daxili test</div>
               <h1 className="tl-title">Tədbir biletləri — TEST</h1>

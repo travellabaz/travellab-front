@@ -79,6 +79,11 @@ function localeRouteChildren() {
     // themselves, see TicketNetworkPreviewPage.jsx. Never linked from
     // anywhere in the site, not in prerender.mjs's PAGE_META either.
     <Route key="events-preview" path="events/integration-preview/:eventId" element={<TicketNetworkPreviewPage />} />,
+    // Same page, no eventId — lands on the search UI so TicketNetwork's
+    // own team can pick any currently-live event themselves instead of
+    // us handing them one fixed id that goes stale once that event's
+    // Mercury inventory sells out or its date passes.
+    <Route key="events-preview-search" path="events/integration-preview" element={<TicketNetworkPreviewPage />} />,
     // Epoint redirects the browser here after a checkout attempt — see
     // EpointProperties.successRedirectUrl/errorRedirectUrl.
     <Route key="payment-success" path="events/payment/success" element={<PaymentSuccessPage />} />,

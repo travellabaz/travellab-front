@@ -136,6 +136,17 @@ export default function SeaticsSeatMap({ eventId, ticketGroups, ticketGroupsLoad
    viewport, not the outer page's). */
 body{margin:0;font-family:sans-serif;max-height:100vh;overflow:hidden;}
 #seatics-map{max-height:100vh;overflow:hidden;}
+/* Per TicketNetwork support's own follow-up (Yuliya, confirmed live via
+   DevTools): #tn-maps — a separate top-level container from #seatics-map,
+   not nested inside it — is the element that actually grows unbounded
+   (observed 4249px+ live, same runaway-height pattern as .sea-map-inner
+   below, just a different node). A hard px max-height with !important
+   beats their inline height unconditionally (unlike the earlier
+   percentage-based attempt against .sea-map-inner, which didn't stick),
+   so this is the more reliable fix of the two. overflow-y:auto turns the
+   overflow into a normal scrollbar instead of the map rendering
+   thousands of pixels below the fold. */
+#tn-maps{max-height:750px !important;overflow-y:auto !important;}
 </style>
 <script>
 // Pre-declared before the framework script loads — its own bootstrap is
