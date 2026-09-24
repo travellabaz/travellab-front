@@ -180,22 +180,10 @@ export default function TicketNetworkEventsPage() {
   // full page load never does. A real navigation sidesteps the whole
   // question: every direct-URL/full-reload test this session, without
   // exception, rendered the map correctly.
-  // This same component is mounted under two different routes: the
-  // public, phone-gated /events (EventsPage.jsx) and the ungated
-  // /events/integration-preview (TicketNetworkPreviewPage.jsx, handed
-  // directly to TicketNetwork's own team so they can test without an
-  // account). Hardcoding "/events/:id" here would silently drop a
-  // preview visitor back onto the gated route the moment they click a
-  // search result — for anyone without the allowlisted phone number
-  // that's the Ticketmaster section, not this map at all. Stay on
-  // whichever family the visitor is already in.
-  const isPreview = window.location.pathname.includes('/events/integration-preview');
-  const eventPath = (id) => (isPreview ? `/events/integration-preview/${id}` : `/events/${id}`);
-
   const openEvent = (event) => {
-    window.location.href = eventPath(event.id);
+    window.location.href = `/events/${event.id}`;
   };
-  const backToResults = () => navigate(isPreview ? '/events/integration-preview' : '/events');
+  const backToResults = () => navigate('/events');
 
   // Search-as-you-type, debounced — Catalog's dedicated /suggest endpoint
   // (lighter than a full /search), matches Expedia's autocomplete. Picking
@@ -224,7 +212,7 @@ export default function TicketNetworkEventsPage() {
   }, [keyword]);
 
   const openSuggestion = (suggestion) => {
-    window.location.href = eventPath(suggestion.id); // see the comment on openEvent
+    window.location.href = `/events/${suggestion.id}`; // see the comment on openEvent
   };
 
   // Loads whichever event is currently in the URL — reached either by

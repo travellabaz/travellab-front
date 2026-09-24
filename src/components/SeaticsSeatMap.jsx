@@ -127,25 +127,14 @@ export default function SeaticsSeatMap({ eventId, ticketGroups, ticketGroupsLoad
 <head>
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <style>
-/* Per TicketNetwork support's own suggestion for the periodic
-   pan/zoom-reset issue (already reported, see the email thread) — cap
-   the iframe document's own height so an internal resize-driven redraw
-   loop, if that's the cause, has nothing to keep growing into. Doesn't
-   affect layout otherwise: this document is already sized by our fixed
-   900px iframe, not by 100vh (100vh here means the iframe's own
-   viewport, not the outer page's). */
-body{margin:0;font-family:sans-serif;max-height:100vh;overflow:hidden;}
-#seatics-map{max-height:100vh;overflow:hidden;}
-/* Per TicketNetwork support's own follow-up (Yuliya, confirmed live via
-   DevTools): #tn-maps — a separate top-level container from #seatics-map,
-   not nested inside it — is the element that actually grows unbounded
-   (observed 4249px+ live, same runaway-height pattern as .sea-map-inner
-   below, just a different node). A hard px max-height with !important
-   beats their inline height unconditionally (unlike the earlier
-   percentage-based attempt against .sea-map-inner, which didn't stick),
-   so this is the more reliable fix of the two. overflow-y:auto turns the
-   overflow into a normal scrollbar instead of the map rendering
-   thousands of pixels below the fold. */
+body{margin:0;font-family:sans-serif;}
+/* Per TicketNetwork support's own diagnosis (Yuliya): #tn-maps grows
+   unbounded on its own (observed 4249px+ live) — a resize-driven calc
+   inside the widget that never settles. A hard px max-height with
+   !important beats their inline height unconditionally, turning the
+   runaway growth into a normal scrollbar instead of the map rendering
+   thousands of pixels below the fold. Confirmed fixed live after
+   deploying this. */
 #tn-maps{max-height:750px !important;overflow-y:auto !important;}
 </style>
 <script>
@@ -159,70 +148,6 @@ body{margin:0;font-family:sans-serif;max-height:100vh;overflow:hidden;}
 //   Setting it explicitly guarantees the documented (off) behavior
 //   regardless of whatever our websiteConfigId currently has stored.
 window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } };
-</script>
-<script>
-// Workaround for a bug in the widget itself, confirmed live via DevTools
-// (not something mapContained above fixes): div.sea-map-inner's own
-// height keeps growing without bound — 300px at load, ~4000px within a
-// couple seconds, tens of thousands of px if left running, triggered by
-// resize/scroll events feeding what looks like a "current + delta"
-// calculation instead of an absolute one. The visible symptom (the map
-// going blank / seeming to "reset") isn't the container collapsing —
-// it's that the map's own <svg class="venue-map-svg"> picks up a stale,
-// huge inline transform: translate(...) as a side effect of that same
-// runaway calculation, physically rendering the map thousands of pixels
-// below the visible area. Reported to TicketNetwork support; this is a
-// client-side mitigation, not a real fix — it can't correct their
-// internal click/hit-testing state, only what's visibly on screen.
-//
-// Runs before jQuery/the framework script below so it's observing from
-// the very first mutation, not reacting after growth has already
-// compounded — capping only after the fact does nothing (confirmed
-// live: the stale transform on the SVG doesn't get recalculated just
-// because the container's height is reset afterward).
-(function () {
-  var HEIGHT_CAP = 1100; // matches this iframe's own fixed height
-  var TRANSLATE_CAP = 400; // generous headroom over any legitimate pan
-
-  function clampHeight(el) {
-    var h = parseFloat(el.style.height);
-    if (h > HEIGHT_CAP) el.style.setProperty('height', HEIGHT_CAP + 'px', 'important');
-  }
-
-  function clampTransform(el) {
-    var t = el.style.transform;
-    if (!t) return;
-    var m = /translate\\(([-\\d.]+)px,\\s*([-\\d.]+)px\\)/.exec(t);
-    if (!m) return;
-    var tx = parseFloat(m[1]), ty = parseFloat(m[2]);
-    if (Math.abs(tx) > TRANSLATE_CAP || Math.abs(ty) > TRANSLATE_CAP) {
-      el.style.setProperty('transform', t.replace(/translate\\([^)]*\\)/, 'translate(0px, 0px)'), 'important');
-    }
-  }
-
-  function watch(el) {
-    if (el.classList && el.classList.contains('sea-map-inner')) {
-      clampHeight(el);
-      new MutationObserver(function () { clampHeight(el); }).observe(el, { attributes: true, attributeFilter: ['style'] });
-    }
-    if (el.tagName === 'svg' || el.tagName === 'SVG') {
-      clampTransform(el);
-      new MutationObserver(function () { clampTransform(el); }).observe(el, { attributes: true, attributeFilter: ['style'] });
-    }
-  }
-
-  new MutationObserver(function (records) {
-    records.forEach(function (r) {
-      r.addedNodes && r.addedNodes.forEach(function (n) {
-        if (n.nodeType !== 1) return;
-        watch(n);
-        if (n.querySelectorAll) {
-          n.querySelectorAll('.sea-map-inner, svg').forEach(watch);
-        }
-      });
-    });
-  }).observe(document.documentElement, { childList: true, subtree: true });
-})();
 </script>
 </head>
 <body>
@@ -263,7 +188,7 @@ Seatics.Presentation.redirectToCheckout = function (ticketGroup, quantity) {
     <iframe
       title="Seat map"
       srcDoc={srcDoc}
-      style={{ width: '100%', height: 1100, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
+      style={{ width: '100%', height: 900, border: '1px solid var(--tl-gray-200)', borderRadius: 12, marginBottom: 24 }}
     />
   );
 }

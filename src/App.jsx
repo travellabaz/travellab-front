@@ -21,7 +21,6 @@ import TourCategoryPage from './pages/TourCategoryPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
-import TicketNetworkPreviewPage from './pages/TicketNetworkPreviewPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
 import VizaPage from './pages/VizaPage';
@@ -74,16 +73,6 @@ function localeRouteChildren() {
     // number, see EventsPage.jsx) whether to show the TicketNetwork
     // integration or the existing Ticketmaster-based EventsSection.
     <Route key="events-id" path="events/:eventId" element={<EventsPage />} />,
-    // No login gate — a URL handed directly to TicketNetwork's own
-    // integration support so they can see the MapWidget/checkout flow
-    // themselves, see TicketNetworkPreviewPage.jsx. Never linked from
-    // anywhere in the site, not in prerender.mjs's PAGE_META either.
-    <Route key="events-preview" path="events/integration-preview/:eventId" element={<TicketNetworkPreviewPage />} />,
-    // Same page, no eventId — lands on the search UI so TicketNetwork's
-    // own team can pick any currently-live event themselves instead of
-    // us handing them one fixed id that goes stale once that event's
-    // Mercury inventory sells out or its date passes.
-    <Route key="events-preview-search" path="events/integration-preview" element={<TicketNetworkPreviewPage />} />,
     // Epoint redirects the browser here after a checkout attempt — see
     // EpointProperties.successRedirectUrl/errorRedirectUrl.
     <Route key="payment-success" path="events/payment/success" element={<PaymentSuccessPage />} />,

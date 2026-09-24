@@ -114,15 +114,11 @@ export default function usePageMeta() {
     const category = isToursList ? new URLSearchParams(location.search).get('category') || '' : null;
     const categoryMetaKey = category || 'all';
 
-    // /events/:eventId (and the /events/integration-preview/:eventId variant
-    // used for internal TicketNetwork testing) has no dedicated meta of its
-    // own (the event's real name is only known client-side, inside
-    // TicketNetworkEventsPage/TicketNetworkPreviewPage's own fetch) — falls
-    // back to the generic /events title/desc instead of the "page not found"
-    // default every other unmatched path gets. Without this, the preview
-    // route's tab title reads "Bu səhifə tapılmadı" even though the page
-    // loads real content, which makes a valid test link look broken.
-    const isEventDetail = /^\/events\/(?:integration-preview\/)?[^/]+$/.test(path);
+    // /events/:eventId has no dedicated meta of its own (the event's real
+    // name is only known client-side, inside TicketNetworkEventsPage's own
+    // fetch) — falls back to the generic /events title/desc instead of the
+    // "page not found" default every other unmatched path gets.
+    const isEventDetail = /^\/events\/[^/]+$/.test(path);
     const seoKey = SEO_KEY_BY_PATH[path] || (isEventDetail ? 'events' : undefined);
     const page = post
       ? { title: `${post.title} — Travellab`, desc: post.metaDescription || post.excerpt }
