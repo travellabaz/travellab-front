@@ -25,12 +25,18 @@ function formatEventDate(iso) {
   return formatDateTimeAz(iso);
 }
 
-// selectedEvent.scheduleStatus is TicketNetwork's raw Catalog value
-// (Active/Postponed/Cancelled/Rescheduled/SoldOut, case not guaranteed) —
-// never shown to the visitor as-is. null/Active/OnSale means "on sale
-// normally", nothing to show. Any other known value gets a specific AZ
-// message; an unrecognized value still gets a safe generic AZ fallback
-// rather than leaking the raw English string.
+// selectedEvent.scheduleStatus is TicketNetwork's raw Catalog value.
+// Confirmed live that a perfectly normal, on-sale event's real value is
+// "On Schedule" — not "Active"/"OnSale" as originally guessed without API
+// access, which meant EVERY normal event was wrongly matching the
+// fallback "status changed" message and hiding real, purchasable
+// inventory (see the EmptyState in the "seats" tab below). Matching
+// against a whitelist of "known good" values is exactly what broke this
+// the first time a real but unanticipated value showed up, so this is a
+// blacklist instead: only specific bad-known values trigger a message,
+// anything else (this or any future unrecognized status) is treated as
+// on sale — ticketGroups.length===0 is what actually protects against
+// showing a broken/empty purchase flow, this is purely informational.
 const EVENT_STATUS_MESSAGES = {
   postponed: 'Bu tədbir təxirə salınıb. Yeni tarix açıqlandıqda bu səhifə yenilənəcək.',
   cancelled: 'Bu tədbir ləğv edilib.',
@@ -42,8 +48,22 @@ const EVENT_STATUS_MESSAGES = {
 function getEventStatusMessage(scheduleStatus) {
   if (!scheduleStatus) return null;
   const key = scheduleStatus.trim().toLowerCase().replace(/\s+/g, '');
-  if (key === 'active' || key === 'onsale') return null;
-  return EVENT_STATUS_MESSAGES[key] || 'Bu tədbirin satış statusu dəyişib. Zəhmət olmasa bir az sonra yenidən yoxlayın və ya bizimlə əlaqə saxlayın.';
+  return EVENT_STATUS_MESSAGES[key] || null;
+}
+
+// Caps the rendered page-number buttons so paging far forward doesn't
+// eventually render hundreds of them — always keeps 1, the current page
+// +/-1, and the highest known page, collapsing the rest behind '…'.
+function getPageWindow(current, max) {
+  if (max <= 7) return Array.from({ length: max }, (_, i) => i + 1);
+  const pages = new Set([1, max, current - 1, current, current + 1]);
+  const sorted = [...pages].filter((n) => n >= 1 && n <= max).sort((a, b) => a - b);
+  const out = [];
+  sorted.forEach((n, i) => {
+    if (i > 0 && n - sorted[i - 1] > 1) out.push('…');
+    out.push(n);
+  });
+  return out;
 }
 
 // Whole-dollar display for marketing prices (card price range, ticket-row
@@ -216,6 +236,11 @@ export default function TicketNetworkEventsPage() {
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  // Highest page number we know for sure exists (a real 1/2/3... pagination
+  // bar, not just Prev/Next) — grows as the visitor pages forward, since
+  // the backend's ?page= endpoint never returns a total count to size the
+  // bar up front (see runSearch).
+  const [maxPage, setMaxPage] = useState(1);
 
   // "Oxşar tədbirlər" suggestions for EmptyState — a handful of other
   // real, on-sale events, fetched lazily (only once something actually
@@ -278,9 +303,11 @@ export default function TicketNetworkEventsPage() {
       ].filter(Boolean).join('&');
       const res = await fetch(url);
       const data = res.ok ? await res.json() : [];
+      const gotMore = (data || []).length > 0;
       setEvents(data || []);
       setPage(pageNum);
-      setHasMore((data || []).length > 0);
+      setHasMore(gotMore);
+      setMaxPage((m) => Math.max(m, gotMore ? pageNum + 1 : pageNum));
       if ((data || []).length === 0) fetchOtherEvents();
     } catch (err) {
       console.error('ActionLog.ticketNetworkEvents.searchFailed', err);
@@ -293,6 +320,7 @@ export default function TicketNetworkEventsPage() {
 
   const searchEvents = (e) => {
     e.preventDefault();
+    setMaxPage(1);
     runSearch(keyword, 1);
   };
 
@@ -304,6 +332,7 @@ export default function TicketNetworkEventsPage() {
 
   const clearSearch = () => {
     setKeyword('');
+    setMaxPage(1);
     runSearch('', 1);
   };
 
@@ -617,14 +646,27 @@ export default function TicketNetworkEventsPage() {
                       <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
                     ))}
                   </div>
-                  {(page > 1 || hasMore) && (
+                  {(maxPage > 1 || page > 1) && (
                     <div className="tl-evt-pagination">
-                      <button type="button" className="tl-evt-page-btn" onClick={() => goToPage(page - 1)} disabled={page <= 1}>
-                        <BackArrowIcon /> Əvvəlki
+                      <button type="button" className="tl-evt-page-arrow" onClick={() => goToPage(page - 1)} disabled={page <= 1} aria-label="Əvvəlki">
+                        <BackArrowIcon />
                       </button>
-                      <span className="tl-evt-page-num">Səhifə {page}</span>
-                      <button type="button" className="tl-evt-page-btn" onClick={() => goToPage(page + 1)} disabled={!hasMore}>
-                        Növbəti <span className="tl-evt-page-next-arrow">›</span>
+                      {getPageWindow(page, maxPage).map((n, i) => (
+                        n === '…' ? (
+                          <span key={`ellipsis-${i}`} className="tl-evt-page-ellipsis">…</span>
+                        ) : (
+                          <button
+                            key={n}
+                            type="button"
+                            className={`tl-evt-page-num-btn${n === page ? ' tl-evt-page-num-btn-active' : ''}`}
+                            onClick={() => goToPage(n)}
+                          >
+                            {n}
+                          </button>
+                        )
+                      ))}
+                      <button type="button" className="tl-evt-page-arrow" onClick={() => goToPage(page + 1)} disabled={!hasMore} aria-label="Növbəti">
+                        <span className="tl-evt-page-next-arrow">›</span>
                       </button>
                     </div>
                   )}

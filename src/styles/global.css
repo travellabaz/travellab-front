@@ -12663,23 +12663,55 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-top: 6px;
 }
 
-/* Prev/Next pagination bar under the search-results grid — each click
-   replaces the grid with that page's own results (not an accumulating
-   "load more" list). No total-page count from the backend (see runSearch
-   in TicketNetworkEventsPage.jsx), so there's a page number but no "of N". */
+/* Real 1/2/3... pagination bar under the search-results grid — each
+   click replaces the grid with that page's own results (not an
+   accumulating "load more" list). The backend's ?page= endpoint never
+   returns a total count (see runSearch in TicketNetworkEventsPage.jsx),
+   so the bar only knows about pages actually visited/confirmed so far
+   (maxPage) — it grows as the visitor pages forward rather than showing
+   a fixed "1 of N" from the start. */
 .tl-evt-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  flex-wrap: wrap;
+  gap: 6px;
   margin-top: 28px;
 }
 
-.tl-evt-page-btn {
+.tl-evt-page-arrow {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 20px;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 100px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tl-evt-page-arrow:hover:not(:disabled) {
+  border-color: var(--tl-green);
+  color: var(--tl-green-dark);
+}
+
+.tl-evt-page-arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tl-evt-page-next-arrow {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.tl-evt-page-num-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 4px;
   border-radius: 100px;
   border: 1.5px solid var(--tl-gray-200);
   background: var(--tl-white);
@@ -12691,25 +12723,23 @@ body:not(.tl-subpage) .tl-about-extra {
   transition: all 0.2s;
 }
 
-.tl-evt-page-btn:hover:not(:disabled) {
+.tl-evt-page-num-btn:hover {
   border-color: var(--tl-green);
   color: var(--tl-green-dark);
 }
 
-.tl-evt-page-btn:disabled {
-  opacity: 0.4;
+.tl-evt-page-num-btn-active {
+  background: var(--tl-green);
+  border-color: var(--tl-green);
+  color: #fff;
   cursor: default;
 }
 
-.tl-evt-page-next-arrow {
-  font-size: 16px;
-  line-height: 1;
-}
-
-.tl-evt-page-num {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--tl-gray-500);
+.tl-evt-page-ellipsis {
+  width: 38px;
+  text-align: center;
+  color: var(--tl-gray-400);
+  font-size: 14px;
 }
 
 /* Postponed/cancelled/rescheduled/sold-out banner — sits right under
