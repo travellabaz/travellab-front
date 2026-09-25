@@ -633,6 +633,19 @@ export default function TicketNetworkEventsPage() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState('');
 
+  // Only shown/required when the selected deliveryMethod is one of
+  // selectedGroup.shippingDeliveryMethods (backend-classified — see
+  // TicketNetworkOrderService.isShippableDeliveryMethod). Most groups only
+  // ever offer a digital method, so this stays empty/hidden for almost
+  // every purchase.
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [city, setCity] = useState('');
+  const [addressState, setAddressState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [countryCode, setCountryCode] = useState('');
+  const needsShippingAddress = !!selectedGroup?.shippingDeliveryMethods?.includes(deliveryMethod);
+
   const [purchasing, setPurchasing] = useState(false);
   const [result, setResult] = useState(null);
 
@@ -809,9 +822,36 @@ export default function TicketNetworkEventsPage() {
       ? desiredQuantity
       : (group.purchasableQuantities?.[0] || 1);
     setQuantity(preferredQuantity);
-    setDeliveryMethod(group.deliveryMethods?.[0] || '');
+    // Prefer a digital method as the default when the group offers one —
+    // matches groupDeliveryTypeLabel's "best case" summary and avoids
+    // defaulting into the address form for a group that didn't need it.
+    const preferredDelivery = group.deliveryMethods?.find((m) => !group.shippingDeliveryMethods?.includes(m))
+      || group.deliveryMethods?.[0] || '';
+    setDeliveryMethod(preferredDelivery);
+    setAddress1('');
+    setAddress2('');
+    setCity('');
+    setAddressState('');
+    setPostalCode('');
+    setCountryCode('');
     setResult(null);
   };
+
+  // Raw TicketNetwork method names ("Paperless - Ship Gift Card", "Mobile
+  // Transfer") mean nothing to a visitor — this is what actually matters to
+  // them: does it show up instantly on their phone, or does someone have to
+  // mail something to an address.
+  const deliveryMethodTypeLabel = (method, group) =>
+    group?.shippingDeliveryMethods?.includes(method) ? 'Poçtla göndərilir' : 'Elektron bilet';
+
+  // A group can mix a digital and a shipping method — summarize by the
+  // best case available (digital) rather than whichever happens to be
+  // deliveryMethods[0], since a shipping-only summary would wrongly scare
+  // off a visitor who'd actually get the instant digital option by default.
+  const groupDeliveryTypeLabel = (group) =>
+    (group?.deliveryMethods || []).some((m) => !group?.shippingDeliveryMethods?.includes(m))
+      ? 'Elektron bilet'
+      : 'Poçtla göndərilir';
 
   useEffect(() => {
     if (!showQuantityPopup) return undefined;
@@ -892,6 +932,14 @@ export default function TicketNetworkEventsPage() {
           customerName,
           customerEmail,
           customerPhone,
+          ...(needsShippingAddress ? {
+            address1,
+            address2,
+            city,
+            state: addressState,
+            postalCode,
+            countryCode,
+          } : {}),
         }),
       });
       if (!res) {
@@ -1378,7 +1426,7 @@ export default function TicketNetworkEventsPage() {
                             <span className="tl-evt-ticket-label">
                               <span className="tl-evt-ticket-section">{tg.section || 'Section n/a'}{tg.row ? `, Row ${tg.row}` : ''}</span>
                               <span className="tl-evt-ticket-sub">
-                                {tg.availableQuantity} available · {(tg.deliveryMethods || []).join(', ')}
+                                {tg.availableQuantity} available · {groupDeliveryTypeLabel(tg)}
                               </span>
                             </span>
                             <span className="tl-evt-ticket-price-col">
@@ -1421,7 +1469,7 @@ export default function TicketNetworkEventsPage() {
                         <div className="tl-evt-sidebar-selection">
                           <span>
                             <strong>{selectedGroup.section || 'Section n/a'}{selectedGroup.row ? `, Row ${selectedGroup.row}` : ''}</strong>
-                            <span className="tl-evt-ticket-sub">{deliveryMethod}</span>
+                            <span className="tl-evt-ticket-sub">{deliveryMethodTypeLabel(deliveryMethod, selectedGroup)}</span>
                           </span>
                           <strong>{formatPrice(selectedGroup.retailPrice, selectedGroup.currencyCode)}</strong>
                         </div>
@@ -1438,7 +1486,7 @@ export default function TicketNetworkEventsPage() {
                           {(selectedGroup.deliveryMethods || []).length > 1 && (
                             <select value={deliveryMethod} onChange={(e) => setDeliveryMethod(e.target.value)} className="tl-evt-select">
                               {selectedGroup.deliveryMethods.map((m) => (
-                                <option key={m} value={m}>{m}</option>
+                                <option key={m} value={m}>{deliveryMethodTypeLabel(m, selectedGroup)}</option>
                               ))}
                             </select>
                           )}
@@ -1446,6 +1494,22 @@ export default function TicketNetworkEventsPage() {
                           <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Ad Soyad" required className="tl-evt-input" />
                           <input type="email" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} placeholder="Email" required className="tl-evt-input" />
                           <input type="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="Telefon" required className="tl-evt-input" />
+
+                          {/* Only rendered when deliveryMethod is a shipping
+                              method (see needsShippingAddress) — backend
+                              rejects the order without these, see
+                              TicketNetworkOrderService.initiate(). */}
+                          {needsShippingAddress && (
+                            <div className="tl-evt-shipping-address">
+                              <p className="tl-evt-shipping-note">Bu bilet poçtla göndərilir — çatdırılma ünvanını daxil edin.</p>
+                              <input type="text" value={address1} onChange={(e) => setAddress1(e.target.value)} placeholder="Ünvan" required className="tl-evt-input" />
+                              <input type="text" value={address2} onChange={(e) => setAddress2(e.target.value)} placeholder="Ünvan (əlavə, könüllü)" className="tl-evt-input" />
+                              <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Şəhər" required className="tl-evt-input" />
+                              <input type="text" value={addressState} onChange={(e) => setAddressState(e.target.value)} placeholder="Ştat/Bölgə (könüllü)" className="tl-evt-input" />
+                              <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="Poçt indeksi" required className="tl-evt-input" />
+                              <input type="text" value={countryCode} onChange={(e) => setCountryCode(e.target.value.toUpperCase())} placeholder="Ölkə kodu (məs. AZ)" maxLength={2} required className="tl-evt-input" />
+                            </div>
+                          )}
 
                           <div className="tl-evt-sidebar-total">
                             <span className="tl-evt-sidebar-total-label">Cəmi ({quantity} bilet)</span>
