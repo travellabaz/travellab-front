@@ -50,6 +50,20 @@ function formatMoney(value, currency) {
   }
 }
 
+// Day + short month for the search-result card's date badge (e.g. "24"/"AVQ").
+function formatCardDate(iso) {
+  if (!iso) return null;
+  try {
+    const d = new Date(iso);
+    return {
+      day: d.toLocaleString('az-AZ', { day: 'numeric' }),
+      month: d.toLocaleString('az-AZ', { month: 'short' }).replace('.', ''),
+    };
+  } catch {
+    return null;
+  }
+}
+
 function CalendarIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,8 +101,9 @@ function BackArrowIcon() {
 
 function EventCardSkeleton() {
   return (
-    <div className="tl-pkg-card">
-      <div className="tl-pkg-body">
+    <div className="tl-evt-card">
+      <div className="tl-evt-card-cover" />
+      <div className="tl-evt-card-body">
         <div className="tl-evt-skel" style={{ height: 15, width: '80%', marginBottom: 10 }} />
         <div className="tl-evt-skel" style={{ height: 12, width: '60%', marginBottom: 14 }} />
         <div className="tl-evt-skel" style={{ height: 17, width: '40%' }} />
@@ -370,7 +385,7 @@ export default function TicketNetworkEventsPage() {
 
   return (
       <section className="tl-page-top">
-        <div className="tl-section">
+        <div className="tl-section tl-evt-page">
           {awaitingDeepLink && (
             <div className="tl-evt-tickets" style={{ marginTop: 16 }}>
               {Array.from({ length: 4 }).map((_, i) => <TicketRowSkeleton key={i} />)}
@@ -381,7 +396,7 @@ export default function TicketNetworkEventsPage() {
             <>
               <div className="tl-tag">Daxili test</div>
               <h1 className="tl-title">Bu tədbir artıq mövcud deyil</h1>
-              <p style={{ color: 'var(--tl-gray-500)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
+              <p style={{ color: 'var(--tl-evt-text-dim)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
                 Tədbir satışdan çıxıb və ya linkin müddəti bitib. Aşağıdakı axtarışdan aktual bir tədbir seçin.
               </p>
             </>
@@ -391,7 +406,7 @@ export default function TicketNetworkEventsPage() {
             <>
               <div className="tl-tag">Daxili test</div>
               <h1 className="tl-title">Tədbir biletləri — TEST</h1>
-              <p style={{ color: 'var(--tl-gray-500)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
+              <p style={{ color: 'var(--tl-evt-text-dim)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
                 Ödəniş Epoint üzərindən aparılır. Yalnız sizin üçün açıqdır.
               </p>
 
@@ -432,36 +447,45 @@ export default function TicketNetworkEventsPage() {
               </form>
 
               {loadingEvents && (
-                <div className="tl-pkg-grid">
+                <div className="tl-evt-grid">
                   {Array.from({ length: 8 }).map((_, i) => <EventCardSkeleton key={i} />)}
                 </div>
               )}
               {!loadingEvents && searched && events.length === 0 && (
-                <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Nəticə tapılmadı.</p>
+                <p style={{ color: 'var(--tl-evt-text-faint)', fontSize: 13 }}>Nəticə tapılmadı.</p>
               )}
 
               {!loadingEvents && events.length > 0 && (
-                <div className="tl-pkg-grid">
-                  {events.map((ev) => (
-                    <div className="tl-pkg-card" key={ev.id} onClick={() => openEvent(ev)} style={{ cursor: 'pointer' }}>
-                      <div className="tl-pkg-body">
-                        <h3 className="tl-pkg-name">{ev.name}</h3>
-                        <div style={{ color: 'var(--tl-gray-600)', fontSize: 13, marginBottom: 8 }}>
-                          {formatEventDate(ev.date)}
-                          {ev.venue ? ` · ${ev.venue}` : ''}
-                          {ev.city ? `, ${ev.city}` : ''}
+                <div className="tl-evt-grid">
+                  {events.map((ev) => {
+                    const cardDate = formatCardDate(ev.date);
+                    return (
+                      <div className="tl-evt-card" key={ev.id} onClick={() => openEvent(ev)}>
+                        <div className="tl-evt-card-cover">
+                          {cardDate && (
+                            <div className="tl-evt-card-date">
+                              <span className="tl-evt-card-date-day">{cardDate.day}</span>
+                              <span className="tl-evt-card-date-month">{cardDate.month}</span>
+                            </div>
+                          )}
                         </div>
-                        {ev.lowPrice != null && (
-                          <div style={{ fontWeight: 700, color: 'var(--tl-navy)' }}>
-                            {formatPrice(ev.lowPrice, ev.currencyCode)}-dən başlayaraq
+                        <div className="tl-evt-card-body">
+                          <h3 className="tl-evt-card-name">{ev.name}</h3>
+                          <div className="tl-evt-card-meta">
+                            {[ev.venue, ev.city].filter(Boolean).join(', ')}
                           </div>
-                        )}
-                        {!ev.mercuryEligible && (
-                          <div style={{ color: '#b45309', fontSize: 12, marginTop: 6 }}>Mercury ilə satılmır</div>
-                        )}
+                          {ev.lowPrice != null && (
+                            <div className="tl-evt-card-price">
+                              {formatPrice(ev.lowPrice, ev.currencyCode)}-dən başlayaraq
+                            </div>
+                          )}
+                          {!ev.mercuryEligible && (
+                            <div className="tl-evt-card-ineligible">Mercury ilə satılmır</div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </>
@@ -547,10 +571,10 @@ export default function TicketNetworkEventsPage() {
                     </div>
                   )}
                   {!loadingGroups && ticketGroups.length === 0 && (
-                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>Bu tədbir üçün real bilet tapılmadı.</p>
+                    <p style={{ color: 'var(--tl-evt-text-faint)', fontSize: 13, marginTop: 16 }}>Bu tədbir üçün real bilet tapılmadı.</p>
                   )}
                   {!loadingGroups && ticketGroups.length > 0 && visibleTicketGroups.length === 0 && (
-                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>
+                    <p style={{ color: 'var(--tl-evt-text-faint)', fontSize: 13, marginTop: 16 }}>
                       {desiredQuantity} bilet birlikdə mövcud deyil. <button type="button" className="tl-evt-inline-link" onClick={() => setShowQuantityPopup(true)}>Sayı dəyişin</button>
                     </p>
                   )}
