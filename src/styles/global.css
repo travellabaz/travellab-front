@@ -1651,6 +1651,7 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-600);
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .tl-fbtn.active,
@@ -1658,6 +1659,16 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-green);
   border-color: var(--tl-green);
   color: #fff;
+}
+
+/* Custom focus ring instead of the browser default — on a filled pill
+   button (.active, e.g. the events search's "Axtar" button) the default
+   UA focus halo sits offset from the pill's rounded edge and, at small
+   sizes or in a compressed screenshot, reads as a second stacked button
+   rather than a focus indicator. */
+.tl-fbtn:focus-visible {
+  outline: 2px solid var(--tl-green-dark);
+  outline-offset: 2px;
 }
 
 /* package cards */
@@ -12293,7 +12304,19 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #991b1b;
 }
 
-@media (max-width: 900px) {
+/* 1420px = the map card's hard 992px min-width (needed so Seatics picks
+   its desktop CSS bucket, see the comment on .tl-evt-map-card above) +
+   the sidebar's fixed 380px + the 32px gap between them, plus a little
+   slack. Below this, the two columns literally don't fit side by side —
+   confirmed live at common laptop widths (1280-1366px) the sidebar was
+   rendering squeezed on top of the map/Seatics panel instead of next to
+   it (order-summary card overlapping the ticket details, inputs reading
+   as cut off). Stacking earlier here fixes that; the map itself keeps
+   its 992px min-width (own horizontal scroll if needed) all the way
+   down to the separate 900px breakpoint below, where it's finally safe
+   to let it go fully fluid because Seatics also switches to actual
+   mobile width there. */
+@media (max-width: 1420px) {
   .tl-evt-layout {
     flex-direction: column;
     align-items: stretch;
@@ -12304,7 +12327,9 @@ body:not(.tl-subpage) .tl-about-extra {
     width: 100%;
     flex-basis: auto;
   }
+}
 
+@media (max-width: 900px) {
   .tl-evt-map-card {
     min-width: 0;
     overflow-x: visible;
@@ -12371,16 +12396,17 @@ body:not(.tl-subpage) .tl-about-extra {
   color: var(--tl-gray-400);
 }
 
-/* "How many tickets?" popup — same overlay/card pattern as the other
-   modals (ManagerContactModal.jsx etc.), shown the moment an event page
-   opens, before the visitor browses the ticket list. */
+/* "How many tickets?" popup — matches the site's canonical modal chrome
+   exactly (see AuthModal.jsx's inline styles: same overlay tint/blur,
+   same 24px box radius, same 30px/8px close button) rather than the
+   generic/unbranded version this had before. */
 .tl-evt-qty-overlay {
   display: flex;
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(13, 21, 32, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(13, 21, 32, 0.88);
+  backdrop-filter: blur(8px);
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -12390,7 +12416,7 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-white);
   border: 1px solid var(--tl-gray-200);
   box-shadow: var(--tl-shadow);
-  border-radius: var(--tl-r-xl);
+  border-radius: 24px;
   width: 100%;
   max-width: 380px;
   padding: 32px;
@@ -12405,10 +12431,10 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-gray-100);
   border: none;
   border-radius: 8px;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   color: var(--tl-navy);
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   line-height: 1;
   display: flex;
@@ -12585,4 +12611,109 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #b45309;
   font-size: 12px;
   margin-top: 6px;
+}
+
+/* "Daha çox göstər" pagination control under the search-results grid. */
+.tl-evt-loadmore-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.tl-evt-loadmore {
+  padding: 11px 28px;
+  border-radius: 100px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Geist Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tl-evt-loadmore:hover {
+  border-color: var(--tl-green);
+  color: var(--tl-green-dark);
+}
+
+.tl-evt-loadmore:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Postponed/cancelled/rescheduled/sold-out banner — sits right under
+   .tl-evt-hero, visible regardless of which tab is active. Amber, not
+   red: these are informational (the event's status changed), not error
+   states caused by anything the visitor did. */
+.tl-evt-status-banner {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  border-radius: var(--tl-r-md);
+  padding: 14px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* Shared "nothing to show here" block — no search results, an event
+   with no purchasable tickets, or a postponed/cancelled/sold-out event.
+   Always gives a next step (browse everything) instead of a dead end. */
+.tl-evt-empty {
+  text-align: center;
+  padding: 48px 20px;
+  border: 1px dashed var(--tl-gray-200);
+  border-radius: var(--tl-r-xl);
+  background: var(--tl-gray-50);
+}
+
+.tl-evt-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--tl-white);
+  color: var(--tl-gray-400);
+  margin-bottom: 16px;
+  box-shadow: var(--tl-shadow);
+}
+
+.tl-evt-empty-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--tl-navy);
+  margin: 0 0 8px;
+}
+
+.tl-evt-empty-text {
+  color: var(--tl-gray-500);
+  font-size: 13.5px;
+  line-height: 1.6;
+  max-width: 440px;
+  margin: 0 auto 20px;
+}
+
+.tl-evt-empty-cta {
+  display: inline-flex;
+  width: auto;
+  flex: none;
+  padding: 11px 28px;
+}
+
+.tl-evt-empty-suggestions {
+  margin-top: 36px;
+  text-align: left;
+}
+
+.tl-evt-empty-suggestions-title {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  margin-bottom: 14px;
 }

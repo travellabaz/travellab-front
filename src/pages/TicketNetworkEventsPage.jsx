@@ -6,6 +6,7 @@ import { API_BASE, authFetch } from '../api/client';
 import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 import { getLocaleFromPathname } from '../utils/locale';
+import { formatDateTimeAz, formatDayMonthAz } from '../utils/date';
 
 // The TicketNetwork integration (Catalog search -> Mercury ticket groups
 // -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
@@ -21,12 +22,28 @@ import { getLocaleFromPathname } from '../utils/locale';
 // right) dressed in Travellab's own design tokens — see the "Event ticket
 // detail" block in global.css.
 function formatEventDate(iso) {
-  if (!iso) return '';
-  try {
-    return new Date(iso).toLocaleString('az-AZ', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  } catch {
-    return iso;
-  }
+  return formatDateTimeAz(iso);
+}
+
+// selectedEvent.scheduleStatus is TicketNetwork's raw Catalog value
+// (Active/Postponed/Cancelled/Rescheduled/SoldOut, case not guaranteed) —
+// never shown to the visitor as-is. null/Active/OnSale means "on sale
+// normally", nothing to show. Any other known value gets a specific AZ
+// message; an unrecognized value still gets a safe generic AZ fallback
+// rather than leaking the raw English string.
+const EVENT_STATUS_MESSAGES = {
+  postponed: 'Bu tədbir təxirə salınıb. Yeni tarix açıqlandıqda bu səhifə yenilənəcək.',
+  cancelled: 'Bu tədbir ləğv edilib.',
+  canceled: 'Bu tədbir ləğv edilib.',
+  rescheduled: 'Bu tədbirin tarixi dəyişdirilib — aktual tarixi yuxarıda yoxlayın.',
+  soldout: 'Bu tədbir üçün biletlər satılıb qurtarıb.',
+};
+
+function getEventStatusMessage(scheduleStatus) {
+  if (!scheduleStatus) return null;
+  const key = scheduleStatus.trim().toLowerCase().replace(/\s+/g, '');
+  if (key === 'active' || key === 'onsale') return null;
+  return EVENT_STATUS_MESSAGES[key] || 'Bu tədbirin satış statusu dəyişib. Zəhmət olmasa bir az sonra yenidən yoxlayın və ya bizimlə əlaqə saxlayın.';
 }
 
 // Whole-dollar display for marketing prices (card price range, ticket-row
@@ -50,18 +67,9 @@ function formatMoney(value, currency) {
   }
 }
 
-// Day + short month for the search-result card's date badge (e.g. "24"/"AVQ").
+// Day + short month for the search-result card's date badge (e.g. "24"/"Avq").
 function formatCardDate(iso) {
-  if (!iso) return null;
-  try {
-    const d = new Date(iso);
-    return {
-      day: d.toLocaleString('az-AZ', { day: 'numeric' }),
-      month: d.toLocaleString('az-AZ', { month: 'short' }).replace('.', ''),
-    };
-  } catch {
-    return null;
-  }
+  return formatDayMonthAz(iso);
 }
 
 function CalendarIcon() {
@@ -124,6 +132,78 @@ function TicketRowSkeleton() {
   );
 }
 
+// Shared with both the main search grid and EmptyState's "Oxşar tədbirlər"
+// suggestions, so the two never drift into two different card designs.
+function EventCard({ event, onClick }) {
+  const cardDate = formatCardDate(event.date);
+  return (
+    <div className="tl-evt-card" onClick={onClick}>
+      <div className="tl-evt-card-cover">
+        {cardDate && (
+          <div className="tl-evt-card-date">
+            <span className="tl-evt-card-date-day">{cardDate.day}</span>
+            <span className="tl-evt-card-date-month">{cardDate.month}</span>
+          </div>
+        )}
+      </div>
+      <div className="tl-evt-card-body">
+        <h3 className="tl-evt-card-name">{event.name}</h3>
+        <div className="tl-evt-card-meta">
+          {[event.venue, event.city].filter(Boolean).join(', ')}
+        </div>
+        {event.lowPrice != null && (
+          <div className="tl-evt-card-price">
+            {formatPrice(event.lowPrice, event.currencyCode)}-dən başlayaraq
+          </div>
+        )}
+        {!event.mercuryEligible && (
+          <div className="tl-evt-card-ineligible">Mercury ilə satılmır</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function EmptyStateIcon() {
+  return (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 7l1-4h14l1 4M4 7v11a2 2 0 002 2h12a2 2 0 002-2V7M4 7h16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 12h6M9 16h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Reused for every "nothing to show" case (no search results, a specific
+// event with no purchasable tickets, a postponed/cancelled/sold-out
+// event) — a plain one-line text message used to just dead-end the
+// visitor there; this always gives them a next step (browse everything)
+// plus, when we have them on hand, a few other real events to consider
+// instead of leaving the page empty.
+function EmptyState({ title, message, onBrowseAll, suggestions }) {
+  return (
+    <div className="tl-evt-empty">
+      <div className="tl-evt-empty-icon"><EmptyStateIcon /></div>
+      <h3 className="tl-evt-empty-title">{title}</h3>
+      <p className="tl-evt-empty-text">{message}</p>
+      {onBrowseAll && (
+        <button type="button" className="tl-btn-book tl-evt-empty-cta" onClick={onBrowseAll}>
+          Digər tədbirlərə bax
+        </button>
+      )}
+      {suggestions && suggestions.length > 0 && (
+        <div className="tl-evt-empty-suggestions">
+          <div className="tl-evt-empty-suggestions-title">Oxşar tədbirlər</div>
+          <div className="tl-evt-grid">
+            {suggestions.map((ev) => (
+              <EventCard key={ev.id} event={ev} onClick={() => { window.location.href = `/events/${ev.id}`; }} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TicketNetworkEventsPage() {
   const { profile, isAuthenticated } = useAuth();
   const { openAuth } = useModals();
@@ -134,6 +214,21 @@ export default function TicketNetworkEventsPage() {
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // "Oxşar tədbirlər" suggestions for EmptyState — a handful of other
+  // real, on-sale events, fetched lazily (only once something actually
+  // needs to show them: a dead-end search, or an event with no
+  // purchasable tickets/non-active status) rather than on every page load.
+  const [otherEvents, setOtherEvents] = useState([]);
+  const fetchOtherEvents = (excludeId) => {
+    fetch(API_BASE + '/tickets/events')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setOtherEvents((data || []).filter((ev) => String(ev.id) !== String(excludeId)).slice(0, 4)))
+      .catch((err) => console.error('ActionLog.ticketNetworkEvents.otherEventsFailed', err));
+  };
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -168,21 +263,51 @@ export default function TicketNetworkEventsPage() {
   const [purchasing, setPurchasing] = useState(false);
   const [result, setResult] = useState(null);
 
-  const searchEvents = async (e) => {
-    e.preventDefault();
-    setLoadingEvents(true);
-    setSearched(true);
+  // Backend supports ?page= (1-indexed, fixed page size server-side, see
+  // TicketNetworkEventService.searchPageSize) but doesn't return a total
+  // count — "hasMore" is a simple heuristic: keep showing "Daha çox
+  // göstər" as long as the last page we fetched came back non-empty, hide
+  // it the moment a page comes back empty. Worst case that's one harmless
+  // extra click right at the true end of the results.
+  const runSearch = async (kw, pageNum) => {
+    const isFirstPage = pageNum === 1;
+    if (isFirstPage) {
+      setLoadingEvents(true);
+      setSearched(true);
+    } else {
+      setLoadingMore(true);
+    }
     try {
-      const url = API_BASE + '/tickets/events' + (keyword.trim() ? '?keyword=' + encodeURIComponent(keyword.trim()) : '');
+      const url = API_BASE + '/tickets/events?' + [
+        kw.trim() ? 'keyword=' + encodeURIComponent(kw.trim()) : null,
+        'page=' + pageNum,
+      ].filter(Boolean).join('&');
       const res = await fetch(url);
       const data = res.ok ? await res.json() : [];
-      setEvents(data || []);
+      setEvents((prev) => (isFirstPage ? (data || []) : [...prev, ...(data || [])]));
+      setPage(pageNum);
+      setHasMore((data || []).length > 0);
+      if (isFirstPage && (data || []).length === 0) fetchOtherEvents();
     } catch (err) {
       console.error('ActionLog.ticketNetworkEvents.searchFailed', err);
-      setEvents([]);
+      if (isFirstPage) setEvents([]);
+      setHasMore(false);
     } finally {
-      setLoadingEvents(false);
+      if (isFirstPage) setLoadingEvents(false);
+      else setLoadingMore(false);
     }
+  };
+
+  const searchEvents = (e) => {
+    e.preventDefault();
+    runSearch(keyword, 1);
+  };
+
+  const loadMoreEvents = () => runSearch(keyword, page + 1);
+
+  const clearSearch = () => {
+    setKeyword('');
+    runSearch('', 1);
   };
 
   // The event stays in the URL (/events/:eventId) so it's a real,
@@ -323,6 +448,25 @@ export default function TicketNetworkEventsPage() {
     ? ticketGroups.filter((tg) => (tg.purchasableQuantities || []).includes(desiredQuantity))
     : ticketGroups;
 
+  const eventStatusMessage = selectedEvent ? getEventStatusMessage(selectedEvent.scheduleStatus) : null;
+  const noTicketsAvailable = !loadingGroups && (!!eventStatusMessage || ticketGroups.length === 0);
+
+  // Once it's clear there's really nothing to sell here (non-active
+  // status, or Mercury simply has no ticket groups for this event),
+  // fetch a few other real events so EmptyState below can suggest them
+  // instead of just dead-ending the visitor — and skip mounting
+  // SeaticsSeatMap at all, since Seatics' own widget shows its own
+  // (English, unbranded) "no results"/"postponed" messaging in exactly
+  // this situation, which this replaces.
+  useEffect(() => {
+    if (!selectedEvent || loadingGroups) return undefined;
+    if (getEventStatusMessage(selectedEvent.scheduleStatus) || ticketGroups.length === 0) {
+      fetchOtherEvents(selectedEvent.id);
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedEvent, loadingGroups, ticketGroups.length]);
+
   // Epoint is a redirect flow, not an inline mock charge — success here
   // means "the tickets are locked and a payment session is ready", not
   // "the purchase is done". A successful response takes the browser to
@@ -402,7 +546,6 @@ export default function TicketNetworkEventsPage() {
 
           {deepLinkNotFound && (
             <>
-              <div className="tl-tag">Daxili test</div>
               <h1 className="tl-title">Bu tədbir artıq mövcud deyil</h1>
               <p style={{ color: 'var(--tl-gray-500)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
                 Tədbir satışdan çıxıb və ya linkin müddəti bitib. Aşağıdakı axtarışdan aktual bir tədbir seçin.
@@ -413,10 +556,9 @@ export default function TicketNetworkEventsPage() {
           {!selectedEvent && !awaitingDeepLink && (
             <>
               <div className="tl-evt-hero">
-                <div className="tl-tag">Daxili test</div>
-                <h1 className="tl-title">Tədbir biletləri — TEST</h1>
+                <h1 className="tl-title">Tədbir biletləri</h1>
                 <p style={{ color: 'rgba(244, 247, 250, 0.78)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
-                  Ödəniş Epoint üzərindən aparılır. Yalnız sizin üçün açıqdır.
+                  Rəsmi tərəfdaşımız vasitəsilə təhlükəsiz bilet alışı.
                 </p>
 
                 <form style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }} onSubmit={searchEvents}>
@@ -427,7 +569,7 @@ export default function TicketNetworkEventsPage() {
                       onChange={(e) => setKeyword(e.target.value)}
                       onFocus={() => setShowSuggestions(true)}
                       onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                      placeholder="Search events (e.g. Hamilton, Yankees, Madrid)"
+                      placeholder="Tədbir axtar (məs. Hamilton, Yankees, Madrid)"
                       className="tl-evt-input"
                       style={{ marginBottom: 0 }}
                       autoComplete="off"
@@ -461,42 +603,31 @@ export default function TicketNetworkEventsPage() {
                   {Array.from({ length: 8 }).map((_, i) => <EventCardSkeleton key={i} />)}
                 </div>
               )}
+
               {!loadingEvents && searched && events.length === 0 && (
-                <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Nəticə tapılmadı.</p>
+                <EmptyState
+                  title="Nəticə tapılmadı"
+                  message="Axtarışınıza uyğun tədbir tapılmadı. Başqa açar söz sınayın və ya bütün tədbirlərə baxın."
+                  onBrowseAll={clearSearch}
+                  suggestions={otherEvents}
+                />
               )}
 
               {!loadingEvents && events.length > 0 && (
-                <div className="tl-evt-grid">
-                  {events.map((ev) => {
-                    const cardDate = formatCardDate(ev.date);
-                    return (
-                      <div className="tl-evt-card" key={ev.id} onClick={() => openEvent(ev)}>
-                        <div className="tl-evt-card-cover">
-                          {cardDate && (
-                            <div className="tl-evt-card-date">
-                              <span className="tl-evt-card-date-day">{cardDate.day}</span>
-                              <span className="tl-evt-card-date-month">{cardDate.month}</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="tl-evt-card-body">
-                          <h3 className="tl-evt-card-name">{ev.name}</h3>
-                          <div className="tl-evt-card-meta">
-                            {[ev.venue, ev.city].filter(Boolean).join(', ')}
-                          </div>
-                          {ev.lowPrice != null && (
-                            <div className="tl-evt-card-price">
-                              {formatPrice(ev.lowPrice, ev.currencyCode)}-dən başlayaraq
-                            </div>
-                          )}
-                          {!ev.mercuryEligible && (
-                            <div className="tl-evt-card-ineligible">Mercury ilə satılmır</div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <>
+                  <div className="tl-evt-grid">
+                    {events.map((ev) => (
+                      <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
+                    ))}
+                  </div>
+                  {hasMore && (
+                    <div className="tl-evt-loadmore-wrap">
+                      <button type="button" className="tl-evt-loadmore" onClick={loadMoreEvents} disabled={loadingMore}>
+                        {loadingMore ? 'Yüklənir...' : 'Daha çox göstər'}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}
@@ -548,6 +679,10 @@ export default function TicketNetworkEventsPage() {
                   <span className="tl-evt-trust-item"><ShieldIcon /> Ani e-bilet</span>
                 </div>
               </div>
+
+              {eventStatusMessage && (
+                <div className="tl-evt-status-banner">{eventStatusMessage}</div>
+              )}
 
               <div className="tl-evt-tabs">
                 {[
@@ -620,6 +755,17 @@ export default function TicketNetworkEventsPage() {
               )}
 
               <div className="tl-evt-layout" style={{ display: activeTab === 'seats' ? 'flex' : 'none' }}>
+                {noTicketsAvailable ? (
+                  <div className="tl-evt-main">
+                    <EmptyState
+                      title={eventStatusMessage ? 'Bu tədbir hazırda satışda deyil' : 'Bilet tapılmadı'}
+                      message={eventStatusMessage || 'Bu tədbir üçün hazırda satılan real bilet yoxdur. Bir az sonra yenidən yoxlayın və ya digər tədbirlərə baxın.'}
+                      onBrowseAll={backToResults}
+                      suggestions={otherEvents}
+                    />
+                  </div>
+                ) : (
+                <>
                 <div className="tl-evt-main">
                   <div className="tl-evt-map-card">
                     <SeaticsSeatMap
@@ -652,10 +798,7 @@ export default function TicketNetworkEventsPage() {
                       {Array.from({ length: 4 }).map((_, i) => <TicketRowSkeleton key={i} />)}
                     </div>
                   )}
-                  {!loadingGroups && ticketGroups.length === 0 && (
-                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>Bu tədbir üçün real bilet tapılmadı.</p>
-                  )}
-                  {!loadingGroups && ticketGroups.length > 0 && visibleTicketGroups.length === 0 && (
+                  {!loadingGroups && visibleTicketGroups.length === 0 && (
                     <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>
                       {desiredQuantity} bilet birlikdə mövcud deyil. <button type="button" className="tl-evt-inline-link" onClick={() => setShowQuantityPopup(true)}>Sayı dəyişin</button>
                     </p>
@@ -765,6 +908,8 @@ export default function TicketNetworkEventsPage() {
                     )}
                   </div>
                 </div>
+                </>
+                )}
               </div>
             </>
           )}
