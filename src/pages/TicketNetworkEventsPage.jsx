@@ -860,7 +860,7 @@ export default function TicketNetworkEventsPage() {
                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') selectGroup(tg); }}
                             className={`tl-evt-ticket-row${isSelected ? ' tl-evt-ticket-row-selected' : ''}`}
                           >
-                            <span>
+                            <span className="tl-evt-ticket-label">
                               <span className="tl-evt-ticket-section">{tg.section || 'Section n/a'}{tg.row ? `, Row ${tg.row}` : ''}</span>
                               <span className="tl-evt-ticket-sub">
                                 {tg.availableQuantity} available · {(tg.deliveryMethods || []).join(', ')}

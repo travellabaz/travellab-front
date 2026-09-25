@@ -147,7 +147,20 @@ body{margin:0;font-family:sans-serif;}
 //   into map zoom/pan whenever the cursor happened to rest over the map.
 //   Setting it explicitly guarantees the documented (off) behavior
 //   regardless of whatever our websiteConfigId currently has stored.
-window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } };
+// - buyButtonContentHtml: per the guide's "CTA in the Ticket Group Row"
+//   section — without it, each row in the widget's own built-in ticket
+//   list only has a bare ">" chevron, no visible "Buy"-style button (this
+//   is a *separate* list from our own "Mövcud biletlər" list further
+//   down the page — this one lives inside the Seatics widget itself).
+//   Brand orange (var(--tl-orange) in global.css), same "Al" label and
+//   color as our own list's own buy button.
+window.Seatics = {
+  config: {
+    mapContained: true,
+    mouseWheelZoomEnabled: false,
+    buyButtonContentHtml: '<div style="background:#F5A623;color:#1D2939;padding:10px 18px;border-radius:8px;font-weight:700;font-family:sans-serif;text-align:center;">Al</div>',
+  },
+};
 </script>
 </head>
 <body>

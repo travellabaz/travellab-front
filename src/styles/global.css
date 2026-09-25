@@ -12129,6 +12129,20 @@ body:not(.tl-subpage) .tl-about-extra {
   text-align: left;
   transition: all 0.2s;
   width: 100%;
+  /* box-sizing: without it, the 18px+18px padding and 1.5px+1.5px border
+     add on top of width:100%, same overflow bug as .tl-evt-input — here
+     it pushed the "Al" button (flex-shrink:0, at the far right) past the
+     row's own rounded border instead of the row itself looking wider. */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Left-hand label block (section/row/availability) — min-width:0 lets it
+   actually shrink below its own text's natural width when the row is
+   tight, instead of forcing the row wider than its box and pushing the
+   price/buy-button column (flex-shrink:0) past the row's right edge. */
+.tl-evt-ticket-label {
+  min-width: 0;
 }
 
 .tl-evt-ticket-row:hover {
@@ -12193,8 +12207,8 @@ body:not(.tl-subpage) .tl-about-extra {
   padding: 10px 20px;
   border-radius: var(--tl-r-sm);
   border: none;
-  background: var(--tl-green);
-  color: #fff;
+  background: var(--tl-orange);
+  color: var(--tl-navy);
   font-family: 'Geist Sans', sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -12203,7 +12217,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-ticket-buy:hover {
-  background: var(--tl-green-dark);
+  background: var(--tl-orange-dark);
 }
 
 /* ── Sticky order-summary sidebar — same sticky mechanics as
