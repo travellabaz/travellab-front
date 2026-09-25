@@ -11859,52 +11859,39 @@ body:not(.tl-subpage) .tl-about-extra {
 /* ── Event ticket detail (TicketNetworkEventsPage.jsx) — Expedia-style
    seat-map + ticket-list layout, dressed in Travellab's own tokens.
    Mirrors .tl-tourp-layout/.tl-tourp-sidebar-col's sticky two-column
-   pattern (see above) rather than inventing a new one. ── */
-/* ══════════════════════════════════════════════════════════════════
-   EVENTS / TICKETING — premium dark theme
-   ══════════════════════════════════════════════════════════════════
-   Scoped entirely under .tl-evt-page (wraps TicketNetworkEventsPage's
-   top-level <section>) — every rule below is a descendant selector, so
-   nothing here leaks into the rest of the site. Reuses --tl-navy2
-   (#0A2030, already defined site-wide but unused elsewhere) as the dark
-   surface instead of inventing a new color, and keeps the standard
-   --tl-green CTA — only the page's own background/card language goes
-   dark, per the brand brief ("əsas brend rəngi saxlanılsın, tünd fon
-   YALNIZ bu bölmənin öz kimliyi üçün"). Header/Footer are untouched
-   (Nav.jsx/Footer.jsx, already shared site-wide, stay light) — only the
-   content area between them goes dark, matching the reference mockups. */
-.tl-evt-page {
-  --tl-evt-bg: var(--tl-navy2);
-  --tl-evt-bg-soft: #0D2537;
-  --tl-evt-card: rgba(255, 255, 255, 0.045);
-  --tl-evt-card-hover: rgba(255, 255, 255, 0.075);
-  --tl-evt-border: rgba(255, 255, 255, 0.1);
-  --tl-evt-border-strong: rgba(255, 255, 255, 0.18);
-  --tl-evt-text: #F4F7FA;
-  --tl-evt-text-dim: rgba(244, 247, 250, 0.62);
-  --tl-evt-text-faint: rgba(244, 247, 250, 0.4);
-  --tl-evt-green: #22C069;
-  --tl-evt-shadow: 0 24px 60px rgba(2, 8, 14, 0.45);
-  background: var(--tl-evt-bg);
+   pattern (see above) rather than inventing a new one.
+
+   Page stays on the site's normal light background — only the header
+   band (title/date/venue/trust-badges, or the search title on the list
+   view) gets a dark gradient "hero" treatment, standing in for the
+   photo hero in the reference mockups (TicketNetwork/Mercury doesn't
+   give us real event photography to put behind it). Map card, ticket
+   list, sidebar and result cards below the hero are plain light cards,
+   same visual language as the rest of the site (.tl-pkg-card etc). ── */
+
+.tl-evt-hero {
+  background: linear-gradient(135deg, var(--tl-navy2) 0%, #123049 55%, var(--tl-teal) 140%);
   border-radius: var(--tl-r-xl);
-  padding: 40px 32px 56px;
-  color: var(--tl-evt-text);
+  padding: 28px 32px;
+  color: #F4F7FA;
+  margin-bottom: 28px;
 }
 
-.tl-evt-page .tl-tag {
-  background: rgba(34, 192, 105, 0.14);
-  color: var(--tl-evt-green);
+.tl-evt-hero .tl-tag {
+  background: rgba(34, 192, 105, 0.18);
+  color: #6EE7A0;
 }
 
-.tl-evt-page .tl-title {
-  color: var(--tl-evt-text);
+.tl-evt-hero .tl-title {
+  color: #fff;
+  margin-bottom: 0;
 }
 
 .tl-evt-back {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--tl-evt-text-dim);
+  color: rgba(244, 247, 250, 0.7);
   font-size: 13px;
   font-weight: 500;
   text-decoration: none;
@@ -11917,14 +11904,14 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-back:hover {
-  color: var(--tl-evt-green);
+  color: #6EE7A0;
 }
 
 .tl-evt-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  color: var(--tl-evt-text-dim);
+  color: rgba(244, 247, 250, 0.78);
   font-size: 14px;
   margin: 10px 0 18px;
 }
@@ -11936,7 +11923,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-meta-item svg {
-  color: var(--tl-evt-green);
+  color: #6EE7A0;
   flex-shrink: 0;
 }
 
@@ -11944,7 +11931,7 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 28px;
+  margin: 0;
 }
 
 .tl-evt-trust-item {
@@ -11953,15 +11940,110 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 6px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--tl-evt-green);
-  background: rgba(34, 192, 105, 0.12);
-  border: 1px solid rgba(34, 192, 105, 0.25);
+  color: #6EE7A0;
+  background: rgba(34, 192, 105, 0.16);
+  border: 1px solid rgba(34, 192, 105, 0.32);
   border-radius: 100px;
   padding: 7px 14px;
 }
 
 .tl-evt-trust-item svg {
   flex-shrink: 0;
+}
+
+/* Search title/subtitle/search-bar on the list view sit in the same
+   dark hero band — the search input gets its own light-on-dark (glass)
+   treatment here, distinct from the same .tl-evt-input class's plain
+   light styling further down (used in the checkout sidebar form). */
+.tl-evt-hero .tl-evt-search-wrap .tl-evt-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.tl-evt-hero .tl-evt-search-wrap .tl-evt-input::placeholder {
+  color: rgba(244, 247, 250, 0.55);
+}
+
+.tl-evt-hero .tl-evt-search-wrap .tl-evt-input:focus {
+  border-color: #6EE7A0;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Detail-page tabs (Ümumi məlumat / Yer seçimi / Qiymətlər / Qaydalar) —
+   sit on the plain light background right below .tl-evt-hero, green
+   underline on the active tab, same pattern as .tl-tourp's own tab-like
+   controls elsewhere on the site. */
+.tl-evt-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--tl-gray-200);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.tl-evt-tab {
+  padding: 12px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tl-gray-500);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tl-evt-tab:hover {
+  color: var(--tl-navy);
+}
+
+.tl-evt-tab-active {
+  color: var(--tl-green-dark);
+  border-bottom-color: var(--tl-green);
+}
+
+.tl-evt-tabpanel {
+  max-width: 760px;
+  margin-bottom: 32px;
+}
+
+.tl-evt-tabpanel p {
+  color: var(--tl-gray-600);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+
+.tl-evt-price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tl-evt-price-table th,
+.tl-evt-price-table td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--tl-gray-200);
+  white-space: nowrap;
+}
+
+.tl-evt-price-table th {
+  color: var(--tl-gray-500);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.tl-evt-price-table td {
+  color: var(--tl-navy);
+}
+
+.tl-evt-price-table strong {
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-layout {
@@ -11984,32 +12066,27 @@ body:not(.tl-subpage) .tl-about-extra {
    unstyled shapes. overflow-x lets the card scroll horizontally on
    windows narrower than 992px + sidebar instead of breaking the page;
    reverted below 900px, where .tl-evt-layout already stacks to one
-   column and Seatics should see an actual phone's real width.
-   The map iframe's own content stays a normal white/light surface
-   (it's Seatics' third-party document, not ours to reskin) — only the
-   frame around it goes dark, so it reads as "a light panel embedded in
-   a dark page" rather than a jarring white rectangle. */
+   column and Seatics should see an actual phone's real width. */
 .tl-evt-map-card {
-  border: 1px solid var(--tl-evt-border);
+  border: 1px solid var(--tl-gray-200);
   border-radius: var(--tl-r-xl);
   overflow: hidden;
   overflow-x: auto;
   min-width: 992px;
   margin-bottom: 28px;
-  box-shadow: var(--tl-evt-shadow);
 }
 
 .tl-evt-tickets-head {
   font-family: 'Geist Sans', sans-serif;
   font-size: 18px;
   font-weight: 800;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   margin: 0 0 4px;
 }
 
 .tl-evt-tickets-sub {
   font-size: 13px;
-  color: var(--tl-evt-text-faint);
+  color: var(--tl-gray-400);
   margin: 0 0 16px;
 }
 
@@ -12034,9 +12111,9 @@ body:not(.tl-subpage) .tl-about-extra {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 18px;
-  border: 1.5px solid var(--tl-evt-border);
+  border: 1.5px solid var(--tl-gray-200);
   border-radius: var(--tl-r-md);
-  background: var(--tl-evt-card);
+  background: var(--tl-white);
   cursor: pointer;
   text-align: left;
   transition: all 0.2s;
@@ -12044,26 +12121,25 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-ticket-row:hover {
-  border-color: var(--tl-evt-green);
-  background: var(--tl-evt-card-hover);
+  border-color: var(--tl-green);
 }
 
 .tl-evt-ticket-row.tl-evt-ticket-row-selected {
-  border-color: var(--tl-evt-green);
-  background: rgba(34, 192, 105, 0.12);
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
 }
 
 .tl-evt-ticket-section {
   font-size: 14px;
   font-weight: 700;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
 }
 
 .tl-evt-ticket-sub {
   display: block;
   font-size: 12px;
   font-weight: 500;
-  color: var(--tl-evt-text-faint);
+  color: var(--tl-gray-400);
   margin-top: 3px;
 }
 
@@ -12076,13 +12152,13 @@ body:not(.tl-subpage) .tl-about-extra {
   font-family: 'Geist Sans', sans-serif;
   font-size: 17px;
   font-weight: 800;
-  color: var(--tl-evt-green);
+  color: var(--tl-navy);
   display: block;
 }
 
 .tl-evt-ticket-price span {
   font-size: 11px;
-  color: var(--tl-evt-text-faint);
+  color: var(--tl-gray-400);
 }
 
 .tl-evt-ticket-price-azn {
@@ -12099,17 +12175,17 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-sidebar {
-  border: 1px solid var(--tl-evt-border-strong);
+  border: 1px solid var(--tl-gray-200);
   border-radius: var(--tl-r-xl);
-  box-shadow: var(--tl-evt-shadow);
+  box-shadow: var(--tl-shadow);
   padding: 24px;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  background: var(--tl-white);
 }
 
 .tl-evt-sidebar-empty {
   text-align: center;
   padding: 24px 8px;
-  color: var(--tl-evt-text-faint);
+  color: var(--tl-gray-400);
   font-size: 13px;
 }
 
@@ -12117,7 +12193,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-family: 'Geist Sans', sans-serif;
   font-size: 16px;
   font-weight: 800;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   margin: 0 0 16px;
 }
 
@@ -12128,23 +12204,23 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 10px;
   padding-bottom: 16px;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--tl-evt-border);
+  border-bottom: 1px solid var(--tl-gray-200);
 }
 
 .tl-evt-sidebar-selection strong {
   font-size: 14px;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
 }
 
 .tl-evt-input,
 .tl-evt-select {
   width: 100%;
   height: 46px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid var(--tl-evt-border);
+  background: var(--tl-gray-100);
+  border: 1.5px solid var(--tl-gray-200);
   border-radius: 12px;
   padding: 0 14px;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   font-size: 14px;
   font-weight: 500;
   font-family: 'Geist Sans', sans-serif;
@@ -12153,19 +12229,10 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 10px;
 }
 
-.tl-evt-input::placeholder {
-  color: var(--tl-evt-text-faint);
-}
-
 .tl-evt-input:focus,
 .tl-evt-select:focus {
-  border-color: var(--tl-evt-green);
-  background: rgba(34, 192, 105, 0.08);
-}
-
-.tl-evt-select option {
-  background: var(--tl-evt-bg-soft);
-  color: var(--tl-evt-text);
+  border-color: var(--tl-green);
+  background: rgba(4, 149, 72, 0.06);
 }
 
 .tl-evt-sidebar-total {
@@ -12177,14 +12244,14 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-sidebar-total-label {
   font-size: 13px;
-  color: var(--tl-evt-text-dim);
+  color: var(--tl-gray-600);
 }
 
 .tl-evt-sidebar-total-value {
   font-family: 'Geist Sans', sans-serif;
   font-size: 22px;
   font-weight: 800;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
 }
 
 /* The actual Epoint charge (AZN) — distinct from the USD quote above it,
@@ -12194,19 +12261,18 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-sidebar-total-azn .tl-evt-sidebar-total-label {
-  color: var(--tl-evt-green);
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-sidebar-total-azn .tl-evt-sidebar-total-value {
   font-size: 16px;
-  color: var(--tl-evt-green);
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-sidebar-cta {
   width: 100%;
   justify-content: center;
   padding: 13px 0;
-  box-shadow: 0 12px 28px rgba(4, 149, 72, 0.35);
 }
 
 .tl-evt-result {
@@ -12244,8 +12310,8 @@ body:not(.tl-subpage) .tl-about-extra {
     overflow-x: visible;
   }
 
-  .tl-evt-page {
-    padding: 24px 16px 40px;
+  .tl-evt-hero {
+    padding: 20px 18px;
     border-radius: var(--tl-r-lg);
   }
 }
@@ -12264,10 +12330,10 @@ body:not(.tl-subpage) .tl-about-extra {
   left: 0;
   right: 0;
   z-index: 20;
-  background: var(--tl-evt-bg-soft);
-  border: 1px solid var(--tl-evt-border-strong);
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
   border-radius: var(--tl-r-md);
-  box-shadow: var(--tl-evt-shadow);
+  box-shadow: var(--tl-shadow-lg);
   overflow: hidden;
   max-height: 320px;
   overflow-y: auto;
@@ -12281,7 +12347,7 @@ body:not(.tl-subpage) .tl-about-extra {
   padding: 10px 16px;
   background: none;
   border: none;
-  border-bottom: 1px solid var(--tl-evt-border);
+  border-bottom: 1px solid var(--tl-gray-100);
   text-align: left;
   cursor: pointer;
 }
@@ -12291,18 +12357,18 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-suggest-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--tl-gray-50);
 }
 
 .tl-evt-suggest-name {
   font-size: 13px;
   font-weight: 600;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
 }
 
 .tl-evt-suggest-meta {
   font-size: 11px;
-  color: var(--tl-evt-text-faint);
+  color: var(--tl-gray-400);
 }
 
 /* "How many tickets?" popup — same overlay/card pattern as the other
@@ -12313,41 +12379,35 @@ body:not(.tl-subpage) .tl-about-extra {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(2, 8, 14, 0.92);
-  backdrop-filter: blur(8px);
+  background: rgba(13, 21, 32, 0.6);
+  backdrop-filter: blur(4px);
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 
 .tl-evt-qty-box {
-  background: var(--tl-evt-bg-soft);
-  border: 1px solid var(--tl-evt-border-strong);
-  box-shadow: var(--tl-evt-shadow);
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  box-shadow: var(--tl-shadow);
   border-radius: var(--tl-r-xl);
   width: 100%;
   max-width: 380px;
   padding: 32px;
   position: relative;
-  color: var(--tl-evt-text);
   animation: authPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-}
-
-.tl-evt-qty-box .tl-evt-sidebar-title,
-.tl-evt-qty-box .tl-evt-tickets-sub {
-  color: var(--tl-evt-text);
 }
 
 .tl-evt-qty-close {
   position: absolute;
   top: 14px;
   right: 14px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--tl-gray-100);
   border: none;
   border-radius: 8px;
   width: 32px;
   height: 32px;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   font-size: 20px;
   cursor: pointer;
   line-height: 1;
@@ -12365,46 +12425,45 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-evt-qty-btn {
   height: 52px;
   border-radius: var(--tl-r-sm);
-  border: 1.5px solid var(--tl-evt-border);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
   font-family: 'Geist Sans', sans-serif;
   font-size: 17px;
   font-weight: 700;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .tl-evt-qty-btn:hover {
-  border-color: var(--tl-evt-green);
-  background: rgba(34, 192, 105, 0.14);
-  color: var(--tl-evt-green);
+  border-color: var(--tl-green);
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-qty-pill {
   flex-shrink: 0;
   padding: 7px 14px;
   border-radius: 100px;
-  border: 1.5px solid var(--tl-evt-border);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
   font-size: 12px;
   font-weight: 600;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s;
 }
 
 .tl-evt-qty-pill:hover {
-  border-color: var(--tl-evt-green);
-  color: var(--tl-evt-green);
+  border-color: var(--tl-green);
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-inline-link {
   background: none;
   border: none;
   padding: 0;
-  color: var(--tl-evt-green);
+  color: var(--tl-green);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -12412,9 +12471,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* Skeleton loading state for the search grid and ticket list — replaces
-   plain "Yüklənir..." text with Expedia-style shimmering placeholders.
-   Dark-surface variant (the light gray shimmer used everywhere else on
-   the site would be invisible against .tl-evt-page's navy background). */
+   plain "Yüklənir..." text with Expedia-style shimmering placeholders. */
 @keyframes tl-evt-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -12422,14 +12479,17 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-skel {
   border-radius: 6px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 25%, rgba(255, 255, 255, 0.14) 37%, rgba(255, 255, 255, 0.06) 63%);
+  background: linear-gradient(90deg, var(--tl-gray-100) 25%, var(--tl-gray-200) 37%, var(--tl-gray-100) 63%);
   background-size: 400% 100%;
   animation: tl-evt-shimmer 1.4s ease infinite;
 }
 
 /* ── Search-results grid (event cards) — dedicated classes, not the
    shared .tl-pkg-* ones (those are reused by tour cards across the rest
-   of the site; redesigning them here would have reskinned tours too). ── */
+   of the site; redesigning them here would have reskinned tours too).
+   Light card body (matches the rest of the site) with a colored gradient
+   cover strip standing in for a real event photo — TicketNetwork/Mercury
+   doesn't give us usable images, see the .tl-evt-hero comment above. ── */
 .tl-evt-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -12438,49 +12498,45 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-card {
   position: relative;
-  border: 1px solid var(--tl-evt-border);
+  border: 1px solid var(--tl-gray-200);
   border-radius: var(--tl-r-lg);
-  background: var(--tl-evt-card);
+  background: var(--tl-white);
+  box-shadow: var(--tl-shadow);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .tl-evt-card:hover {
   transform: translateY(-3px);
-  border-color: var(--tl-evt-green);
-  background: var(--tl-evt-card-hover);
+  box-shadow: var(--tl-shadow-lg);
 }
 
 .tl-evt-card-cover {
   position: relative;
   height: 120px;
-  background: linear-gradient(135deg, #123049, #0A2030 65%);
+  background: linear-gradient(135deg, var(--tl-navy2), var(--tl-teal) 130%);
   overflow: hidden;
 }
 
-/* Faint repeating "sound bars" motif — a cheap, license-free stand-in
-   for a real event photo (TicketNetwork's own images are low-quality,
-   see the design brief) so cards don't read as broken/empty. */
 .tl-evt-card-cover::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 15% 30%, rgba(34, 192, 105, 0.35), transparent 40%),
-    radial-gradient(circle at 85% 70%, rgba(34, 192, 105, 0.2), transparent 45%);
+  background-image: radial-gradient(circle at 15% 30%, rgba(34, 192, 105, 0.4), transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(34, 192, 105, 0.22), transparent 45%);
 }
 
 .tl-evt-card-date {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: rgba(10, 32, 48, 0.85);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--tl-evt-border-strong);
+  background: var(--tl-white);
   border-radius: 10px;
   padding: 6px 10px;
   text-align: center;
   line-height: 1.1;
+  box-shadow: var(--tl-shadow);
 }
 
 .tl-evt-card-date-day {
@@ -12488,7 +12544,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-family: 'Geist Sans', sans-serif;
   font-size: 15px;
   font-weight: 800;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
 }
 
 .tl-evt-card-date-month {
@@ -12497,7 +12553,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: var(--tl-evt-green);
+  color: var(--tl-green-dark);
 }
 
 .tl-evt-card-body {
@@ -12508,25 +12564,25 @@ body:not(.tl-subpage) .tl-about-extra {
   font-family: 'Geist Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
-  color: var(--tl-evt-text);
+  color: var(--tl-navy);
   margin: 0 0 6px;
   line-height: 1.3;
 }
 
 .tl-evt-card-meta {
-  color: var(--tl-evt-text-dim);
+  color: var(--tl-gray-600);
   font-size: 12.5px;
   margin-bottom: 10px;
 }
 
 .tl-evt-card-price {
   font-weight: 700;
-  color: var(--tl-evt-green);
+  color: var(--tl-green-dark);
   font-size: 14px;
 }
 
 .tl-evt-card-ineligible {
-  color: #f0ad4e;
+  color: #b45309;
   font-size: 12px;
   margin-top: 6px;
 }

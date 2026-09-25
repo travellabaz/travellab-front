@@ -138,6 +138,13 @@ export default function TicketNetworkEventsPage() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  // Detail-page tabs (Ümumi məlumat / Yer seçimi / Qiymətlər / Qaydalar),
+  // matching the reference mockup's structure — "Yer seçimi" holds the
+  // existing map + ticket-list + checkout flow unchanged, the other three
+  // are light read-only panels built from data we already have (event
+  // fields, ticketGroups) rather than new content/API surface.
+  const [activeTab, setActiveTab] = useState('seats');
+
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [ticketGroups, setTicketGroups] = useState([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
@@ -245,6 +252,7 @@ export default function TicketNetworkEventsPage() {
     setQuantity(1);
     setDesiredQuantity(null);
     setShowQuantityPopup(true);
+    setActiveTab('seats');
     setResult(null);
     setLoadingGroups(true);
     setCustomerName(profile ? `${profile.name} ${profile.surname}`.trim() : '');
@@ -396,7 +404,7 @@ export default function TicketNetworkEventsPage() {
             <>
               <div className="tl-tag">Daxili test</div>
               <h1 className="tl-title">Bu tədbir artıq mövcud deyil</h1>
-              <p style={{ color: 'var(--tl-evt-text-dim)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
+              <p style={{ color: 'var(--tl-gray-500)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
                 Tədbir satışdan çıxıb və ya linkin müddəti bitib. Aşağıdakı axtarışdan aktual bir tədbir seçin.
               </p>
             </>
@@ -404,47 +412,49 @@ export default function TicketNetworkEventsPage() {
 
           {!selectedEvent && !awaitingDeepLink && (
             <>
-              <div className="tl-tag">Daxili test</div>
-              <h1 className="tl-title">Tədbir biletləri — TEST</h1>
-              <p style={{ color: 'var(--tl-evt-text-dim)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
-                Ödəniş Epoint üzərindən aparılır. Yalnız sizin üçün açıqdır.
-              </p>
+              <div className="tl-evt-hero">
+                <div className="tl-tag">Daxili test</div>
+                <h1 className="tl-title">Tədbir biletləri — TEST</h1>
+                <p style={{ color: 'rgba(244, 247, 250, 0.78)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
+                  Ödəniş Epoint üzərindən aparılır. Yalnız sizin üçün açıqdır.
+                </p>
 
-              <form style={{ display: 'flex', gap: 10, marginBottom: 24, flexWrap: 'wrap' }} onSubmit={searchEvents}>
-                <div className="tl-evt-search-wrap">
-                  <input
-                    type="text"
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    onFocus={() => setShowSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                    placeholder="Search events (e.g. Hamilton, Yankees, Madrid)"
-                    className="tl-evt-input"
-                    style={{ marginBottom: 0 }}
-                    autoComplete="off"
-                  />
-                  {showSuggestions && suggestions.length > 0 && (
-                    <div className="tl-evt-suggest">
-                      {suggestions.map((s) => (
-                        <button
-                          key={s.id}
-                          type="button"
-                          className="tl-evt-suggest-item"
-                          onMouseDown={() => openSuggestion(s)}
-                        >
-                          <span className="tl-evt-suggest-name">{s.name}</span>
-                          <span className="tl-evt-suggest-meta">
-                            {[s.date, [s.venue, s.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <button type="submit" className="tl-fbtn active" style={{ border: 'none', cursor: 'pointer' }}>
-                  Axtar
-                </button>
-              </form>
+                <form style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }} onSubmit={searchEvents}>
+                  <div className="tl-evt-search-wrap">
+                    <input
+                      type="text"
+                      value={keyword}
+                      onChange={(e) => setKeyword(e.target.value)}
+                      onFocus={() => setShowSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                      placeholder="Search events (e.g. Hamilton, Yankees, Madrid)"
+                      className="tl-evt-input"
+                      style={{ marginBottom: 0 }}
+                      autoComplete="off"
+                    />
+                    {showSuggestions && suggestions.length > 0 && (
+                      <div className="tl-evt-suggest">
+                        {suggestions.map((s) => (
+                          <button
+                            key={s.id}
+                            type="button"
+                            className="tl-evt-suggest-item"
+                            onMouseDown={() => openSuggestion(s)}
+                          >
+                            <span className="tl-evt-suggest-name">{s.name}</span>
+                            <span className="tl-evt-suggest-meta">
+                              {[s.date, [s.venue, s.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <button type="submit" className="tl-fbtn active" style={{ border: 'none', cursor: 'pointer' }}>
+                    Axtar
+                  </button>
+                </form>
+              </div>
 
               {loadingEvents && (
                 <div className="tl-evt-grid">
@@ -452,7 +462,7 @@ export default function TicketNetworkEventsPage() {
                 </div>
               )}
               {!loadingEvents && searched && events.length === 0 && (
-                <p style={{ color: 'var(--tl-evt-text-faint)', fontSize: 13 }}>Nəticə tapılmadı.</p>
+                <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>Nəticə tapılmadı.</p>
               )}
 
               {!loadingEvents && events.length > 0 && (
@@ -515,29 +525,101 @@ export default function TicketNetworkEventsPage() {
 
           {selectedEvent && (
             <>
-              <button type="button" className="tl-evt-back" onClick={backToResults}>
-                <BackArrowIcon /> Axtarışa qayıt
-              </button>
+              <div className="tl-evt-hero">
+                <button type="button" className="tl-evt-back" onClick={backToResults}>
+                  <BackArrowIcon /> Axtarışa qayıt
+                </button>
 
-              <h1 className="tl-title">{selectedEvent.name}</h1>
-              <div className="tl-evt-meta">
-                {selectedEvent.date && (
-                  <span className="tl-evt-meta-item"><CalendarIcon /> {formatEventDate(selectedEvent.date)}</span>
-                )}
-                {(selectedEvent.venue || selectedEvent.city) && (
-                  <span className="tl-evt-meta-item">
-                    <PinIcon /> {[selectedEvent.venue, selectedEvent.city].filter(Boolean).join(', ')}
-                  </span>
-                )}
+                <h1 className="tl-title">{selectedEvent.name}</h1>
+                <div className="tl-evt-meta">
+                  {selectedEvent.date && (
+                    <span className="tl-evt-meta-item"><CalendarIcon /> {formatEventDate(selectedEvent.date)}</span>
+                  )}
+                  {(selectedEvent.venue || selectedEvent.city) && (
+                    <span className="tl-evt-meta-item">
+                      <PinIcon /> {[selectedEvent.venue, selectedEvent.city].filter(Boolean).join(', ')}
+                    </span>
+                  )}
+                </div>
+
+                <div className="tl-evt-trust">
+                  <span className="tl-evt-trust-item"><ShieldIcon /> Rəsmi tərəfdaş</span>
+                  <span className="tl-evt-trust-item"><ShieldIcon /> Təhlükəsiz ödəniş</span>
+                  <span className="tl-evt-trust-item"><ShieldIcon /> Ani e-bilet</span>
+                </div>
               </div>
 
-              <div className="tl-evt-trust">
-                <span className="tl-evt-trust-item"><ShieldIcon /> Rəsmi tərəfdaş</span>
-                <span className="tl-evt-trust-item"><ShieldIcon /> Təhlükəsiz ödəniş</span>
-                <span className="tl-evt-trust-item"><ShieldIcon /> Ani e-bilet</span>
+              <div className="tl-evt-tabs">
+                {[
+                  { key: 'info', label: 'Ümumi məlumat' },
+                  { key: 'seats', label: 'Yer seçimi' },
+                  { key: 'prices', label: 'Qiymətlər' },
+                  { key: 'rules', label: 'Qaydalar' },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    className={`tl-evt-tab${activeTab === tab.key ? ' tl-evt-tab-active' : ''}`}
+                    onClick={() => setActiveTab(tab.key)}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
 
-              <div className="tl-evt-layout">
+              {activeTab === 'info' && (
+                <div className="tl-evt-tabpanel">
+                  <p>
+                    <strong>{selectedEvent.name}</strong>
+                    {selectedEvent.date ? ` — ${formatEventDate(selectedEvent.date)}` : ''}
+                    {selectedEvent.venue ? `, ${selectedEvent.venue}` : ''}
+                    {selectedEvent.city ? `, ${selectedEvent.city}` : ''}.
+                  </p>
+                  <p>Biletlər rəsmi tərəfdaşımız TicketNetwork vasitəsilə təqdim olunur — bu, ilkin bilet satıcısı deyil, üçüncü tərəf satıcıların yerlərini təklif edən bir bazardır. Qiymətlər nominal dəyərdən yuxarı və ya aşağı ola bilər və satıcı tərəfindən müəyyən edilir.</p>
+                  <p>Ödəniş Travellab-ın Epoint təhlükəsiz ödəniş sistemi üzərindən AZN ilə aparılır. Sifariş təsdiqləndikdən sonra bilet(lər) seçdiyiniz çatdırılma üsulu ilə (adətən e-bilet) təqdim olunur.</p>
+                </div>
+              )}
+
+              {activeTab === 'prices' && (
+                <div className="tl-evt-tabpanel">
+                  {ticketGroups.length === 0 ? (
+                    <p style={{ color: 'var(--tl-gray-400)' }}>Qiymət məlumatı hazırda mövcud deyil.</p>
+                  ) : (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table className="tl-evt-price-table">
+                        <thead>
+                          <tr>
+                            <th>Sektor</th>
+                            <th>Sıra</th>
+                            <th>Mövcud</th>
+                            <th>Qiymət</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {ticketGroups.map((tg) => (
+                            <tr key={tg.ticketGroupId}>
+                              <td>{tg.section || '—'}</td>
+                              <td>{tg.row || '—'}</td>
+                              <td>{tg.availableQuantity}</td>
+                              <td><strong>{formatPrice(tg.retailPrice, tg.currencyCode)}</strong></td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'rules' && (
+                <div className="tl-evt-tabpanel">
+                  <p>Bütün satışlar yekundur — bilet(lər) geri qaytarılmır və ya dəyişdirilmir, tədbirin ləğvi halları istisna olmaqla.</p>
+                  <p>Ödəniş uğurla aparıldıqdan sonra sifariş TicketNetwork Mercury sistemi vasitəsilə real vaxtda təsdiqlənir; təsdiqdən sonra bilet(lər) seçdiyiniz çatdırılma üsulu ilə təqdim olunur.</p>
+                  <p>Əgər sifariş texniki səbəbdən təsdiqlənə bilməzsə, ödənişiniz avtomatik olaraq kartınıza geri qaytarılır.</p>
+                </div>
+              )}
+
+              <div className="tl-evt-layout" style={{ display: activeTab === 'seats' ? 'flex' : 'none' }}>
                 <div className="tl-evt-main">
                   <div className="tl-evt-map-card">
                     <SeaticsSeatMap
@@ -571,10 +653,10 @@ export default function TicketNetworkEventsPage() {
                     </div>
                   )}
                   {!loadingGroups && ticketGroups.length === 0 && (
-                    <p style={{ color: 'var(--tl-evt-text-faint)', fontSize: 13, marginTop: 16 }}>Bu tədbir üçün real bilet tapılmadı.</p>
+                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>Bu tədbir üçün real bilet tapılmadı.</p>
                   )}
                   {!loadingGroups && ticketGroups.length > 0 && visibleTicketGroups.length === 0 && (
-                    <p style={{ color: 'var(--tl-evt-text-faint)', fontSize: 13, marginTop: 16 }}>
+                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13, marginTop: 16 }}>
                       {desiredQuantity} bilet birlikdə mövcud deyil. <button type="button" className="tl-evt-inline-link" onClick={() => setShowQuantityPopup(true)}>Sayı dəyişin</button>
                     </p>
                   )}
