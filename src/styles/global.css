@@ -12199,6 +12199,9 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   padding: 10px 18px;
   border-radius: 100px;
   border: 1.5px solid var(--tl-gray-200);
@@ -12209,6 +12212,10 @@ body:not(.tl-subpage) .tl-about-extra {
   font-family: 'Geist Sans', sans-serif;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.tl-evt-cat-chip svg {
+  flex-shrink: 0;
 }
 
 .tl-evt-cat-chip:hover {

@@ -78,6 +78,17 @@ function formatPrice(value, currency) {
   }
 }
 
+// "1 300 ₼" — whole AZN, space-grouped thousands, no decimals. Used for
+// browse/search card prices (event.lowPriceAzn, Travellab's own margin
+// already applied server-side — see CurrencyConversionUtil). Falls back
+// to formatPrice's raw USD display when the backend didn't have a USD
+// lowPrice to convert.
+function formatAznWhole(value) {
+  if (value == null) return '';
+  const rounded = Math.round(value);
+  return `${rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')} ₼`;
+}
+
 function formatMoney(value, currency) {
   if (value == null) return '';
   try {
@@ -171,6 +182,88 @@ function MobileAppIcon() {
   );
 }
 
+// Category-chip icons — one per CATEGORY_SHORTCUTS entry, 15px so they
+// sit comfortably inline with the chip label text.
+function GridIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+      <rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function MusicNoteIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 18V5l11-2v13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="6" cy="18" r="3" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="17" cy="16" r="3" stroke="currentColor" strokeWidth="1.8" />
+    </svg>
+  );
+}
+
+function TrophyIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 4h8v6a4 4 0 01-8 0V4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M8 5H5a1 1 0 00-1 1v1a3 3 0 003 3M16 5h3a1 1 0 011 1v1a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M12 14v3M9 20h6M9.5 20c0-1.6.9-2.6 2.5-3 1.6.4 2.5 1.4 2.5 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SparkleIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3l1.8 5.6L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.4L12 3Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MasksIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 5c3 1 3 6 0 7 1 4 5 6 8 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M21 5c-3 1-3 6 0 7-1 4-5 6-8 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="8" cy="8" r="1" fill="currentColor" />
+      <circle cx="16" cy="8" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function SpotlightIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2v3M6 5l2 2M18 5l-2 2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M7 9h10l3 11H4L7 9Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function GalleryIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="4" width="18" height="14" rx="1.5" stroke="currentColor" strokeWidth="1.7" />
+      <circle cx="8" cy="9" r="1.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3 15l5-4 4 3 3-2 6 6" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MoreDotsIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="5" cy="12" r="1.6" fill="currentColor" />
+      <circle cx="12" cy="12" r="1.6" fill="currentColor" />
+      <circle cx="19" cy="12" r="1.6" fill="currentColor" />
+    </svg>
+  );
+}
+
 function EventCardSkeleton() {
   return (
     <div className="tl-evt-card">
@@ -217,7 +310,7 @@ function EventCard({ event, onClick }) {
         </div>
         {event.lowPrice != null && (
           <div className="tl-evt-card-price">
-            {formatPrice(event.lowPrice, event.currencyCode)}-dən başlayaraq
+            {event.lowPriceAzn != null ? formatAznWhole(event.lowPriceAzn) : formatPrice(event.lowPrice, event.currencyCode)}-dən başlayaraq
           </div>
         )}
         {!event.mercuryEligible && (
@@ -328,14 +421,14 @@ export default function TicketNetworkEventsPage() {
   // the per-event category system the design implies. Revisit if
   // TicketNetwork ever exposes real classification data.
   const CATEGORY_SHORTCUTS = [
-    { key: 'all', label: 'Bütün tədbirlər', kw: '' },
-    { key: 'concerts', label: 'Konsertlər', kw: 'concert' },
-    { key: 'sports', label: 'İdman oyunları', kw: 'sports' },
-    { key: 'festivals', label: 'Festivallar', kw: 'festival' },
-    { key: 'theatre', label: 'Teatr', kw: 'theatre' },
-    { key: 'shows', label: 'Şou proqram', kw: 'show' },
-    { key: 'expos', label: 'Sərgilər', kw: 'expo' },
-    { key: 'other', label: 'Digər', kw: 'event' },
+    { key: 'all', label: 'Bütün tədbirlər', kw: '', Icon: GridIcon },
+    { key: 'concerts', label: 'Konsertlər', kw: 'concert', Icon: MusicNoteIcon },
+    { key: 'sports', label: 'İdman oyunları', kw: 'sports', Icon: TrophyIcon },
+    { key: 'festivals', label: 'Festivallar', kw: 'festival', Icon: SparkleIcon },
+    { key: 'theatre', label: 'Teatr', kw: 'theatre', Icon: MasksIcon },
+    { key: 'shows', label: 'Şou proqram', kw: 'show', Icon: SpotlightIcon },
+    { key: 'expos', label: 'Sərgilər', kw: 'expo', Icon: GalleryIcon },
+    { key: 'other', label: 'Digər', kw: 'event', Icon: MoreDotsIcon },
   ];
   const runCategorySearch = (kw) => {
     setKeyword(kw);
@@ -829,7 +922,7 @@ export default function TicketNetworkEventsPage() {
                         className={`tl-evt-cat-chip${keyword === cat.kw ? ' tl-evt-cat-chip-active' : ''}`}
                         onClick={() => runCategorySearch(cat.kw)}
                       >
-                        {cat.label}
+                        <cat.Icon /> {cat.label}
                       </button>
                     ))}
                   </div>
