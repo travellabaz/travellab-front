@@ -147,28 +147,7 @@ body{margin:0;font-family:sans-serif;}
 //   into map zoom/pan whenever the cursor happened to rest over the map.
 //   Setting it explicitly guarantees the documented (off) behavior
 //   regardless of whatever our websiteConfigId currently has stored.
-// - tgGuaranteeNoteHtml / preCheckoutButtonHtml / desktopEventInfoRightCol:
-//   AZ translations of the widget's own hardcoded English UI text, per
-//   the "Customizing Seatics.Text"/"Large Screen Disclosures Customization"/
-//   "Pre-Checkout Screen Customization" sections of TicketNetwork's own
-//   "Seatics Maps - API Integration Guide" (v3.18) — these are documented,
-//   supported override points, not a guess. desktopEventInfoRightCol is
-//   the guide's own example HTML with only the visible text translated —
-//   ids/classes kept identical so the guarantee popup still opens/closes
-//   correctly and any of their own CSS targeting those ids still applies.
-//   The four other reported English strings ("this event has been
-//   postponed", "no results for this event", etc.) aren't documented
-//   anywhere in the guide as overridable text, so those aren't guessed at
-//   here — see the email to Yuliya asking about them directly.
-window.Seatics = {
-  config: {
-    mapContained: true,
-    mouseWheelZoomEnabled: false,
-    tgGuaranteeNoteHtml: '100% Zəmanətli Alış',
-    preCheckoutButtonHtml: 'Təhlükəsiz ödənişə keç',
-    desktopEventInfoRightCol: '<div class="event-info-disclaimer"><a id="event-info-guarantee-show" class="event-info-guarantee-show" href="javascript:">100% Zəmanətli Alış</a><br><span>&#x2713; Travellab etibarlı bazar platformasıdır, bilet satıcısı deyil.</span><br><span>&#x2713; Qiymətlər üçüncü tərəf satıcılar tərəfindən təyin olunur və nominal dəyərdən yuxarı və ya aşağı ola bilər.</span><br><span>&#x2713; Yerləriniz, əks halda qeyd olunmadıqca, yan-yana olacaq.</span><br><span>&#x2713; Bütün satışlar yekundur.</span><br><div id="event-info-guarantee" class="event-info-guarantee" style="display: none;"><a id="event-info-guarantee-close" class="event-info-guarantee-close icon-cancel" href="javascript:void(0)"></a><h3>Biz sizi 100% dəstəkləyirik.</h3><br><p>İstər bilet alın, istərsə satın, əməliyyatınızı qoruyuruq.</p><br /><p><strong>Aşağıdakı hallarda biletləriniz üçün 100% geri ödəniş alacaqsınız:</strong></p><ul><li>Sifarişiniz qəbul edilib, lakin satıcı tərəfindən çatdırılmayıb.</li><li>Sifarişiniz qəbul edilib, lakin tədbirə vaxtında göndərilməyib.</li><li>Biletləriniz girişə etibarlı deyildi.<sup>(1)</sup></li><li>Tədbiriniz ləğv edilib və təxirə salınmayıb.<sup>(2)</sup></li></ul><br /><p><strong>Qeydlər:</strong></p><p>(1) Təsdiqlənmiş sübut məkandan məktub şəklində təqdim olunmalıdır. Yazılı və ya möhürlənmiş "etibarsız" qeydləri təsdiqlənmiş sübut sayılmır.</p><p>(2) Ləğv edilmiş tədbir üçün 100% geri ödənişə çatdırılma xərcləri daxil deyil.</p></div></div>',
-  },
-};
+window.Seatics = { config: { mapContained: true, mouseWheelZoomEnabled: false } };
 </script>
 </head>
 <body>
