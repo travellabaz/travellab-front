@@ -12613,15 +12613,23 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-top: 6px;
 }
 
-/* "Daha çox göstər" pagination control under the search-results grid. */
-.tl-evt-loadmore-wrap {
+/* Prev/Next pagination bar under the search-results grid — each click
+   replaces the grid with that page's own results (not an accumulating
+   "load more" list). No total-page count from the backend (see runSearch
+   in TicketNetworkEventsPage.jsx), so there's a page number but no "of N". */
+.tl-evt-pagination {
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 18px;
   margin-top: 28px;
 }
 
-.tl-evt-loadmore {
-  padding: 11px 28px;
+.tl-evt-page-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
   border-radius: 100px;
   border: 1.5px solid var(--tl-gray-200);
   background: var(--tl-white);
@@ -12633,14 +12641,25 @@ body:not(.tl-subpage) .tl-about-extra {
   transition: all 0.2s;
 }
 
-.tl-evt-loadmore:hover {
+.tl-evt-page-btn:hover:not(:disabled) {
   border-color: var(--tl-green);
   color: var(--tl-green-dark);
 }
 
-.tl-evt-loadmore:disabled {
-  opacity: 0.6;
+.tl-evt-page-btn:disabled {
+  opacity: 0.4;
   cursor: default;
+}
+
+.tl-evt-page-next-arrow {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.tl-evt-page-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-gray-500);
 }
 
 /* Postponed/cancelled/rescheduled/sold-out banner — sits right under

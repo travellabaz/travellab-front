@@ -26,6 +26,14 @@ export function formatDateTimeAz(isoDateTime) {
   return `${d.getDate()} ${AZ_MONTHS[d.getMonth()]} ${d.getFullYear()}, ${hh}:${mm}`;
 }
 
+// Date only (no time) for a datetime ISO string -> "3 Oktyabr 2026".
+export function formatDateOnlyAz(isoDateTime) {
+  if (!isoDateTime) return '';
+  const d = new Date(isoDateTime);
+  if (Number.isNaN(d.getTime())) return isoDateTime;
+  return `${d.getDate()} ${AZ_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 // Day number + short month name, for compact date badges (event cards).
 export function formatDayMonthAz(isoDateTime) {
   if (!isoDateTime) return null;

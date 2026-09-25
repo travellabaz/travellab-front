@@ -6,7 +6,7 @@ import { API_BASE, authFetch } from '../api/client';
 import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 import { getLocaleFromPathname } from '../utils/locale';
-import { formatDateTimeAz, formatDayMonthAz } from '../utils/date';
+import { formatDateTimeAz, formatDayMonthAz, formatDateOnlyAz } from '../utils/date';
 
 // The TicketNetwork integration (Catalog search -> Mercury ticket groups
 // -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
@@ -149,7 +149,7 @@ function EventCard({ event, onClick }) {
       <div className="tl-evt-card-body">
         <h3 className="tl-evt-card-name">{event.name}</h3>
         <div className="tl-evt-card-meta">
-          {[event.venue, event.city].filter(Boolean).join(', ')}
+          {[formatDateOnlyAz(event.date), [event.venue, event.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
         </div>
         {event.lowPrice != null && (
           <div className="tl-evt-card-price">
@@ -216,7 +216,6 @@ export default function TicketNetworkEventsPage() {
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
 
   // "Oxşar tədbirlər" suggestions for EmptyState — a handful of other
   // real, on-sale events, fetched lazily (only once something actually
@@ -265,18 +264,13 @@ export default function TicketNetworkEventsPage() {
 
   // Backend supports ?page= (1-indexed, fixed page size server-side, see
   // TicketNetworkEventService.searchPageSize) but doesn't return a total
-  // count — "hasMore" is a simple heuristic: keep showing "Daha çox
-  // göstər" as long as the last page we fetched came back non-empty, hide
-  // it the moment a page comes back empty. Worst case that's one harmless
-  // extra click right at the true end of the results.
+  // count — "hasNextPage" is a simple heuristic: enabled as long as the
+  // page we just fetched came back full-looking (non-empty); if a click
+  // on "Növbəti" ever lands on a genuinely empty page, that page is
+  // simply shown empty with Next disabled rather than guessed in advance.
   const runSearch = async (kw, pageNum) => {
-    const isFirstPage = pageNum === 1;
-    if (isFirstPage) {
-      setLoadingEvents(true);
-      setSearched(true);
-    } else {
-      setLoadingMore(true);
-    }
+    setLoadingEvents(true);
+    setSearched(true);
     try {
       const url = API_BASE + '/tickets/events?' + [
         kw.trim() ? 'keyword=' + encodeURIComponent(kw.trim()) : null,
@@ -284,17 +278,16 @@ export default function TicketNetworkEventsPage() {
       ].filter(Boolean).join('&');
       const res = await fetch(url);
       const data = res.ok ? await res.json() : [];
-      setEvents((prev) => (isFirstPage ? (data || []) : [...prev, ...(data || [])]));
+      setEvents(data || []);
       setPage(pageNum);
       setHasMore((data || []).length > 0);
-      if (isFirstPage && (data || []).length === 0) fetchOtherEvents();
+      if ((data || []).length === 0) fetchOtherEvents();
     } catch (err) {
       console.error('ActionLog.ticketNetworkEvents.searchFailed', err);
-      if (isFirstPage) setEvents([]);
+      setEvents([]);
       setHasMore(false);
     } finally {
-      if (isFirstPage) setLoadingEvents(false);
-      else setLoadingMore(false);
+      setLoadingEvents(false);
     }
   };
 
@@ -303,7 +296,11 @@ export default function TicketNetworkEventsPage() {
     runSearch(keyword, 1);
   };
 
-  const loadMoreEvents = () => runSearch(keyword, page + 1);
+  const goToPage = (pageNum) => {
+    if (pageNum < 1) return;
+    runSearch(keyword, pageNum);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const clearSearch = () => {
     setKeyword('');
@@ -620,10 +617,14 @@ export default function TicketNetworkEventsPage() {
                       <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
                     ))}
                   </div>
-                  {hasMore && (
-                    <div className="tl-evt-loadmore-wrap">
-                      <button type="button" className="tl-evt-loadmore" onClick={loadMoreEvents} disabled={loadingMore}>
-                        {loadingMore ? 'Yüklənir...' : 'Daha çox göstər'}
+                  {(page > 1 || hasMore) && (
+                    <div className="tl-evt-pagination">
+                      <button type="button" className="tl-evt-page-btn" onClick={() => goToPage(page - 1)} disabled={page <= 1}>
+                        <BackArrowIcon /> Əvvəlki
+                      </button>
+                      <span className="tl-evt-page-num">Səhifə {page}</span>
+                      <button type="button" className="tl-evt-page-btn" onClick={() => goToPage(page + 1)} disabled={!hasMore}>
+                        Növbəti <span className="tl-evt-page-next-arrow">›</span>
                       </button>
                     </div>
                   )}
