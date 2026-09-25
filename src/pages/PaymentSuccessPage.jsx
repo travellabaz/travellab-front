@@ -13,6 +13,21 @@ import LocalizedLink from '../components/LocalizedLink';
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 30000;
 
+// FULFILLED is not actually the end of the story — TicketNetworkVaultClient
+// (backend) re-queries Vault live on every GET /tickets/orders/{orderId}
+// call, but the seller attaches the e-ticket/transfer URL to Vault
+// asynchronously after the order confirms (per TicketNetwork support: often
+// instant, but tied to the ticket group's own OnHandDate, so not
+// guaranteed). Stopping polling the instant FULFILLED is first seen meant a
+// visitor who landed on this page before Vault had the file would see
+// "Sifariş uğurlu oldu!" with no ticket and never find out it showed up
+// later — the backend WOULD have returned it on a later call, this page
+// just never made one. Keep polling (slower, longer) specifically for that
+// case; stop for real once delivery data arrives or this longer window
+// elapses.
+const DELIVERY_POLL_INTERVAL_MS = 5000;
+const DELIVERY_POLL_TIMEOUT_MS = 120000;
+
 export default function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -23,6 +38,12 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     if (!orderId) return undefined;
     let cancelled = false;
+    // Set the moment FULFILLED is first seen — starts the separate, longer
+    // delivery-polling window, independent of the payment-confirmation
+    // timeout above.
+    let fulfilledAt = null;
+
+    const hasDelivery = (data) => !!(data?.eticketPdfBase64 || data?.mobileTransferUrls?.length > 0);
 
     const poll = () => {
       fetch(API_BASE + `/tickets/orders/${orderId}`)
@@ -30,7 +51,16 @@ export default function PaymentSuccessPage() {
         .then((data) => {
           if (cancelled) return;
           if (data) setOrder(data);
-          const terminal = data && ['FULFILLED', 'FULFILLMENT_FAILED', 'PAYMENT_FAILED'].includes(data.status);
+
+          if (data?.status === 'FULFILLED') {
+            if (hasDelivery(data)) return; // the real end: ticket is here
+            if (fulfilledAt == null) fulfilledAt = Date.now();
+            if (Date.now() - fulfilledAt > DELIVERY_POLL_TIMEOUT_MS) return; // gave it a fair window
+            setTimeout(poll, DELIVERY_POLL_INTERVAL_MS);
+            return;
+          }
+
+          const terminal = data && ['FULFILLMENT_FAILED', 'PAYMENT_FAILED'].includes(data.status);
           if (terminal) return;
           if (Date.now() - startedAt.current > POLL_TIMEOUT_MS) {
             setTimedOut(true);
@@ -51,6 +81,8 @@ export default function PaymentSuccessPage() {
       cancelled = true;
     };
   }, [orderId]);
+
+  const awaitingDelivery = order?.status === 'FULFILLED' && !order.eticketPdfBase64 && !(order.mobileTransferUrls?.length > 0);
 
   const eventLink = order?.eventId ? `/events/${order.eventId}` : '/events';
 
@@ -84,6 +116,9 @@ export default function PaymentSuccessPage() {
             )}
             {order.mobileTransferUrls?.length > 0 && (
               <p style={{ marginTop: 8 }}>Mobil transfer bileti hazırdır.</p>
+            )}
+            {awaitingDelivery && (
+              <p style={{ marginTop: 8 }}>Bilet(lər)iniz hazırlanır — bu adətən tez baş verir. Zəhmət olmasa bir neçə dəqiqədən sonra bu səhifəni yeniləyin.</p>
             )}
           </div>
         )}
