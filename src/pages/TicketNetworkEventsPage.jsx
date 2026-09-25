@@ -127,6 +127,50 @@ function BackArrowIcon() {
   );
 }
 
+function ForwardArrowIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function OfficialBadgeIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 2l2.4 2.4 3.3-.5.6 3.3 3 1.6-1.6 3 1.6 3-3 1.6-.6 3.3-3.3-.5L12 22l-2.4-2.4-3.3.5-.6-3.3-3-1.6 1.6-3-1.6-3 3-1.6.6-3.3 3.3.5L12 2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SecurePaymentIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="10" width="18" height="11" rx="2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M7 10V7a5 5 0 0110 0v3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SupportIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M12 8v4l2.5 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function MobileAppIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="7" y="2" width="10" height="20" rx="2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M11 18h2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function EventCardSkeleton() {
   return (
     <div className="tl-evt-card">
@@ -256,6 +300,68 @@ export default function TicketNetworkEventsPage() {
 
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Landing-page sections (hero carousel, "Seçilmiş tədbirlər", "Yaxın
+  // tarixlərdə") — one shared fetch of the same default (no-keyword)
+  // event list events.js also uses, sliced two different ways client-side
+  // rather than two separate API calls. Only loaded once, before the
+  // visitor has searched for anything.
+  const [landingEvents, setLandingEvents] = useState([]);
+  const [landingLoaded, setLandingLoaded] = useState(false);
+  useEffect(() => {
+    if (eventId) return; // only the /events list view needs this
+    fetch(API_BASE + '/tickets/events')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setLandingEvents(data || []))
+      .catch((err) => console.error('ActionLog.ticketNetworkEvents.landingFailed', err))
+      .finally(() => setLandingLoaded(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventId]);
+
+  // Catalog has no category/genre field at all (confirmed — not just
+  // unmapped), so these chips can't be a real taxonomy filter. Each one
+  // instead runs a real keyword search using a representative term —
+  // honest (real search results, not a fake filter) even though it's not
+  // the per-event category system the design implies. Revisit if
+  // TicketNetwork ever exposes real classification data.
+  const CATEGORY_SHORTCUTS = [
+    { key: 'all', label: 'Bütün tədbirlər', kw: '' },
+    { key: 'concerts', label: 'Konsertlər', kw: 'concert' },
+    { key: 'sports', label: 'İdman oyunları', kw: 'sports' },
+    { key: 'festivals', label: 'Festivallar', kw: 'festival' },
+    { key: 'theatre', label: 'Teatr', kw: 'theatre' },
+    { key: 'shows', label: 'Şou proqram', kw: 'show' },
+    { key: 'expos', label: 'Sərgilər', kw: 'expo' },
+    { key: 'other', label: 'Digər', kw: 'event' },
+  ];
+  const runCategorySearch = (kw) => {
+    setKeyword(kw);
+    setMaxPage(1);
+    runSearch(kw, 1);
+  };
+
+  // Featured hero carousel + "Seçilmiş tədbirlər" — sorted by Catalog's
+  // own salesRank (lower = more popular, per TicketNetwork's naming;
+  // events Catalog didn't rank sort last). "Yaxın tarixlərdə" is the
+  // same fetch sorted by date instead, deduped against whatever's
+  // already shown as featured so the two sections don't just repeat
+  // each other.
+  const featuredEvents = [...landingEvents]
+    .sort((a, b) => (a.salesRank ?? Infinity) - (b.salesRank ?? Infinity))
+    .slice(0, 5);
+  const featuredIds = new Set(featuredEvents.map((ev) => ev.id));
+  const upcomingEvents = [...landingEvents]
+    .filter((ev) => !featuredIds.has(ev.id))
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(0, 8);
+
+  const [heroSlide, setHeroSlide] = useState(0);
+  useEffect(() => {
+    if (featuredEvents.length < 2) return undefined;
+    const timer = setInterval(() => setHeroSlide((s) => (s + 1) % featuredEvents.length), 5000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [featuredEvents.length]);
 
   // Detail-page tabs (Ümumi məlumat / Yer seçimi / Qiymətlər / Qaydalar),
   // matching the reference mockup's structure — "Yer seçimi" holds the
@@ -581,48 +687,170 @@ export default function TicketNetworkEventsPage() {
 
           {!selectedEvent && !awaitingDeepLink && (
             <>
-              <div className="tl-evt-hero">
-                <h1 className="tl-title">Tədbir biletləri</h1>
-                <p style={{ color: 'rgba(244, 247, 250, 0.78)', fontSize: 13, marginTop: 8, marginBottom: 20 }}>
-                  Rəsmi tərəfdaşımız vasitəsilə təhlükəsiz bilet alışı.
-                </p>
+              <div className="tl-evt-hero tl-evt-hero-landing">
+                <div className="tl-evt-hero-main">
+                  <div className="tl-evt-hero-eyebrow">Bilet al, dünyanı yaşa</div>
+                  <h1 className="tl-title">Konsertlər və Tədbirlər</h1>
+                  <p className="tl-evt-hero-sub">
+                    Sevdiyin artistlər, unudulmaz anlar. Dünyanın ən böyük konsertləri, idman oyunları və festivalları bir klik uzaqlığında.
+                  </p>
 
-                <form style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }} onSubmit={searchEvents}>
-                  <div className="tl-evt-search-wrap">
-                    <input
-                      type="text"
-                      value={keyword}
-                      onChange={(e) => setKeyword(e.target.value)}
-                      onFocus={() => setShowSuggestions(true)}
-                      onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                      placeholder="Tədbir axtar (məs. Hamilton, Yankees, Madrid)"
-                      className="tl-evt-input"
-                      style={{ marginBottom: 0 }}
-                      autoComplete="off"
-                    />
-                    {showSuggestions && suggestions.length > 0 && (
-                      <div className="tl-evt-suggest">
-                        {suggestions.map((s) => (
+                  <form className="tl-evt-hero-search-form" onSubmit={searchEvents}>
+                    <div className="tl-evt-search-wrap">
+                      <input
+                        type="text"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        onFocus={() => setShowSuggestions(true)}
+                        onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                        placeholder="Tədbir, artist, şəhər və ya məkan"
+                        className="tl-evt-input"
+                        style={{ marginBottom: 0 }}
+                        autoComplete="off"
+                      />
+                      {showSuggestions && suggestions.length > 0 && (
+                        <div className="tl-evt-suggest">
+                          {suggestions.map((s) => (
+                            <button
+                              key={s.id}
+                              type="button"
+                              className="tl-evt-suggest-item"
+                              onMouseDown={() => openSuggestion(s)}
+                            >
+                              <span className="tl-evt-suggest-name">{s.name}</span>
+                              <span className="tl-evt-suggest-meta">
+                                {[s.date, [s.venue, s.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <button type="submit" className="tl-evt-cta-btn" style={{ border: 'none', cursor: 'pointer' }}>
+                      Axtar
+                    </button>
+                  </form>
+                </div>
+
+                {landingLoaded && featuredEvents.length > 0 && (
+                  <div className="tl-evt-hero-feature">
+                    {featuredEvents.map((ev, i) => {
+                      const d = formatCardDate(ev.date);
+                      return (
+                        <div
+                          key={ev.id}
+                          className={`tl-evt-hero-feature-card${i === heroSlide ? ' tl-evt-hero-feature-active' : ''}`}
+                          onClick={() => openEvent(ev)}
+                        >
+                          <div className="tl-evt-hero-feature-img">
+                            {d && (
+                              <div className="tl-evt-card-date">
+                                <span className="tl-evt-card-date-day">{d.day}</span>
+                                <span className="tl-evt-card-date-month">{d.month}</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="tl-evt-hero-feature-body">
+                            <h3 className="tl-evt-hero-feature-name">{ev.name}</h3>
+                            <div className="tl-evt-hero-feature-meta">{[ev.venue, ev.city].filter(Boolean).join(', ')}</div>
+                            <button type="button" className="tl-evt-cta-btn tl-evt-hero-feature-btn" onClick={(e) => { e.stopPropagation(); openEvent(ev); }}>
+                              Biletləri əldə et
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {featuredEvents.length > 1 && (
+                      <div className="tl-evt-hero-dots">
+                        {featuredEvents.map((ev, i) => (
                           <button
-                            key={s.id}
+                            key={ev.id}
                             type="button"
-                            className="tl-evt-suggest-item"
-                            onMouseDown={() => openSuggestion(s)}
-                          >
-                            <span className="tl-evt-suggest-name">{s.name}</span>
-                            <span className="tl-evt-suggest-meta">
-                              {[s.date, [s.venue, s.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
-                            </span>
-                          </button>
+                            className={`tl-evt-hero-dot${i === heroSlide ? ' tl-evt-hero-dot-active' : ''}`}
+                            aria-label={`Slayd ${i + 1}`}
+                            onClick={() => setHeroSlide(i)}
+                          />
                         ))}
                       </div>
                     )}
                   </div>
-                  <button type="submit" className="tl-fbtn active" style={{ border: 'none', cursor: 'pointer' }}>
-                    Axtar
-                  </button>
-                </form>
+                )}
               </div>
+
+              {!searched && (
+                <>
+                  <div className="tl-evt-categories">
+                    {CATEGORY_SHORTCUTS.map((cat) => (
+                      <button
+                        key={cat.key}
+                        type="button"
+                        className={`tl-evt-cat-chip${keyword === cat.kw ? ' tl-evt-cat-chip-active' : ''}`}
+                        onClick={() => runCategorySearch(cat.kw)}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {landingLoaded && featuredEvents.length > 0 && (
+                    <div className="tl-evt-section">
+                      <div className="tl-evt-section-head">
+                        <h2 className="tl-evt-section-title">Seçilmiş tədbirlər</h2>
+                        <button type="button" className="tl-evt-section-link" onClick={() => runCategorySearch('')}>Hamısına bax</button>
+                      </div>
+                      <div className="tl-evt-grid">
+                        {featuredEvents.map((ev) => (
+                          <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="tl-evt-promo">
+                    <div className="tl-evt-promo-main">
+                      <h2 className="tl-evt-promo-title">Daha çox tədbir, daha çox an</h2>
+                      <p className="tl-evt-promo-text">Dünyanın ən yaxşı konsertləri, festivalları və idman oyunları Travellab-da!</p>
+                      <button type="button" className="tl-evt-promo-cta" onClick={() => runCategorySearch('')}>Tədbirlərə bax</button>
+                    </div>
+                    <div className="tl-evt-promo-cats">
+                      {[
+                        { label: 'İdman oyunları', sub: 'Futbol, Basketbol, Tennis və daha çox', kw: 'sports' },
+                        { label: 'Festivallar', sub: 'Musiqi, rəng, azadlıq', kw: 'festival' },
+                        { label: 'Teatr və şoular', sub: 'Ən yaxşı səhnə tamaşaları', kw: 'theatre' },
+                      ].map((c) => (
+                        <button key={c.kw} type="button" className="tl-evt-promo-cat" onClick={() => runCategorySearch(c.kw)}>
+                          <span>
+                            <strong>{c.label}</strong>
+                            <span className="tl-evt-promo-cat-sub">{c.sub}</span>
+                          </span>
+                          <ForwardArrowIcon />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {landingLoaded && upcomingEvents.length > 0 && (
+                    <div className="tl-evt-section">
+                      <div className="tl-evt-section-head">
+                        <h2 className="tl-evt-section-title">Yaxın tarixlərdə</h2>
+                        <button type="button" className="tl-evt-section-link" onClick={() => runCategorySearch('')}>Hamısına bax</button>
+                      </div>
+                      <div className="tl-evt-grid">
+                        {upcomingEvents.map((ev) => (
+                          <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="tl-evt-trust-strip">
+                    <div className="tl-evt-trust-strip-item"><OfficialBadgeIcon /> <span>Rəsmi satıcı<small>100% orijinal biletlər</small></span></div>
+                    <div className="tl-evt-trust-strip-item"><SecurePaymentIcon /> <span>Təhlükəsiz ödəniş<small>Epoint ilə etibarlı</small></span></div>
+                    <div className="tl-evt-trust-strip-item"><SupportIcon /> <span>Dəstək<small>24/7 müştəri xidməti</small></span></div>
+                    <div className="tl-evt-trust-strip-item"><MobileAppIcon /> <span>Mobil tətbiq<small>Səfərinizin hər anında</small></span></div>
+                  </div>
+                </>
+              )}
 
               {loadingEvents && (
                 <div className="tl-evt-grid">
