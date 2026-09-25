@@ -160,7 +160,7 @@ window.Seatics = {
   config: {
     mapContained: true,
     mouseWheelZoomEnabled: false,
-    buyButtonContentHtml: '<div style="background:#F5A623;color:#1D2939;padding:10px 18px;border-radius:8px;font-weight:700;font-family:sans-serif;text-align:center;">Buy</div>',
+    buyButtonContentHtml: '<div style="background:#F5A623;color:#1D2939;padding:7px 14px;border-radius:8px;font-weight:700;font-size:13px;font-family:sans-serif;text-align:center;">Buy</div>',
   },
 };
 </script>
