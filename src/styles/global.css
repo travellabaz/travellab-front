@@ -11981,6 +11981,23 @@ body:not(.tl-subpage) .tl-about-extra {
   background: rgba(255, 255, 255, 0.16);
 }
 
+/* Same light-on-dark glass treatment for the date-range button (see
+   DatePickerField) — it sits directly on the hero, not inside
+   .tl-evt-search-wrap, so needs its own version of the rule above. */
+.tl-evt-hero .tl-evt-date-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.tl-evt-hero .tl-evt-date-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.tl-evt-hero .tl-evt-date-btn svg {
+  color: #6EE7A0;
+}
+
 /* ══════════════════════════════════════════════════════════════════
    /events LANDING PAGE — hero, category shortcuts, featured/upcoming
    sections, promo banner, trust strip. Everything here is scoped under
@@ -12060,17 +12077,131 @@ body:not(.tl-subpage) .tl-about-extra {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-}
-
-.tl-evt-date-input {
-  width: auto;
-  min-width: 140px;
-  color-scheme: dark;
+  position: relative;
 }
 
 .tl-evt-date-sep {
   color: rgba(244, 247, 250, 0.5);
   font-size: 13px;
+}
+
+/* Custom date field (DatePickerField) — replaces <input type="date">,
+   whose own calendar popup is OS/browser chrome and can't be restyled. */
+.tl-evt-datefield {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tl-evt-date-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  min-width: 150px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tl-evt-date-placeholder {
+  color: rgba(244, 247, 250, 0.5);
+}
+
+.tl-evt-calendar {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  width: 280px;
+  background: var(--tl-white);
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  box-shadow: var(--tl-shadow-lg);
+  padding: 16px;
+}
+
+.tl-evt-calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tl-evt-calendar-head strong {
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  color: var(--tl-navy);
+  text-transform: capitalize;
+}
+
+.tl-evt-calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: none;
+  background: var(--tl-gray-100);
+  color: var(--tl-navy);
+  cursor: pointer;
+}
+
+.tl-evt-calendar-nav:hover {
+  background: var(--tl-gray-200);
+}
+
+.tl-evt-calendar-weekdays,
+.tl-evt-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.tl-evt-calendar-weekdays span {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--tl-gray-400);
+  padding-bottom: 6px;
+}
+
+.tl-evt-calendar-day {
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: var(--tl-navy);
+  cursor: pointer;
+}
+
+.tl-evt-calendar-day:hover:not(:disabled) {
+  background: var(--tl-green-light);
+}
+
+.tl-evt-calendar-day:disabled {
+  color: var(--tl-gray-300);
+  cursor: not-allowed;
+}
+
+.tl-evt-calendar-day-today {
+  font-weight: 700;
+  color: var(--tl-green-dark);
+}
+
+.tl-evt-calendar-day-selected {
+  background: var(--tl-green);
+  color: #fff;
+  font-weight: 700;
+}
+
+.tl-evt-calendar-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tl-gray-100);
 }
 
 /* City/venue narrowing dropdown above the results grid — only shown
@@ -12083,16 +12214,47 @@ body:not(.tl-subpage) .tl-about-extra {
   margin-bottom: 16px;
 }
 
-.tl-evt-city-filter label {
+.tl-evt-city-filter-label {
   font-size: 13px;
   font-weight: 600;
   color: var(--tl-gray-600);
 }
 
-.tl-evt-city-filter .tl-evt-select {
-  width: auto;
-  min-width: 180px;
-  margin-bottom: 0;
+/* Custom dropdown (CityDropdown) — replaces <select>, whose own option
+   list is also OS/browser chrome. */
+.tl-evt-city-dropdown {
+  position: relative;
+}
+
+.tl-evt-city-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1.5px solid var(--tl-gray-200);
+  background: var(--tl-white);
+  color: var(--tl-navy);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Geist Sans', sans-serif;
+  cursor: pointer;
+}
+
+.tl-evt-city-dropdown-btn:hover {
+  border-color: var(--tl-green);
+}
+
+.tl-evt-city-list {
+  min-width: 200px;
+  z-index: 30;
+}
+
+.tl-evt-suggest-item-active {
+  background: var(--tl-green-light);
+  color: var(--tl-green-dark);
+  font-weight: 700;
 }
 
 /* Featured-event mini carousel, right side of the hero. Cross-fades

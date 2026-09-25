@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
@@ -6,7 +6,7 @@ import { API_BASE, authFetch } from '../api/client';
 import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 import { getLocaleFromPathname } from '../utils/locale';
-import { formatDateTimeAz, formatDayMonthAz, formatDateOnlyAz } from '../utils/date';
+import { formatDateTimeAz, formatDayMonthAz, formatDateOnlyAz, AZ_MONTHS } from '../utils/date';
 
 // The TicketNetwork integration (Catalog search -> Mercury ticket groups
 // -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
@@ -355,6 +355,152 @@ function EmptyState({ title, message, onBrowseAll, suggestions }) {
               <EventCard key={ev.id} event={ev} onClick={() => { window.location.href = `/events/${ev.id}`; }} />
             ))}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const AZ_WEEKDAYS_SHORT = ['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'];
+
+function toIsoDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+// Closes any of this file's own popovers (calendar, city list) when the
+// visitor clicks anywhere outside them.
+function useClickOutside(active, onOutside) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!active) return undefined;
+    const onDocClick = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onOutside();
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, [active, onOutside]);
+  return ref;
+}
+
+// Custom calendar popup replacing <input type="date"> — its native
+// calendar UI is rendered by the OS/browser shell and can't be restyled
+// with CSS at all (only the input field itself can), which is exactly
+// why it looked out of place next to the rest of the page.
+function DatePickerField({ label, value, onChange, minIso }) {
+  const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(() => (value ? new Date(value) : new Date()));
+  const wrapRef = useClickOutside(open, () => setOpen(false));
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const firstOfMonth = new Date(year, month, 1);
+  const startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first grid
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells = Array(startOffset).fill(null).concat(
+    Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1))
+  );
+  const minDate = minIso ? new Date(minIso) : null;
+  const todayIso = toIsoDate(new Date());
+
+  return (
+    <div className="tl-evt-datefield" ref={wrapRef}>
+      <button type="button" className="tl-evt-input tl-evt-date-btn" onClick={() => setOpen((o) => !o)}>
+        <CalendarIcon />
+        <span className={value ? '' : 'tl-evt-date-placeholder'}>{value ? formatDateOnlyAz(value) : label}</span>
+      </button>
+      {open && (
+        <div className="tl-evt-calendar">
+          <div className="tl-evt-calendar-head">
+            <button type="button" className="tl-evt-calendar-nav" onClick={() => setViewDate(new Date(year, month - 1, 1))} aria-label="Əvvəlki ay">
+              <BackArrowIcon />
+            </button>
+            <strong>{AZ_MONTHS[month]} {year}</strong>
+            <button type="button" className="tl-evt-calendar-nav" onClick={() => setViewDate(new Date(year, month + 1, 1))} aria-label="Növbəti ay">
+              <ForwardArrowIcon />
+            </button>
+          </div>
+          <div className="tl-evt-calendar-weekdays">
+            {AZ_WEEKDAYS_SHORT.map((w) => <span key={w}>{w}</span>)}
+          </div>
+          <div className="tl-evt-calendar-grid">
+            {cells.map((d, i) => {
+              if (!d) return <span key={`empty-${i}`} />;
+              const iso = toIsoDate(d);
+              const disabled = minDate != null && d < new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate());
+              return (
+                <button
+                  key={iso}
+                  type="button"
+                  disabled={disabled}
+                  className={`tl-evt-calendar-day${iso === value ? ' tl-evt-calendar-day-selected' : ''}${iso === todayIso ? ' tl-evt-calendar-day-today' : ''}`}
+                  onClick={() => { onChange(iso); setOpen(false); }}
+                >
+                  {d.getDate()}
+                </button>
+              );
+            })}
+          </div>
+          <div className="tl-evt-calendar-foot">
+            <button type="button" className="tl-evt-inline-link" onClick={() => { onChange(''); setOpen(false); }}>Sil</button>
+            <button
+              type="button"
+              className="tl-evt-inline-link"
+              onClick={() => {
+                const t = new Date();
+                setViewDate(t);
+                onChange(toIsoDate(t));
+                setOpen(false);
+              }}
+            >
+              Bu gün
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Custom dropdown replacing the native <select> for the city filter —
+// same reasoning as DatePickerField above (a native <select>'s own
+// option list is OS-rendered chrome, not stylable).
+function CityDropdown({ cities, value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useClickOutside(open, () => setOpen(false));
+
+  return (
+    <div className="tl-evt-city-dropdown" ref={wrapRef}>
+      <button type="button" className="tl-evt-city-dropdown-btn" onClick={() => setOpen((o) => !o)}>
+        {value || 'Bütün şəhərlər'}
+        <ChevronDownIcon />
+      </button>
+      {open && (
+        <div className="tl-evt-suggest tl-evt-city-list">
+          <button
+            type="button"
+            className={`tl-evt-suggest-item${!value ? ' tl-evt-suggest-item-active' : ''}`}
+            onClick={() => { onChange(''); setOpen(false); }}
+          >
+            Bütün şəhərlər
+          </button>
+          {cities.map((c) => (
+            <button
+              key={c}
+              type="button"
+              className={`tl-evt-suggest-item${value === c ? ' tl-evt-suggest-item-active' : ''}`}
+              onClick={() => { onChange(c); setOpen(false); }}
+            >
+              {c}
+            </button>
+          ))}
         </div>
       )}
     </div>
@@ -841,24 +987,18 @@ export default function TicketNetworkEventsPage() {
                       )}
                     </div>
                     <div className="tl-evt-hero-date-wrap">
-                      <input
-                        type="date"
+                      <DatePickerField
+                        label="Tarixdən"
                         value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
-                        className="tl-evt-input tl-evt-date-input"
-                        style={{ marginBottom: 0 }}
-                        aria-label="Tarixdən"
-                        min={new Date().toISOString().slice(0, 10)}
+                        onChange={setDateFrom}
+                        minIso={new Date().toISOString().slice(0, 10)}
                       />
                       <span className="tl-evt-date-sep">—</span>
-                      <input
-                        type="date"
+                      <DatePickerField
+                        label="Tarixədək"
                         value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
-                        className="tl-evt-input tl-evt-date-input"
-                        style={{ marginBottom: 0 }}
-                        aria-label="Tarixədək"
-                        min={dateFrom || new Date().toISOString().slice(0, 10)}
+                        onChange={setDateTo}
+                        minIso={dateFrom || new Date().toISOString().slice(0, 10)}
                       />
                     </div>
                     <button type="submit" className="tl-evt-cta-btn" style={{ border: 'none', cursor: 'pointer' }}>
@@ -1006,11 +1146,8 @@ export default function TicketNetworkEventsPage() {
                 <>
                   {availableCities.length > 1 && (
                     <div className="tl-evt-city-filter">
-                      <label htmlFor="tl-evt-city-select">Şəhər:</label>
-                      <select id="tl-evt-city-select" className="tl-evt-select" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
-                        <option value="">Bütün şəhərlər</option>
-                        {availableCities.map((c) => <option key={c} value={c}>{c}</option>)}
-                      </select>
+                      <span className="tl-evt-city-filter-label">Şəhər:</span>
+                      <CityDropdown cities={availableCities} value={cityFilter} onChange={setCityFilter} />
                     </div>
                   )}
                   {visibleEvents.length === 0 ? (
