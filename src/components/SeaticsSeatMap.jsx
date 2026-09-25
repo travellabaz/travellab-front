@@ -152,13 +152,15 @@ body{margin:0;font-family:sans-serif;}
 //   list only has a bare ">" chevron, no visible "Buy"-style button (this
 //   is a *separate* list from our own "Mövcud biletlər" list further
 //   down the page — this one lives inside the Seatics widget itself).
-//   Brand orange (var(--tl-orange) in global.css), same "Al" label and
-//   color as our own list's own buy button.
+//   Brand orange (var(--tl-orange) in global.css), same color as our own
+//   list's buy button — kept as "Buy" (not "Al") since every other piece
+//   of text inside this specific Seatics panel (Tickets/ADA Accessible/
+//   Fees Included/etc.) is still English, unlike our own list below it.
 window.Seatics = {
   config: {
     mapContained: true,
     mouseWheelZoomEnabled: false,
-    buyButtonContentHtml: '<div style="background:#F5A623;color:#1D2939;padding:10px 18px;border-radius:8px;font-weight:700;font-family:sans-serif;text-align:center;">Al</div>',
+    buyButtonContentHtml: '<div style="background:#F5A623;color:#1D2939;padding:10px 18px;border-radius:8px;font-weight:700;font-family:sans-serif;text-align:center;">Buy</div>',
   },
 };
 </script>
