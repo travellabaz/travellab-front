@@ -12176,8 +12176,41 @@ body:not(.tl-subpage) .tl-about-extra {
   display: block;
 }
 
+/* Groups price + the "Al" buy button as one flex unit on the row's right
+   side (Expedia's own ticket-list layout: price column, separate Buy
+   button column) — keeps .tl-evt-ticket-row's own space-between at just
+   two visual blocks (label vs. this group) instead of spreading three
+   flex children unevenly across the row. */
+.tl-evt-ticket-price-col {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.tl-evt-ticket-buy {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border-radius: var(--tl-r-sm);
+  border: none;
+  background: var(--tl-green);
+  color: #fff;
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tl-evt-ticket-buy:hover {
+  background: var(--tl-green-dark);
+}
+
 /* ── Sticky order-summary sidebar — same sticky mechanics as
-   .tl-tourp-sidebar-col (position:sticky on the column, no JS). ── */
+   .tl-tourp-sidebar-col (position:sticky on the column, no JS). Only
+   rendered once a ticket group is actually selected (see
+   TicketNetworkEventsPage.jsx) — there's no empty/placeholder state
+   for it to sit in before that. ── */
 .tl-evt-sidebar-col {
   flex: 0 0 380px;
   width: 380px;
@@ -12193,11 +12226,20 @@ body:not(.tl-subpage) .tl-about-extra {
   background: var(--tl-white);
 }
 
-.tl-evt-sidebar-empty {
-  text-align: center;
-  padding: 24px 8px;
-  color: var(--tl-gray-400);
-  font-size: 13px;
+.tl-evt-sidebar-close {
+  flex-shrink: 0;
+  background: var(--tl-gray-100);
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  color: var(--tl-navy);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tl-evt-sidebar-title {
@@ -12225,6 +12267,14 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-input,
 .tl-evt-select {
+  /* <input>/<select> default to content-box (unlike <body>, this site
+     doesn't reset box-sizing globally) — without this, the 14px+14px
+     padding and 1.5px+1.5px border get ADDED on top of width:100%,
+     rendering ~31px wider than the parent. That overflow visually
+     overlapped the "Axtar" search button next to it, and made the
+     checkout sidebar's name/email/phone fields look like they spilled
+     past the card's own edge. */
+  box-sizing: border-box;
   width: 100%;
   height: 46px;
   background: var(--tl-gray-100);

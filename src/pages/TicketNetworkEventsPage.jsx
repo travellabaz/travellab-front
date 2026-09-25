@@ -810,10 +810,12 @@ export default function TicketNetworkEventsPage() {
                       {visibleTicketGroups.map((tg) => {
                         const isSelected = selectedGroup?.ticketGroupId === tg.ticketGroupId;
                         return (
-                          <button
+                          <div
                             key={tg.ticketGroupId}
-                            type="button"
+                            role="button"
+                            tabIndex={0}
                             onClick={() => selectGroup(tg)}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') selectGroup(tg); }}
                             className={`tl-evt-ticket-row${isSelected ? ' tl-evt-ticket-row-selected' : ''}`}
                           >
                             <span>
@@ -822,30 +824,42 @@ export default function TicketNetworkEventsPage() {
                                 {tg.availableQuantity} available · {(tg.deliveryMethods || []).join(', ')}
                               </span>
                             </span>
-                            <span className="tl-evt-ticket-price">
-                              <strong>{formatPrice(tg.retailPrice, tg.currencyCode)}</strong>
-                              {/* Checkout charges AZN (Epoint doesn't take USD) — shown
-                                  here so the amount on Epoint's own payment page isn't
-                                  a surprise. */}
-                              {tg.retailPriceAzn != null && <span className="tl-evt-ticket-price-azn">≈ {formatMoney(tg.retailPriceAzn, 'AZN')}</span>}
-                              <span>bilet başına</span>
+                            <span className="tl-evt-ticket-price-col">
+                              <span className="tl-evt-ticket-price">
+                                <strong>{formatPrice(tg.retailPrice, tg.currencyCode)}</strong>
+                                {/* Checkout charges AZN (Epoint doesn't take USD) — shown
+                                    here so the amount on Epoint's own payment page isn't
+                                    a surprise. */}
+                                {tg.retailPriceAzn != null && <span className="tl-evt-ticket-price-azn">≈ {formatMoney(tg.retailPriceAzn, 'AZN')}</span>}
+                                <span>bilet başına</span>
+                              </span>
+                              {/* Explicit CTA per row, matching Expedia's own ticket-list
+                                  pattern (separate "Buy" column) — same action as clicking
+                                  the row itself (selectGroup), just a more obvious "do
+                                  this now" target than relying on the whole row being
+                                  clickable. */}
+                              <button
+                                type="button"
+                                className="tl-evt-ticket-buy"
+                                onClick={(e) => { e.stopPropagation(); selectGroup(tg); }}
+                              >
+                                Al
+                              </button>
                             </span>
-                          </button>
+                          </div>
                         );
                       })}
                     </div>
                   )}
                 </div>
 
+                {selectedGroup && (
                 <div className="tl-evt-sidebar-col">
                   <div className="tl-evt-sidebar">
-                    {!selectedGroup && (
-                      <div className="tl-evt-sidebar-empty">Davam etmək üçün soldakı siyahıdan bilet seçin.</div>
-                    )}
-
-                    {selectedGroup && (
-                      <>
-                        <h3 className="tl-evt-sidebar-title">Sifariş xülasəsi</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <h3 className="tl-evt-sidebar-title" style={{ marginBottom: 0 }}>Sifariş xülasəsi</h3>
+                          <button type="button" className="tl-evt-sidebar-close" onClick={() => setSelectedGroup(null)} aria-label="Bağla">×</button>
+                        </div>
 
                         <div className="tl-evt-sidebar-selection">
                           <span>
@@ -895,8 +909,6 @@ export default function TicketNetworkEventsPage() {
                             {purchasing ? 'Yönləndirilir...' : 'Ödənişə keç'}
                           </button>
                         </form>
-                      </>
-                    )}
 
                     {/* A successful response redirects the browser to Epoint
                         immediately (see submitPurchase) — this only ever
@@ -909,6 +921,7 @@ export default function TicketNetworkEventsPage() {
                     )}
                   </div>
                 </div>
+                )}
                 </>
                 )}
               </div>
