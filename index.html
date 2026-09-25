@@ -249,7 +249,12 @@
             return;
           }
 
-          if (resultsBlock) resultsBlock.style.display = '';
+          if (!resultsBlock) {
+            if (widgetsBlock) widgetsBlock.style.display = 'none';
+            return;
+          }
+
+          resultsBlock.style.display = '';
 
           // hiding widgetsBlock removes its height from the page, shifting
           // #tpwl-tickets (and the scroll target) upward — if the scroll ran
@@ -261,16 +266,18 @@
             if (canSmoothScroll) scrollToResults();
           }
 
-          if (!widgetsBlock) {
-            if (canSmoothScroll) scrollToResults();
-            return;
-          }
-
-          if (!resultsBlock) {
-            widgetsBlock.style.display = 'none';
-            return;
-          }
-
+          // Always wait for the results block to actually have rendered
+          // content before scrolling to it — confirmed live that
+          // .tpwl-widgets__wrapper no longer exists in the current
+          // Travelpayouts widget markup (it must have restructured since
+          // this was written), which used to make the code skip this wait
+          // entirely and call scrollToResults() the instant the URL updated,
+          // before #tpwl-tickets had any real height. That premature scroll
+          // computed an offset against a still-empty/collapsing element,
+          // landing the viewport in the wrong place — on mobile specifically
+          // reported as "results render off-screen, Turlarımız shows first".
+          // Not gating this on widgetsBlock's existence any more makes it
+          // robust to whatever markup the widget happens to use.
           if (resultsBlock.offsetHeight > 0) {
             settle();
             return;
