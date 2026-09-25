@@ -285,6 +285,9 @@ export default function TicketNetworkEventsPage() {
   // the backend's ?page= endpoint never returns a total count to size the
   // bar up front (see runSearch).
   const [maxPage, setMaxPage] = useState(1);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
 
   // "Oxşar tədbirlər" suggestions for EmptyState — a handful of other
   // real, on-sale events, fetched lazily (only once something actually
@@ -337,6 +340,7 @@ export default function TicketNetworkEventsPage() {
   const runCategorySearch = (kw) => {
     setKeyword(kw);
     setMaxPage(1);
+    setCityFilter('');
     runSearch(kw, 1);
   };
 
@@ -406,6 +410,8 @@ export default function TicketNetworkEventsPage() {
       const url = API_BASE + '/tickets/events?' + [
         kw.trim() ? 'keyword=' + encodeURIComponent(kw.trim()) : null,
         'page=' + pageNum,
+        dateFrom ? 'dateFrom=' + dateFrom : null,
+        dateTo ? 'dateTo=' + dateTo : null,
       ].filter(Boolean).join('&');
       const res = await fetch(url);
       const data = res.ok ? await res.json() : [];
@@ -427,6 +433,7 @@ export default function TicketNetworkEventsPage() {
   const searchEvents = (e) => {
     e.preventDefault();
     setMaxPage(1);
+    setCityFilter('');
     runSearch(keyword, 1);
   };
 
@@ -438,9 +445,23 @@ export default function TicketNetworkEventsPage() {
 
   const clearSearch = () => {
     setKeyword('');
+    setDateFrom('');
+    setDateTo('');
+    setCityFilter('');
     setMaxPage(1);
     runSearch('', 1);
   };
+
+  // City/venue narrowing — client-side only. Catalog has no confirmed
+  // filter clause for this (no local API reference to verify a field
+  // path against, and guessing one risks silently returning wrong
+  // results server-side, same class of mistake as the scheduleStatus
+  // value guess earlier). Instead the dropdown only ever lists cities
+  // that are actually present in the current real result set, and
+  // narrows what's shown from data already fetched — real data, no
+  // fabricated venue list, no unverified server-side filter.
+  const availableCities = [...new Set(events.map((ev) => ev.city).filter(Boolean))].sort();
+  const visibleEvents = cityFilter ? events.filter((ev) => ev.city === cityFilter) : events;
 
   // The event stays in the URL (/events/:eventId) so it's a real,
   // shareable/bookmarkable page on travellab.az — not just React state.
@@ -726,6 +747,27 @@ export default function TicketNetworkEventsPage() {
                         </div>
                       )}
                     </div>
+                    <div className="tl-evt-hero-date-wrap">
+                      <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={(e) => setDateFrom(e.target.value)}
+                        className="tl-evt-input tl-evt-date-input"
+                        style={{ marginBottom: 0 }}
+                        aria-label="Tarixdən"
+                        min={new Date().toISOString().slice(0, 10)}
+                      />
+                      <span className="tl-evt-date-sep">—</span>
+                      <input
+                        type="date"
+                        value={dateTo}
+                        onChange={(e) => setDateTo(e.target.value)}
+                        className="tl-evt-input tl-evt-date-input"
+                        style={{ marginBottom: 0 }}
+                        aria-label="Tarixədək"
+                        min={dateFrom || new Date().toISOString().slice(0, 10)}
+                      />
+                    </div>
                     <button type="submit" className="tl-evt-cta-btn" style={{ border: 'none', cursor: 'pointer' }}>
                       Axtar
                     </button>
@@ -869,11 +911,26 @@ export default function TicketNetworkEventsPage() {
 
               {!loadingEvents && events.length > 0 && (
                 <>
-                  <div className="tl-evt-grid">
-                    {events.map((ev) => (
-                      <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
-                    ))}
-                  </div>
+                  {availableCities.length > 1 && (
+                    <div className="tl-evt-city-filter">
+                      <label htmlFor="tl-evt-city-select">Şəhər:</label>
+                      <select id="tl-evt-city-select" className="tl-evt-select" value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
+                        <option value="">Bütün şəhərlər</option>
+                        {availableCities.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                  )}
+                  {visibleEvents.length === 0 ? (
+                    <p style={{ color: 'var(--tl-gray-400)', fontSize: 13 }}>
+                      Bu şəhərdə nəticə yoxdur. <button type="button" className="tl-evt-inline-link" onClick={() => setCityFilter('')}>Bütün şəhərləri göstər</button>
+                    </p>
+                  ) : (
+                    <div className="tl-evt-grid">
+                      {visibleEvents.map((ev) => (
+                        <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
+                      ))}
+                    </div>
+                  )}
                   {(maxPage > 1 || page > 1) && (
                     <div className="tl-evt-pagination">
                       <button type="button" className="tl-evt-page-arrow" onClick={() => goToPage(page - 1)} disabled={page <= 1} aria-label="Əvvəlki">

@@ -12055,6 +12055,46 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-wrap: wrap;
 }
 
+.tl-evt-hero-date-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.tl-evt-date-input {
+  width: auto;
+  min-width: 140px;
+  color-scheme: dark;
+}
+
+.tl-evt-date-sep {
+  color: rgba(244, 247, 250, 0.5);
+  font-size: 13px;
+}
+
+/* City/venue narrowing dropdown above the results grid — only shown
+   once a search has real results with more than one distinct city in
+   them (see availableCities in TicketNetworkEventsPage.jsx). */
+.tl-evt-city-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tl-evt-city-filter label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tl-gray-600);
+}
+
+.tl-evt-city-filter .tl-evt-select {
+  width: auto;
+  min-width: 180px;
+  margin-bottom: 0;
+}
+
 /* Featured-event mini carousel, right side of the hero. Cross-fades
    between slides (absolute-positioned stack) with a timer in the
    component; dots let the visitor jump directly to one. */
