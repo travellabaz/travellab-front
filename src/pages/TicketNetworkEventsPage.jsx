@@ -1028,7 +1028,7 @@ export default function TicketNetworkEventsPage() {
                   <div className="tl-evt-hero-eyebrow">Bilet al, dünyanı yaşa</div>
                   <h1 className="tl-title">Konsertlər və Tədbirlər</h1>
                   <p className="tl-evt-hero-sub">
-                    Sevdiyin artistlər, unudulmaz anlar. Dünyanın ən böyük konsertləri, idman oyunları və festivalları bir klik uzaqlığında.
+                    Sevdiyin artistlər, unudulmaz anlar. Dünyanın ən böyük konsertləri, idman oyunları, festivalları və daha çoxu — bir klik uzaqlığında.
                   </p>
 
                   <form className="tl-evt-hero-search-form" onSubmit={searchEvents}>
@@ -1102,8 +1102,9 @@ export default function TicketNetworkEventsPage() {
                             )}
                           </div>
                           <div className="tl-evt-hero-feature-body">
+                            <span className="tl-evt-hero-feature-eyebrow">SEÇİLMİŞ TƏDBİR</span>
                             <h3 className="tl-evt-hero-feature-name">{ev.name}</h3>
-                            <div className="tl-evt-hero-feature-meta">{[ev.venue, ev.city].filter(Boolean).join(', ')}</div>
+                            <div className="tl-evt-hero-feature-meta">{[ev.city, formatDateOnlyAz(ev.date)].filter(Boolean).join(', ')}</div>
                             <button type="button" className="tl-evt-cta-btn tl-evt-hero-feature-btn" onClick={(e) => { e.stopPropagation(); openEvent(ev); }}>
                               Biletləri əldə et
                             </button>
@@ -1146,7 +1147,7 @@ export default function TicketNetworkEventsPage() {
                   {landingLoaded && featuredEvents.length > 0 && (
                     <div className="tl-evt-section">
                       <div className="tl-evt-section-head">
-                        <h2 className="tl-evt-section-title">Seçilmiş tədbirlər</h2>
+                        <h2 className="tl-evt-section-title">Populyar tədbirlər</h2>
                         <button type="button" className="tl-evt-section-link" onClick={() => runCategorySearch('')}>Hamısına bax</button>
                       </div>
                       <div className="tl-evt-grid">
@@ -1231,9 +1232,9 @@ export default function TicketNetworkEventsPage() {
 
                   <div className="tl-evt-trust-strip">
                     <div className="tl-evt-trust-strip-item"><OfficialBadgeIcon /> <span>Rəsmi satıcı<small>100% orijinal biletlər</small></span></div>
-                    <div className="tl-evt-trust-strip-item"><SecurePaymentIcon /> <span>Təhlükəsiz ödəniş<small>Epoint ilə etibarlı</small></span></div>
-                    <div className="tl-evt-trust-strip-item"><SupportIcon /> <span>Dəstək<small>24/7 müştəri xidməti</small></span></div>
-                    <div className="tl-evt-trust-strip-item"><MobileAppIcon /> <span>Mobil tətbiq<small>Səfərinizin hər anında</small></span></div>
+                    <div className="tl-evt-trust-strip-item"><SecurePaymentIcon /> <span>Təhlükəsiz ödəniş<small>Etibarlı və sürətli</small></span></div>
+                    <div className="tl-evt-trust-strip-item"><SupportIcon /> <span>Dəstək<small>7/24 müştəri xidməti</small></span></div>
+                    <div className="tl-evt-trust-strip-item"><MobileAppIcon /> <span>Mobil bilet<small>Telefonunda, hər an</small></span></div>
                   </div>
                 </>
               )}
