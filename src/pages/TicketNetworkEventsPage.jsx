@@ -7,6 +7,7 @@ import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 import { getLocaleFromPathname } from '../utils/locale';
 import { formatDateTimeAz, formatDayMonthAz, formatDateOnlyAz, AZ_MONTHS } from '../utils/date';
+import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
 
 // The TicketNetwork integration (Catalog search -> Mercury ticket groups
 // -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
@@ -178,6 +179,33 @@ function MobileAppIcon() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="7" y="2" width="10" height="20" rx="2" stroke="currentColor" strokeWidth="1.6" />
       <path d="M11 18h2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Package-banner icons (tl-evt-package) — 20x20 viewBox, matches this
+// trio's own visual weight better than the 24x24 trust-strip set above.
+function PackageTicketIcon() {
+  return (
+    <svg width="21" height="21" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2.5 6.5V5.2A1.2 1.2 0 013.7 4h12.6a1.2 1.2 0 011.2 1.2v1.3a2.5 2.5 0 000 5v1.3a1.2 1.2 0 01-1.2 1.2H3.7a1.2 1.2 0 01-1.2-1.2v-1.3a2.5 2.5 0 000-5z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PackagePlaneIcon() {
+  return (
+    <svg width="21" height="21" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12.5 12 10.5 8 17H6l2-7.5L3 8V6l2 .6L7 8.5l5-1.2L8 2h2l5 5 3.5-.9a1.5 1.5 0 010 3z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PackageHotelIcon() {
+  return (
+    <svg width="21" height="21" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 18V4M3 8h11a3 3 0 013 3v7M3 13h14" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="7" cy="10.5" r="1.4" stroke="currentColor" strokeWidth="1.7" />
     </svg>
   );
 }
@@ -1128,6 +1156,41 @@ export default function TicketNetworkEventsPage() {
                       </div>
                     </div>
                   )}
+
+                  {/* No real bundle/package purchase flow exists anywhere
+                      in checkout — this is a real, working CTA (opens
+                      WhatsApp with a prefilled request), not a fake "buy"
+                      button, since a combined ticket+flight+hotel order
+                      genuinely has to go through a manager today. */}
+                  <div className="tl-evt-package">
+                    <div className="tl-evt-package-main">
+                      <span className="tl-evt-package-badge">Yalnız Travellab-da</span>
+                      <h2 className="tl-evt-package-title">Tədbir + uçuş + otel — bir sifarişdə</h2>
+                      <p className="tl-evt-package-text">Xaricdəki konsertə gedirsən? Bileti seç, tarixinə uyğun reys və məkana yaxın oteli biz əlavə edək.</p>
+                    </div>
+                    <div className="tl-evt-package-items">
+                      <div className="tl-evt-package-item">
+                        <span className="tl-evt-package-item-icon"><PackageTicketIcon /></span>
+                        <span><strong>Tədbir bileti</strong><small>Yer sxemi ilə seçim</small></span>
+                      </div>
+                      <div className="tl-evt-package-item">
+                        <span className="tl-evt-package-item-icon"><PackagePlaneIcon /></span>
+                        <span><strong>Aviabilet</strong><small>Tədbir tarixinə uyğun</small></span>
+                      </div>
+                      <div className="tl-evt-package-item">
+                        <span className="tl-evt-package-item-icon"><PackageHotelIcon /></span>
+                        <span><strong>Otel</strong><small>Məkana yaxın, sərfəli</small></span>
+                      </div>
+                    </div>
+                    <a
+                      className="tl-evt-package-cta"
+                      href={`https://wa.me/${SHOP_WHATSAPP_NUMBER}?text=${encodeURIComponent('Salam! Xaricdə keçiriləcək bir tədbir üçün bilet + uçuş + otel paketi sifariş etmək istəyirəm.')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Paket sifariş et <ForwardArrowIcon />
+                    </a>
+                  </div>
 
                   <div className="tl-evt-promo">
                     <div className="tl-evt-promo-main">
