@@ -624,6 +624,12 @@ export default function TicketNetworkEventsPage() {
   // the per-event category system the design implies. Revisit if
   // TicketNetwork ever exposes real classification data.
   const upcomingScrollRef = useRef(null);
+  // "Seçilən tədbirlər" renders in a 4-wide grid — showing all 5 slotted
+  // featuredEvents left a lone 5th card dangling on its own row. Cap the
+  // initial view to a clean 4 and reveal the rest on demand instead of
+  // just trimming the data (still a real one-click "Daha çox göstər" one
+  // more tap away, not a swept-under-the-rug slice(0,4)).
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
 
   const CATEGORY_SHORTCUTS = [
     { key: 'all', label: 'Bütün tədbirlər', kw: '', Icon: GridIcon },
@@ -1145,10 +1151,15 @@ export default function TicketNetworkEventsPage() {
                         <button type="button" className="tl-evt-section-link" onClick={() => runCategorySearch('')}>Hamısına bax</button>
                       </div>
                       <div className="tl-evt-grid">
-                        {featuredEvents.map((ev) => (
+                        {(showAllFeatured ? featuredEvents : featuredEvents.slice(0, 4)).map((ev) => (
                           <EventCard key={ev.id} event={ev} onClick={() => openEvent(ev)} />
                         ))}
                       </div>
+                      {!showAllFeatured && featuredEvents.length > 4 && (
+                        <button type="button" className="tl-evt-show-more" onClick={() => setShowAllFeatured(true)}>
+                          Daha çox göstər
+                        </button>
+                      )}
                     </div>
                   )}
 
