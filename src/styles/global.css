@@ -12029,11 +12029,22 @@ body:not(.tl-subpage) .tl-about-extra {
   background: #111a26;
 }
 
+/* Light theme, overriding the dark .tl-evt-hero gradient this modifier
+   class shares with the (still-dark) event-detail page header — later in
+   the file wins for equal-specificity two-class selectors, so this block
+   must come after .tl-evt-hero's own rules above. */
 .tl-evt-hero-landing {
+  background: var(--tl-gray-100);
   display: flex;
-  align-items: stretch;
-  gap: 32px;
+  flex-direction: column;
+  gap: 24px;
   padding: 36px;
+}
+
+.tl-evt-hero-top {
+  display: flex;
+  align-items: center;
+  gap: 32px;
 }
 
 .tl-evt-hero-main {
@@ -12042,6 +12053,17 @@ body:not(.tl-subpage) .tl-about-extra {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.tl-evt-hero-badge {
+  align-self: flex-start;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--tl-navy);
+  background: #fff;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 12px;
 }
 
 .tl-evt-hero-eyebrow {
@@ -12056,20 +12078,84 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-evt-hero-landing .tl-title {
   font-size: 52px;
   margin-bottom: 12px;
+  color: var(--tl-navy);
 }
 
-.tl-evt-hero-sub {
-  color: rgba(244, 247, 250, 0.78);
+.tl-evt-hero-landing .tl-evt-hero-sub {
+  color: var(--tl-gray-600);
   font-size: 14px;
   line-height: 1.6;
   max-width: 480px;
-  margin: 0 0 24px;
+  margin: 0;
 }
 
+/* Static design-supplied banner (replaces the old dynamic featured-event
+   carousel that used to live in the hero — that content moved to its own
+   "Populyar tədbirlər" section below). */
+.tl-evt-hero-banner {
+  flex-shrink: 0;
+  width: 42%;
+  max-width: 460px;
+  border-radius: var(--tl-r-lg);
+  overflow: hidden;
+}
+
+.tl-evt-hero-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Floating white search bar, no longer glass-on-dark (see the
+   .tl-evt-hero .tl-evt-search-wrap .tl-evt-input / .tl-evt-date-btn dark
+   overrides above — this out-specificities them by also matching
+   .tl-evt-hero-landing, and comes later in the file). */
 .tl-evt-hero-search-form {
   display: flex;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  background: #fff;
+  border-radius: var(--tl-r-lg);
+  padding: 10px;
+  box-shadow: var(--tl-shadow);
+}
+
+.tl-evt-hero-landing .tl-evt-search-wrap .tl-evt-input {
+  background: var(--tl-gray-100);
+  border: 1.5px solid transparent;
+  color: var(--tl-navy);
+}
+
+.tl-evt-hero-landing .tl-evt-search-wrap .tl-evt-input::placeholder {
+  color: var(--tl-gray-500);
+}
+
+.tl-evt-hero-landing .tl-evt-search-wrap .tl-evt-input:focus {
+  border-color: var(--tl-navy);
+  background: #fff;
+}
+
+.tl-evt-hero-landing .tl-evt-date-btn {
+  background: var(--tl-gray-100);
+  border: 1.5px solid transparent;
+  color: var(--tl-navy);
+}
+
+.tl-evt-hero-landing .tl-evt-date-btn:hover {
+  border-color: var(--tl-navy);
+}
+
+.tl-evt-hero-landing .tl-evt-date-btn svg {
+  color: var(--tl-gray-500);
+}
+
+.tl-evt-hero-landing .tl-evt-city-dropdown-btn {
+  background: var(--tl-gray-100);
+  border: 1.5px solid transparent;
+  color: var(--tl-navy);
+  height: 46px;
 }
 
 .tl-evt-hero-date-wrap {
@@ -12257,108 +12343,6 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700;
 }
 
-/* Featured-event mini carousel, right side of the hero. Cross-fades
-   between slides (absolute-positioned stack) with a timer in the
-   component; dots let the visitor jump directly to one. */
-.tl-evt-hero-feature {
-  position: relative;
-  flex: 0 0 340px;
-  width: 340px;
-  border-radius: var(--tl-r-lg);
-  overflow: hidden;
-  box-shadow: var(--tl-shadow-lg);
-}
-
-.tl-evt-hero-feature-card {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease;
-  cursor: pointer;
-}
-
-.tl-evt-hero-feature-active {
-  position: relative;
-  opacity: 1;
-  visibility: visible;
-}
-
-.tl-evt-hero-feature-img {
-  position: relative;
-  height: 190px;
-  background: linear-gradient(135deg, #123049, var(--tl-teal) 130%);
-}
-
-.tl-evt-hero-feature-img::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle at 20% 30%, rgba(245, 166, 35, 0.35), transparent 45%),
-    radial-gradient(circle at 85% 75%, rgba(34, 192, 105, 0.25), transparent 45%);
-}
-
-.tl-evt-hero-feature-body {
-  padding: 18px;
-  background: var(--tl-evt-bg-soft, #0D2537);
-}
-
-.tl-evt-hero-feature-eyebrow {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  color: #5DD394;
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
-}
-
-.tl-evt-hero-feature-name {
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 17px;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 6px;
-}
-
-.tl-evt-hero-feature-meta {
-  color: rgba(244, 247, 250, 0.65);
-  font-size: 13px;
-  margin-bottom: 16px;
-}
-
-.tl-evt-hero-feature-btn {
-  width: 100%;
-  padding: 11px 0;
-}
-
-.tl-evt-hero-dots {
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-  z-index: 2;
-}
-
-.tl-evt-hero-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  padding: 0;
-}
-
-.tl-evt-hero-dot-active {
-  background: var(--tl-orange);
-  width: 18px;
-  border-radius: 4px;
-}
-
 /* Category shortcut chips — see the JS-side comment on CATEGORY_SHORTCUTS:
    these run a real keyword search, not a true taxonomy filter (Catalog
    has no category field to filter on). */
@@ -12458,8 +12442,8 @@ body:not(.tl-subpage) .tl-about-extra {
   flex-wrap: wrap;
   align-items: center;
   gap: 28px;
-  background: var(--tl-green-light);
-  border: 1px solid #D7ECDD;
+  background: #EAF2FA;
+  border: 1px solid #D3E6F5;
   border-radius: var(--tl-r-xl);
   padding: 28px 32px;
   margin-bottom: 36px;
@@ -12477,7 +12461,7 @@ body:not(.tl-subpage) .tl-about-extra {
   align-self: flex-start;
   font-size: 12px;
   font-weight: 700;
-  color: var(--tl-green);
+  color: var(--tl-blue);
   background: #fff;
   padding: 5px 12px;
   border-radius: 100px;
@@ -12521,8 +12505,8 @@ body:not(.tl-subpage) .tl-about-extra {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: var(--tl-green-light);
-  color: var(--tl-green);
+  background: #EAF2FA;
+  color: var(--tl-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12550,18 +12534,18 @@ body:not(.tl-subpage) .tl-about-extra {
   font-size: 13.5px;
   font-weight: 700;
   font-family: 'Geist Sans', sans-serif;
-  color: var(--tl-green);
+  color: var(--tl-navy);
   background: #fff;
   padding: 12px 20px;
   border-radius: 100px;
-  border: 1.5px solid var(--tl-green);
+  border: 1.5px solid var(--tl-navy);
   text-decoration: none;
   transition: all 0.2s;
 }
 
 .tl-evt-package-cta:hover {
-  background: var(--tl-green);
-  color: #fff;
+  background: var(--tl-navy);
+  color: var(--tl-orange);
 }
 
 @media (max-width: 900px) {
@@ -12705,13 +12689,29 @@ body:not(.tl-subpage) .tl-about-extra {
 
 @media (max-width: 900px) {
   .tl-evt-hero-landing {
-    flex-direction: column;
     padding: 24px 20px;
   }
 
-  .tl-evt-hero-feature {
+  .tl-evt-hero-top {
+    flex-direction: column;
+  }
+
+  .tl-evt-hero-banner {
     width: 100%;
-    flex: none;
+    max-width: none;
+  }
+
+  .tl-evt-hero-search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tl-evt-hero-date-wrap {
+    width: 100%;
+  }
+
+  .tl-evt-hero-date-wrap .tl-evt-datefield {
+    flex: 1;
   }
 
   .tl-evt-promo {
@@ -13437,6 +13437,144 @@ body:not(.tl-subpage) .tl-about-extra {
   color: #b45309;
   font-size: 12px;
   margin-top: 6px;
+}
+
+.tl-evt-card-cta {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 100px;
+  border: 1.5px solid var(--tl-navy);
+  background: #fff;
+  color: var(--tl-navy);
+  font-family: 'Geist Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tl-evt-card-cta:hover {
+  background: var(--tl-navy);
+  color: var(--tl-orange);
+}
+
+/* "Kateqoriyalar" section — 5 large photo tiles, distinct from the
+   compact chip row above (.tl-evt-cat-chip); both run the same
+   runCategorySearch(kw), just a bigger visual entry point. */
+.tl-evt-cat-tiles {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tl-evt-cat-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Geist Sans', sans-serif;
+}
+
+.tl-evt-cat-tile img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: var(--tl-r-md);
+  display: block;
+}
+
+.tl-evt-cat-tile-overlay {
+  position: absolute;
+  inset: 0;
+  bottom: auto;
+  height: 130px;
+  border-radius: var(--tl-r-md);
+  background: linear-gradient(180deg, rgba(13, 36, 58, 0.05) 0%, rgba(13, 36, 58, 0.75) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 12px;
+}
+
+.tl-evt-cat-tile-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 700;
+}
+
+.tl-evt-cat-tile-name svg {
+  flex-shrink: 0;
+}
+
+.tl-evt-cat-tile-sub {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--tl-gray-500);
+}
+
+@media (max-width: 900px) {
+  .tl-evt-cat-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Horizontal-scroll row ("Yaxın tarixlərdə") with a forward-arrow button
+   that nudges the scroll position — plain overflow-x, no JS carousel
+   library, since native scroll-snap + a button is enough here. */
+.tl-evt-scroll-row-wrap {
+  position: relative;
+}
+
+.tl-evt-scroll-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tl-evt-scroll-row::-webkit-scrollbar {
+  display: none;
+}
+
+.tl-evt-scroll-item {
+  flex: 0 0 270px;
+  scroll-snap-align: start;
+}
+
+.tl-evt-scroll-arrow {
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--tl-gray-200);
+  background: #fff;
+  color: var(--tl-navy);
+  box-shadow: var(--tl-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .tl-evt-scroll-arrow {
+    display: none;
+  }
 }
 
 /* Real 1/2/3... pagination bar under the search-results grid — each
