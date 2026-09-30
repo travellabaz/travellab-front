@@ -13421,9 +13421,21 @@ body:not(.tl-subpage) .tl-about-extra {
   line-height: 1.3;
 }
 
-.tl-evt-card-meta {
+.tl-evt-card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--tl-gray-600);
-  font-size: 13px;
+  font-size: 12.5px;
+  margin-bottom: 5px;
+}
+
+.tl-evt-card-meta-row svg {
+  flex-shrink: 0;
+  color: var(--tl-gray-500);
+}
+
+.tl-evt-card-meta-row:last-of-type {
   margin-bottom: 10px;
 }
 

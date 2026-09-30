@@ -333,9 +333,16 @@ function EventCard({ event, onClick }) {
       </div>
       <div className="tl-evt-card-body">
         <h3 className="tl-evt-card-name">{event.name}</h3>
-        <div className="tl-evt-card-meta">
-          {[formatDateOnlyAz(event.date), [event.venue, event.city].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
-        </div>
+        {(event.venue || event.city) && (
+          <div className="tl-evt-card-meta-row">
+            <PinIcon /> {[event.venue, event.city].filter(Boolean).join(', ')}
+          </div>
+        )}
+        {event.date && (
+          <div className="tl-evt-card-meta-row">
+            <CalendarIcon /> {formatDateTimeAz(event.date).replace(', ', ' · ')}
+          </div>
+        )}
         {event.lowPrice != null && (
           <div className="tl-evt-card-price">
             {event.lowPriceAzn != null ? formatAznWhole(event.lowPriceAzn) : formatPrice(event.lowPrice, event.currencyCode)}-dən başlayaraq
@@ -1055,7 +1062,7 @@ export default function TicketNetworkEventsPage() {
                       photo — replaces the old auto-rotating featured-event
                       carousel that used to live here. Real popular events
                       still get their own spotlight just below, in
-                      "Populyar tədbirlər". */}
+                      "Seçilən tədbirlər". */}
                   <div className="tl-evt-hero-banner">
                     <img src="/images/events/01_hero_konsert.png" alt="Travellab Tədbirlər" loading="eager" />
                   </div>
@@ -1134,7 +1141,7 @@ export default function TicketNetworkEventsPage() {
                   {landingLoaded && featuredEvents.length > 0 && (
                     <div className="tl-evt-section">
                       <div className="tl-evt-section-head">
-                        <h2 className="tl-evt-section-title">Populyar tədbirlər</h2>
+                        <h2 className="tl-evt-section-title">Seçilən tədbirlər</h2>
                         <button type="button" className="tl-evt-section-link" onClick={() => runCategorySearch('')}>Hamısına bax</button>
                       </div>
                       <div className="tl-evt-grid">
