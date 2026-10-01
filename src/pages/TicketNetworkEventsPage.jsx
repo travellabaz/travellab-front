@@ -551,11 +551,11 @@ function CityDropdown({ cities, value, onChange }) {
 // which this reuses so a tile click runs the exact same filter as its
 // matching chip).
 const KATEQORIYA_TILES = [
-  { kw: 'concert', label: 'Konsertlər', sub: 'Musiqi, sənətçilər, konsertlər', img: '/images/events/06_kateqoriya_konsertler.png' },
-  { kw: 'sports', label: 'İdman oyunları', sub: 'Futbol, basketbol, tennis', img: '/images/events/07_kateqoriya_idman.png' },
-  { kw: 'festival', label: 'Festivallar', sub: 'Musiqi, mədəniyyət, əyləncə', img: '/images/events/08_kateqoriya_festivallar.png' },
-  { kw: 'theatre', label: 'Teatr', sub: 'Tamaşalar, klassika, müasir', img: '/images/events/09_kateqoriya_teatr.png' },
-  { kw: 'show', label: 'Şou proqram', sub: 'Şoular, stand-up, qastrol', img: '/images/events/10_kateqoriya_sou.png' },
+  { kw: 'concert', label: 'Konsertlər', img: '/images/events/06_kateqoriya_konsertler.png' },
+  { kw: 'sports', label: 'İdman oyunları', img: '/images/events/07_kateqoriya_idman.png' },
+  { kw: 'festival', label: 'Festivallar', img: '/images/events/08_kateqoriya_festivallar.png' },
+  { kw: 'theatre', label: 'Teatr', img: '/images/events/09_kateqoriya_teatr.png' },
+  { kw: 'show', label: 'Şou proqram', img: '/images/events/10_kateqoriya_sou.png' },
 ];
 
 export default function TicketNetworkEventsPage() {
@@ -1233,7 +1233,6 @@ export default function TicketNetworkEventsPage() {
                           <span className="tl-evt-cat-tile-overlay">
                             <span className="tl-evt-cat-tile-name">{cat.label}<ForwardArrowIcon /></span>
                           </span>
-                          <span className="tl-evt-cat-tile-sub">{cat.sub}</span>
                         </button>
                       ))}
                     </div>

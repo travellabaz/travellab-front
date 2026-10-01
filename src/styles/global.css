@@ -12129,7 +12129,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-hero-landing .tl-evt-search-wrap .tl-evt-input::placeholder {
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
 }
 
 .tl-evt-hero-landing .tl-evt-search-wrap .tl-evt-input:focus {
@@ -12148,7 +12148,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-hero-landing .tl-evt-date-btn svg {
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
 }
 
 .tl-evt-hero-landing .tl-evt-city-dropdown-btn {
@@ -12545,7 +12545,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-evt-package-item small {
   display: block;
   font-size: 11.5px;
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
   margin-top: 1px;
 }
 
@@ -12706,7 +12706,7 @@ body:not(.tl-subpage) .tl-about-extra {
 .tl-evt-trust-strip-item small {
   font-size: 12px;
   font-weight: 500;
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
   margin-top: 2px;
 }
 
@@ -12729,12 +12729,28 @@ body:not(.tl-subpage) .tl-about-extra {
     align-items: stretch;
   }
 
+  /* Side-by-side (desktop) couldn't fit two 150px-min-width date buttons
+     in ~320px of actual space on a real phone — confirmed live, the
+     second field spilled past the white search card's edge. Stack
+     instead of trying to shrink text-bearing buttons that narrow. */
   .tl-evt-hero-date-wrap {
     width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 
   .tl-evt-hero-date-wrap .tl-evt-datefield {
-    flex: 1;
+    width: 100%;
+  }
+
+  .tl-evt-hero-date-wrap .tl-evt-date-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tl-evt-date-sep {
+    display: none;
   }
 
   .tl-evt-hero-landing .tl-title {
@@ -12789,7 +12805,7 @@ body:not(.tl-subpage) .tl-about-extra {
   border-bottom: 2px solid transparent;
   font-size: 14px;
   font-weight: 600;
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
   cursor: pointer;
   white-space: nowrap;
   transition: color 0.2s, border-color 0.2s;
@@ -12831,7 +12847,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-price-table th {
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -13109,7 +13125,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-shipping-note {
   font-size: 12px;
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
   margin: 0 0 10px;
 }
 
@@ -13473,7 +13489,7 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-card-meta-row svg {
   flex-shrink: 0;
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
 }
 
 .tl-evt-card-meta-row:last-of-type {
@@ -13566,12 +13582,6 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-cat-tile-name svg {
   flex-shrink: 0;
-}
-
-.tl-evt-cat-tile-sub {
-  margin-top: 8px;
-  font-size: 12px;
-  color: var(--tl-gray-500);
 }
 
 @media (max-width: 900px) {
@@ -13757,7 +13767,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-empty-text {
-  color: var(--tl-gray-500);
+  color: var(--tl-gray-500, #64748b);
   font-size: 13.5px;
   line-height: 1.6;
   max-width: 440px;
