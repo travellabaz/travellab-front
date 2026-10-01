@@ -12737,6 +12737,24 @@ body:not(.tl-subpage) .tl-about-extra {
     flex: 1;
   }
 
+  .tl-evt-hero-landing .tl-title {
+    font-size: 32px;
+  }
+
+  .tl-evt-hero-landing .tl-evt-hero-sub {
+    font-size: 13.5px;
+    max-width: none;
+  }
+
+  .tl-evt-city-dropdown,
+  .tl-evt-cta-btn {
+    width: 100%;
+  }
+
+  .tl-evt-section-title {
+    font-size: 21px;
+  }
+
   .tl-evt-promo {
     flex-direction: column;
   }
