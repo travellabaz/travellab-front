@@ -533,12 +533,22 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 // wait on a possibly-saturated primary — a sustained outage on one model
 // doesn't imply the other is also overloaded, since they're separate
 // capacity pools. delayMs is how long to wait *before* that attempt.
+// Widened 2026-10-01: 3 consecutive days of real failures (all "Body too
+// short" from FALLBACK_MODEL, after PRIMARY_MODEL 503'd both its tries —
+// see https://discuss.ai.google.dev, widespread Flash-tier overload since
+// the Gemini 3 release in mid-September) showed the lite model trending
+// upward across its 3 attempts (531 -> 844 -> 882 words, enforceLength
+// active from the 2nd) without quite clearing the 900-word floor — one or
+// two more rolls is cheap (a lite-model generation call, not 503 backoff)
+// and matches the demonstrated trend far better than giving up.
 const ATTEMPT_PLAN = [
   { model: PRIMARY_MODEL, backoffMs: 0 },
   { model: PRIMARY_MODEL, backoffMs: 20_000 },
   { model: FALLBACK_MODEL, backoffMs: 0 },
   { model: FALLBACK_MODEL, backoffMs: 20_000 },
   { model: FALLBACK_MODEL, backoffMs: 40_000 },
+  { model: FALLBACK_MODEL, backoffMs: 20_000 },
+  { model: FALLBACK_MODEL, backoffMs: 20_000 },
 ];
 
 // 503/429 are capacity problems — worth the full climbing backoff above.
