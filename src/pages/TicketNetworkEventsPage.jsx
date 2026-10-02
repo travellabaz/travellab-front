@@ -667,7 +667,22 @@ export default function TicketNetworkEventsPage() {
     .filter((ev) => !featuredIds.has(ev.id))
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .slice(0, 8);
-  const landingCities = [...new Set(landingEvents.map((ev) => ev.city).filter(Boolean))].sort();
+  // TicketNetwork's live inventory is currently 100% US venues (confirmed
+  // live — no AZ/regional cities exist to filter in or pin to the top), so
+  // a plain alphabetical sort surfaces obscure one-off small towns
+  // ("Alpharetta", "Sewell") ahead of cities an AZ visitor would actually
+  // recognize. Sorting by how many events a city has instead (ties broken
+  // alphabetically) floats the cities worth browsing to the top without
+  // fabricating a regional list that doesn't match the real data.
+  const sortCitiesByEventCount = (cityList, eventList) => {
+    const counts = new Map();
+    eventList.forEach((ev) => {
+      if (!ev.city) return;
+      counts.set(ev.city, (counts.get(ev.city) || 0) + 1);
+    });
+    return [...cityList].sort((a, b) => (counts.get(b) || 0) - (counts.get(a) || 0) || a.localeCompare(b));
+  };
+  const landingCities = sortCitiesByEventCount([...new Set(landingEvents.map((ev) => ev.city).filter(Boolean))], landingEvents);
 
   // Detail-page tabs (Ümumi məlumat / Yer seçimi / Qiymətlər / Qaydalar),
   // matching the reference mockup's structure — "Yer seçimi" holds the
@@ -776,7 +791,7 @@ export default function TicketNetworkEventsPage() {
   // that are actually present in the current real result set, and
   // narrows what's shown from data already fetched — real data, no
   // fabricated venue list, no unverified server-side filter.
-  const availableCities = [...new Set(events.map((ev) => ev.city).filter(Boolean))].sort();
+  const availableCities = sortCitiesByEventCount([...new Set(events.map((ev) => ev.city).filter(Boolean))], events);
   const visibleEvents = cityFilter ? events.filter((ev) => ev.city === cityFilter) : events;
 
   // The event stays in the URL (/events/:eventId) so it's a real,
@@ -880,6 +895,8 @@ export default function TicketNetworkEventsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
 
+  const sidebarRef = useRef(null);
+
   const selectGroup = (group) => {
     setSelectedGroup(group);
     const preferredQuantity = desiredQuantity && (group.purchasableQuantities || []).includes(desiredQuantity)
@@ -900,6 +917,17 @@ export default function TicketNetworkEventsPage() {
     setCountryCode('');
     setResult(null);
   };
+
+  // Nothing told the visitor a selection actually registered — picking a
+  // seat on the map or a row in the list silently filled in the sidebar
+  // further down/to the side with no visual cue, confirmed confusing on a
+  // real device. Scrolling the order-summary card into view gives an
+  // obvious "this is where your selection went" moment, on both the
+  // sticky desktop sidebar and the mobile stacked layout.
+  useEffect(() => {
+    if (!selectedGroup) return;
+    sidebarRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [selectedGroup]);
 
   // Raw TicketNetwork method names ("Paperless - Ship Gift Card", "Mobile
   // Transfer") mean nothing to a visitor — this is what actually matters to
@@ -1110,18 +1138,18 @@ export default function TicketNetworkEventsPage() {
                     )}
                   </div>
                   <div className="tl-evt-hero-date-wrap">
+                    {/* A single date, not a travel-style date RANGE — each
+                        event happens on exactly one day, so "Tarixdən/
+                        Tarixədək" (two separate pickers borrowed from the
+                        tour-search UI) just confused visitors. One field
+                        sets both dateFrom and dateTo to the same day,
+                        matching the backend's existing range params
+                        without needing a new single-date query param. */}
                     <DatePickerField
-                      label="Tarixdən"
+                      label="Tarix"
                       value={dateFrom}
-                      onChange={setDateFrom}
+                      onChange={(iso) => { setDateFrom(iso); setDateTo(iso); }}
                       minIso={new Date().toISOString().slice(0, 10)}
-                    />
-                    <span className="tl-evt-date-sep">—</span>
-                    <DatePickerField
-                      label="Tarixədək"
-                      value={dateTo}
-                      onChange={setDateTo}
-                      minIso={dateFrom || new Date().toISOString().slice(0, 10)}
                     />
                   </div>
                   {landingCities.length > 1 && (
@@ -1563,7 +1591,7 @@ export default function TicketNetworkEventsPage() {
                 </div>
 
                 {selectedGroup && (
-                <div className="tl-evt-sidebar-col">
+                <div className="tl-evt-sidebar-col" ref={sidebarRef}>
                   <div className="tl-evt-sidebar">
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <h3 className="tl-evt-sidebar-title" style={{ marginBottom: 0 }}>Sifariş xülasəsi</h3>

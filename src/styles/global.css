@@ -12166,11 +12166,6 @@ body:not(.tl-subpage) .tl-about-extra {
   position: relative;
 }
 
-.tl-evt-date-sep {
-  color: rgba(244, 247, 250, 0.5);
-  font-size: 13px;
-}
-
 /* Custom date field (DatePickerField) — replaces <input type="date">,
    whose own calendar popup is OS/browser chrome and can't be restyled. */
 .tl-evt-datefield {
@@ -12580,6 +12575,16 @@ body:not(.tl-subpage) .tl-about-extra {
   .tl-evt-package-items {
     grid-template-columns: 1fr;
   }
+  /* min-width:240/280px (set for the 3-column desktop layout) still
+     applies to a stacked child even after flex-direction switches to
+     column — on a narrow phone (~320-360px minus this padding) that's
+     wider than the available space, so the block visibly clips/cuts off
+     past the edge instead of wrapping. Dropping it lets each stacked
+     child size to the actual viewport. */
+  .tl-evt-package-main,
+  .tl-evt-package-items {
+    min-width: 0;
+  }
 }
 
 /* Promo banner — dark block, one big CTA on the left and 3 category
@@ -12749,10 +12754,6 @@ body:not(.tl-subpage) .tl-about-extra {
     min-width: 0;
   }
 
-  .tl-evt-date-sep {
-    display: none;
-  }
-
   .tl-evt-hero-landing .tl-title {
     font-size: 32px;
   }
@@ -12775,14 +12776,14 @@ body:not(.tl-subpage) .tl-about-extra {
     flex-direction: column;
   }
 
+  /* Same min-width-on-a-stacked-child clipping as .tl-evt-package above. */
+  .tl-evt-promo-main,
+  .tl-evt-promo-cats {
+    min-width: 0;
+  }
+
   .tl-evt-trust-strip {
     grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .tl-evt-trust-strip {
-    grid-template-columns: 1fr;
   }
 }
 
