@@ -988,6 +988,10 @@
       "title": "Tədbir Biletləri - Konsert, Şou, Festival | Travellab",
       "desc": "Bakıda və digər şəhərlərdə konsert, şou və tədbir biletlərini onlayn əldə edin. Sürətli və etibarlı bilet alışı Travellab ilə."
     },
+    "ordersPage": {
+      "title": "Sifarişlərim | Travellab",
+      "desc": "Travellab hesabınızdakı bilet sifarişlərinizə baxın."
+    },
     "viza": {
       "title": "Viza Xidmətləri - Sürətli və Etibarlı | Travellab",
       "desc": "Türkiyə, Şengen, Dubay və digər ölkələr üçün viza xidməti. Sənəd hazırlığından təhvilə qədər tam dəstək. Sürətli və etibarlı proses."
@@ -1260,6 +1264,11 @@
     "profile": "Profil",
     "referralLink": "Dosta dəvət linki",
     "copy": "Kopyala",
+    "orders": "Sifarişlərim",
+    "cart": "Səbətim",
+    "waChannel": "Bizim WhatsApp kanalımız",
+    "support": "Dəstək / Əlaqə",
+    "about": "Haqqımızda",
     "logout": "Çıxış"
   }
 }

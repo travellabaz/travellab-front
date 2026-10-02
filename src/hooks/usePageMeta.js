@@ -38,6 +38,11 @@ const SEO_KEY_BY_PATH = {
   '/korporativ': 'korporativ',
   '/endirimler': 'endirimler',
   '/shop': 'shop',
+  // Login-gated account page — not in PAGE_META/prerender.mjs's static
+  // route list (nothing user-specific to prerender), but still needs a
+  // real title instead of falling through to the "page not found"
+  // default every other unmatched path gets.
+  '/hesab/sifarislerim': 'ordersPage',
 };
 
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/

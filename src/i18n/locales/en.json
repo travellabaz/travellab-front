@@ -988,6 +988,10 @@
       "title": "Event Tickets - Concerts, Shows, Festivals | Travellab",
       "desc": "Get tickets online for concerts, shows and events in Baku and other cities. Fast and reliable ticket purchasing with Travellab."
     },
+    "ordersPage": {
+      "title": "My Orders | Travellab",
+      "desc": "View your ticket orders in your Travellab account."
+    },
     "viza": {
       "title": "Visa Services - Fast and Reliable | Travellab",
       "desc": "Visa services for Turkey, Schengen, Dubai and other countries. Full support from document preparation to delivery. Fast, reliable process."
@@ -1260,6 +1264,11 @@
     "profile": "Profile",
     "referralLink": "Referral link for a friend",
     "copy": "Copy",
+    "orders": "My orders",
+    "cart": "My cart",
+    "waChannel": "Our WhatsApp channel",
+    "support": "Support / Contact",
+    "about": "About us",
     "logout": "Log out"
   }
 }

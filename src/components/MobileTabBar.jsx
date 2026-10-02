@@ -3,8 +3,31 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+import { useCart } from '../context/CartContext';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
+import { SOCIAL_LINKS } from '../utils/socialLinks';
 import useScrollDirection from '../hooks/useScrollDirection';
+
+// Same WhatsApp Channel link as NavProfile.jsx (desktop dropdown).
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/PLACEHOLDER';
+
+// Same path data as Footer.jsx's own social icons — see NavProfile.jsx's
+// identical constant for why this isn't further deduplicated into one
+// shared file (two small per-file icon sets, consistent with how the rest
+// of the codebase defines icons locally rather than through a shared
+// icon library).
+const SOCIAL_ICON_PATHS = {
+  facebook: <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14C17.17 2.1 15.95 2 14.66 2 11.98 2 10 3.66 10 6.7v2.8H7v4h3V22h4v-8.5z" />,
+  linkedin: <path d="M6.94 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM3.4 8.75h3.1V21H3.4V8.75zm6.2 0h2.97v1.68h.04c.41-.78 1.43-1.6 2.94-1.6 3.14 0 3.72 2.07 3.72 4.76V21h-3.1v-5.44c0-1.3-.02-2.97-1.81-2.97-1.82 0-2.1 1.42-2.1 2.88V21H9.6V8.75z" />,
+  instagram: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+    </>
+  ),
+  tiktok: <path d="M16.6 5.82c-.6-.66-.96-1.5-1-2.42h-3.14v13.3c0 1.4-1.13 2.53-2.53 2.53a2.53 2.53 0 0 1-.98-4.87 2.53 2.53 0 0 1 1.68-.13V11.1a5.7 5.7 0 0 0-.7-.05A5.73 5.73 0 1 0 15.6 16.7V9.02a8.16 8.16 0 0 0 4.75 1.52V7.4a4.85 4.85 0 0 1-3.75-1.58z" />,
+};
 
 function HomeIcon() {
   return (
@@ -68,6 +91,7 @@ const TABS = [
 export default function MobileTabBar() {
   const { isAuthenticated, profile, logout } = useAuth();
   const { openAuth } = useModals();
+  const { openDrawer } = useCart();
   const { t } = useTranslation();
   const location = useLocation();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -115,6 +139,42 @@ export default function MobileTabBar() {
               <span>{t('mobileTabBar.balanceLabel')}</span>
               <strong>{profile.points} LP</strong>
             </div>
+
+            <NavLink to={localize('/hesab/sifarislerim')} className="tl-tabbar-sheet-item" onClick={() => setAccountOpen(false)}>
+              {t('navProfile.orders')}
+            </NavLink>
+
+            <button
+              type="button"
+              className="tl-tabbar-sheet-item"
+              style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left' }}
+              onClick={() => { setAccountOpen(false); openDrawer(); }}
+            >
+              {t('navProfile.cart')}
+            </button>
+
+            <a className="tl-tabbar-sheet-item" href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
+              {t('navProfile.waChannel')}
+            </a>
+
+            <div className="tl-tabbar-sheet-social">
+              {SOCIAL_LINKS.map((s) => (
+                <a key={s.key} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    {SOCIAL_ICON_PATHS[s.key]}
+                  </svg>
+                </a>
+              ))}
+            </div>
+
+            <a className="tl-tabbar-sheet-item" href="mailto:info@travellab.az">
+              {t('navProfile.support')}
+            </a>
+
+            <NavLink to={localize('/about')} className="tl-tabbar-sheet-item" onClick={() => setAccountOpen(false)}>
+              {t('navProfile.about')}
+            </NavLink>
+
             <a
               className="tl-tabbar-sheet-logout"
               href="#"

@@ -1297,6 +1297,35 @@ body:not(.tl-subpage) .tl-about-extra {
   padding: 8px 0 2px;
 }
 
+.tl-tabbar-sheet-item {
+  display: block;
+  padding: 11px 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--tl-navy);
+  text-decoration: none;
+  border-bottom: 1px solid var(--tl-gray-100);
+  cursor: pointer;
+}
+
+.tl-tabbar-sheet-social {
+  display: flex;
+  gap: 8px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--tl-gray-100);
+}
+
+.tl-tabbar-sheet-social a {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--tl-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
 /* ── HERO ── */
 .tl-hero {
   background: var(--tl-hero-orange);
@@ -8004,6 +8033,28 @@ body:not(.tl-subpage) .tl-about-extra {
   background: rgba(214, 69, 69, .08) !important
 }
 
+.nav-dd-social {
+  display: flex;
+  gap: 6px;
+  padding: 6px 12px;
+}
+
+.nav-dd-social a {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tl-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: 0.2s;
+}
+
+.nav-dd-social a:hover {
+  background: var(--tl-green);
+}
+
 /* ── PRIVACY / TERMS MODAL ── */
 .pv-section {
   margin-bottom: 24px;
@@ -13194,6 +13245,75 @@ body:not(.tl-subpage) .tl-about-extra {
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #991b1b;
+}
+
+/* "Sifarişlərim" (OrdersPage.jsx) order list. */
+.tl-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tl-order-row {
+  border: 1px solid var(--tl-gray-200);
+  border-radius: var(--tl-r-md);
+  padding: 16px;
+}
+
+.tl-order-row-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tl-order-row-name {
+  font-weight: 700;
+  color: var(--tl-navy);
+  font-size: 14.5px;
+}
+
+.tl-order-status {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.tl-order-status-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.tl-order-status-ok {
+  background: var(--tl-green-light);
+  color: #065f46;
+}
+
+.tl-order-status-fail {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.tl-order-row-meta {
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: var(--tl-gray-500, #64748b);
+}
+
+.tl-order-row-reason {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: #991b1b;
+}
+
+.tl-order-row-ticket {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
 /* 1420px = the map card's hard 992px min-width (needed so Seatics picks

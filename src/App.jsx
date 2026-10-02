@@ -21,6 +21,7 @@ import TourCategoryPage from './pages/TourCategoryPage';
 import OfferDetailPage from './pages/OfferDetailPage';
 import LabpointPage from './pages/LabpointPage';
 import EventsPage from './pages/EventsPage';
+import OrdersPage from './pages/OrdersPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentErrorPage from './pages/PaymentErrorPage';
 import VizaPage from './pages/VizaPage';
@@ -77,6 +78,7 @@ function localeRouteChildren() {
     // EpointProperties.successRedirectUrl/errorRedirectUrl.
     <Route key="payment-success" path="events/payment/success" element={<PaymentSuccessPage />} />,
     <Route key="payment-error" path="events/payment/error" element={<PaymentErrorPage />} />,
+    <Route key="hesab-sifarisler" path="hesab/sifarislerim" element={<OrdersPage />} />,
     <Route key="viza" path="viza" element={<VizaPage />} />,
     <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
     <Route key="about" path="about" element={<AboutPage />} />,
