@@ -156,11 +156,25 @@ body{margin:0;font-family:sans-serif;}
 //   list's buy button — kept as "Buy" (not "Al") since every other piece
 //   of text inside this specific Seatics panel (Tickets/ADA Accessible/
 //   Fees Included/etc.) is still English, unlike our own list below it.
+// - skipPrecheckoutMobile/Desktop: the guide's default ("Two Clicks to
+//   Checkout") inserts Seatics' own pre-checkout info screen, with its own
+//   "Go to Secure Checkout" button, between picking a seat/table on the
+//   map and redirectToCheckout() firing. Confirmed live that button does
+//   nothing when clicked — reported by a real customer as a dead end that
+//   blocks the whole map-based purchase path. Setting both to true enables
+//   the guide's documented "Single Click to Checkout" mode instead: the
+//   map's own CTA calls redirectToCheckout() directly, skipping that
+//   screen (and its broken button) entirely. This reaches the exact same
+//   already-working redirectToCheckout override below that the row-level
+//   Buy button uses, so it also collapses what used to be two different
+//   buy paths into one.
 window.Seatics = {
   config: {
     mapContained: true,
     mouseWheelZoomEnabled: false,
     buyButtonContentHtml: '<div style="background:#F5A623;color:#1D2939;padding:7px 14px;border-radius:8px;font-weight:700;font-size:13px;font-family:sans-serif;text-align:center;">Buy</div>',
+    skipPrecheckoutMobile: true,
+    skipPrecheckoutDesktop: true,
   },
 };
 </script>

@@ -11951,9 +11951,9 @@ body:not(.tl-subpage) .tl-about-extra {
   gap: 6px;
   font-size: 12px;
   font-weight: 600;
-  color: #6EE7A0;
-  background: rgba(34, 192, 105, 0.16);
-  border: 1px solid rgba(34, 192, 105, 0.32);
+  color: var(--tl-orange);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 100px;
   padding: 7px 14px;
 }
@@ -12263,7 +12263,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-calendar-day:hover:not(:disabled) {
-  background: var(--tl-green-light);
+  background: rgba(13, 36, 58, 0.06);
 }
 
 .tl-evt-calendar-day:disabled {
@@ -12273,11 +12273,11 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-calendar-day-today {
   font-weight: 700;
-  color: var(--tl-green-dark);
+  color: var(--tl-navy);
 }
 
 .tl-evt-calendar-day-selected {
-  background: var(--tl-green);
+  background: var(--tl-navy);
   color: #fff;
   font-weight: 700;
 }
@@ -12329,7 +12329,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-city-dropdown-btn:hover {
-  border-color: var(--tl-green);
+  border-color: var(--tl-navy);
 }
 
 .tl-evt-city-list {
@@ -12338,8 +12338,8 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-suggest-item-active {
-  background: var(--tl-green-light);
-  color: var(--tl-green-dark);
+  background: rgba(13, 36, 58, 0.06);
+  color: var(--tl-navy);
   font-weight: 700;
 }
 
@@ -12816,8 +12816,8 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-tab-active {
-  color: var(--tl-green-dark);
-  border-bottom-color: var(--tl-green);
+  color: var(--tl-navy);
+  border-bottom-color: var(--tl-navy);
 }
 
 .tl-evt-tabpanel {
@@ -12859,7 +12859,7 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-price-table strong {
-  color: var(--tl-green-dark);
+  color: var(--tl-navy);
 }
 
 .tl-evt-layout {
@@ -12951,12 +12951,12 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-ticket-row:hover {
-  border-color: var(--tl-green);
+  border-color: var(--tl-navy);
 }
 
 .tl-evt-ticket-row.tl-evt-ticket-row-selected {
-  border-color: var(--tl-green);
-  background: var(--tl-green-light);
+  border-color: var(--tl-navy);
+  background: rgba(13, 36, 58, 0.05);
 }
 
 .tl-evt-ticket-section {
@@ -13111,8 +13111,8 @@ body:not(.tl-subpage) .tl-about-extra {
 
 .tl-evt-input:focus,
 .tl-evt-select:focus {
-  border-color: var(--tl-green);
-  background: rgba(4, 149, 72, 0.06);
+  border-color: var(--tl-navy);
+  background: rgba(13, 36, 58, 0.04);
 }
 
 .tl-evt-shipping-address {
@@ -13155,18 +13155,26 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-sidebar-total-azn .tl-evt-sidebar-total-label {
-  color: var(--tl-green-dark);
+  color: var(--tl-navy);
 }
 
 .tl-evt-sidebar-total-azn .tl-evt-sidebar-total-value {
   font-size: 16px;
-  color: var(--tl-green-dark);
+  color: var(--tl-navy);
 }
 
+/* Overrides .tl-btn-book's sitewide green — same reasoning as
+   .tl-evt-empty-cta above. */
 .tl-evt-sidebar-cta {
   width: 100%;
   justify-content: center;
   padding: 13px 0;
+  background: var(--tl-navy);
+  color: var(--tl-orange);
+}
+
+.tl-evt-sidebar-cta:hover {
+  background: #111a26;
 }
 
 .tl-evt-result {
@@ -13345,9 +13353,9 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-qty-btn:hover {
-  border-color: var(--tl-green);
-  background: var(--tl-green-light);
-  color: var(--tl-green-dark);
+  border-color: var(--tl-navy);
+  background: rgba(13, 36, 58, 0.05);
+  color: var(--tl-navy);
 }
 
 .tl-evt-qty-pill {
@@ -13364,15 +13372,15 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-qty-pill:hover {
-  border-color: var(--tl-green);
-  color: var(--tl-green-dark);
+  border-color: var(--tl-navy);
+  color: var(--tl-navy);
 }
 
 .tl-evt-inline-link {
   background: none;
   border: none;
   padding: 0;
-  color: var(--tl-green);
+  color: var(--tl-blue);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -13462,7 +13470,7 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700;
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: var(--tl-green-dark);
+  color: var(--tl-navy);
 }
 
 .tl-evt-card-body {
@@ -13671,8 +13679,8 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-page-arrow:hover:not(:disabled) {
-  border-color: var(--tl-green);
-  color: var(--tl-green-dark);
+  border-color: var(--tl-navy);
+  color: var(--tl-navy);
 }
 
 .tl-evt-page-arrow:disabled {
@@ -13701,13 +13709,13 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 .tl-evt-page-num-btn:hover {
-  border-color: var(--tl-green);
-  color: var(--tl-green-dark);
+  border-color: var(--tl-navy);
+  color: var(--tl-navy);
 }
 
 .tl-evt-page-num-btn-active {
-  background: var(--tl-green);
-  border-color: var(--tl-green);
+  background: var(--tl-navy);
+  border-color: var(--tl-navy);
   color: #fff;
   cursor: default;
 }
@@ -13774,11 +13782,21 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 auto 20px;
 }
 
+/* Overrides .tl-btn-book's sitewide green — brand rule for this page is
+   navy/yellow, not the rest of the site's green primary-CTA color. Same
+   specificity as .tl-btn-book (one class each); wins because it's
+   declared later in the file. */
 .tl-evt-empty-cta {
   display: inline-flex;
   width: auto;
   flex: none;
   padding: 11px 28px;
+  background: var(--tl-navy);
+  color: var(--tl-orange);
+}
+
+.tl-evt-empty-cta:hover {
+  background: #111a26;
 }
 
 .tl-evt-empty-suggestions {

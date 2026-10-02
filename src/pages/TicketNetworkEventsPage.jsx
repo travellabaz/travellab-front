@@ -7,7 +7,11 @@ import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 import { getLocaleFromPathname } from '../utils/locale';
 import { formatDateTimeAz, formatDayMonthAz, formatDateOnlyAz, AZ_MONTHS } from '../utils/date';
-import { SHOP_WHATSAPP_NUMBER } from '../utils/shopWhatsapp';
+// Package-request CTA goes to Əfsanə specifically (not the general shop
+// WhatsApp line) — this number matches the one already in utils/managers.js,
+// not imported from there since that array rotates managers randomly and
+// this assignment is a fixed, deliberate choice, not "any manager".
+const PACKAGE_REQUEST_WHATSAPP_NUMBER = '994516383665';
 
 // The TicketNetwork integration (Catalog search -> Mercury ticket groups
 // -> mock-paid purchase -> Ticket Vault e-ticket), rendered inside the
@@ -1190,7 +1194,7 @@ export default function TicketNetworkEventsPage() {
                     </div>
                     <a
                       className="tl-evt-package-cta"
-                      href={`https://wa.me/${SHOP_WHATSAPP_NUMBER}?text=${encodeURIComponent('Salam! Xaricdə keçiriləcək bir tədbir üçün bilet + uçuş + otel paketi sifariş etmək istəyirəm.')}`}
+                      href={`https://wa.me/${PACKAGE_REQUEST_WHATSAPP_NUMBER}?text=${encodeURIComponent('Salam! Xaricdə keçiriləcək bir tədbir üçün bilet + uçuş + otel paketi sifariş etmək istəyirəm.')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
