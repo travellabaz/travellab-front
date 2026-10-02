@@ -9,7 +9,7 @@ import { SOCIAL_LINKS } from '../utils/socialLinks';
 import useScrollDirection from '../hooks/useScrollDirection';
 
 // Same WhatsApp Channel link as NavProfile.jsx (desktop dropdown).
-const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/PLACEHOLDER';
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vaifnm1ATRSxATpCqq3N';
 
 // Same path data as Footer.jsx's own social icons — see NavProfile.jsx's
 // identical constant for why this isn't further deduplicated into one

@@ -7,7 +7,7 @@ import { SOCIAL_LINKS } from '../utils/socialLinks';
 
 // Travellab's official WhatsApp Channel — follow link, not a 1:1 chat
 // (distinct from the manager-pool deep links elsewhere on the site).
-const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/PLACEHOLDER';
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vaifnm1ATRSxATpCqq3N';
 
 // Same path data as Footer.jsx's own social icons, kept visually
 // consistent with the footer rather than inventing a second icon set.
