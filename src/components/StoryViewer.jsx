@@ -2,10 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedNavigate } from './LocalizedLink';
-import { useModals } from '../context/ModalContext';
 import { markCategoryViewed } from '../utils/storyViewed';
 import { trackEvent } from '../utils/analytics';
-import { contactManager, managerLabel } from '../utils/managers';
+import { pickManager, managerLabel } from '../utils/managers';
 import { BASE_URL } from '../data/pageMeta';
 
 const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doesn't set its own
@@ -59,7 +58,6 @@ function CategoryPreviewCard({ category, depth, side, t, onClick }) {
 export default function StoryViewer({ categories, startCategoryIndex, onClose, onCategoryViewed }) {
   const { t } = useTranslation();
   const navigate = useLocalizedNavigate();
-  const { openManagerContact } = useModals();
   const [catIndex, setCatIndex] = useState(startCategoryIndex);
   const [storyIndex, setStoryIndex] = useState(0);
   const [progress, setProgress] = useState(0); // 0..1 within the current story
@@ -323,15 +321,22 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
     navigate(story.link);
   };
 
-  // "Zəng et" / WhatsApp — same manager-pool contact flow TourCard.jsx
-  // already uses (mobile opens WhatsApp directly, desktop shows the
-  // pick-a-manager popup) — see utils/managers.js. story.link is our own
-  // "/tours/{id}" path; permalink here just needs to be an absolute URL
-  // for the WhatsApp message text, not the Instagram post itself.
+  // "Zəng et" / WhatsApp — always a direct wa.me deep link, deliberately
+  // NOT managers.js's own managerLink() (which falls back to a bare
+  // tel: link on desktop — exactly the "macOS Chrome hands off to
+  // FaceTime with no warning" problem contactManager()'s popup exists to
+  // avoid elsewhere). A story is a quick, in-the-moment prompt, so
+  // WhatsApp (web or app) opening immediately — on both mobile and
+  // desktop — is the better flow here, per explicit feedback on the
+  // prototype. Still the same round-robin manager pool as everywhere
+  // else. story.link is our own "/tours/{id}" path — included in the
+  // prefilled message so the manager knows which tour/story the visitor
+  // was looking at.
   const handleCallClick = (e) => {
     e.stopPropagation();
-    setPaused(true);
-    contactManager({ title: story.title, permalink: BASE_URL + story.link }, t, openManagerContact);
+    const manager = pickManager();
+    const text = t('common.tourInterestMessage', { title: story.title || 'tur' }) + ' ' + BASE_URL + story.link;
+    window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(text), '_blank');
   };
 
   if (!category || !story) return null;
