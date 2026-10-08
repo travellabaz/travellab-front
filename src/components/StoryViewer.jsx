@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedNavigate } from './LocalizedLink';
 import LogoMark from './LogoMark';
+import StoryIcon from '../utils/storyIcons.jsx';
 import { markCategoryViewed } from '../utils/storyViewed';
 import { trackEvent } from '../utils/analytics';
 import { pickManager, managerLabel } from '../utils/managers';
@@ -315,7 +316,9 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
               className={'tl-story-viewer-sidebar-item' + (i === slide.catIdx ? ' active' : '')}
               onClick={(e) => { e.stopPropagation(); jumpToCategory(i); }}
             >
-              {t(`stories.categories.${cat.id}`, cat.label)}
+              <span className="tl-story-viewer-sidebar-icon"><StoryIcon name={cat.cover_icon} /></span>
+              <span className="tl-story-viewer-sidebar-name">{t(`stories.categories.${cat.id}`, cat.label)}</span>
+              <span className="tl-story-viewer-sidebar-count">{cat.stories.length}</span>
             </button>
           )
         ))}
@@ -378,6 +381,14 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
           onClick={goNext}
         />
 
+        {/* Desktop-only up/down — same prev/next as the tapzones and
+            swipe gesture, just a visible click target next to the
+            always-visible sidebar (touch devices rely on the swipe). */}
+        <div className="tl-story-viewer-updown">
+          <button type="button" className="tl-story-viewer-iconbtn" aria-label={t('stories.prev')} onClick={(e) => { e.stopPropagation(); goPrev(); }}>⌃</button>
+          <button type="button" className="tl-story-viewer-iconbtn" aria-label={t('stories.next')} onClick={(e) => { e.stopPropagation(); goNext(); }}>⌄</button>
+        </div>
+
         {/* CTA row — Endirimlər is special-cased (each story has its own
             /tours/{id} link, not a fixed per-category destination like
             every other category); everything else reads category.cta,
@@ -409,19 +420,24 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
             </button>
           </div>
         )}
-      </div>
 
-      {/* Like + (display-only) comment count — right side, matching the
-          prototype. Likes are decorative for now (see utils/storyLikes.js):
-          a stable per-story base count plus a per-visitor +1 remembered in
-          localStorage once tapped, no shared/backend count yet. */}
-      <div className="tl-story-viewer-social">
-        <button type="button" className={'tl-story-viewer-socialbtn' + (liked ? ' liked' : '')} onClick={handleLikeClick}>
-          {liked ? '♥' : '♡'}
-        </button>
-        <span className="tl-story-viewer-socialcount">{likeCount}</span>
-        <span className="tl-story-viewer-socialbtn tl-story-viewer-socialbtn-static">💬</span>
-        <span className="tl-story-viewer-socialcount">{commentCount}</span>
+        {/* Like + (display-only) comment count — a child of the stage
+            (not the outer viewer) so it positions relative to the actual
+            media column, not the full viewport; the desktop sidebar
+            means those aren't the same thing once >=1100px floats this
+            just outside the stage's right edge instead of overlapping
+            the photo (see global.css). Likes are decorative for now
+            (utils/storyLikes.js): a stable per-story base count plus a
+            per-visitor +1 remembered in localStorage once tapped, no
+            shared/backend count yet. */}
+        <div className="tl-story-viewer-social">
+          <button type="button" className={'tl-story-viewer-socialbtn' + (liked ? ' liked' : '')} onClick={handleLikeClick}>
+            {liked ? '♥' : '♡'}
+          </button>
+          <span className="tl-story-viewer-socialcount">{likeCount}</span>
+          <span className="tl-story-viewer-socialbtn tl-story-viewer-socialbtn-static">💬</span>
+          <span className="tl-story-viewer-socialcount">{commentCount}</span>
+        </div>
       </div>
     </div>,
     document.body

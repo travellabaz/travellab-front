@@ -845,6 +845,9 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 .tl-story-viewer-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-align: left;
   background: none;
   border: none;
@@ -865,6 +868,39 @@ body.tl-subpage .tl-tours-arrow {
 .tl-story-viewer-sidebar-item.active {
   background: rgba(255, 255, 255, 0.12);
   color: var(--tl-white);
+}
+
+.tl-story-viewer-sidebar-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tl-story-viewer-sidebar-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tl-story-viewer-sidebar-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tl-story-viewer-sidebar-count {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.tl-story-viewer-sidebar-item.active .tl-story-viewer-sidebar-count {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .tl-story-viewer-stage {
@@ -1038,6 +1074,37 @@ body.tl-subpage .tl-tours-arrow {
   right: 0;
 }
 
+/* Desktop-only visible prev/next — touch devices get the swipe gesture
+   instead (see onTouchMove/onTouchEnd), but a mouse has no equivalent,
+   so these are real click targets, not just the ArrowUp/ArrowDown
+   keyboard shortcuts. */
+.tl-story-viewer-updown {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .tl-story-viewer-updown {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    right: -56px;
+    top: calc(50% - 90px);
+    z-index: 3;
+  }
+
+  .tl-story-viewer-updown .tl-story-viewer-iconbtn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .tl-story-viewer-updown .tl-story-viewer-iconbtn:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+}
+
 /* Like/comment — floats just outside the stage's right edge, same row
    the prototype places it in. Comment count is display-only (no comment
    UI exists), so it isn't a <button>. */
@@ -1052,9 +1119,15 @@ body.tl-subpage .tl-tours-arrow {
   gap: 4px;
 }
 
-@media (min-width: 560px) {
+/* Once the desktop sidebar is showing (see .tl-story-viewer-sidebar),
+   the stage has guaranteed clearance on its right — float the social
+   buttons just outside it, in that margin, instead of overlapping the
+   photo's corner like the narrower/mobile layout does. */
+@media (min-width: 1100px) {
   .tl-story-viewer-social {
-    right: calc(50% - 258px);
+    right: -56px;
+    bottom: auto;
+    top: calc(50% + 20px);
   }
 }
 
