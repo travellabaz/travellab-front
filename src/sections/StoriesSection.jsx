@@ -3,6 +3,25 @@ import { useTranslation } from 'react-i18next';
 import StoryIcon from '../utils/storyIcons.jsx';
 import StoryViewer from '../components/StoryViewer';
 import { isCategoryViewed } from '../utils/storyViewed';
+import { API_BASE } from '../api/client';
+
+// The one category (Endirimlər) that isn't file-based content — see
+// GET /v1/tours/stories (TourStoryService, backend): auto-generated from
+// live tours, nearest departure first, capped at 16, no admin panel or
+// manual curation (none exists anywhere in this codebase yet). Every
+// other category here still follows the static stories.json convention
+// described below.
+const LIVE_CATEGORY_ID = 'endirimler';
+
+function tourToStoryItem(tour) {
+  return {
+    id: tour.id,
+    type: 'image',
+    media_url: API_BASE + tour.imageUrl,
+    duration_seconds: 5,
+    link: tour.link,
+  };
+}
 
 // Instagram-style highlight row — file-based content (see
 // /public/content/stories.json + /public/stories/), no admin panel or
@@ -28,6 +47,30 @@ export default function StoriesSection() {
         if (cancelled) return;
         const sorted = [...(data.categories || [])].sort((a, b) => a.order - b.order);
         setCategories(sorted);
+
+        // Swap the Endirimlər category's static placeholder stories for
+        // the live, auto-generated list once it arrives — the row renders
+        // immediately with the static data so the page never waits on
+        // this second request. A failed/empty fetch removes the category
+        // entirely rather than leaving stale placeholder content up, per
+        // the spec's "API cavab verməsə, bölmə gizlənir" rule.
+        fetch(API_BASE + '/tours/stories')
+          .then((res) => (res.ok ? res.json() : Promise.reject(new Error('bad status'))))
+          .then((tours) => {
+            if (cancelled) return;
+            setCategories((prev) => {
+              if (!tours || tours.length === 0) {
+                return prev.filter((c) => c.id !== LIVE_CATEGORY_ID);
+              }
+              return prev.map((c) =>
+                c.id === LIVE_CATEGORY_ID ? { ...c, stories: tours.map(tourToStoryItem) } : c
+              );
+            });
+          })
+          .catch((err) => {
+            console.error('ActionLog.storiesSection.liveStoriesFailed', err);
+            if (!cancelled) setCategories((prev) => prev.filter((c) => c.id !== LIVE_CATEGORY_ID));
+          });
       })
       .catch(() => {
         if (!cancelled) setCategories([]);

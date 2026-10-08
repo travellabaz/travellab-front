@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedNavigate } from './LocalizedLink';
+import { useModals } from '../context/ModalContext';
 import { markCategoryViewed } from '../utils/storyViewed';
+import { trackEvent } from '../utils/analytics';
+import { contactManager, managerLabel } from '../utils/managers';
+import { BASE_URL } from '../data/pageMeta';
 
 const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doesn't set its own
 const SWIPE_DOWN_CLOSE_THRESHOLD = 80; // px
@@ -55,6 +59,7 @@ function CategoryPreviewCard({ category, depth, side, t, onClick }) {
 export default function StoryViewer({ categories, startCategoryIndex, onClose, onCategoryViewed }) {
   const { t } = useTranslation();
   const navigate = useLocalizedNavigate();
+  const { openManagerContact } = useModals();
   const [catIndex, setCatIndex] = useState(startCategoryIndex);
   const [storyIndex, setStoryIndex] = useState(0);
   const [progress, setProgress] = useState(0); // 0..1 within the current story
@@ -101,6 +106,16 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catIndex, storyIndex]);
+
+  // GA4 story_view — scoped to the Endirimlər category (the only one
+  // backed by real tour_ids, see StoriesSection.jsx's tourToStoryItem);
+  // the other 8 categories are static file-based content with nothing
+  // meaningful to attribute a tour_id to.
+  useEffect(() => {
+    if (category?.id === 'endirimler' && story) {
+      trackEvent('story_view', { tour_id: story.id, position: storyIndex });
+    }
+  }, [category, story, storyIndex]);
 
   const goToCategory = useCallback((nextCatIndex, atLastStory) => {
     if (nextCatIndex < 0 || nextCatIndex >= categories.length) {
@@ -301,8 +316,22 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
 
   const handleLinkClick = (e) => {
     e.stopPropagation();
+    if (category?.id === 'endirimler') {
+      trackEvent('story_click', { tour_id: story.id, position: storyIndex });
+    }
     onClose();
     navigate(story.link);
+  };
+
+  // "Zəng et" / WhatsApp — same manager-pool contact flow TourCard.jsx
+  // already uses (mobile opens WhatsApp directly, desktop shows the
+  // pick-a-manager popup) — see utils/managers.js. story.link is our own
+  // "/tours/{id}" path; permalink here just needs to be an absolute URL
+  // for the WhatsApp message text, not the Instagram post itself.
+  const handleCallClick = (e) => {
+    e.stopPropagation();
+    setPaused(true);
+    contactManager({ title: story.title, permalink: BASE_URL + story.link }, t, openManagerContact);
   };
 
   if (!category || !story) return null;
@@ -446,9 +475,16 @@ export default function StoryViewer({ categories, startCategoryIndex, onClose, o
       />
 
       {story.link && (
-        <button type="button" className="tl-story-viewer-linkbtn" onClick={handleLinkClick}>
-          {t('stories.viewMore')} ↗
-        </button>
+        <div className="tl-story-viewer-cta-row">
+          <button type="button" className="tl-story-viewer-linkbtn" onClick={handleLinkClick}>
+            {t('stories.viewMore')} ↗
+          </button>
+          {category?.id === 'endirimler' && (
+            <button type="button" className="tl-story-viewer-linkbtn tl-story-viewer-callbtn" onClick={handleCallClick}>
+              {managerLabel(t)}
+            </button>
+          )}
+        </div>
       )}
     </div>,
     document.body

@@ -1027,12 +1027,17 @@ body.tl-subpage .tl-tours-arrow {
   }
 }
 
-.tl-story-viewer-linkbtn {
+.tl-story-viewer-cta-row {
   position: absolute;
   bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
+  display: flex;
+  gap: 10px;
+}
+
+.tl-story-viewer-linkbtn {
   background: var(--tl-white);
   color: var(--tl-navy);
   border: none;
@@ -1043,6 +1048,12 @@ body.tl-subpage .tl-tours-arrow {
   font-size: 13px;
   cursor: pointer;
   box-shadow: var(--tl-shadow);
+  white-space: nowrap;
+}
+
+.tl-story-viewer-callbtn {
+  background: var(--tl-navy);
+  color: #fff;
 }
 
 /* About: stats/services/address only show on the dedicated Haqqımızda
