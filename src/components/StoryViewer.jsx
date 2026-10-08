@@ -8,10 +8,12 @@ import { markCategoryViewed } from '../utils/storyViewed';
 import { trackEvent } from '../utils/analytics';
 import { pickManager, managerLabel } from '../utils/managers';
 import { baseLikeCount, baseCommentCount, isStoryLiked, setStoryLiked } from '../utils/storyLikes';
+import { getComments, addComment } from '../utils/storyComments';
 import { BASE_URL } from '../data/pageMeta';
 
 const DEFAULT_IMAGE_DURATION = 5; // seconds, per spec — used when a story doesn't set its own
 const SWIPE_THRESHOLD = 60; // px of vertical movement before a touch counts as a next/prev swipe, not a tap
+const DRAG_DEADZONE = 10; // px of movement (any direction) before a touch stops counting as a plain tap
 const LOOP_TOAST_MS = 2200;
 
 function StoryMedia({ story, mediaRef, muted, className }) {
@@ -75,9 +77,13 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
   const [paused, setPaused] = useState(false);
   const [loopToast, setLoopToast] = useState(null); // category label, or null
   const [liked, setLiked] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentDraft, setCommentDraft] = useState('');
   const videoRef = useRef(null);
   const touchStartRef = useRef(null); // { x, y } at touchstart
   const swipingRef = useRef(false); // set once a touchmove is recognized as a vertical swipe
+  const draggedRef = useRef(false); // set once a touchmove clears DRAG_DEADZONE, in any direction
   const loopToastTimeoutRef = useRef(null);
 
   const slide = slides[index];
@@ -88,6 +94,12 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
 
   useEffect(() => {
     if (story) setLiked(isStoryLiked(story.id));
+    // Closing the panel on every story change (not just loading that
+    // story's own comments) avoids a stale "add a comment" box floating
+    // over whatever's now on screen — reopen it fresh per story.
+    setCommentsOpen(false);
+    setCommentDraft('');
+    if (story) setComments(getComments(story.id));
   }, [story]);
 
   // Reached the last story of a category — record it as viewed (see
@@ -137,10 +149,23 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     if (i !== -1) setIndex(i);
   }, [slides]);
 
+  // Opening the comment panel should freeze auto-advance the same way
+  // tap-and-hold does — a ref (not just reading `paused || commentsOpen`
+  // directly) because the image-story tick loop below deliberately
+  // doesn't restart on every pause toggle (see its own comment), so it
+  // needs a value that stays current without re-running that effect.
+  const pausedRef = useRef(false);
+  useEffect(() => {
+    pausedRef.current = paused || commentsOpen;
+  }, [paused, commentsOpen]);
+
   // Drives the top progress segments for image stories (videos drive their
   // own via timeupdate below) — restarts from 0 every time the story
   // changes, ticking via rAF rather than a single CSS transition so pause
   // (see the tap-and-hold handling further down) can freeze it mid-way.
+  // Deliberately NOT in the dependency array below: re-running this
+  // effect on every pause toggle would reset progress to 0 each time,
+  // which is exactly the visible glitch pausedRef avoids.
   useEffect(() => {
     setProgress(0);
     if (!story || story.type !== 'image') return undefined;
@@ -150,7 +175,7 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     let frameId;
 
     const tick = (now) => {
-      if (paused) {
+      if (pausedRef.current) {
         frameId = requestAnimationFrame(tick);
         return;
       }
@@ -179,14 +204,14 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     const onEnded = () => goNext();
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('ended', onEnded);
-    if (paused) video.pause();
+    if (paused || commentsOpen) video.pause();
     else video.play().catch(() => {});
     return () => {
       video.removeEventListener('timeupdate', onTimeUpdate);
       video.removeEventListener('ended', onEnded);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, paused]);
+  }, [index, paused, commentsOpen]);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -206,20 +231,31 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     const t0 = e.touches[0];
     touchStartRef.current = { x: t0.clientX, y: t0.clientY };
     swipingRef.current = false;
+    draggedRef.current = false;
   };
 
-  // Vertical swipe = next/prev (TikTok/Reels-style, matches the
-  // prototype's "scroll down -> next story" description), independent of
-  // which category each story belongs to. Only commits once the finger
-  // has moved past SWIPE_THRESHOLD and vertical movement dominates
-  // horizontal — short/diagonal touches still fall through to the
-  // tapzone buttons' own onClick (goPrev/goNext) as a plain tap.
+  // Vertical swipe down = next, up = prev — matches the prototype's own
+  // "scroll down -> next story" description literally (not the TikTok/
+  // Reels "swipe up for next" convention this started out copying).
+  // Horizontal movement must never trigger navigation, even though the
+  // tapzone buttons underneath are a plain left/right tap-to-advance —
+  // without draggedRef, a horizontal/diagonal drag that ends over the
+  // right tapzone would fire its onClick as if it were a clean tap on
+  // "next", which reads as "swiping right also advances". draggedRef
+  // marks "real movement happened, this was not a tap" the moment the
+  // finger clears a small deadzone, independent of direction; onTouchEnd
+  // uses it to suppress that fallback for every drag that isn't a
+  // recognized vertical swipe, leaving genuine taps (no real movement)
+  // as the only thing that still reaches the tapzones' own onClick.
   const onTouchMove = (e) => {
     const start = touchStartRef.current;
     if (!start || swipingRef.current) return;
     const t0 = e.touches[0];
     const dy = t0.clientY - start.y;
     const dx = t0.clientX - start.x;
+    if (!draggedRef.current && (Math.abs(dy) > DRAG_DEADZONE || Math.abs(dx) > DRAG_DEADZONE)) {
+      draggedRef.current = true;
+    }
     if (Math.abs(dy) > SWIPE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
       swipingRef.current = true;
       setPaused(true);
@@ -228,18 +264,31 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
 
   const onTouchEnd = (e) => {
     const start = touchStartRef.current;
+    const wasSwiping = swipingRef.current;
+    const wasDragged = draggedRef.current;
     touchStartRef.current = null;
+    swipingRef.current = false;
+    draggedRef.current = false;
     setPaused(false);
-    if (!start || !swipingRef.current) {
-      swipingRef.current = false;
+
+    if (!start) return;
+
+    if (wasSwiping) {
+      e.preventDefault(); // suppress the synthetic click the tapzone underneath would otherwise fire
+      const t0 = e.changedTouches[0];
+      const dy = t0.clientY - start.y;
+      if (dy > 0) goNext(); // swiped down -> next
+      else goPrev(); // swiped up -> prev
       return;
     }
-    swipingRef.current = false;
-    e.preventDefault(); // suppress the synthetic click the tapzone underneath would otherwise fire
-    const t0 = e.changedTouches[0];
-    const dy = t0.clientY - start.y;
-    if (dy < 0) goNext(); // swiped up -> next
-    else goPrev(); // swiped down -> prev
+
+    if (wasDragged) {
+      // Moved, but not a qualifying vertical swipe (e.g. mostly
+      // horizontal) — a no-op, not a fallback tap. See the comment above.
+      e.preventDefault();
+    }
+    // else: a genuine tap with no real movement — let it fall through to
+    // the tapzone button's own onClick (left = prev, right = next).
   };
 
   const handleLinkClick = (e) => {
@@ -289,10 +338,23 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     setStoryLiked(story.id, next);
   };
 
+  const handleCommentToggle = (e) => {
+    e.stopPropagation();
+    setCommentsOpen((open) => !open);
+  };
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!commentDraft.trim()) return;
+    setComments(addComment(story.id, commentDraft));
+    setCommentDraft('');
+  };
+
   if (!slide) return null;
 
   const likeCount = baseLikeCount(story.id) + (liked ? 1 : 0);
-  const commentCount = baseCommentCount(story.id);
+  const commentCount = baseCommentCount(story.id) + comments.length;
   const categoryLabel = t(`stories.categories.${category.id}`, category.label);
 
   return createPortal(
@@ -421,23 +483,57 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
           </div>
         )}
 
-        {/* Like + (display-only) comment count — a child of the stage
-            (not the outer viewer) so it positions relative to the actual
-            media column, not the full viewport; the desktop sidebar
-            means those aren't the same thing once >=1100px floats this
-            just outside the stage's right edge instead of overlapping
-            the photo (see global.css). Likes are decorative for now
-            (utils/storyLikes.js): a stable per-story base count plus a
-            per-visitor +1 remembered in localStorage once tapped, no
-            shared/backend count yet. */}
+        {/* Like + comment — a child of the stage (not the outer viewer)
+            so it positions relative to the actual media column, not the
+            full viewport; the desktop sidebar means those aren't the
+            same thing once >=1100px floats this just outside the
+            stage's right edge instead of overlapping the photo (see
+            global.css). Both are per-visitor-only, no shared backend
+            yet (see utils/storyLikes.js / utils/storyComments.js): likes
+            are a stable per-story base count plus a local +1 once
+            tapped; comments are a real, working add-a-comment panel,
+            just not visible to anyone else. */}
         <div className="tl-story-viewer-social">
           <button type="button" className={'tl-story-viewer-socialbtn' + (liked ? ' liked' : '')} onClick={handleLikeClick}>
             {liked ? '♥' : '♡'}
           </button>
           <span className="tl-story-viewer-socialcount">{likeCount}</span>
-          <span className="tl-story-viewer-socialbtn tl-story-viewer-socialbtn-static">💬</span>
+          <button type="button" className={'tl-story-viewer-socialbtn' + (commentsOpen ? ' active' : '')} onClick={handleCommentToggle}>
+            💬
+          </button>
           <span className="tl-story-viewer-socialcount">{commentCount}</span>
         </div>
+
+        {commentsOpen && (
+          <div className="tl-story-viewer-comments" onClick={(e) => e.stopPropagation()}>
+            <div className="tl-story-viewer-comments-head">
+              <strong>{t('stories.comments.title')}</strong>
+              <button type="button" className="tl-story-viewer-comments-close" onClick={handleCommentToggle}>✕</button>
+            </div>
+            <div className="tl-story-viewer-comments-list">
+              {comments.length === 0 ? (
+                <p className="tl-story-viewer-comments-empty">{t('stories.comments.empty')}</p>
+              ) : (
+                comments.map((c, i) => (
+                  <div key={i} className="tl-story-viewer-comments-item">
+                    <strong>{t('stories.comments.you')}</strong>
+                    <span>{c.text}</span>
+                  </div>
+                ))
+              )}
+            </div>
+            <form className="tl-story-viewer-comments-form" onSubmit={handleCommentSubmit}>
+              <input
+                type="text"
+                value={commentDraft}
+                onChange={(e) => setCommentDraft(e.target.value)}
+                placeholder={t('stories.comments.placeholder')}
+                maxLength={300}
+              />
+              <button type="submit" disabled={!commentDraft.trim()}>{t('stories.comments.send')}</button>
+            </form>
+          </div>
+        )}
       </div>
     </div>,
     document.body

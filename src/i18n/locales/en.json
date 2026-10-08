@@ -157,6 +157,13 @@
     "next": "Next",
     "viewMore": "Learn more",
     "loopedToStart": "You've seen them all — back to {{category}}",
+    "comments": {
+      "title": "Comments",
+      "empty": "No comments yet. Be the first!",
+      "you": "You",
+      "placeholder": "Write a comment...",
+      "send": "Send"
+    },
     "cta": {
       "joinTour": "Join a similar tour",
       "vizaPage": "Visa page",

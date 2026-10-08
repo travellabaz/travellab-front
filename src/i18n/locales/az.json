@@ -157,6 +157,13 @@
     "next": "Növbəti",
     "viewMore": "Ətraflı",
     "loopedToStart": "Hamısına baxdınız — yenidən {{category}}",
+    "comments": {
+      "title": "Şərhlər",
+      "empty": "Hələ şərh yoxdur. İlk siz yazın!",
+      "you": "Siz",
+      "placeholder": "Şərh yaz...",
+      "send": "Göndər"
+    },
     "cta": {
       "joinTour": "Oxşar tura qoşul",
       "vizaPage": "Viza səhifəsi",
