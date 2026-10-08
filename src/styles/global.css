@@ -908,43 +908,55 @@ body.tl-subpage .tl-tours-arrow {
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tl-story-viewer-progress {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  z-index: 2;
-  display: flex;
-  gap: 4px;
-}
-
-.tl-story-viewer-seg {
-  flex: 1;
-  height: 2.5px;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.tl-story-viewer-seg-fill {
   height: 100%;
-  background: var(--tl-white);
+}
+
+/* The scrollable feed itself — one native-scroll column, CSS scroll-snap
+   doing the "one gesture = one slide" work on touch (see StoryViewer.jsx
+   for why wheel/trackpad input is handled separately in JS instead). */
+.tl-story-viewer-feed {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tl-story-viewer-feed::-webkit-scrollbar {
+  display: none;
+}
+
+.tl-story-viewer-slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .tl-story-viewer-head {
   position: absolute;
   top: 22px;
-  left: 14px;
   right: 14px;
   z-index: 2;
+}
+
+/* Bottom-left author + caption + CTA stack — moved down from the old
+   top bar to match the Reels/TikTok layout this was redesigned against;
+   only mute/close stay up top now. right:80px keeps it clear of the
+   like/comment column, which sits in the same bottom-right corner on
+   mobile (see .tl-story-viewer-social below). */
+.tl-story-viewer-bottom {
+  position: absolute;
+  left: 16px;
+  right: 80px;
+  bottom: 28px;
+  z-index: 2;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .tl-story-viewer-author {
@@ -1032,6 +1044,28 @@ body.tl-subpage .tl-tours-arrow {
   background: #000;
 }
 
+/* Stands in for a video that isn't within the active ±1 window — see
+   StoryViewer.jsx's isNear. The data model has no real per-story
+   thumbnail to show instead. */
+.tl-story-viewer-media-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.tl-story-viewer-caption {
+  margin: 0;
+  color: var(--tl-white);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-size: 12.5px;
+  line-height: 1.45;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .tl-story-viewer-toast {
   position: absolute;
   top: 56px;
@@ -1055,29 +1089,9 @@ body.tl-subpage .tl-tours-arrow {
   100% { opacity: 0; transform: translate(-50%, -6px); }
 }
 
-.tl-story-viewer-tapzone {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.tl-story-viewer-tapzone-left {
-  left: 0;
-}
-
-.tl-story-viewer-tapzone-right {
-  right: 0;
-}
-
-/* Desktop-only visible prev/next — touch devices get the swipe gesture
-   instead (see onTouchMove/onTouchEnd), but a mouse has no equivalent,
-   so these are real click targets, not just the ArrowUp/ArrowDown
-   keyboard shortcuts. */
+/* Desktop-only visible prev/next — touch devices get the native swipe
+   instead, but a mouse has no equivalent, so these are real click
+   targets, not just the ArrowUp/ArrowDown keyboard shortcuts. */
 .tl-story-viewer-updown {
   display: none;
 }
@@ -1119,17 +1133,14 @@ body.tl-subpage .tl-tours-arrow {
   gap: 4px;
 }
 
-/* Once the desktop sidebar is showing (see .tl-story-viewer-sidebar),
-   the stage has guaranteed clearance on its right — float the social
-   buttons just outside it, in that margin, instead of overlapping the
-   photo's corner like the narrower/mobile layout does. */
-@media (min-width: 1100px) {
-  .tl-story-viewer-social {
-    right: -56px;
-    bottom: auto;
-    top: calc(50% + 20px);
-  }
-}
+/* Deliberately NOT floated outside the stage's right edge on desktop
+   (unlike .tl-story-viewer-updown, which is a direct child of the
+   stage): .tl-story-viewer-social lives inside each slide, which is a
+   descendant of .tl-story-viewer-feed — and feed needs overflow-y:auto
+   for its scroll-snap, which per the CSS overflow spec forces its
+   overflow-x to the same non-visible computed value too, clipping
+   anything positioned past the feed's own box. Keeping this inside the
+   480px stage width (same spot as mobile) avoids that clip entirely. */
 
 .tl-story-viewer-socialbtn {
   width: 40px;
@@ -1265,14 +1276,13 @@ body.tl-subpage .tl-tours-arrow {
   cursor: default;
 }
 
+/* No longer absolutely positioned on its own — it's a row inside
+   .tl-story-viewer-bottom's flex column now, left-aligned with the
+   author/caption above it rather than centered over the stage. */
 .tl-story-viewer-cta-row {
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .tl-story-viewer-linkbtn {
