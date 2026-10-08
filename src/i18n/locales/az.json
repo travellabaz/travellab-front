@@ -18,6 +18,7 @@
     "copyNumber": "Nömrəni kopyala",
     "copied": "Kopyalandı!",
     "tourInterestMessage": "Salam! \"{{title}}\" turu ilə maraqlanıram.",
+    "vizaInterestMessage": "Salam! Saytda viza ilə bağlı story-yə baxdım. Viza müraciəti haqqında məlumat almaq istəyirəm.",
     "close": "Bağla"
   },
   "nav": {
@@ -151,9 +152,16 @@
   },
   "stories": {
     "sectionTitle": "Storilərimiz",
+    "recentTitle": "Son storilər",
     "prev": "Əvvəlki",
     "next": "Növbəti",
     "viewMore": "Ətraflı",
+    "loopedToStart": "Hamısına baxdınız — yenidən {{category}}",
+    "cta": {
+      "joinTour": "Oxşar tura qoşul",
+      "vizaPage": "Viza səhifəsi",
+      "applyNow": "Müraciət et"
+    },
     "categories": {
       "turistler": "Turistlər",
       "viza": "Viza",

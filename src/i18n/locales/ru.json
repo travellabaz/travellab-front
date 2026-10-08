@@ -18,6 +18,7 @@
     "copyNumber": "Скопировать номер",
     "copied": "Скопировано!",
     "tourInterestMessage": "Здравствуйте! Меня интересует тур \"{{title}}\".",
+    "vizaInterestMessage": "Здравствуйте! Я посмотрел(а) историю про визу на сайте. Хочу узнать подробнее о подаче на визу.",
     "close": "Закрыть"
   },
   "nav": {
@@ -151,9 +152,16 @@
   },
   "stories": {
     "sectionTitle": "Наши истории",
+    "recentTitle": "Недавние истории",
     "prev": "Назад",
     "next": "Далее",
     "viewMore": "Подробнее",
+    "loopedToStart": "Вы посмотрели всё — снова {{category}}",
+    "cta": {
+      "joinTour": "Похожий тур",
+      "vizaPage": "Страница визы",
+      "applyNow": "Подать заявку"
+    },
     "categories": {
       "turistler": "Туристам",
       "viza": "Виза",

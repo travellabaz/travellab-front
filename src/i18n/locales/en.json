@@ -18,6 +18,7 @@
     "copyNumber": "Copy number",
     "copied": "Copied!",
     "tourInterestMessage": "Hello! I'm interested in the \"{{title}}\" tour.",
+    "vizaInterestMessage": "Hello! I watched a visa story on the website. I'd like to learn more about applying for a visa.",
     "close": "Close"
   },
   "nav": {
@@ -151,9 +152,16 @@
   },
   "stories": {
     "sectionTitle": "Our Stories",
+    "recentTitle": "Recent Stories",
     "prev": "Previous",
     "next": "Next",
     "viewMore": "Learn more",
+    "loopedToStart": "You've seen them all — back to {{category}}",
+    "cta": {
+      "joinTour": "Join a similar tour",
+      "vizaPage": "Visa page",
+      "applyNow": "Apply now"
+    },
     "categories": {
       "turistler": "Tourists",
       "viza": "Visa",

@@ -5,6 +5,7 @@
       "label": "Turistlər",
       "order": 1,
       "cover_icon": "users",
+      "cta": { "type": "link", "to": "/tours", "labelKey": "stories.cta.joinTour" },
       "stories": [
         { "id": "turistler-001", "type": "video", "media_url": "/stories/turistler/001.mp4", "duration_seconds": null, "link": null },
         { "id": "turistler-002", "type": "video", "media_url": "/stories/turistler/002.mp4", "duration_seconds": null, "link": null },
@@ -63,6 +64,7 @@
       "label": "Viza",
       "order": 2,
       "cover_icon": "passport",
+      "cta": { "type": "link_whatsapp", "to": "/viza", "labelKey": "stories.cta.vizaPage", "waLabelKey": "stories.cta.applyNow" },
       "stories": [
         { "id": "viza-001", "type": "video", "media_url": "/stories/viza/001.mp4", "duration_seconds": null, "link": null },
         { "id": "viza-002", "type": "image", "media_url": "/stories/viza/002.jpg", "duration_seconds": 5, "link": null },
@@ -94,6 +96,7 @@
       "label": "Bloggerlər",
       "order": 4,
       "cover_icon": "camera",
+      "cta": { "type": "link", "to": "/tours", "labelKey": "stories.cta.joinTour" },
       "stories": [
         { "id": "bloggerler-001", "type": "video", "media_url": "/stories/bloggerler/001.mp4", "duration_seconds": null, "link": null },
         { "id": "bloggerler-002", "type": "video", "media_url": "/stories/bloggerler/002.mp4", "duration_seconds": null, "link": null },
@@ -105,6 +108,7 @@
       "label": "Hədiyyə Kartı",
       "order": 5,
       "cover_icon": "gift",
+      "cta": { "type": "link", "to": "/hediyye-karti", "labelKey": "stories.viewMore" },
       "stories": [
         { "id": "hediyye-karti-001", "type": "video", "media_url": "/stories/hediyye-karti/001.mp4", "duration_seconds": null, "link": null },
         { "id": "hediyye-karti-002", "type": "image", "media_url": "/stories/hediyye-karti/002.jpg", "duration_seconds": 5, "link": null },
@@ -118,6 +122,7 @@
       "label": "Shop",
       "order": 6,
       "cover_icon": "bag",
+      "cta": { "type": "link", "to": "/shop", "labelKey": "stories.viewMore" },
       "stories": [
         { "id": "shop-001", "type": "image", "media_url": "/stories/shop/001.jpg", "duration_seconds": 5, "link": null },
         { "id": "shop-002", "type": "image", "media_url": "/stories/shop/002.jpg", "duration_seconds": 5, "link": null },
@@ -145,6 +150,7 @@
       "label": "Labpoint",
       "order": 7,
       "cover_icon": "award",
+      "cta": { "type": "link", "to": "/labpoint", "labelKey": "stories.viewMore" },
       "stories": [
         { "id": "labpoint-001", "type": "image", "media_url": "/stories/labpoint/001.jpg", "duration_seconds": 5, "link": null },
         { "id": "labpoint-002", "type": "image", "media_url": "/stories/labpoint/002.jpg", "duration_seconds": 5, "link": null }
@@ -155,6 +161,7 @@
       "label": "Rəylər",
       "order": 8,
       "cover_icon": "star",
+      "cta": { "type": "link", "to": "/#reviews", "labelKey": "stories.viewMore" },
       "stories": [
         { "id": "reyler-001", "type": "image", "media_url": "/stories/reyler/001.jpg", "duration_seconds": 6, "link": null },
         { "id": "reyler-002", "type": "image", "media_url": "/stories/reyler/002.jpg", "duration_seconds": 6, "link": null },
@@ -186,6 +193,7 @@
       "label": "Tədbirlər",
       "order": 9,
       "cover_icon": "building",
+      "cta": { "type": "link", "to": "/events", "labelKey": "stories.viewMore" },
       "stories": [
         { "id": "tedbir-001", "type": "image", "media_url": "/images/about/events/travellab-qarabagda.jpg", "duration_seconds": 5, "link": null },
         { "id": "tedbir-002", "type": "image", "media_url": "/images/about/events/mice-leisure-turkiye-2025.jpg", "duration_seconds": 5, "link": null },

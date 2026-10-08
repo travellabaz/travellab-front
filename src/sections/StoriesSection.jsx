@@ -23,6 +23,29 @@ function tourToStoryItem(tour) {
   };
 }
 
+// "Son storilər" — a mixed sample across categories, round-robin (one
+// from each category in turn) rather than true chronological recency:
+// almost none of the static stories.json content has a real timestamp to
+// sort by, so "recent" here means "a representative mix of topics", per
+// the redesign's own description. Copies each category's story array so
+// shift() here never mutates the real data categories/StoryViewer use.
+function buildStoryMix(categories, limit) {
+  const pools = categories.map((c) => [...c.stories]);
+  const mixed = [];
+  let anyLeft = true;
+  while (mixed.length < limit && anyLeft) {
+    anyLeft = false;
+    for (let i = 0; i < categories.length && mixed.length < limit; i++) {
+      if (pools[i].length === 0) continue;
+      anyLeft = true;
+      mixed.push({ story: pools[i].shift(), category: categories[i] });
+    }
+  }
+  return mixed;
+}
+
+const RECENT_MIX_LIMIT = 12;
+
 // Instagram-style highlight row — file-based content (see
 // /public/content/stories.json + /public/stories/), no admin panel or
 // backend: the site owner edits the JSON directly via GitHub's web editor
@@ -37,6 +60,7 @@ export default function StoriesSection() {
   const { t } = useTranslation();
   const [categories, setCategories] = useState(null); // null = still loading
   const [openCategoryIndex, setOpenCategoryIndex] = useState(null);
+  const [openStoryId, setOpenStoryId] = useState(null); // set when opened from "Son storilər" — a specific story, not a category's first
   const [viewedTick, setViewedTick] = useState(0); // bumped to re-read localStorage after closing the viewer
 
   useEffect(() => {
@@ -82,6 +106,24 @@ export default function StoriesSection() {
 
   if (!categories || categories.length === 0) return null;
 
+  const recentMix = buildStoryMix(categories, RECENT_MIX_LIMIT);
+
+  const openCategory = (index) => {
+    setOpenStoryId(null);
+    setOpenCategoryIndex(index);
+  };
+
+  const openStory = (catIndex, storyId) => {
+    setOpenCategoryIndex(catIndex);
+    setOpenStoryId(storyId);
+  };
+
+  const closeViewer = () => {
+    setOpenCategoryIndex(null);
+    setOpenStoryId(null);
+    setViewedTick((v) => v + 1);
+  };
+
   return (
     <section className="tl-story-section">
       <div className="tl-section" style={{ paddingBottom: 24 }}>
@@ -99,7 +141,7 @@ export default function StoriesSection() {
                 key={category.id}
                 className="tl-story-item"
                 disabled={!hasStories}
-                onClick={() => setOpenCategoryIndex(index)}
+                onClick={() => openCategory(index)}
               >
                 <span className={'tl-story-ring' + (viewed ? ' viewed' : '')}>
                   <span className={`tl-story-avatar tl-logo-color-${index % 4}`}>
@@ -111,16 +153,37 @@ export default function StoriesSection() {
             );
           })}
         </div>
+
+        {recentMix.length > 0 && (
+          <>
+            <h2 className="tl-story-section-title" style={{ marginTop: 28 }}>{t('stories.recentTitle')}</h2>
+            <div className="tl-story-recent-row">
+              {recentMix.map(({ story, category }) => (
+                <button
+                  type="button"
+                  key={story.id}
+                  className="tl-story-recent-card"
+                  onClick={() => openStory(categories.indexOf(category), story.id)}
+                >
+                  {story.type === 'video' ? (
+                    <video src={story.media_url} className="tl-story-recent-card-media" muted preload="metadata" />
+                  ) : (
+                    <img src={story.media_url} alt="" className="tl-story-recent-card-media" loading="lazy" />
+                  )}
+                  <span className="tl-story-recent-card-pill">{t(`stories.categories.${category.id}`, category.label)}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {openCategoryIndex !== null && (
         <StoryViewer
           categories={categories}
           startCategoryIndex={openCategoryIndex}
-          onClose={() => {
-            setOpenCategoryIndex(null);
-            setViewedTick((v) => v + 1);
-          }}
+          startStoryId={openStoryId}
+          onClose={closeViewer}
           onCategoryViewed={() => setViewedTick((v) => v + 1)}
         />
       )}
