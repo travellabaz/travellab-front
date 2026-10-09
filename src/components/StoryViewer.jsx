@@ -277,7 +277,9 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
   }, []); // only the opening category/story matters — never re-derive mid-session
 
   const [activeDomIndex, setActiveDomIndex] = useState(initialDomIndex);
-  const [muted, setMuted] = useState(true);
+  // Starts unmuted — opening the viewer is itself the user gesture
+  // autoplay-with-sound policies require, so this doesn't get blocked.
+  const [muted, setMuted] = useState(false);
   const [loopToast, setLoopToast] = useState(null); // category label, or null
 
   const feedRef = useRef(null);
