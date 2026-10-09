@@ -1637,7 +1637,7 @@ export default function TicketNetworkEventsPage() {
                               <input type="text" value={address1} onChange={(e) => setAddress1(e.target.value)} placeholder="Ünvan" required className="tl-evt-input" />
                               <input type="text" value={address2} onChange={(e) => setAddress2(e.target.value)} placeholder="Ünvan (əlavə, könüllü)" className="tl-evt-input" />
                               <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Şəhər" required className="tl-evt-input" />
-                              <input type="text" value={addressState} onChange={(e) => setAddressState(e.target.value)} placeholder="Ştat/Bölgə (könüllü)" className="tl-evt-input" />
+                              <input type="text" value={addressState} onChange={(e) => setAddressState(e.target.value)} placeholder="Ştat/Bölgə" required className="tl-evt-input" />
                               <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="Poçt indeksi" required className="tl-evt-input" />
                               <input type="text" value={countryCode} onChange={(e) => setCountryCode(e.target.value.toUpperCase())} placeholder="Ölkə kodu (məs. AZ)" maxLength={2} required className="tl-evt-input" />
                             </div>
