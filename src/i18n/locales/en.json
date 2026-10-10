@@ -159,10 +159,15 @@
     "loopedToStart": "You've seen them all — back to {{category}}",
     "comments": {
       "title": "Comments",
-      "empty": "No comments yet. Be the first!",
-      "you": "You",
-      "placeholder": "Write a comment...",
-      "send": "Send"
+      "emptyTitle": "No comments yet",
+      "emptySubtitle": "Be the first to comment",
+      "placeholder": "Write a comment…",
+      "send": "Send",
+      "loginToComment": "Log in to comment",
+      "timeNow": "just now",
+      "timeMinutes": "{{count}}m",
+      "timeHours": "{{count}}h",
+      "timeDays": "{{count}}d"
     },
     "cta": {
       "joinTour": "Join a similar tour",

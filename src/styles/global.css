@@ -1015,13 +1015,15 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 .tl-story-viewer-iconbtn {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border: none;
   color: var(--tl-white);
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1143,22 +1145,19 @@ body.tl-subpage .tl-tours-arrow {
    480px stage width (same spot as mobile) avoids that clip entirely. */
 
 .tl-story-viewer-socialbtn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border: none;
   color: var(--tl-white);
-  font-size: 19px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 10px;
-}
-
-.tl-story-viewer-socialbtn.liked {
-  color: #ff4d6d;
 }
 
 .tl-story-viewer-socialbtn.active {
@@ -1172,41 +1171,80 @@ body.tl-subpage .tl-tours-arrow {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* Comment panel — a real, working add-a-comment UI (see
-   utils/storyComments.js), anchored to the bottom of the stage so it
-   reads as part of this one story rather than a separate screen. */
+/* Comment panel — real, backend-shared comments (see api/storyComments.js
+   + StoryCommentController on the backend), light theme matching the
+   rest of the site rather than the dark/translucent treatment the rest
+   of this fullscreen viewer uses. Mobile: a bottom sheet. Desktop
+   (≥1100px): a 380px side panel beside the video, not overlapping it —
+   see the media query below. Rendered via a portal into a plain target
+   div that's a direct child of .tl-story-viewer-stage (see
+   StoryViewer.jsx), NOT nested inside .tl-story-viewer-feed — that
+   container needs overflow-y:auto for its scroll-snap, which per the CSS
+   overflow spec forces overflow-x to the same non-visible value too,
+   which would otherwise clip this panel's positioning the same way it
+   once clipped .tl-story-viewer-social (see that rule's own comment). */
+.tl-story-viewer-comments-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(15, 27, 45, 0.45);
+}
+
 .tl-story-viewer-comments {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 4;
-  max-height: 70%;
+  z-index: 11;
+  height: 65vh;
   display: flex;
   flex-direction: column;
-  background: rgba(10, 14, 20, 0.92);
-  backdrop-filter: blur(6px);
-  border-radius: 18px 18px 0 0;
-  padding: 16px;
+  background: #FFFFFF;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -12px 40px rgba(15, 27, 45, 0.25);
+  font-family: 'Geist Sans', sans-serif;
+  color: #0F1B2D;
+  overflow: hidden;
+}
+
+.tl-story-viewer-comments-dragzone {
+  flex-shrink: 0;
+  padding-top: 10px;
+  cursor: grab;
+}
+
+.tl-story-viewer-comments-handle {
+  width: 40px;
+  height: 4px;
+  background: #D0D5DD;
+  border-radius: 2px;
+  margin: 0 auto 10px;
 }
 
 .tl-story-viewer-comments-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  color: var(--tl-white);
-  font-family: 'Geist Sans', sans-serif;
-  font-size: 14px;
-  margin-bottom: 10px;
+  justify-content: center;
+  position: relative;
+  padding: 0 16px 14px;
+  border-bottom: 1px solid #EEF2EF;
+}
+
+.tl-story-viewer-comments-head strong {
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .tl-story-viewer-comments-close {
+  position: absolute;
+  right: 12px;
+  top: -4px;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 15px;
+  color: #667085;
+  font-size: 16px;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
 }
 
 .tl-story-viewer-comments-list {
@@ -1214,66 +1252,205 @@ body.tl-subpage .tl-tours-arrow {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 12px;
-  min-height: 40px;
 }
 
-.tl-story-viewer-comments-empty {
-  color: rgba(255, 255, 255, 0.45);
+.tl-story-viewer-comments-emptystate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #98A2B3;
+  text-align: center;
+  padding: 24px;
+}
+
+.tl-story-viewer-comments-emptystate strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1B2D;
+}
+
+.tl-story-viewer-comments-emptystate span {
   font-size: 13px;
-  margin: 0;
+  color: #667085;
 }
 
 .tl-story-viewer-comments-item {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 13px;
-  color: var(--tl-white);
+  gap: 10px;
+  padding: 12px 16px;
+  align-items: flex-start;
 }
 
-.tl-story-viewer-comments-item strong {
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.5);
+.tl-story-viewer-comments-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--tl-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.tl-story-viewer-comments-avatar.official {
+  background: #fff;
+  border: 1px solid #EEF2EF;
+}
+
+.tl-story-viewer-comments-avatar.official svg {
+  width: 20px;
+  height: 20px;
+}
+
+.tl-story-viewer-comments-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tl-story-viewer-comments-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tl-story-viewer-comments-name {
+  font-weight: 700;
+  font-size: 13px;
+  color: #0F1B2D;
+}
+
+.tl-story-viewer-comments-official-badge {
+  background: var(--tl-green);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+
+.tl-story-viewer-comments-time {
+  font-size: 12px;
+  color: #667085;
+}
+
+.tl-story-viewer-comments-text {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #0F1B2D;
+}
+
+.tl-story-viewer-comments-error {
+  margin: 0 16px 8px;
+  font-size: 12.5px;
+  color: #F04438;
 }
 
 .tl-story-viewer-comments-form {
+  flex-shrink: 0;
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid #EEF2EF;
+}
+
+.tl-story-viewer-comments-form-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--tl-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
 .tl-story-viewer-comments-form input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  min-width: 0;
+  background: #F2F4F7;
+  border: none;
   border-radius: 100px;
-  padding: 10px 14px;
-  color: var(--tl-white);
-  font-size: 13px;
+  padding: 11px 16px;
+  color: #0F1B2D;
+  font-size: 14px;
   outline: none;
+  font-family: inherit;
 }
 
 .tl-story-viewer-comments-form input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: #98A2B3;
 }
 
-.tl-story-viewer-comments-form button {
-  background: var(--tl-orange);
-  color: #1D2939;
+.tl-story-viewer-comments-send {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--tl-green);
+  color: #fff;
   border: none;
-  border-radius: 100px;
-  padding: 10px 18px;
-  font-weight: 700;
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
 }
 
-.tl-story-viewer-comments-form button:disabled {
-  opacity: 0.4;
+.tl-story-viewer-comments-send:disabled {
+  background: #D0D5DD;
   cursor: default;
+}
+
+.tl-story-viewer-comments-login-btn {
+  flex-shrink: 0;
+  margin: 12px 16px;
+  background: var(--tl-green);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 13px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+@media (min-width: 1100px) {
+  .tl-story-viewer-comments-backdrop {
+    display: none;
+  }
+
+  .tl-story-viewer-comments {
+    position: absolute;
+    left: 100%;
+    right: auto;
+    top: 0;
+    bottom: auto;
+    margin-left: 16px;
+    width: 380px;
+    height: 100%;
+    border-radius: 18px;
+    box-shadow: var(--tl-shadow);
+  }
+
+  .tl-story-viewer-comments-dragzone {
+    cursor: default;
+  }
+
+  .tl-story-viewer-comments-handle {
+    display: none;
+  }
 }
 
 /* No longer absolutely positioned on its own — it's a row inside

@@ -328,7 +328,12 @@ export default function AuthModal() {
         display: 'flex',
         position: 'fixed',
         inset: 0,
-        zIndex: 1000,
+        // Above every other overlay in the site, including the story
+        // viewer (.tl-story-viewer, z-index:3000) — a login prompt
+        // triggered from inside that fullscreen overlay (e.g. "Şərh
+        // yazmaq üçün daxil olun") would otherwise open successfully but
+        // render completely hidden behind it.
+        zIndex: 3500,
         background: 'rgba(13,21,32,0.88)',
         backdropFilter: 'blur(8px)',
         alignItems: 'center',

@@ -159,10 +159,15 @@
     "loopedToStart": "Вы посмотрели всё — снова {{category}}",
     "comments": {
       "title": "Комментарии",
-      "empty": "Пока нет комментариев. Будьте первым!",
-      "you": "Вы",
-      "placeholder": "Написать комментарий...",
-      "send": "Отправить"
+      "emptyTitle": "Пока нет комментариев",
+      "emptySubtitle": "Будьте первым, кто напишет",
+      "placeholder": "Написать комментарий…",
+      "send": "Отправить",
+      "loginToComment": "Войдите, чтобы оставить комментарий",
+      "timeNow": "только что",
+      "timeMinutes": "{{count}} мин",
+      "timeHours": "{{count}} ч",
+      "timeDays": "{{count}} дн"
     },
     "cta": {
       "joinTour": "Похожий тур",
