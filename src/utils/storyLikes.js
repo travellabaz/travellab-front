@@ -23,12 +23,6 @@ export function baseLikeCount(storyId) {
   return 60 + (hash(storyId + '_likes') % 380); // 60-439
 }
 
-// Comments have no UI of their own yet (no comment content exists
-// anywhere) — this is purely a display count, never incremented.
-export function baseCommentCount(storyId) {
-  return 2 + (hash(storyId + '_comments') % 38); // 2-39
-}
-
 export function isStoryLiked(storyId) {
   try {
     return localStorage.getItem(KEY_PREFIX + storyId) === '1';

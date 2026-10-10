@@ -7,8 +7,8 @@ import StoryIcon from '../utils/storyIcons.jsx';
 import { markCategoryViewed } from '../utils/storyViewed';
 import { trackEvent } from '../utils/analytics';
 import { pickManager, managerLabel } from '../utils/managers';
-import { baseLikeCount, baseCommentCount, isStoryLiked, setStoryLiked } from '../utils/storyLikes';
-import { getComments, addComment } from '../utils/storyComments';
+import { baseLikeCount, isStoryLiked, setStoryLiked } from '../utils/storyLikes';
+import { getComments, addComment, getSeedComments } from '../utils/storyComments';
 
 const LOOP_TOAST_MS = 2200;
 const WHEEL_STEP_THRESHOLD = 40; // px of accumulated deltaY before one wheel "tick" counts as a step
@@ -29,6 +29,15 @@ function StorySlide({ story, category, storyIdxInCat, domIndex, setSlideRef, isA
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [comments, setComments] = useState(() => getComments(story.id));
   const [commentDraft, setCommentDraft] = useState('');
+
+  // Reyler (reviews) already shows testimonial content — commenting on a
+  // review reads as redundant, so the whole comment feature (button,
+  // count, panel, writing) is simply off for this one category.
+  const commentsEnabled = category.id !== 'reyler';
+  const seedComments = useMemo(
+    () => (commentsEnabled ? getSeedComments(story.id, category.id) : []),
+    [commentsEnabled, story.id, category.id]
+  );
 
   // Only the active slide's video actually plays — every other mounted
   // slide (including the ones kept "near" for preload) stays paused.
@@ -91,7 +100,7 @@ function StorySlide({ story, category, storyIdxInCat, domIndex, setSlideRef, isA
   };
 
   const likeCount = baseLikeCount(story.id) + (liked ? 1 : 0);
-  const commentCount = baseCommentCount(story.id) + comments.length;
+  const commentCount = seedComments.length + comments.length;
   const categoryLabel = t(`stories.categories.${category.id}`, category.label);
 
   return (
@@ -181,29 +190,35 @@ function StorySlide({ story, category, storyIdxInCat, domIndex, setSlideRef, isA
           {liked ? '♥' : '♡'}
         </button>
         <span className="tl-story-viewer-socialcount">{likeCount}</span>
-        <button type="button" className={'tl-story-viewer-socialbtn' + (commentsOpen ? ' active' : '')} onClick={handleCommentToggle}>
-          💬
-        </button>
-        <span className="tl-story-viewer-socialcount">{commentCount}</span>
+        {commentsEnabled && (
+          <>
+            <button type="button" className={'tl-story-viewer-socialbtn' + (commentsOpen ? ' active' : '')} onClick={handleCommentToggle}>
+              💬
+            </button>
+            <span className="tl-story-viewer-socialcount">{commentCount}</span>
+          </>
+        )}
       </div>
 
-      {commentsOpen && (
+      {commentsEnabled && commentsOpen && (
         <div className="tl-story-viewer-comments" onClick={(e) => e.stopPropagation()}>
           <div className="tl-story-viewer-comments-head">
             <strong>{t('stories.comments.title')}</strong>
             <button type="button" className="tl-story-viewer-comments-close" onClick={handleCommentToggle}>✕</button>
           </div>
           <div className="tl-story-viewer-comments-list">
-            {comments.length === 0 ? (
-              <p className="tl-story-viewer-comments-empty">{t('stories.comments.empty')}</p>
-            ) : (
-              comments.map((c, i) => (
-                <div key={i} className="tl-story-viewer-comments-item">
-                  <strong>{t('stories.comments.you')}</strong>
-                  <span>{c.text}</span>
-                </div>
-              ))
-            )}
+            {seedComments.map((c, i) => (
+              <div key={'seed-' + i} className="tl-story-viewer-comments-item">
+                <strong>{c.name}</strong>
+                <span>{c.text}</span>
+              </div>
+            ))}
+            {comments.map((c, i) => (
+              <div key={'own-' + i} className="tl-story-viewer-comments-item">
+                <strong>{t('stories.comments.you')}</strong>
+                <span>{c.text}</span>
+              </div>
+            ))}
           </div>
           <form className="tl-story-viewer-comments-form" onSubmit={handleCommentSubmit}>
             <input
