@@ -8510,18 +8510,27 @@ body:not(.tl-subpage) .tl-about-extra {
   margin: 0 auto;
 }
 
-@media (max-width: 600px) {
+/* 900px, not the old 600px — matches .tl-tabbar's own breakpoint (the
+   bottom "Hesab" sheet, MobileTabBar.jsx), so this top-header trigger and
+   the bottom one switch to sheet mode at the same width instead of a
+   600-900px gap where one was already a sheet and the other still a
+   top-anchored dropdown. Position/shape/animation below are also now a
+   byte-for-byte match of .tl-tabbar-sheet (same file, above) — floating
+   card above the tab bar, not a full-bleed panel flush to the screen
+   edge — so opening either trigger reads as the same component. */
+@media (max-width: 900px) {
   .nav-dd {
     position: fixed;
     top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    max-height: 85vh;
-    border-radius: 20px 20px 0 0;
-    border: none;
-    animation: navDdSheetIn 180ms ease both;
+    left: 12px;
+    right: 12px;
+    bottom: calc(74px + env(safe-area-inset-bottom));
+    width: auto;
+    max-height: calc(100dvh - 74px - env(safe-area-inset-bottom) - 24px);
+    border-radius: var(--tl-r-lg);
+    border: 1px solid var(--tl-gray-200);
+    box-shadow: 0 12px 32px rgba(10, 30, 25, 0.16);
+    animation: tlFadeUp 0.25s ease both;
   }
 
   .nav-dd-dragzone {
@@ -8529,11 +8538,6 @@ body:not(.tl-subpage) .tl-about-extra {
     padding: 10px 0 8px;
     margin: -8px -8px 4px;
     cursor: grab;
-  }
-
-  @keyframes navDdSheetIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
   }
 }
 
