@@ -382,6 +382,7 @@ html {
   height: 2px;
   background: var(--tl-navy);
   border-radius: 2px;
+  transition: background 0.2s ease;
 }
 
 .tl-nav-burger span::before,
@@ -393,6 +394,7 @@ html {
   height: 2px;
   background: var(--tl-navy);
   border-radius: 2px;
+  transition: top 0.2s ease, transform 0.2s ease, background 0.2s ease;
 }
 
 .tl-nav-burger span::before {
@@ -401,6 +403,32 @@ html {
 
 .tl-nav-burger span::after {
   top: 5px;
+}
+
+/* Open state: burger morphs into an X on a dark pill, same dark navy as
+   the overlay tone, so the "how do I close this" affordance is obvious
+   the instant the menu opens (design canvas step 2a/2b). */
+.tl-nav-burger.open {
+  background: #1d2939;
+  border-color: #1d2939;
+}
+
+.tl-nav-burger.open span {
+  background: transparent;
+}
+
+.tl-nav-burger.open span::before,
+.tl-nav-burger.open span::after {
+  top: 0;
+  background: var(--tl-white);
+}
+
+.tl-nav-burger.open span::before {
+  transform: rotate(45deg);
+}
+
+.tl-nav-burger.open span::after {
+  transform: rotate(-45deg);
 }
 
 /* ── PAGE ROUTING: only the active [data-page] section is shown.
@@ -7452,14 +7480,21 @@ body:not(.tl-subpage) .tl-about-extra {
    it against its old grid-area box even after that, clipping the AZ/RU/EN
    row on the right edge on Android. Safari never had the bug. A portal
    sidesteps the whole class of issue by construction. */
+/* z-index 120/121: must sit above .tl-tabbar (110, see that rule) too —
+   the bottom tab bar is otherwise still bright/legible under the overlay,
+   splitting attention away from the open menu (design canvas feedback).
+   Blur is deliberately light (2px, not the 8px used on the profile/account
+   menus) — the design canvas explicitly calls out that stronger blur there
+   reads as the site being "broken"; darkening alone carries the effect. */
 .tl-mobile-menu-backdrop {
   position: fixed;
   inset: 0;
   top: 68px;
-  z-index: 98;
-  background: rgba(15, 27, 45, 0.45);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  z-index: 120;
+  background: rgba(15, 27, 45, 0.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: tl-mobile-menu-fade-in 150ms ease-out;
 }
 
 .tl-mobile-menu {
@@ -7472,14 +7507,25 @@ body:not(.tl-subpage) .tl-about-extra {
   left: 0;
   right: 0;
   background: var(--tl-white);
-  border-bottom: 1px solid var(--tl-gray-200);
-  box-shadow: 0 12px 28px rgba(10, 30, 25, 0.1);
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 18px 40px rgba(15, 27, 45, 0.25);
   padding: 8px 20px 18px;
   gap: 0;
-  z-index: 99;
-  max-height: calc(100vh - 68px);
+  z-index: 121;
+  max-height: calc(100dvh - 68px);
   overflow-y: auto;
   box-sizing: border-box;
+  animation: tl-mobile-menu-slide-in 200ms ease-out;
+}
+
+@keyframes tl-mobile-menu-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tl-mobile-menu-slide-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .tl-mobile-menu a {

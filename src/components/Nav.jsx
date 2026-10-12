@@ -53,24 +53,53 @@ export default function Nav() {
   // had (see useBodyScrollLock's own comment for why plain
   // overflow:hidden isn't enough on iOS Safari).
   useBodyScrollLock(mobileOpen);
+
+  // Makes the phone/browser back button close the menu instead of
+  // navigating away from the page — push a throwaway history entry the
+  // instant the menu opens, then treat a 'popstate' (back button, or
+  // closeMobileMenu's own history.back() call below) as "menu should be
+  // closed". closeMobileMenu is what every in-menu close trigger (X,
+  // overlay, Esc, link clicks) calls so the pushed entry gets consumed
+  // immediately rather than sitting in history for a *later* back-press
+  // to eat.
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+    if (window.history.state && window.history.state.tlMobileMenu) {
+      window.history.back();
+    }
+  };
+
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    window.history.pushState({ tlMobileMenu: true }, '');
+    const onPopState = () => setMobileOpen(false);
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [mobileOpen]);
+
   useEffect(() => {
     if (!mobileOpen) return undefined;
     const onKey = (e) => {
-      if (e.key === 'Escape') setMobileOpen(false);
+      if (e.key === 'Escape') closeMobileMenu();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [mobileOpen]);
 
+  const toggleMobileMenu = () => {
+    if (mobileOpen) closeMobileMenu();
+    else setMobileOpen(true);
+  };
+
   const handleLogoClick = () => {
-    setMobileOpen(false);
+    closeMobileMenu();
     if (location.pathname === localize('/')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const openCartFromMenu = () => {
-    setMobileOpen(false);
+    closeMobileMenu();
     openDrawer();
   };
 
@@ -98,11 +127,11 @@ export default function Nav() {
               .tl-tabbar-backdrop) — this panel had no backdrop at all
               before, just a white dropdown over the still-fully-visible
               (and still-colorful/busy) page underneath. */}
-          <div className="tl-mobile-menu-backdrop" onClick={() => setMobileOpen(false)} />
+          <div className="tl-mobile-menu-backdrop" onClick={closeMobileMenu} />
           <ul className="tl-mobile-menu">
           {NAV_LINK_PATHS.map(({ path, key, icon, badge }) => (
             <li key={path}>
-              <NavLink to={localize(path)} className={({ isActive }) => 'tl-mobile-menu-row' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+              <NavLink to={localize(path)} className={({ isActive }) => 'tl-mobile-menu-row' + (isActive ? ' active' : '')} onClick={closeMobileMenu}>
                 <NavIcon name={icon} className="tl-mobile-menu-row-icon" />
                 <span className="tl-mobile-menu-row-label">{t(`nav.${key}`)}</span>
                 {badge && <span className="tl-mobile-menu-row-badge">{t('nav.newBadge')}</span>}
@@ -111,13 +140,13 @@ export default function Nav() {
             </li>
           ))}
           <li className="tl-mobile-menu-pill-row">
-            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')} onClick={closeMobileMenu}>
               <NavIcon name="bag" />
               {t('nav.shop')}
             </NavLink>
           </li>
           <li className="tl-mobile-menu-pill-row">
-            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
+            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')} onClick={closeMobileMenu}>
               <NavIcon name="briefcase" />
               {t('nav.korporativ')}
             </NavLink>
@@ -142,7 +171,7 @@ export default function Nav() {
                   key={l}
                   href={buildLocalizedPath(location.pathname, l) + location.search}
                   className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeMobileMenu}
                 >
                   {LANG_SHORT_LABEL[l]}
                 </a>
@@ -154,7 +183,7 @@ export default function Nav() {
               <a
                 href="#"
                 className="tl-mobile-menu-row tl-mobile-menu-login-row"
-                onClick={(e) => { e.preventDefault(); setMobileOpen(false); openAuth('login'); }}
+                onClick={(e) => { e.preventDefault(); closeMobileMenu(); openAuth('login'); }}
               >
                 <NavIcon name="user" className="tl-mobile-menu-row-icon" />
                 <span className="tl-mobile-menu-row-label">{t('nav.login')}</span>
@@ -163,7 +192,7 @@ export default function Nav() {
               <a
                 href="#"
                 className="tl-mobile-menu-register-btn"
-                onClick={(e) => { e.preventDefault(); setMobileOpen(false); openAuth('register'); }}
+                onClick={(e) => { e.preventDefault(); closeMobileMenu(); openAuth('register'); }}
               >
                 <NavIcon name="userPlus" />
                 {t('nav.register')}
@@ -184,7 +213,7 @@ export default function Nav() {
       <ul className="tl-nav-links">
         {NAV_LINK_PATHS.map(({ path, key, badge }) => (
           <li key={path}>
-            <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={() => setMobileOpen(false)}>
+            <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={closeMobileMenu}>
               {badge ? (
                 <span className="tl-nav-link-badged">
                   {t(`nav.${key}`)}
@@ -265,9 +294,10 @@ export default function Nav() {
             display:none/flex media rule for when it's actually visible. */}
         <button
           type="button"
-          className="tl-nav-burger"
-          aria-label={t('nav.menu')}
-          onClick={() => setMobileOpen((o) => !o)}
+          className={'tl-nav-burger' + (mobileOpen ? ' open' : '')}
+          aria-label={mobileOpen ? t('nav.closeMenu') : t('nav.menu')}
+          aria-expanded={mobileOpen}
+          onClick={toggleMobileMenu}
         >
           <span />
         </button>
