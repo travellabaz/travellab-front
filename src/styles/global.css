@@ -8465,6 +8465,22 @@ body:not(.tl-subpage) .tl-about-extra {
   animation: navDdOverlayIn 150ms ease both;
 }
 
+/* Above 900px, .nav-dd is just a small ~220px dropdown anchored under
+   the button (not the mobile full-screen sheet) — darkening/blurring the
+   entire desktop page behind a small dropdown reads as the whole site
+   glitching, not an intentional effect. Kept as a transparent full-page
+   click-catcher rather than removed outright: it's still what the
+   overlay's own onClick relies on for "click outside closes the menu"
+   (the document-level click listener in NavProfile.jsx is a second,
+   redundant path for the same thing, not a reason to drop this one). */
+@media (min-width: 901px) {
+  .nav-dd-overlay {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 @keyframes navDdOverlayIn {
   from { opacity: 0; }
   to { opacity: 1; }
