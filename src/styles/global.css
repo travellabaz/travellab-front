@@ -1692,11 +1692,15 @@ body:not(.tl-subpage) .tl-about-extra {
   justify-content: center;
 }
 
+/* Same dark-blur tone as .nav-dd-overlay (the desktop/top-header account
+   menu's own overlay) — this one was plain flat-dim, no blur, before. */
 .tl-tabbar-backdrop {
   position: fixed;
   inset: 0;
   z-index: 109;
-  background: rgba(10, 20, 15, 0.35);
+  background: rgba(15, 27, 45, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .tl-tabbar-sheet {
@@ -1711,6 +1715,12 @@ body:not(.tl-subpage) .tl-about-extra {
   box-shadow: 0 12px 32px rgba(10, 30, 25, 0.16);
   padding: 16px;
   animation: tlFadeUp 0.25s ease both;
+  /* Name + LP card + up to 6 items + social row + logout can run taller
+     than a short phone's viewport — no max-height/scroll here before,
+     so the sheet (anchored by `bottom` only, no `top`) could render with
+     its own top edge off-screen, no way to reach whatever was clipped. */
+  max-height: calc(100dvh - 74px - env(safe-area-inset-bottom) - 24px);
+  overflow-y: auto;
 }
 
 .tl-tabbar-sheet-name {

@@ -5,6 +5,7 @@ import LocalizedLink from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { SOCIAL_LINKS } from '../utils/socialLinks';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 // Travellab's official WhatsApp Channel — follow link, not a 1:1 chat
 // (distinct from the manager-pool deep links elsewhere on the site).
@@ -60,17 +61,21 @@ export default function NavProfile() {
     return () => document.removeEventListener('click', onDocClick);
   }, []);
 
-  // Esc closes, and the page behind can't scroll while the menu (or its
-  // mobile bottom-sheet form) is open.
+  // The page behind can't scroll while the menu (or its mobile
+  // bottom-sheet form) is open — see useBodyScrollLock's own comment for
+  // why plain overflow:hidden isn't enough on iOS Safari (confirmed live:
+  // without this, the sheet visibly jumped around as the underlying page
+  // scrolled and iOS's address bar collapsed/expanded under it).
+  useBodyScrollLock(open);
+
+  // Esc closes.
   useEffect(() => {
     if (!open) return undefined;
-    document.body.style.overflow = 'hidden';
     const onKey = (e) => {
       if (e.key === 'Escape') setOpen(false);
     };
     document.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = '';
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);

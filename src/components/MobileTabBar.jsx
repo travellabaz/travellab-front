@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import { useCart } from '../context/CartContext';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 import { SOCIAL_LINKS } from '../utils/socialLinks';
 import useScrollDirection from '../hooks/useScrollDirection';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 // Same WhatsApp Channel link as NavProfile.jsx (desktop dropdown).
 const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vaifnm1ATRSxATpCqq3N';
@@ -105,6 +106,20 @@ export default function MobileTabBar() {
   const scrollDirection = useScrollDirection();
   const hidden = scrollDirection === 'down';
 
+  const sheetOpen = accountOpen && isAuthenticated;
+  // Same robust iOS-safe lock as NavProfile.jsx's own account menu — this
+  // sheet had no scroll lock at all before, same underlying "page moves
+  // under a position:fixed sheet" bug class.
+  useBodyScrollLock(sheetOpen);
+  useEffect(() => {
+    if (!sheetOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setAccountOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [sheetOpen]);
+
   return (
     <>
       <nav className={'tl-tabbar' + (hidden ? ' tl-tabbar-hidden' : '')} aria-label="Mobil naviqasiya">
@@ -130,7 +145,7 @@ export default function MobileTabBar() {
         </button>
       </nav>
 
-      {accountOpen && isAuthenticated && (
+      {sheetOpen && (
         <>
           <div className="tl-tabbar-backdrop" onClick={() => setAccountOpen(false)} />
           <div className="tl-tabbar-sheet">
