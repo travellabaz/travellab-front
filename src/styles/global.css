@@ -1466,6 +1466,9 @@ body.tl-subpage .tl-tours-arrow {
 }
 
 .tl-story-viewer-linkbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--tl-white);
   color: var(--tl-navy);
   border: none;
@@ -1479,8 +1482,12 @@ body.tl-subpage .tl-tours-arrow {
   white-space: nowrap;
 }
 
+/* WhatsApp's own brand green (not the site's --tl-green) — a visitor
+   should recognize instantly that this takes them to WhatsApp, same
+   reasoning as the WA channel button elsewhere on the site using the
+   same literal color. */
 .tl-story-viewer-callbtn {
-  background: var(--tl-navy);
+  background: #25D366;
   color: #fff;
 }
 

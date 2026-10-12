@@ -30,7 +30,11 @@ export default function TermsModal() {
         display: 'flex',
         position: 'fixed',
         inset: 0,
-        zIndex: 2000,
+        // Above the story viewer (.tl-story-viewer, z-index:3000) — same
+        // bug class fixed in AuthModal/ManagerContactModal: opened from
+        // inside it (AuthModal's register form links here), this
+        // rendered but was completely hidden behind it.
+        zIndex: 3500,
         background: 'rgba(13,21,32,0.92)',
         backdropFilter: 'blur(8px)',
         alignItems: 'flex-start',

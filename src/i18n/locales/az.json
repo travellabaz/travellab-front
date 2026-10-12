@@ -184,7 +184,8 @@
       "labpoint": "Labpoint",
       "reyler": "Rəylər",
       "tedbir": "Tədbirlər"
-    }
+    },
+    "genericTourMessage": "Salam! Saytda Endirimlər story-sinə baxdım, bu tur barədə məlumat almaq istəyirəm."
   },
   "toursPage": {
     "tag": "Xüsusi Təkliflər",

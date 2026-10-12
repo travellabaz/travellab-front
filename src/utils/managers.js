@@ -25,11 +25,17 @@ export function formatManagerNumber(number) {
 // `t` is the i18next translate function from the calling component's
 // useTranslation() — these are plain utils, not hooks, so the already-
 // localized message text is built by the caller and passed through.
+// Every real caller (TourCard, OfferCard, OfferDetailPage) always has a
+// real tour/offer title — the old `|| 'tur'` fallback here never actually
+// protected any of them, it just silently produced "Salam! "tur" turu ilə
+// maraqlanıram." instead of surfacing the real bug the one time a caller
+// (the story viewer, before it was fixed to look up a real tour — see
+// utils/tourWhatsapp.js) DID pass something titleless. Callers are now
+// expected to not call this with an empty title at all.
 export function managerLink(tour, manager, t) {
   if (isMobile()) {
-    const title = tour?.title || 'tur';
     const link = tour?.permalink || '';
-    const text = t('common.tourInterestMessage', { title }) + (link ? ' ' + link : '');
+    const text = t('common.tourInterestMessage', { title: tour?.title || '' }) + (link ? ' ' + link : '');
     return 'https://wa.me/' + manager.number + '?text=' + encodeURIComponent(text);
   }
   return 'tel:+' + manager.number;

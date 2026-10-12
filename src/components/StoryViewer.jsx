@@ -7,11 +7,21 @@ import StoryIcon from '../utils/storyIcons.jsx';
 import { SoundOnIcon, SoundOffIcon, CommentIcon, HeartIcon, SendIcon, CommentEmptyIcon } from './StoryActionIcons';
 import { markCategoryViewed } from '../utils/storyViewed';
 import { trackEvent } from '../utils/analytics';
-import { pickManager, managerLabel } from '../utils/managers';
+import { pickManager, isMobile } from '../utils/managers';
 import { baseLikeCount, isStoryLiked, setStoryLiked } from '../utils/storyLikes';
 import { fetchStoryComments, postStoryComment } from '../api/storyComments';
+import { buildTourWaText } from '../utils/tourWhatsapp';
+import { BASE_URL } from '../data/pageMeta';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
+import { useTours } from '../context/ToursContext';
+
+const WHATSAPP_ICON = (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z" />
+    <path d="M8.5 10.5c0 3 2.5 5.5 5.5 5.5" strokeLinecap="round" />
+  </svg>
+);
 
 const LOOP_TOAST_MS = 2200;
 const WHEEL_STEP_THRESHOLD = 40; // px of accumulated deltaY before one wheel "tick" counts as a step
@@ -47,7 +57,8 @@ function StorySlide({
   const { t } = useTranslation();
   const navigate = useLocalizedNavigate();
   const { isAuthenticated, profile, logout } = useAuth();
-  const { openAuth } = useModals();
+  const { openAuth, openManagerContact } = useModals();
+  const { tours } = useTours();
   const videoRef = useRef(null);
   const dragStartYRef = useRef(null);
   const [liked, setLiked] = useState(() => isStoryLiked(story.id));
@@ -112,9 +123,36 @@ function StorySlide({
     navigate(story.link);
   };
 
+  // Endirimlər stories come from the same live tour/Instagram post their
+  // id already matches (ToursContext.tours), so the full tour — title,
+  // description (for price parsing), permalink — is looked up by that id
+  // rather than carried redundantly on the story itself (which only ever
+  // had id/title/imageUrl/link — see StoryTourDto on the backend). This
+  // used to just send `story.title || 'tur'` straight into the WhatsApp
+  // text, and story.title was never actually populated by
+  // tourToStoryItem on the frontend either — real bug, every message
+  // literally read 'Salam! "tur" turu ilə maraqlanıram.' with no price
+  // or link at all. A tour that's expired/sold out since the story was
+  // generated (not in `tours` anymore) falls back to a generic message
+  // with the story's own shareable link instead of guessing.
+  const matchedTour = category.id === 'endirimler' ? tours.find((tr) => tr.id === story.id) : null;
+
   const handleCallClick = (e) => {
     e.stopPropagation();
-    openManagerWhatsApp('common.tourInterestMessage', { title: story.title || 'tur' });
+    const manager = pickManager();
+    const text = matchedTour
+      ? buildTourWaText(matchedTour, t)
+      : t('stories.genericTourMessage') + '\n' + BASE_URL + '/?story=' + story.id;
+    if (isMobile()) {
+      window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(text), '_blank');
+    } else {
+      // Same desktop treatment as every other "contact a manager" entry
+      // point on the site (see utils/managers.js's own contactManager) —
+      // a popup with the picked manager's number, not a prefilled chat
+      // (wa.me can't be opened with text prefilled outside a real mobile
+      // WhatsApp handoff anyway).
+      openManagerContact(manager);
+    }
   };
 
   const handleVizaApplyClick = (e) => {
@@ -234,8 +272,12 @@ function StorySlide({
             <button type="button" className="tl-story-viewer-linkbtn" onClick={handleLinkClick}>
               {t('stories.viewMore')} ↗
             </button>
+            {/* Always branded/labeled as WhatsApp now, not managerLabel's
+                device-dependent "Zəng et"/"WhatsApp yaz" split — desktop
+                opens the same manager-contact popup either way (see
+                handleCallClick), never an actual tel: call from here. */}
             <button type="button" className="tl-story-viewer-linkbtn tl-story-viewer-callbtn" onClick={handleCallClick}>
-              {managerLabel(t)}
+              {WHATSAPP_ICON} {t('common.waWrite')}
             </button>
           </div>
         )}

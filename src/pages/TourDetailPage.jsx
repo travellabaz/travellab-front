@@ -10,6 +10,7 @@ import { extractMinPrice, formatPrice } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
 import { toTourCartItem } from '../utils/tourCartItem';
 import { parseTourCaption } from '../utils/parseTourCaption';
+import { buildTourWaText } from '../utils/tourWhatsapp';
 import InstallmentCalculator from '../components/InstallmentCalculator';
 import TravelProductsSidePanel, { TravelProductsPicker, useTravelProductsCart } from '../components/TravelProductsCrossSell';
 import Breadcrumb from '../components/Breadcrumb';
@@ -118,18 +119,11 @@ export default function TourDetailPage() {
   const cashback = currentPrice ? Math.max(1, Math.round(currentPrice.amount * 0.01)) : null;
 
   // WhatsApp message carries the tour, the selected hotel + its price, and
-  // the post link so the manager sees exactly what the visitor picked.
-  const waText = [
-    t('common.tourInterestMessage', { title: tour.title }),
-    selectedHotel
-      ? t('tourDetail.waHotel', { name: selectedHotel.name, price: formatPrice(selectedHotel.price.amount, selectedHotel.price.currency) })
-      : currentPrice
-        ? t('tourDetail.waPrice', { price: formatPrice(currentPrice.amount, currentPrice.currency) })
-        : '',
-    tour.permalink || '',
-  ]
-    .filter(Boolean)
-    .join('\n');
+  // the post link so the manager sees exactly what the visitor picked —
+  // see utils/tourWhatsapp.js (also used by StoryViewer's Endirimlər
+  // "WhatsApp yaz" button, so both produce the same message for the same
+  // tour).
+  const waText = buildTourWaText(tour, t, { selectedHotel });
   const waHref = (phone) => `https://wa.me/${phone}?text=${encodeURIComponent(waText)}`;
 
   // Date/passenger-count change request — tours are a static Instagram

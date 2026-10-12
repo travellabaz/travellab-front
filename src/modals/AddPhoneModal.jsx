@@ -210,7 +210,12 @@ export default function AddPhoneModal() {
         display: 'flex',
         position: 'fixed',
         inset: 0,
-        zIndex: 1000,
+        // Above the story viewer (.tl-story-viewer, z-index:3000) — same
+        // bug class fixed in AuthModal/ManagerContactModal: if this
+        // prompts right after a Google sign-in triggered from inside the
+        // story viewer, it would otherwise render completely hidden
+        // behind it.
+        zIndex: 3500,
         background: 'rgba(13,21,32,0.88)',
         backdropFilter: 'blur(8px)',
         alignItems: 'center',

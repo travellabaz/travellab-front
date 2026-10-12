@@ -43,7 +43,11 @@ export default function ManagerContactModal() {
         display: 'flex',
         position: 'fixed',
         inset: 0,
-        zIndex: 2000,
+        // Above the story viewer (.tl-story-viewer, z-index:3000) — same
+        // bug class as AuthModal's own fix: this rendered successfully
+        // but completely hidden behind it when opened from inside the
+        // story viewer (Endirimlər's "WhatsApp yaz" desktop path).
+        zIndex: 3500,
         background: 'rgba(13,21,32,0.92)',
         backdropFilter: 'blur(8px)',
         alignItems: 'center',
