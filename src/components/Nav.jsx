@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import { useCart } from '../context/CartContext';
 import { SUPPORTED_LANGUAGES } from '../i18n';
 import { getLocaleFromPathname, buildLocalizedPath } from '../utils/locale';
 import useScrollDirection from '../hooks/useScrollDirection';
+import useBodyScrollLock from '../hooks/useBodyScrollLock';
 
 const LANG_SHORT_LABEL = { az: 'AZ', ru: 'RU', en: 'EN' };
 
@@ -48,6 +49,20 @@ export default function Nav() {
   const scrollDirection = useScrollDirection();
   const navHidden = scrollDirection === 'down' && !mobileOpen;
 
+  // Had no backdrop, no Esc-to-close, and no scroll lock at all before —
+  // same gaps NavProfile.jsx's and MobileTabBar.jsx's own account menus
+  // had (see useBodyScrollLock's own comment for why plain
+  // overflow:hidden isn't enough on iOS Safari).
+  useBodyScrollLock(mobileOpen);
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [mobileOpen]);
+
   const handleLogoClick = () => {
     setMobileOpen(false);
     if (location.pathname === localize('/')) {
@@ -79,7 +94,13 @@ export default function Nav() {
   // there when logged out.
   const mobileMenu = mobileOpen
     ? createPortal(
-        <ul className="tl-mobile-menu">
+        <>
+          {/* Same dark-blur tone as the account menus (.nav-dd-overlay /
+              .tl-tabbar-backdrop) — this panel had no backdrop at all
+              before, just a white dropdown over the still-fully-visible
+              (and still-colorful/busy) page underneath. */}
+          <div className="tl-mobile-menu-backdrop" onClick={() => setMobileOpen(false)} />
+          <ul className="tl-mobile-menu">
           {NAV_LINK_PATHS.map(({ path, key, icon, badge }) => (
             <li key={path}>
               <NavLink to={localize(path)} className={({ isActive }) => 'tl-mobile-menu-row' + (isActive ? ' active' : '')} onClick={() => setMobileOpen(false)}>
@@ -150,7 +171,8 @@ export default function Nav() {
               </a>
             </li>
           )}
-        </ul>,
+          </ul>
+        </>,
         document.body
       )
     : null;

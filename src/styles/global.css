@@ -7452,6 +7452,16 @@ body:not(.tl-subpage) .tl-about-extra {
    it against its old grid-area box even after that, clipping the AZ/RU/EN
    row on the right edge on Android. Safari never had the bug. A portal
    sidesteps the whole class of issue by construction. */
+.tl-mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  top: 68px;
+  z-index: 98;
+  background: rgba(15, 27, 45, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 .tl-mobile-menu {
   list-style: none;
   margin: 0;
