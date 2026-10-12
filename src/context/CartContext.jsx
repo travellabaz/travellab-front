@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const CartContext = createContext(null);
 const STORAGE_KEY = 'tl-shop-cart';
@@ -31,6 +32,17 @@ function readStored() {
 export function CartProvider({ children }) {
   const [items, setItems] = useState(readStored);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  // Closing the drawer was only ever wired to its own X/overlay/"Davam
+  // et" controls — navigating away via a NavLink (tab bar, hamburger
+  // menu, desktop nav) left drawerOpen untouched, so the drawer stayed
+  // open and visible, painted over whatever page you'd just navigated
+  // to. Tying it to the route itself covers every navigation path at
+  // once instead of patching each link's onClick individually.
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     try {

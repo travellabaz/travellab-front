@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const WishlistContext = createContext(null);
 const STORAGE_KEY = 'tl-shop-wishlist';
@@ -23,6 +24,7 @@ function readStored() {
 export function WishlistProvider({ children }) {
   const [items, setItems] = useState(readStored);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     try {
@@ -31,6 +33,13 @@ export function WishlistProvider({ children }) {
       // storage full/blocked — wishlist just won't persist across reloads
     }
   }, [items]);
+
+  // Same reasoning as CartContext's own pathname effect — navigating away
+  // via a NavLink didn't close this drawer either, same "stuck open over
+  // the new page" bug.
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
 
   const has = useCallback((kind, id) => !!items[itemKey(kind, id)], [items]);
 
