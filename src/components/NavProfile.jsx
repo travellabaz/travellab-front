@@ -187,14 +187,6 @@ export default function NavProfile() {
         )}
         <div className="nav-dd-sep" />
 
-        <LocalizedLink className="nav-dd-item" to="/hesab/sifarislerim" onClick={() => setOpen(false)}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M9 2h6l1 3h4v16H4V5h4l1-3Z" />
-            <path d="M9 11h6M9 15h4" />
-          </svg>
-          {t('navProfile.orders')}
-        </LocalizedLink>
-
         <button type="button" className="nav-dd-item" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }} onClick={() => { setOpen(false); openDrawer(); }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="9" cy="20" r="1.3" />

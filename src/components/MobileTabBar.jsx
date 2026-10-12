@@ -155,10 +155,6 @@ export default function MobileTabBar() {
               <strong>{profile.points} LP</strong>
             </div>
 
-            <NavLink to={localize('/hesab/sifarislerim')} className="tl-tabbar-sheet-item" onClick={() => setAccountOpen(false)}>
-              {t('navProfile.orders')}
-            </NavLink>
-
             <button
               type="button"
               className="tl-tabbar-sheet-item"

@@ -58,16 +58,26 @@ export default function Nav() {
   // navigating away from the page — push a throwaway history entry the
   // instant the menu opens, then treat a 'popstate' (back button, or
   // closeMobileMenu's own history.back() call below) as "menu should be
-  // closed". closeMobileMenu is what every in-menu close trigger (X,
-  // overlay, Esc, link clicks) calls so the pushed entry gets consumed
-  // immediately rather than sitting in history for a *later* back-press
-  // to eat.
+  // closed". closeMobileMenu is for close triggers that don't themselves
+  // navigate (X, overlay, Esc, cart) — see closeMobileMenuForNav below
+  // for why link clicks need a different, history.back()-free close.
   const closeMobileMenu = () => {
     setMobileOpen(false);
     if (window.history.state && window.history.state.tlMobileMenu) {
       window.history.back();
     }
   };
+
+  // Plain close, no history.back() — for anything that ALSO navigates in
+  // the same click (NavLink rows, the shop/korporativ pills, the logo,
+  // the language links). history.back() is async; firing it alongside
+  // the navigation's own history.pushState (or, for the plain-<a>
+  // language links, the browser's own full navigation) races it and can
+  // silently cancel the navigation — confirmed live: tapping Viza/Turlar
+  // in the open menu did nothing. The leftover pushState entry from
+  // opening the menu just becomes one harmless extra "back" stop
+  // pointing at the page the menu was opened from.
+  const closeMobileMenuForNav = () => setMobileOpen(false);
 
   useEffect(() => {
     if (!mobileOpen) return undefined;
@@ -92,7 +102,7 @@ export default function Nav() {
   };
 
   const handleLogoClick = () => {
-    closeMobileMenu();
+    closeMobileMenuForNav();
     if (location.pathname === localize('/')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -131,7 +141,7 @@ export default function Nav() {
           <ul className="tl-mobile-menu">
           {NAV_LINK_PATHS.map(({ path, key, icon, badge }) => (
             <li key={path}>
-              <NavLink to={localize(path)} className={({ isActive }) => 'tl-mobile-menu-row' + (isActive ? ' active' : '')} onClick={closeMobileMenu}>
+              <NavLink to={localize(path)} className={({ isActive }) => 'tl-mobile-menu-row' + (isActive ? ' active' : '')} onClick={closeMobileMenuForNav}>
                 <NavIcon name={icon} className="tl-mobile-menu-row-icon" />
                 <span className="tl-mobile-menu-row-label">{t(`nav.${key}`)}</span>
                 {badge && <span className="tl-mobile-menu-row-badge">{t('nav.newBadge')}</span>}
@@ -140,13 +150,13 @@ export default function Nav() {
             </li>
           ))}
           <li className="tl-mobile-menu-pill-row">
-            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')} onClick={closeMobileMenu}>
+            <NavLink to={localize('/shop')} className={({ isActive }) => 'tl-nav-shop-pill' + (isActive ? ' active' : '')} onClick={closeMobileMenuForNav}>
               <NavIcon name="bag" />
               {t('nav.shop')}
             </NavLink>
           </li>
           <li className="tl-mobile-menu-pill-row">
-            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')} onClick={closeMobileMenu}>
+            <NavLink to={localize('/korporativ')} className={({ isActive }) => 'tl-nav-korporativ-pill' + (isActive ? ' active' : '')} onClick={closeMobileMenuForNav}>
               <NavIcon name="briefcase" />
               {t('nav.korporativ')}
             </NavLink>
@@ -171,7 +181,7 @@ export default function Nav() {
                   key={l}
                   href={buildLocalizedPath(location.pathname, l) + location.search}
                   className={'tl-nav-mobile-lang-opt' + (l === lang ? ' active' : '')}
-                  onClick={closeMobileMenu}
+                  onClick={closeMobileMenuForNav}
                 >
                   {LANG_SHORT_LABEL[l]}
                 </a>
@@ -213,7 +223,7 @@ export default function Nav() {
       <ul className="tl-nav-links">
         {NAV_LINK_PATHS.map(({ path, key, badge }) => (
           <li key={path}>
-            <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={closeMobileMenu}>
+            <NavLink to={localize(path)} className={({ isActive }) => (isActive ? 'active' : undefined)} onClick={closeMobileMenuForNav}>
               {badge ? (
                 <span className="tl-nav-link-badged">
                   {t(`nav.${key}`)}
