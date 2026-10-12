@@ -44,14 +44,40 @@ function isValidEmail(mail) {
   return !!mail && mail.includes('@');
 }
 
+const DESKTOP_BREAKPOINT = 900; // matches .nav-dd's own mobile-sheet media query
+
 export default function NavProfile() {
   const { t } = useTranslation();
   const { profile, logout } = useAuth();
   const { openDrawer } = useCart();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [anchorRect, setAnchorRect] = useState(null);
   const rootRef = useRef(null);
   const dragStartYRef = useRef(null);
+
+  // .nav-dd is portaled to <body> (see below) so it's no longer a DOM
+  // descendant of this button's position:relative wrapper — its CSS
+  // `position: absolute; top: calc(100% + 8px); right: 0` on desktop
+  // used to anchor against that wrapper, but once portaled it resolves
+  // against the document's full scrollable height instead, rendering the
+  // dropdown far off-screen (clicking the button looked like it did
+  // nothing). Measure the button's real position and anchor the portaled
+  // dropdown with position:fixed instead — only on desktop widths, where
+  // it's a small anchored dropdown rather than the mobile full-bleed
+  // sheet (that one is still driven purely by .nav-dd's own media query).
+  useEffect(() => {
+    if (!open) {
+      setAnchorRect(null);
+      return undefined;
+    }
+    const measure = () => {
+      if (rootRef.current) setAnchorRect(rootRef.current.getBoundingClientRect());
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [open]);
 
   useEffect(() => {
     function onDocClick(e) {
@@ -100,6 +126,10 @@ export default function NavProfile() {
   };
   const handleSheetTouchEnd = () => { dragStartYRef.current = null; };
 
+  const dropdownStyle = anchorRect && window.innerWidth > DESKTOP_BREAKPOINT
+    ? { position: 'fixed', top: anchorRect.bottom + 8, right: window.innerWidth - anchorRect.right }
+    : undefined;
+
   return (
     <div style={{ position: 'relative' }} ref={rootRef}>
       <button type="button" className="nav-profile-btn" onClick={() => setOpen((o) => !o)}>
@@ -126,7 +156,7 @@ export default function NavProfile() {
       {open && createPortal(
         <>
           <div className="nav-dd-overlay" onClick={() => setOpen(false)} />
-          <div className="nav-dd open">
+          <div className="nav-dd open" style={dropdownStyle}>
             <div
               className="nav-dd-dragzone"
               onTouchStart={handleSheetTouchStart}
