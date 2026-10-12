@@ -32,7 +32,7 @@ const NAV_LINK_PATHS = [
 // MobileTabBar.jsx).
 export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { openAuth } = useModals();
   const { count, openDrawer } = useCart();
   const location = useLocation();
@@ -192,23 +192,52 @@ export default function Nav() {
       </ul>
       {mobileMenu}
       <div className="tl-nav-right">
-        <button type="button" className="tl-nav-cart" aria-label={t('nav.cart')} onClick={openDrawer}>
+        {/* On mobile (≤900px), a logged-out visitor with an empty cart
+            has no reason to see an empty cart icon — hidden via
+            .tl-nav-cart-hide-mobile-guest below, replaced by the login
+            pill. A logged-out visitor who already put something in the
+            cart (guests can add to cart — see CartContext, it isn't
+            auth-gated) still needs to find it, so the icon stays next to
+            the login pill in that case. Desktop is untouched either way. */}
+        <button
+          type="button"
+          className={'tl-nav-cart' + (!authLoading && !isAuthenticated && count === 0 ? ' tl-nav-cart-hide-mobile-guest' : '')}
+          aria-label={t('nav.cart')}
+          onClick={openDrawer}
+        >
           <NavIcon name="cart" />
           {count > 0 && <span className="tl-nav-cart-badge">{count}</span>}
         </button>
         <LanguageSwitcher className="tl-nav-lang-switcher" />
         <span className="tl-nav-divider" aria-hidden="true" />
-        {isAuthenticated ? (
+        {authLoading ? (
+          // Reserves the same footprint as NavProfile/the login pill so
+          // the header doesn't jump once the real auth state lands.
+          <span className="tl-nav-auth-placeholder" aria-hidden="true" />
+        ) : isAuthenticated ? (
           <NavProfile />
         ) : (
-          <div className="tl-nav-auth-desktop">
-            <a href="#" className="tl-btn-login" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>
+          <>
+            <div className="tl-nav-auth-desktop">
+              <a href="#" className="tl-btn-login" onClick={(e) => { e.preventDefault(); openAuth('login'); }}>
+                {t('nav.login')}
+              </a>
+              <a href="#" className="tl-btn-cta" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>
+                {t('nav.register')}
+              </a>
+            </div>
+            {/* Mobile-only (see .tl-nav-login-pill-mobile's media rule) —
+                previously a logged-out visitor had no visible way to log
+                in from the closed header at all, only via the hamburger
+                menu's own login row further down. */}
+            <button type="button" className="tl-nav-login-pill-mobile" onClick={() => openAuth('login')}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6" />
+              </svg>
               {t('nav.login')}
-            </a>
-            <a href="#" className="tl-btn-cta" onClick={(e) => { e.preventDefault(); openAuth('register'); }}>
-              {t('nav.register')}
-            </a>
-          </div>
+            </button>
+          </>
         )}
         {/* Rightmost on purpose (mobile task: the burger used to sit
             before the account block, ahead of it) — see .tl-nav-burger's

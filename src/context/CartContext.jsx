@@ -65,8 +65,13 @@ export function CartProvider({ children }) {
   const productLines = useMemo(() => lines.filter((l) => l.kind === 'product'), [lines]);
   const tourLines = useMemo(() => lines.filter((l) => l.kind === 'tour'), [lines]);
 
-  const count = useMemo(() => lines.reduce((sum, l) => sum + l.qty, 0), [lines]);
-  const total = useMemo(() => lines.reduce((sum, l) => sum + l.qty * (l.price || 0), 0), [lines]);
+  // (l.qty || 0), not l.qty — a stored line from an older cart schema
+  // missing qty entirely (undefined) would otherwise poison the whole
+  // sum to NaN (number + undefined = NaN propagates through every later
+  // addition too), silently breaking both the header badge and anything
+  // gating on count/total being a real number.
+  const count = useMemo(() => lines.reduce((sum, l) => sum + (l.qty || 0), 0), [lines]);
+  const total = useMemo(() => lines.reduce((sum, l) => sum + (l.qty || 0) * (l.price || 0), 0), [lines]);
 
   const value = useMemo(
     () => ({

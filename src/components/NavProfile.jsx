@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import LocalizedLink from './LocalizedLink';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +9,8 @@ import { SOCIAL_LINKS } from '../utils/socialLinks';
 // Travellab's official WhatsApp Channel — follow link, not a 1:1 chat
 // (distinct from the manager-pool deep links elsewhere on the site).
 const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vaifnm1ATRSxATpCqq3N';
+
+const SWIPE_CLOSE_THRESHOLD = 80; // px of downward drag on the mobile sheet's handle before it closes
 
 // Same path data as Footer.jsx's own social icons, kept visually
 // consistent with the footer rather than inventing a second icon set.
@@ -24,6 +27,22 @@ const SOCIAL_ICON_PATHS = {
   tiktok: <path d="M16.6 5.82c-.6-.66-.96-1.5-1-2.42h-3.14v13.3c0 1.4-1.13 2.53-2.53 2.53a2.53 2.53 0 0 1-.98-4.87 2.53 2.53 0 0 1 1.68-.13V11.1a5.7 5.7 0 0 0-.7-.05A5.73 5.73 0 1 0 15.6 16.7V9.02a8.16 8.16 0 0 0 4.75 1.52V7.4a4.85 4.85 0 0 1-3.75-1.58z" />,
 };
 
+const GIFT_ICON = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="4" y="9" width="16" height="4" />
+    <rect x="5" y="13" width="14" height="7" />
+    <path d="M12 9v11" />
+    <path d="M12 9C9.5 9 8 7.8 8 6.3 8 5 9 4 10.2 4 11.5 4 12 6 12 9ZM12 9c2.5 0 4-1.2 4-2.7C16 5 15 4 13.8 4 12.5 4 12 6 12 9Z" />
+  </svg>
+);
+
+// Guards against showing the raw placeholder a test/incomplete account's
+// mail field can hold (e.g. "xxx") — same gap would show for any real
+// customer whose email is blank or was never actually validated.
+function isValidEmail(mail) {
+  return !!mail && mail.includes('@');
+}
+
 export default function NavProfile() {
   const { t } = useTranslation();
   const { profile, logout } = useAuth();
@@ -31,6 +50,7 @@ export default function NavProfile() {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef(null);
+  const dragStartYRef = useRef(null);
 
   useEffect(() => {
     function onDocClick(e) {
@@ -40,6 +60,21 @@ export default function NavProfile() {
     return () => document.removeEventListener('click', onDocClick);
   }, []);
 
+  // Esc closes, and the page behind can't scroll while the menu (or its
+  // mobile bottom-sheet form) is open.
+  useEffect(() => {
+    if (!open) return undefined;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
   if (!profile) return null;
 
   const copyReferral = () => {
@@ -47,6 +82,18 @@ export default function NavProfile() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Swipe-down-to-close on the mobile sheet's handle/header only — the
+  // scrollable item list below stays untouched.
+  const handleSheetTouchStart = (e) => { dragStartYRef.current = e.touches[0].clientY; };
+  const handleSheetTouchMove = (e) => {
+    if (dragStartYRef.current == null) return;
+    if (e.touches[0].clientY - dragStartYRef.current > SWIPE_CLOSE_THRESHOLD) {
+      dragStartYRef.current = null;
+      setOpen(false);
+    }
+  };
+  const handleSheetTouchEnd = () => { dragStartYRef.current = null; };
 
   return (
     <div style={{ position: 'relative' }} ref={rootRef}>
@@ -59,11 +106,28 @@ export default function NavProfile() {
         <span className="nav-profile-name">{profile.name || t('navProfile.profile')}</span>
         <span className="nav-lp-badge">{profile.points} LP</span>
       </button>
+      {/* Portaled to <body> so it truly covers the whole page regardless
+          of where this component sits in the DOM — same reasoning as
+          StoryViewer.jsx's own portals elsewhere in this app. */}
+      {open && createPortal(
+        <div className="nav-dd-overlay" onClick={() => setOpen(false)} />,
+        document.body
+      )}
       <div className={'nav-dd' + (open ? ' open' : '')}>
+        <div
+          className="nav-dd-dragzone"
+          onTouchStart={handleSheetTouchStart}
+          onTouchMove={handleSheetTouchMove}
+          onTouchEnd={handleSheetTouchEnd}
+        >
+          <div className="nav-dd-handle" />
+        </div>
         <div className="nav-dd-hdr">
           <div className="nav-dd-name">{profile.name} {profile.surname}</div>
           <div className="nav-dd-ph">{profile.phone ? '+' + profile.phone : ''}</div>
-          <div className="nav-dd-ph" style={{ marginTop: 2 }}>{profile.mail}</div>
+          {isValidEmail(profile.mail) && (
+            <div className="nav-dd-ph" style={{ marginTop: 2 }}>{profile.mail}</div>
+          )}
           <div className="nav-dd-lp">
             <div>
               <div className="nav-dd-lpl">Labpoint</div>
@@ -74,8 +138,8 @@ export default function NavProfile() {
         </div>
         {profile.referralLink && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--tl-gray-200)', marginBottom: 6 }}>
-            <div style={{ fontSize: 10, color: 'rgba(29,41,57,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
-              🎁 {t('navProfile.referralLink')}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: 'rgba(29,41,57,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
+              {GIFT_ICON} {t('navProfile.referralLink')}
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
               <input

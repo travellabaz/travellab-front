@@ -8,6 +8,27 @@ import { useModals } from '../context/ModalContext';
 const PILLS_SCROLL_SPEED = 0.6; // px per animation frame
 const PILLS_END_PAUSE_MS = 900; // pause once fully revealed, before scrolling back
 
+// Replace the hero badge/pill emoji with icons matching the rest of the
+// site's inline-SVG style (stroke="currentColor") instead.
+const PLANE_ICON = (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8 4.8 6.2a.5.5 0 0 0-.5.8L8 11l-3 3H3l-1 1 3 2 2 3 1-1v-2l3-3 3.9 3.7a.5.5 0 0 0 .8-.5Z" />
+  </svg>
+);
+const FIRE_ICON = (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 2c1 3-3 4-3 7a3 3 0 0 0 6 0c1.5 1 2 3 2 4.5a5 5 0 0 1-10 0C7 9.5 11 8 12 2Z" />
+  </svg>
+);
+const GIFT_PILL_ICON = (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="4" y="9" width="16" height="4" />
+    <rect x="5" y="13" width="14" height="7" />
+    <path d="M12 9v11" />
+    <path d="M12 9C9.5 9 8 7.8 8 6.3 8 5 9 4 10.2 4 11.5 4 12 6 12 9ZM12 9c2.5 0 4-1.2 4-2.7C16 5 15 4 13.8 4 12.5 4 12 6 12 9Z" />
+  </svg>
+);
+
 // Alt text lives in the hero.photoAlts translation array (indexed the same
 // as this list) since it can't be resolved until the component has a `t`.
 const HERO_PHOTO_SRCS = [
@@ -129,7 +150,7 @@ export default function HeroSearch({ title }) {
         </div>
         <div className="tl-float tl-float-2">{t('hero.floatLabpoint')}</div>
         <div className="tl-hero-content">
-          <div className="tl-hero-badge">{t('hero.badge')}</div>
+          <div className="tl-hero-badge">{PLANE_ICON} {t('hero.badge')}</div>
           <h1>{heroTitle}</h1>
           <p>{t('hero.subtitle')}</p>
         </div>
@@ -146,11 +167,11 @@ export default function HeroSearch({ title }) {
             className="tl-hero-pill tl-hero-pill-deal"
             onClick={() => (isAuthenticated ? navigate('/endirimler') : openAuth('register'))}
           >
-            {t('hero.pillDeals')}
+            {t('hero.pillDeals')} {FIRE_ICON}
           </button>
           <Link to="/tours" className="tl-hero-pill">{t('hero.pillTours')}</Link>
           <Link to="/tours?category=Qrup%20Turlar%C4%B1" className="tl-hero-pill">{t('hero.pillGroupTours')}</Link>
-          <Link to="/hediyye-karti" className="tl-hero-pill tl-hero-pill-gift">{t('hero.pillGiftCard')}</Link>
+          <Link to="/hediyye-karti" className="tl-hero-pill tl-hero-pill-gift">{GIFT_PILL_ICON} {t('hero.pillGiftCard')}</Link>
         </div>
       </section>
 

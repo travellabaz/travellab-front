@@ -239,7 +239,10 @@ html {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  /* Above .nav-dd-overlay (199) so the header — including the profile
+     button itself — stays clickable while the account menu is open,
+     letting a second tap on it close the menu again. */
+  z-index: 201;
   height: 68px;
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(16px);
@@ -1906,8 +1909,8 @@ body:not(.tl-subpage) .tl-about-extra {
 }
 
 /* Signup-bait pill (see HeroSearch.jsx) — a button, not a link, so it
-   needs its own reset. Same look as the other pills; the 🔥 plus a
-   subtle pulse is what does the "entice" work instead of a standout
+   needs its own reset. Same look as the other pills; the fire icon plus
+   a subtle pulse is what does the "entice" work instead of a standout
    color. */
 .tl-hero-pill-deal {
   font: inherit;
@@ -8369,6 +8372,32 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700
 }
 
+/* Dark overlay behind the open menu — portaled to <body> (see
+   NavProfile.jsx), so it covers the whole page regardless of where in
+   the DOM the trigger button sits. Sits below the menu itself (200) but
+   above everything else on the page; .tl-nav is bumped above both (see
+   its own z-index) so the header — including this same profile button —
+   stays clickable/visible for closing the menu again. */
+.nav-dd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+  background: rgba(15, 27, 45, 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: navDdOverlayIn 150ms ease both;
+}
+
+@keyframes navDdOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes navDdIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .nav-dd {
   position: absolute;
   top: calc(100% + 8px);
@@ -8378,14 +8407,57 @@ body:not(.tl-subpage) .tl-about-extra {
   border-radius: 16px;
   padding: 8px;
   min-width: 220px;
-  box-shadow: var(--tl-shadow);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 48px rgba(10, 30, 25, 0.22);
   z-index: 200;
   display: none;
-  animation: amUp .2s ease both
+  animation: navDdIn 180ms ease both
 }
 
 .nav-dd.open {
   display: block
+}
+
+/* Drag handle — hidden on desktop (see .nav-dd being a plain dropdown
+   there); shown only once .nav-dd becomes a bottom sheet, below. */
+.nav-dd-dragzone {
+  display: none;
+}
+
+.nav-dd-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--tl-gray-200);
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .nav-dd {
+    position: fixed;
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-height: 85vh;
+    border-radius: 20px 20px 0 0;
+    border: none;
+    animation: navDdSheetIn 180ms ease both;
+  }
+
+  .nav-dd-dragzone {
+    display: block;
+    padding: 10px 0 8px;
+    margin: -8px -8px 4px;
+    cursor: grab;
+  }
+
+  @keyframes navDdSheetIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 }
 
 .nav-dd-hdr {
@@ -10056,6 +10128,56 @@ body:not(.tl-subpage) .tl-about-extra {
   font-weight: 700;
   line-height: 16px;
   text-align: center;
+}
+
+/* Mobile-only guest login pill + its auth-loading placeholder — see
+   Nav.jsx. Hidden on desktop by default; shown (and .tl-nav-cart hidden
+   when the guest's cart is empty) only under the ≤900px rule below,
+   same breakpoint .tl-nav-auth-desktop already switches on. */
+.tl-nav-login-pill-mobile {
+  display: none;
+  position: relative;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 100px;
+  border: 1.5px solid var(--tl-green);
+  background: var(--tl-white);
+  color: #037A3A;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Geist Sans', sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Expands the actual touch target to 44x44 without growing the visible
+   pill past its 36px height. */
+.tl-nav-login-pill-mobile::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+}
+
+.tl-nav-auth-placeholder {
+  display: none;
+  width: 90px;
+  height: 36px;
+}
+
+@media (max-width: 900px) {
+  .tl-nav-cart-hide-mobile-guest {
+    display: none;
+  }
+
+  .tl-nav-login-pill-mobile {
+    display: inline-flex;
+  }
+
+  .tl-nav-auth-placeholder {
+    display: inline-block;
+  }
 }
 
 /* — Homepage Shop block — */
