@@ -3,7 +3,6 @@ import StoriesSection from '../sections/StoriesSection';
 import ToursSection from '../sections/ToursSection';
 import HotelsSection from '../sections/HotelsSection';
 import CtaSection from '../sections/CtaSection';
-import EventsSection from '../sections/EventsSection';
 import LabpointSection from '../sections/LabpointSection';
 import ShopSection from '../sections/ShopSection';
 import PartnersSection from '../sections/PartnersSection';
@@ -22,7 +21,6 @@ export default function HomePage() {
       <ShopSection />
       <HotelsSection />
       <CtaSection />
-      <EventsSection />
       <LabpointSection />
       <PartnersSection />
 

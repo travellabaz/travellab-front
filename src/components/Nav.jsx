@@ -21,7 +21,6 @@ const NAV_LINK_PATHS = [
   { path: '/hotels', key: 'hotels', icon: 'bed' },
   { path: '/tours', key: 'tours', icon: 'palm' },
   { path: '/labpoint', key: 'labpoint', icon: 'star', badge: true },
-  { path: '/events', key: 'events', icon: 'calendar' },
   { path: '/viza', key: 'viza', icon: 'passport' },
 ];
 
