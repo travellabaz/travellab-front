@@ -8383,8 +8383,12 @@ body:not(.tl-subpage) .tl-about-extra {
   inset: 0;
   z-index: 199;
   background: rgba(15, 27, 45, 0.45);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  /* 2px read as basically no blur at all against a busy/colorful page
+     (confirmed live — screenshot showed the hero text still crisp) —
+     8px matches AuthModal's own overlay, already proven to read as a
+     real blur in this same app. */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   animation: navDdOverlayIn 150ms ease both;
 }
 
