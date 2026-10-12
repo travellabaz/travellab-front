@@ -111,142 +111,153 @@ export default function NavProfile() {
         <span className="nav-profile-name">{profile.name || t('navProfile.profile')}</span>
         <span className="nav-lp-badge">{profile.points} LP</span>
       </button>
-      {/* Portaled to <body> so it truly covers the whole page regardless
-          of where this component sits in the DOM — same reasoning as
+      {/* Both the overlay AND the dropdown/sheet are portaled to <body>
+          together — not just the overlay. Leaving .nav-dd nested inside
+          .tl-nav (as it used to be) silently broke it: .tl-nav has its
+          own backdrop-filter (blur(16px), for the header itself), and a
+          backdrop-filter establishes a containing block for
+          position:fixed descendants — confirmed live that a fixed
+          element nested under .tl-nav gets confined to .tl-nav's own
+          68px-tall box instead of the real viewport. That's exactly why
+          this sheet rendered mangled/mispositioned on mobile while
+          MobileTabBar's "Hesab" sheet (a separate component, never
+          nested under .tl-nav) never had the problem. Same reasoning as
           StoryViewer.jsx's own portals elsewhere in this app. */}
       {open && createPortal(
-        <div className="nav-dd-overlay" onClick={() => setOpen(false)} />,
+        <>
+          <div className="nav-dd-overlay" onClick={() => setOpen(false)} />
+          <div className="nav-dd open">
+            <div
+              className="nav-dd-dragzone"
+              onTouchStart={handleSheetTouchStart}
+              onTouchMove={handleSheetTouchMove}
+              onTouchEnd={handleSheetTouchEnd}
+            >
+              <div className="nav-dd-handle" />
+            </div>
+            <div className="nav-dd-hdr">
+              <div className="nav-dd-name">{profile.name} {profile.surname}</div>
+              <div className="nav-dd-ph">{profile.phone ? '+' + profile.phone : ''}</div>
+              {isValidEmail(profile.mail) && (
+                <div className="nav-dd-ph" style={{ marginTop: 2 }}>{profile.mail}</div>
+              )}
+              <div className="nav-dd-lp">
+                <div>
+                  <div className="nav-dd-lpl">Labpoint</div>
+                  <div className="nav-dd-lpv">{profile.points} LP</div>
+                </div>
+                <div className="nav-dd-azn">{profile.azn} ₼</div>
+              </div>
+            </div>
+            {profile.referralLink && (
+              <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--tl-gray-200)', marginBottom: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: 'rgba(29,41,57,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
+                  {GIFT_ICON} {t('navProfile.referralLink')}
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <input
+                    readOnly
+                    value={profile.referralLink}
+                    style={{
+                      flex: 1,
+                      height: 32,
+                      background: 'var(--tl-gray-100)',
+                      border: '1px solid var(--tl-gray-200)',
+                      borderRadius: 8,
+                      padding: '0 10px',
+                      color: 'var(--tl-navy)',
+                      fontSize: 11,
+                      fontFamily: "'Geist Sans', sans-serif",
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={copyReferral}
+                    style={{
+                      height: 32,
+                      padding: '0 12px',
+                      background: '#F5A623',
+                      border: 'none',
+                      borderRadius: 8,
+                      color: '#0D1520',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      fontFamily: "'Geist Sans', sans-serif",
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {copied ? '✓' : t('navProfile.copy')}
+                  </button>
+                </div>
+              </div>
+            )}
+            <div className="nav-dd-sep" />
+
+            <button type="button" className="nav-dd-item" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }} onClick={() => { setOpen(false); openDrawer(); }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="9" cy="20" r="1.3" />
+                <circle cx="18" cy="20" r="1.3" />
+                <path d="M2 3h2l2.6 12.4A2 2 0 0 0 8.6 17h9.2a2 2 0 0 0 2-1.6L21.5 7H5.3" />
+              </svg>
+              {t('navProfile.cart')}
+            </button>
+
+            <a className="nav-dd-item" href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z" />
+                <path d="M8.5 10.5c0 3 2.5 5.5 5.5 5.5" strokeLinecap="round" />
+              </svg>
+              {t('navProfile.waChannel')}
+            </a>
+
+            <div className="nav-dd-social">
+              {SOCIAL_LINKS.map((s) => (
+                <a key={s.key} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    {SOCIAL_ICON_PATHS[s.key]}
+                  </svg>
+                </a>
+              ))}
+            </div>
+
+            <a className="nav-dd-item" href="mailto:info@travellab.az">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+              {t('navProfile.support')}
+            </a>
+
+            <LocalizedLink className="nav-dd-item" to="/about" onClick={() => setOpen(false)}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 11v5M12 8v.01" strokeLinecap="round" />
+              </svg>
+              {t('navProfile.about')}
+            </LocalizedLink>
+
+            <div className="nav-dd-sep" />
+            <a
+              className="nav-dd-item nav-dd-out"
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                logout();
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+              {t('navProfile.logout')}
+            </a>
+          </div>
+        </>,
         document.body
       )}
-      <div className={'nav-dd' + (open ? ' open' : '')}>
-        <div
-          className="nav-dd-dragzone"
-          onTouchStart={handleSheetTouchStart}
-          onTouchMove={handleSheetTouchMove}
-          onTouchEnd={handleSheetTouchEnd}
-        >
-          <div className="nav-dd-handle" />
-        </div>
-        <div className="nav-dd-hdr">
-          <div className="nav-dd-name">{profile.name} {profile.surname}</div>
-          <div className="nav-dd-ph">{profile.phone ? '+' + profile.phone : ''}</div>
-          {isValidEmail(profile.mail) && (
-            <div className="nav-dd-ph" style={{ marginTop: 2 }}>{profile.mail}</div>
-          )}
-          <div className="nav-dd-lp">
-            <div>
-              <div className="nav-dd-lpl">Labpoint</div>
-              <div className="nav-dd-lpv">{profile.points} LP</div>
-            </div>
-            <div className="nav-dd-azn">{profile.azn} ₼</div>
-          </div>
-        </div>
-        {profile.referralLink && (
-          <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--tl-gray-200)', marginBottom: 6 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: 'rgba(29,41,57,0.5)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 6 }}>
-              {GIFT_ICON} {t('navProfile.referralLink')}
-            </div>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <input
-                readOnly
-                value={profile.referralLink}
-                style={{
-                  flex: 1,
-                  height: 32,
-                  background: 'var(--tl-gray-100)',
-                  border: '1px solid var(--tl-gray-200)',
-                  borderRadius: 8,
-                  padding: '0 10px',
-                  color: 'var(--tl-navy)',
-                  fontSize: 11,
-                  fontFamily: "'Geist Sans', sans-serif",
-                  outline: 'none',
-                }}
-              />
-              <button
-                type="button"
-                onClick={copyReferral}
-                style={{
-                  height: 32,
-                  padding: '0 12px',
-                  background: '#F5A623',
-                  border: 'none',
-                  borderRadius: 8,
-                  color: '#0D1520',
-                  fontSize: 11,
-                  fontWeight: 700,
-                  fontFamily: "'Geist Sans', sans-serif",
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {copied ? '✓' : t('navProfile.copy')}
-              </button>
-            </div>
-          </div>
-        )}
-        <div className="nav-dd-sep" />
-
-        <button type="button" className="nav-dd-item" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left' }} onClick={() => { setOpen(false); openDrawer(); }}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="9" cy="20" r="1.3" />
-            <circle cx="18" cy="20" r="1.3" />
-            <path d="M2 3h2l2.6 12.4A2 2 0 0 0 8.6 17h9.2a2 2 0 0 0 2-1.6L21.5 7H5.3" />
-          </svg>
-          {t('navProfile.cart')}
-        </button>
-
-        <a className="nav-dd-item" href={WHATSAPP_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z" />
-            <path d="M8.5 10.5c0 3 2.5 5.5 5.5 5.5" strokeLinecap="round" />
-          </svg>
-          {t('navProfile.waChannel')}
-        </a>
-
-        <div className="nav-dd-social">
-          {SOCIAL_LINKS.map((s) => (
-            <a key={s.key} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                {SOCIAL_ICON_PATHS[s.key]}
-              </svg>
-            </a>
-          ))}
-        </div>
-
-        <a className="nav-dd-item" href="mailto:info@travellab.az">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <rect x="3" y="5" width="18" height="14" rx="2" />
-            <path d="m3 7 9 6 9-6" />
-          </svg>
-          {t('navProfile.support')}
-        </a>
-
-        <LocalizedLink className="nav-dd-item" to="/about" onClick={() => setOpen(false)}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 11v5M12 8v.01" strokeLinecap="round" />
-          </svg>
-          {t('navProfile.about')}
-        </LocalizedLink>
-
-        <div className="nav-dd-sep" />
-        <a
-          className="nav-dd-item nav-dd-out"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            logout();
-          }}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <path d="M16 17l5-5-5-5" />
-            <path d="M21 12H9" />
-          </svg>
-          {t('navProfile.logout')}
-        </a>
-      </div>
     </div>
   );
 }
