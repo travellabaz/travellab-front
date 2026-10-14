@@ -6,6 +6,7 @@ import LogoMark from './LogoMark';
 import StoryIcon from '../utils/storyIcons.jsx';
 import { SoundOnIcon, SoundOffIcon, CommentIcon, HeartIcon, SendIcon, CommentEmptyIcon } from './StoryActionIcons';
 import { markCategoryViewed } from '../utils/storyViewed';
+import { buildStoryFeed } from '../utils/storyFeed';
 import { trackEvent } from '../utils/analytics';
 import { pickManager, isMobile } from '../utils/managers';
 import { baseLikeCount, isStoryLiked, setStoryLiked } from '../utils/storyLikes';
@@ -404,20 +405,31 @@ function StorySlide({
 // only exists to keep scrolling from running off the end of the list.
 //
 // categories is still the same grouped shape StoriesSection.jsx fetches
-// (stories.json, each category's own cta config) — flattened once into
-// slides, the actual unit navigation now walks.
+// (stories.json, each category's own cta config) — flattened into slides
+// by buildStoryFeed (utils/storyFeed.js) around whichever category was
+// opened: that category shuffled, with other categories' stories
+// interleaved, then everything else. Picking a category in the sidebar
+// rebuilds the feed around it (a fresh shuffle every time).
 export default function StoryViewer({ categories, startCategoryIndex, startStoryId, onClose, onCategoryViewed }) {
   const { t } = useTranslation();
 
+  // By category id, not index — StoriesSection can still drop Endirimlər
+  // from `categories` while the viewer is open (failed live fetch), which
+  // would shift every index after it.
+  const [feedSeed, setFeedSeed] = useState(() => ({
+    categoryId: categories[startCategoryIndex]?.id,
+    storyId: startStoryId,
+  }));
+
+  // Only rebuilt when feedSeed changes, deliberately not on every
+  // `categories` update: a reshuffle mid-viewing would swap the story
+  // under the visitor's finger. A late Endirimlər live-list swap is
+  // picked up the next time a category is opened.
   const slides = useMemo(() => {
-    const flat = [];
-    categories.forEach((cat, catIdx) => {
-      cat.stories.forEach((story, storyIdxInCat) => {
-        flat.push({ story, category: cat, catIdx, storyIdxInCat, logicalIndex: flat.length });
-      });
-    });
-    return flat;
-  }, [categories]);
+    const primaryIdx = Math.max(0, categories.findIndex((c) => c.id === feedSeed.categoryId));
+    return buildStoryFeed(categories, primaryIdx, feedSeed.storyId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feedSeed]);
 
   // [clone(last), ...real slides..., clone(first)] — see the component
   // comment above. domIndex of a real slide is its logicalIndex + 1.
@@ -428,16 +440,9 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     return [head, ...slides, tail];
   }, [slides]);
 
-  const initialDomIndex = useMemo(() => {
-    if (slides.length === 0) return 0;
-    if (startStoryId) {
-      const i = slides.findIndex((s) => s.story.id === startStoryId);
-      if (i !== -1) return i + 1;
-    }
-    const i = slides.findIndex((s) => s.catIdx === startCategoryIndex);
-    return (i === -1 ? 0 : i) + 1;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // only the opening category/story matters — never re-derive mid-session
+  // The feed always starts with the opened category (or the opened
+  // story, see buildStoryFeed) — first real slide, after the head clone.
+  const initialDomIndex = 1;
 
   const [activeDomIndex, setActiveDomIndex] = useState(initialDomIndex);
   // Starts unmuted — opening the viewer is itself the user gesture
@@ -473,13 +478,14 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     else container.scrollTop = el.offsetTop;
   }, []);
 
-  // Jump straight to this domIndex on open, before the first paint — no
-  // visible scroll animation from the top of the feed down to wherever
-  // the opening category/story actually is.
+  // Jump straight to the first real slide, before the first paint — on
+  // open, and again whenever the feed is rebuilt around another category
+  // (sidebar jump), with no visible scroll animation either time.
   useLayoutEffect(() => {
     scrollToDomIndex(initialDomIndex, 'auto');
+    setActiveDomIndex(initialDomIndex);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [slides]);
 
   const goNext = useCallback(() => {
     const next = Math.min(activeDomIndexRef.current + 1, domSlides.length - 1);
@@ -491,12 +497,12 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     scrollToDomIndex(prev, 'smooth');
   }, [scrollToDomIndex]);
 
-  // Sidebar jump — straight to that category's first story, no transition
-  // animation, same as the old per-category switch.
+  // Sidebar jump — rebuilds the feed around that category (new shuffle
+  // and interleave, even when it's the category already open); the
+  // layout effect above then snaps to its first story.
   const jumpToCategory = useCallback((catIdx) => {
-    const i = slides.findIndex((s) => s.catIdx === catIdx);
-    if (i !== -1) scrollToDomIndex(i + 1, 'auto');
-  }, [slides, scrollToDomIndex]);
+    setFeedSeed({ categoryId: categories[catIdx]?.id, storyId: null });
+  }, [categories]);
 
   // Decides which slide is "active" by actual visibility, not scroll
   // math — robust to native touch momentum, programmatic scrollTo, and
@@ -540,19 +546,22 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
   }, [activeDomIndex, domSlides.length]);
 
   const activeSlideInfo = domSlides[activeDomIndex] ?? null;
-  const activeLogical = activeSlideInfo?.logicalIndex;
+  // Story id + feed identity, not the slide object: a loop-wrap lands on
+  // a clone and then the real slide (same story, shouldn't re-fire), while
+  // a sidebar rebuild can keep the same index with a different story.
+  const activeStoryId = activeSlideInfo?.story.id;
 
-  // Reached the last story of a category — record it as viewed (see
-  // storyViewed.js) and let the row's rings update.
+  // Reached a category's last appearance in the feed — record it as
+  // viewed (see storyViewed.js) and let the row's rings update.
   useEffect(() => {
     if (!activeSlideInfo) return;
-    const { category, storyIdxInCat } = activeSlideInfo;
-    if (storyIdxInCat === category.stories.length - 1) {
+    const { category, lastOfCategory } = activeSlideInfo;
+    if (lastOfCategory) {
       markCategoryViewed(category);
       onCategoryViewed?.(category);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLogical]);
+  }, [activeStoryId, slides]);
 
   // GA4 story_view — scoped to the Endirimlər category (the only one
   // backed by real tour_ids, see StoriesSection.jsx's tourToStoryItem).
@@ -563,7 +572,7 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
       trackEvent('story_view', { tour_id: story.id, position: storyIdxInCat });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeLogical]);
+  }, [activeStoryId, slides]);
 
   // Reflects the active story in the URL (?story=<id>) so a copied link
   // reopens on this one — replaceState, not pushState, so every slide
@@ -573,7 +582,7 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
     const url = new URL(window.location.href);
     url.searchParams.set('story', activeSlideInfo.story.id);
     window.history.replaceState(window.history.state, '', url.toString());
-  }, [activeLogical]);
+  }, [activeStoryId, slides]);
 
   // One history entry for "the viewer is open" so the hardware/browser
   // back button closes it instead of navigating the page itself away.
@@ -625,7 +634,7 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
 
   if (slides.length === 0) return null;
 
-  const activeCatIdx = activeSlideInfo?.catIdx;
+  const activeCatId = activeSlideInfo?.category.id;
 
   return createPortal(
     <div className="tl-story-viewer">
@@ -637,7 +646,7 @@ export default function StoryViewer({ categories, startCategoryIndex, startStory
             <button
               key={cat.id}
               type="button"
-              className={'tl-story-viewer-sidebar-item' + (i === activeCatIdx ? ' active' : '')}
+              className={'tl-story-viewer-sidebar-item' + (cat.id === activeCatId ? ' active' : '')}
               onClick={(e) => { e.stopPropagation(); jumpToCategory(i); }}
             >
               <span className="tl-story-viewer-sidebar-icon"><StoryIcon name={cat.cover_icon} /></span>
