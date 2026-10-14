@@ -15196,3 +15196,9 @@ button.tl-tourp-stickybar-wa {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Cart drawer open — the tour page's fixed bars would float over it */
+body.tl-cart-open .tl-tourpkg-strip,
+body.tl-cart-open .tl-tourp-stickybar {
+  display: none;
+}

@@ -131,6 +131,14 @@ export default function CartDrawer() {
     });
   }, [drawerOpen, tourLines, packages, ensurePackage]);
 
+  // The tour page's fixed bars (package strip, sticky bar) sit above the
+  // drawer's layer — hide them while the drawer is open.
+  useEffect(() => {
+    if (!drawerOpen) return undefined;
+    document.body.classList.add('tl-cart-open');
+    return () => document.body.classList.remove('tl-cart-open');
+  }, [drawerOpen]);
+
   if (!drawerOpen) return null;
 
   const tourGroups = Object.values(packages)
