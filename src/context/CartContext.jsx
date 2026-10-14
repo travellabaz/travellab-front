@@ -44,7 +44,10 @@ export function CartProvider({ children }) {
   const itemsRef = useRef(items);
   itemsRef.current = items;
 
-  const { pathname } = useLocation();
+  // location.key, not pathname: tapping a link to the page you're already
+  // on (logo / "Ana səhifə" while on the home page) keeps the pathname but
+  // is still a new navigation, and the drawer has to close for it too.
+  const { key: locationKey } = useLocation();
 
   // Closing the drawer was only ever wired to its own X/overlay/"Davam
   // et" controls — navigating away via a NavLink (tab bar, hamburger
@@ -54,7 +57,7 @@ export function CartProvider({ children }) {
   // once instead of patching each link's onClick individually.
   useEffect(() => {
     setDrawerOpen(false);
-  }, [pathname]);
+  }, [locationKey]);
 
   useEffect(() => {
     try {
