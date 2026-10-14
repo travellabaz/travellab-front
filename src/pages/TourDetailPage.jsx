@@ -12,7 +12,7 @@ import { toTourCartItem } from '../utils/tourCartItem';
 import { parseTourCaption } from '../utils/parseTourCaption';
 import { buildTourWaText } from '../utils/tourWhatsapp';
 import InstallmentCalculator from '../components/InstallmentCalculator';
-import TravelProductsSidePanel, { TravelProductsPicker, useTravelProductsCart } from '../components/TravelProductsCrossSell';
+import TravelProductsSidePanel, { TourPackageMobile, TravelProductsPicker, useSendTourRequest, useTravelProductsCart } from '../components/TravelProductsCrossSell';
 import Breadcrumb from '../components/Breadcrumb';
 import Accordion from '../components/Accordion';
 import TourCard from '../components/TourCard';
@@ -54,7 +54,8 @@ export default function TourDetailPage() {
   const { id } = useParams();
   const { tours, loading } = useTours();
   const { openAuth } = useModals();
-  const { addItem } = useCart();
+  const { addItem, ensurePackage } = useCart();
+  const sendTourRequest = useSendTourRequest();
 
   const tour = tours.find((x) => String(x.id) === id);
   const parsed = useMemo(() => (tour ? parseTourCaption(tour.description) : null), [tour]);
@@ -65,13 +66,28 @@ export default function TourDetailPage() {
   const [aboutExpanded, setAboutExpanded] = useState(false);
   useEffect(() => setAboutExpanded(false), [id]);
 
-  const crossSellCart = useTravelProductsCart(id);
-
   // Show one manager, not the whole list — picked once per tour view.
   const manager = useMemo(() => {
     const list = parsed?.managers || [];
     return list.length ? list[Math.floor(Math.random() * list.length)] : null;
   }, [parsed, id]);
+
+  // What a tour package records about this tour (utils/tourPackage.js) —
+  // computed before the early returns below since the package hook needs
+  // it on every render; re-synced into the package as the hotel changes.
+  const packageHotel = parsed?.hotels?.[hotelIdx] || null;
+  const tourSnapshot = tour
+    ? {
+        title: tour.title,
+        image: tour.imageUrl || null,
+        url: `/tours/${tour.id}`,
+        dateText: parsed?.dateText || null,
+        hotel: packageHotel ? { name: packageHotel.name } : null,
+        price: packageHotel ? packageHotel.price : parsed?.total || extractMinPrice(tour.description) || null,
+        manager: manager ? { name: manager.name, phone: manager.phone } : null,
+      }
+    : null;
+  const crossSellCart = useTravelProductsCart(id, tourSnapshot);
 
   if (loading) {
     return (
@@ -163,7 +179,10 @@ export default function TourDetailPage() {
   const addToCartBtn = (
     <button
       type="button"
-      onClick={() => addItem(toTourCartItem(tour))}
+      onClick={() => {
+        addItem(toTourCartItem(tour));
+        ensurePackage(tour.id, tourSnapshot);
+      }}
       className="tl-btn-book"
       style={{ border: '1px solid var(--tl-gray-200)', cursor: 'pointer', background: '#fff', color: 'var(--tl-navy)', padding: '13px 26px' }}
     >
@@ -453,7 +472,7 @@ export default function TourDetailPage() {
                 {priceCard}
                 {ctaButtons}
               </div>
-              <TravelProductsSidePanel cart={crossSellCart} tour={tour} tourPrice={currentPrice} />
+              <TravelProductsSidePanel cart={crossSellCart} />
               <div className="tl-tourp-sidebar tl-tourp-desktop-only">
                 {waChangeCard}
                 {infoNote}
@@ -476,11 +495,15 @@ export default function TourDetailPage() {
         </div>
       </section>
 
+      <TourPackageMobile cart={crossSellCart} />
+
       {!expired && (
         <TourStickyBar
           price={currentPrice}
           cashback={cashback}
           waHref={manager ? waHref(manager.phone) : '#'}
+          packageSummary={crossSellCart.summary.count > 0 ? crossSellCart.summary : null}
+          onPackageRequest={() => sendTourRequest(crossSellCart.pkg)}
         />
       )}
     </main>

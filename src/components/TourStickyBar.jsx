@@ -15,7 +15,12 @@ const WA_ICON = (
 // (price/cashback are passed in from TourDetailPage's own state, already
 // recalculated there). Scroll back up and this hides, the normal tab bar
 // slides back into place.
-export default function TourStickyBar({ price, cashback, waHref }) {
+//
+// With a tour package (Shop products added on this page, see
+// TravelProductsCrossSell.jsx) only the texts change: the products line
+// replaces the LP line, and the CTA becomes "Sorğu göndər" — the same
+// one combined request as the package sheet's own button.
+export default function TourStickyBar({ price, cashback, waHref, packageSummary, onPackageRequest }) {
   const { t } = useTranslation();
   const scrollDirection = useScrollDirection();
   const visible = scrollDirection === 'down';
@@ -26,14 +31,25 @@ export default function TourStickyBar({ price, cashback, waHref }) {
     <div className={'tl-tourp-stickybar' + (visible ? ' visible' : '')}>
       <div className="tl-tourp-stickybar-price">
         <strong>{formatPrice(price.amount, price.currency)}</strong>
-        {cashback != null && (
+        {packageSummary ? (
+          <span className="tl-tourp-stickybar-cashback">
+            + {t('tourPackage.stripSummary', { count: packageSummary.count, total: formatPrice(packageSummary.total, packageSummary.currency) })}
+          </span>
+        ) : cashback != null && (
           <span className="tl-tourp-stickybar-cashback">+{cashback} {price.currency} LP</span>
         )}
       </div>
-      <a href={waHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-stickybar-wa">
-        {WA_ICON}
-        {t('common.waWrite')}
-      </a>
+      {packageSummary ? (
+        <button type="button" className="tl-tourp-stickybar-wa" onClick={onPackageRequest}>
+          {WA_ICON}
+          {t('tourPackage.sendRequest')}
+        </button>
+      ) : (
+        <a href={waHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-stickybar-wa">
+          {WA_ICON}
+          {t('common.waWrite')}
+        </a>
+      )}
     </div>
   );
 }
