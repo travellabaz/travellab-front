@@ -79,6 +79,15 @@ export default function Nav() {
   // pointing at the page the menu was opened from.
   const closeMobileMenuForNav = () => setMobileOpen(false);
 
+  // The sticky flight search header (.tpwl-search-header) sits at
+  // top: 68px under the nav — once the nav slides away it has to move up
+  // with it, or the results scroll through the empty 68px gap above it.
+  useEffect(() => {
+    if (!navHidden) return undefined;
+    document.body.classList.add('tl-nav-is-hidden');
+    return () => document.body.classList.remove('tl-nav-is-hidden');
+  }, [navHidden]);
+
   useEffect(() => {
     if (!mobileOpen) return undefined;
     window.history.pushState({ tlMobileMenu: true }, '');

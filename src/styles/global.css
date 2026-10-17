@@ -268,6 +268,17 @@ html {
   transform: translateY(-100%);
 }
 
+/* Sticky flight search header follows the nav up when it hides (see
+   Nav.jsx) — otherwise results show through the empty 68px above it.
+   Same timing as the nav's own slide so the two move together. */
+.tpwl-search-header {
+  transition: top 0.25s ease;
+}
+
+body.tl-nav-is-hidden .tpwl-search-header {
+  top: 0;
+}
+
 .tl-logo {
   font-family: 'Geist Sans', sans-serif;
   font-weight: 800;
