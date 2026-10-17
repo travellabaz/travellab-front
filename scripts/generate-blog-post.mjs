@@ -140,6 +140,36 @@ const NARROW_TOPIC_ANGLES = {
   ],
 };
 
+// Topic bank (scripts/blog-topics.json, ~1000 topics grouped by category)
+// — the angle lists above weren't enough: even "wide" categories like
+// Konsertlər/Korporativ kept producing the same post under a new title
+// (4x "Xaricdə Konsert Səyahəti: Bilet, Otel və Uçuş Planlaması" in a
+// month), because the model, left to pick its own subject, converges on
+// the same few. Each post now gets one concrete topic from the bank and
+// records it in its own JSON (`topic`), so a used topic can never come
+// back. Entries are either a plain string or {topic, months} — months
+// (1-12) limits seasonal topics (ski resorts, spring blossoms, Christmas
+// markets) to when they're actually relevant, instead of e.g. a spring
+// flowers post going out in October.
+const TOPIC_BANK = JSON.parse(fs.readFileSync(path.join(__dirname, 'blog-topics.json'), 'utf-8'));
+
+function availableTopics(category, existing, month) {
+  const used = new Set(existing.map((p) => p.topic).filter(Boolean));
+  return (TOPIC_BANK[category] || [])
+    .map((entry) => (typeof entry === 'string' ? { topic: entry } : entry))
+    .filter((entry) => !used.has(entry.topic))
+    .filter((entry) => !entry.months || entry.months.includes(month))
+    .map((entry) => entry.topic);
+}
+
+// Random rather than in-order, so neighbouring entries in the bank (e.g. a
+// run of Turkish cities) don't come out on consecutive days.
+function pickTopic(category, existing, month) {
+  const topics = availableTopics(category, existing, month);
+  return topics.length ? topics[Math.floor(Math.random() * topics.length)] : null;
+}
+
+// Fallback only, for when the topic bank has nothing left for a category.
 // Deterministic rotation (like pickCategory below) rather than leaving it
 // to the model: counts how many posts already exist in this category and
 // picks the next angle in line, so the same angle can't recur until the
@@ -155,14 +185,18 @@ function pickAngle(category, existing) {
 // so the categories stay roughly balanced over time instead of drifting
 // toward whichever one the model likes best. Counts against the AZ title
 // (every post has one, old or new shape) since category is one shared
-// value per post regardless of how many languages it has.
-function pickCategory(existing) {
-  const counts = Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, 0]));
+// value per post regardless of how many languages it has. Categories whose
+// topic bank is used up (or has nothing in season) drop out of the running
+// while any other category still has topics left.
+function pickCategory(existing, month) {
+  const withTopics = Object.keys(CATEGORIES).filter((c) => availableTopics(c, existing, month).length);
+  const pool = withTopics.length ? withTopics : Object.keys(CATEGORIES);
+  const counts = Object.fromEntries(pool.map((c) => [c, 0]));
   for (const p of existing) {
     if (counts[p.category] !== undefined) counts[p.category]++;
   }
   const minCount = Math.min(...Object.values(counts));
-  const candidates = Object.keys(CATEGORIES).filter((c) => counts[c] === minCount);
+  const candidates = pool.filter((c) => counts[c] === minCount);
   return candidates[existing.length % candidates.length];
 }
 
@@ -237,7 +271,7 @@ function existingPosts() {
     .readdirSync(postsDir)
     .filter((f) => f.endsWith('.json'))
     .map((f) => JSON.parse(fs.readFileSync(path.join(postsDir, f), 'utf-8')))
-    .map((p) => ({ slug: p.slug, title: azTitleOf(p), category: p.category }));
+    .map((p) => ({ slug: p.slug, title: azTitleOf(p), category: p.category, topic: p.topic }));
 }
 
 async function callModel(prompt, model = PRIMARY_MODEL) {
@@ -364,7 +398,7 @@ Azərbaycan dilində, TƏXMİNƏN 1400-2000 SÖZ uzunluğunda, konkret və dəri
 Yazı canlı və fərdi səslənsin, şablon kimi deyil: cümlə uzunluğunu dəyişdir, hər yazıda eyni keçid ifadələrini ("İlk növbədə", "Bundan əlavə" və s.) təkrarlama, mümkün olduqca Azərbaycan reallıqlarına bağla (AZN valyutası, Bakı Heydər Əliyev Beynəlxalq Hava Limanı (GYD), yerli mövsüm/iqlim, azərbaycanlı səyahətçinin perspektivi) — bu həm oxucuya daha faydalı olur, həm də yazını generic olmaqdan çıxarır.
 
 Bu yazının kateqoriyası MÜTLƏQ **${category}**dir — mövzunu bu kateqoriyaya uyğun seç: ${cat.guidance}
-${topicHint ? `\nBu kateqoriya artıq bir neçə dəfə işlənib və mövzu təkrarlanma riski var — ona görə bu yazıda MÜTLƏQ bu konkret bucağa fokuslan, daha ümumi/geniş bucağa QAYITMA: ${topicHint}\n` : ''}
+${topicHint ? `\nBu yazının mövzusu artıq seçilib — MÜTLƏQ məhz bu konkret mövzunu işlə, başqa mövzu seçmə və daha ümumi/geniş bucağa QAYITMA: ${topicHint}\n` : ''}
 SEO tələbləri:
 - Bir əsas açar söz ifadəsi seç (məsələn "ucuz bilet tapmaq", "ailəvi səyahət məsləhətləri") və onu başlıqda, girişdə, ən azı iki alt başlıqda və excerpt-də təbii şəkildə istifadə et.
 - title 45-65 simvol arası, cəlbedici və açar sözlü olsun.
@@ -591,12 +625,14 @@ async function generateDraft(lang, existing, category, topicHint, plan = ATTEMPT
 
 async function main() {
   const existing = existingPosts();
-  const category = pickCategory(existing);
-  const angle = pickAngle(category, existing);
+  const month = new Date().getUTCMonth() + 1;
+  const category = pickCategory(existing, month);
+  const topic = pickTopic(category, existing, month);
+  const angle = topic || pickAngle(category, existing);
+  console.log(`category: ${category}, topic: ${topic ?? `(bank empty) angle: ${angle}`}`);
 
-  // AZ first (also decides the day's topic — RU/EN cover the same subject,
-  // written natively rather than translated, see buildPrompt). `angle` is
-  // only non-null for categories with a fixed NARROW_TOPIC_ANGLES rotation.
+  // AZ first (also decides the day's title — RU/EN cover the same subject,
+  // written natively rather than translated, see buildPrompt).
   const azDraft = await generateDraft('az', existing, category, angle);
   const ruDraft = await generateDraft('ru', existing, category, azDraft.title);
   const enDraft = await generateDraft('en', existing, category, azDraft.title);
@@ -643,6 +679,8 @@ async function main() {
     slug,
     category,
     categoryClass: CATEGORIES[category].class,
+    // Bank entry this post was written from — marks it used, see TOPIC_BANK.
+    ...(topic ? { topic } : {}),
     // Shown on the article so it doesn't read as anonymous/unattributed —
     // transparency about it being editorial-team content, not a disguise.
     author: 'Travellab',
