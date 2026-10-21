@@ -15213,3 +15213,15 @@ body.tl-cart-open .tl-tourpkg-strip,
 body.tl-cart-open .tl-tourp-stickybar {
   display: none;
 }
+
+/* iOS Safari zooms the whole page in when a focused input's font-size is
+   under 16px (most inputs here are 13–15px), which reads as the screen
+   "jumping" on every tap — on the auth modal and every other form. Touch
+   devices only, so desktop keeps the designed sizes. */
+@media (hover: none) and (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: max(16px, 1em) !important;
+  }
+}

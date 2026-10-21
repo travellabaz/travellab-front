@@ -152,8 +152,9 @@ export default function AddPhoneModal() {
     }
   };
 
-  const submitOtp = async () => {
-    const code = otpDigits.join('');
+  // Takes the code explicitly — see AuthModal's submitOtp: the
+  // auto-submit's setTimeout would otherwise read stale otpDigits.
+  const submitOtp = async (code = otpDigits.join('')) => {
     if (code.length < 6) return setMsg(t('addPhone.errorOtpLength'));
     setMsg('');
     setLoading(true);
@@ -174,14 +175,27 @@ export default function AddPhoneModal() {
     }
   };
 
+  // iOS SMS autofill (and paste) delivers the whole code into one cell at
+  // once — spread it across the cells instead of keeping only one digit.
   const onOtpInput = (i, value) => {
-    const digit = value.replace(/\D/g, '').slice(-1);
+    let digits = value.replace(/\D/g, '');
+    // Typing over an already-filled cell: keep only the new digit.
+    if (otpDigits[i] && digits.length === 2) digits = digits.replace(otpDigits[i], '');
     const next = [...otpDigits];
-    next[i] = digit;
+    if (digits.length > 1) {
+      const start = digits.length >= 6 ? 0 : i;
+      digits.slice(0, 6 - start).split('').forEach((d, k) => { next[start + k] = d; });
+    } else {
+      next[i] = digits;
+    }
     setOtpDigits(next);
-    if (digit) {
-      if (i < 5) otpRefs.current[i + 1]?.focus();
-      else setTimeout(submitOtp, 80);
+    if (!digits) return;
+    const firstEmpty = next.findIndex((d) => !d);
+    if (firstEmpty === -1) {
+      otpRefs.current[5]?.blur();
+      setTimeout(() => submitOtp(next.join('')), 80);
+    } else {
+      otpRefs.current[Math.max(firstEmpty, Math.min(i + 1, 5))]?.focus();
     }
   };
 
@@ -299,8 +313,9 @@ export default function AddPhoneModal() {
                   key={i}
                   ref={(el) => (otpRefs.current[i] = el)}
                   className={'am-otp-cell' + (digit ? ' fl' : '')}
-                  maxLength={1}
                   type="tel"
+                  inputMode="numeric"
+                  autoComplete={i === 0 ? 'one-time-code' : 'off'}
                   value={digit}
                   onChange={(e) => onOtpInput(i, e.target.value)}
                   onKeyDown={(e) => onOtpKeyDown(i, e)}
@@ -310,7 +325,7 @@ export default function AddPhoneModal() {
             <div className="am-timer">
               {t('auth.otpTimer')} <strong>{countdown.label}</strong>
             </div>
-            <button className={'am-btn' + (loading ? ' ld' : '')} disabled={loading} onClick={submitOtp}>
+            <button className={'am-btn' + (loading ? ' ld' : '')} disabled={loading} onClick={() => submitOtp()}>
               <span className="bt">{t('addPhone.submit')}</span>
               <div className="sp" />
             </button>
