@@ -190,6 +190,10 @@ export default function NavProfile() {
                     value={profile.referralLink}
                     style={{
                       flex: 1,
+                      // An input's intrinsic min width (~20ch, larger at the
+                      // 16px touch font size) otherwise pushes "Kopyala" off
+                      // the right edge of the mobile sheet.
+                      minWidth: 0,
                       height: 32,
                       background: 'var(--tl-gray-100)',
                       border: '1px solid var(--tl-gray-200)',
