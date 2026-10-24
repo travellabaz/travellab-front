@@ -8,6 +8,7 @@ import { getProductBySku, getSuggestedCrossSellProducts, productSlug } from '../
 import { formatPrice } from '../utils/price';
 import { pickManager } from '../utils/managers';
 import { buildTourRequest, packageSummary, toPackageItem, tourRequestWaUrl } from '../utils/tourPackage';
+import { postTourRequest } from '../api/tourRequests';
 
 // "Hamısını göstər" rotates through the brand palette per tour (hashed
 // from tourId, stable for a given tour rather than changing on every
@@ -54,9 +55,10 @@ export function useSendTourRequest() {
     const pax = tourLines.find((l) => l.id === pkg.tourId)?.qty || 1;
     const user = profile ? { name: [profile.name, profile.surname].filter(Boolean).join(' '), phone: profile.phone || null } : null;
     const request = buildTourRequest(pkg, { pax, user });
-    // POST /tour-requests (Shop team notification) goes here once the
-    // backend exists — `request` is already its payload. Until then the
-    // tour manager forwards the message to Shop by its code.
+    // Shop team's Telegram notification — only when the package actually
+    // has Shop products. Not awaited: window.open must stay in this same
+    // click, and the WhatsApp must open even if the backend is down.
+    if (request.items.length) postTourRequest(request);
     const phone = pkg.tour.manager?.phone || pickManager().number;
     window.open(tourRequestWaUrl(request, phone, t), '_blank');
   }, [t, profile, tourLines]);

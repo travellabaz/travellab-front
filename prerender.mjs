@@ -664,6 +664,16 @@ async function main() {
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap);
   console.log(`wrote dist/sitemap.xml (${urlEntries.length} URL entries, ${activeTours.length} live tours)`);
 
+  // Prices exactly as this build shows them — site-backend's
+  // ShopProductCatalog resolves a tour request's Shop items from this
+  // instead of trusting the prices the browser sends.
+  fs.mkdirSync(path.join(distDir, 'content'), { recursive: true });
+  fs.writeFileSync(
+    path.join(distDir, 'content/shop-products.json'),
+    JSON.stringify(shopProducts.map(({ sku, name, price, standalonePrice, currency, inStock }) => ({ sku, name, price, standalonePrice, currency, inStock })))
+  );
+  console.log(`wrote dist/content/shop-products.json (${shopProducts.length} products)`);
+
   const inactiveTourIds = await fetchInactiveTourIds();
   const slugHistory = loadShopSlugRedirects();
   writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours);

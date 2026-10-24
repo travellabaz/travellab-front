@@ -43,8 +43,8 @@ export function writeStoredPackage(tourId, pkg) {
   }
 }
 
-// TL-<5 digits>. Not globally unique (no backend yet) — it only has to
-// let the tour manager and the Shop team refer to the same request.
+// TL-<5 digits>. Not globally unique — it only has to let the tour
+// manager find this request's Telegram notification in the Shop group.
 export function generateRequestCode() {
   return 'TL-' + String(Math.floor(10000 + Math.random() * 90000));
 }
@@ -83,10 +83,10 @@ export function stripEmoji(text) {
     .trim();
 }
 
-// The structured request — exactly what a future POST /tour-requests (Shop
-// team notification, task item G) will send. Built now so the WhatsApp
-// message below is just a rendering of it, and adding the backend call
-// later needs no change to what's collected.
+// The structured request — sent as-is to POST /tour-requests (Shop
+// team's Telegram notification, see api/tourRequests.js); the WhatsApp
+// message below is just a rendering of it. The backend uses only
+// sku/qty from items and resolves names/prices itself.
 export function buildTourRequest(pkg, { pax = 1, user = null } = {}) {
   const { items, total } = packageSummary(pkg);
   return {
