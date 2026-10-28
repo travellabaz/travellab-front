@@ -1168,7 +1168,11 @@
     "s7Title": "Gizlilik Siyasətində Dəyişikliklər",
     "s7Desc": "Bu Gizlilik Siyasəti zaman-zaman yenilənə bilər. Dəyişikliklər bu səhifədə dərc olunacaq. Əgər dəyişikliklər əvvəl təqdim etdiyiniz məlumatların istifadəsinə əhəmiyyətli təsir göstərərsə, razılığınız ayrıca alınacaq.",
     "s8Title": "Əlaqə",
-    "s8Desc": "Sual və narahatlıqlarınız üçün:"
+    "s8Desc": "Sual və narahatlıqlarınız üçün:",
+    "s9Title": "Instagram, Facebook və WhatsApp mesajları",
+    "s9Desc": "Siz Travellab-ın Instagram, Facebook və ya WhatsApp hesabına mesaj yazanda və ya paylaşımlarımıza şərh yazanda Meta Platforms bizə adınızı, istifadəçi adınızı, istifadəçi identifikatorunuzu və mesajınızın mətnini ötürür. Bu məlumatlar yalnız sorğunuza cavab vermək, sizə uyğun tur təklif etmək və müraciətinizin icrasını izləmək üçün daxili CRM sistemimizdə saxlanılır. Bu məlumatları üçüncü şəxslərə satmırıq və reklam məqsədilə ötürmürük.",
+    "s9Deletion": "Məlumatların silinməsi:",
+    "s9DeletionDesc": "Yazışmanızın və şəxsi məlumatlarınızın silinməsini istəyirsinizsə, info@travellab.az ünvanına və ya Instagram-da @travellab.az hesabına \"Məlumatlarımı silin\" yazın. Sorğunuz 30 gün ərzində icra olunacaq və sizə təsdiq göndəriləcək."
   },
   "terms": {
     "badge": "İstifadə Şərtləri",

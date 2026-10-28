@@ -1168,7 +1168,11 @@
     "s7Title": "Changes to the Privacy Policy",
     "s7Desc": "This Privacy Policy may be updated from time to time. Changes will be posted on this page. If changes significantly affect the use of data you previously provided, your consent will be sought separately.",
     "s8Title": "Contact",
-    "s8Desc": "For questions and concerns:"
+    "s8Desc": "For questions and concerns:",
+    "s9Title": "Instagram, Facebook and WhatsApp messages",
+    "s9Desc": "When you send a message to Travellab's Instagram, Facebook or WhatsApp account or comment on our posts, Meta Platforms shares with us your name, username, user ID and the text of your message. We keep this data only in our internal CRM to answer your request, offer you a suitable tour and follow up on your inquiry. We do not sell this data or share it with third parties for advertising.",
+    "s9Deletion": "Data deletion:",
+    "s9DeletionDesc": "To have your conversation and personal data deleted, write \"Delete my data\" to info@travellab.az or to @travellab.az on Instagram. We will complete your request within 30 days and send you a confirmation."
   },
   "terms": {
     "badge": "Terms & Conditions",

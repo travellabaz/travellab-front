@@ -28,6 +28,7 @@ import VizaPage from './pages/VizaPage';
 import VizaCountryPage from './pages/VizaCountryPage';
 import FlightRoutePage from './pages/FlightRoutePage';
 import AboutPage from './pages/AboutPage';
+import PrivacyPage from './pages/PrivacyPage';
 import ShopPage from './pages/ShopPage';
 import ShopProductPage from './pages/ShopProductPage';
 import BlogPage from './pages/BlogPage';
@@ -82,6 +83,7 @@ function localeRouteChildren() {
     <Route key="viza" path="viza" element={<VizaPage />} />,
     <Route key="viza-country" path="viza/:country" element={<VizaCountryPage />} />,
     <Route key="about" path="about" element={<AboutPage />} />,
+    <Route key="privacy" path="privacy" element={<PrivacyPage />} />,
     <Route key="shop" path="shop" element={<ShopPage />} />,
     // Serves both /shop/:categorySlug and /shop/:productSlug — see the
     // dispatcher at the top of ShopProductPage.jsx for how it tells them apart.
