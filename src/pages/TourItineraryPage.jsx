@@ -109,7 +109,7 @@ export default function TourItineraryPage() {
     kind,
     dates: parsed?.dateText || null,
     price,
-    manager: manager.name || null,
+    manager,
   }));
 
   return (

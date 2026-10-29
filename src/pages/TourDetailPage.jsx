@@ -154,7 +154,7 @@ export default function TourDetailPage() {
     hotel: selectedHotel?.name || null,
     dates: parsed?.dateText || null,
     price: currentPrice,
-    manager: manager?.name || null,
+    manager,
   }));
 
   // Date/passenger-count change request — tours are a static Instagram

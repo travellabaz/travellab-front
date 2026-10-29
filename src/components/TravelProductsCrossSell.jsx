@@ -54,13 +54,15 @@ export function useSendTourRequest() {
     if (!pkg) return;
     const pax = tourLines.find((l) => l.id === pkg.tourId)?.qty || 1;
     const user = profile ? { name: [profile.name, profile.surname].filter(Boolean).join(' '), phone: profile.phone || null } : null;
-    const request = buildTourRequest(pkg, { pax, user });
+    const manager = pkg.tour.manager?.phone
+      ? { name: pkg.tour.manager.name || null, phone: pkg.tour.manager.phone }
+      : (({ name, number }) => ({ name, phone: number }))(pickManager());
+    const request = buildTourRequest(pkg, { pax, user, manager });
     // Telegram group notification (a Shop one when the package has
     // products). Not awaited: window.open must stay in this same click,
     // and the WhatsApp must open even if the backend is down.
     postTourRequest(request);
-    const phone = pkg.tour.manager?.phone || pickManager().number;
-    window.open(tourRequestWaUrl(request, phone, t), '_blank');
+    window.open(tourRequestWaUrl(request, manager.phone, t), '_blank');
   }, [t, profile, tourLines]);
 }
 

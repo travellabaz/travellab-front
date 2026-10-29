@@ -87,7 +87,9 @@ export function stripEmoji(text) {
 // team's Telegram notification, see api/tourRequests.js); the WhatsApp
 // message below is just a rendering of it. The backend uses only
 // sku/qty from items and resolves names/prices itself.
-export function buildTourRequest(pkg, { pax = 1, user = null } = {}) {
+// manager = { name, phone } of the WhatsApp the visitor is sent to — shown
+// in the Telegram notification so the group knows who has the customer.
+export function buildTourRequest(pkg, { pax = 1, user = null, manager = null } = {}) {
   const { items, total } = packageSummary(pkg);
   return {
     code: pkg.code,
@@ -109,7 +111,8 @@ export function buildTourRequest(pkg, { pax = 1, user = null } = {}) {
     })),
     itemsTotal: items.length ? { amount: total, currency: items[0].currency } : null,
     user,
-    tourManager: pkg.tour.manager?.name || null,
+    tourManager: manager?.name || null,
+    tourManagerPhone: manager?.phone || null,
     createdAt: new Date().toISOString(),
   };
 }
@@ -130,7 +133,8 @@ export function buildPlainTourRequest(tour, { code, kind = 'interest', hotel = n
     pax: 1,
     tourPrice: price,
     items: [],
-    tourManager: manager,
+    tourManager: manager?.name || null,
+    tourManagerPhone: manager?.phone || null,
     createdAt: new Date().toISOString(),
   };
 }

@@ -149,7 +149,7 @@ function StorySlide({
       ? buildTourWaText(matchedTour, t, { code })
       : t('stories.genericTourMessage') + '\n' + BASE_URL + '/?story=' + story.id;
     if (isMobile()) {
-      if (matchedTour) postTourRequest(buildPlainTourRequest(matchedTour, { code, manager: manager.name || null }));
+      if (matchedTour) postTourRequest(buildPlainTourRequest(matchedTour, { code, manager: { name: manager.name, phone: manager.number } }));
       window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(text), '_blank');
     } else {
       // Same desktop treatment as every other "contact a manager" entry
