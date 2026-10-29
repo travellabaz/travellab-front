@@ -12,6 +12,8 @@ import { pickManager, isMobile } from '../utils/managers';
 import { baseLikeCount, isStoryLiked, setStoryLiked } from '../utils/storyLikes';
 import { fetchStoryComments, postStoryComment } from '../api/storyComments';
 import { buildTourWaText } from '../utils/tourWhatsapp';
+import { buildPlainTourRequest, generateRequestCode } from '../utils/tourPackage';
+import { postTourRequest } from '../api/tourRequests';
 import { BASE_URL } from '../data/pageMeta';
 import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
@@ -141,10 +143,13 @@ function StorySlide({
   const handleCallClick = (e) => {
     e.stopPropagation();
     const manager = pickManager();
+    // A code only when there's a real tour to announce (see TourDetailPage).
+    const code = matchedTour ? generateRequestCode() : null;
     const text = matchedTour
-      ? buildTourWaText(matchedTour, t)
+      ? buildTourWaText(matchedTour, t, { code })
       : t('stories.genericTourMessage') + '\n' + BASE_URL + '/?story=' + story.id;
     if (isMobile()) {
+      if (matchedTour) postTourRequest(buildPlainTourRequest(matchedTour, { code, manager: manager.name || null }));
       window.open('https://wa.me/' + manager.number + '?text=' + encodeURIComponent(text), '_blank');
     } else {
       // Same desktop treatment as every other "contact a manager" entry

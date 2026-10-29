@@ -91,6 +91,7 @@ export function buildTourRequest(pkg, { pax = 1, user = null } = {}) {
   const { items, total } = packageSummary(pkg);
   return {
     code: pkg.code,
+    kind: 'package',
     tourId: pkg.tourId,
     tourTitle: stripEmoji(pkg.tour.title),
     tourUrl: BASE_URL + pkg.tour.url,
@@ -109,6 +110,27 @@ export function buildTourRequest(pkg, { pax = 1, user = null } = {}) {
     itemsTotal: items.length ? { amount: total, currency: items[0].currency } : null,
     user,
     tourManager: pkg.tour.manager?.name || null,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+// Every other WhatsApp to a tour manager (no Shop products) — same payload
+// shape as buildTourRequest so the backend handles both alike; it posts
+// these to the Telegram group as plain "#tur" requests, Shop ones stand
+// out. kind: 'interest' (WhatsApp yaz) or 'change' (date/passenger change).
+export function buildPlainTourRequest(tour, { code, kind = 'interest', hotel = null, dates = null, price = null, manager = null } = {}) {
+  return {
+    code,
+    kind,
+    tourId: String(tour.id),
+    tourTitle: stripEmoji(tour.title),
+    tourUrl: BASE_URL + '/tours/' + tour.id,
+    hotel,
+    dates,
+    pax: 1,
+    tourPrice: price,
+    items: [],
+    tourManager: manager,
     createdAt: new Date().toISOString(),
   };
 }

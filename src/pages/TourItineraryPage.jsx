@@ -7,6 +7,8 @@ import { pickManager, formatManagerNumber } from '../utils/managers';
 import { extractMinPrice, formatPrice } from '../utils/price';
 import { isTourExpired } from '../utils/tourDate';
 import { parseTourCaption } from '../utils/parseTourCaption';
+import { buildPlainTourRequest, generateRequestCode } from '../utils/tourPackage';
+import { postTourRequest } from '../api/tourRequests';
 import { getTourCategory } from '../utils/tourCategory';
 import { findDestinationGuidePost } from '../utils/tourBlogMatch';
 import Breadcrumb from '../components/Breadcrumb';
@@ -47,6 +49,9 @@ export default function TourItineraryPage() {
     const m = pickManager();
     return { name: m.name, phone: m.number };
   }, [parsed, id]);
+
+  // Same per-view request code as TourDetailPage — see there.
+  const requestCode = useMemo(() => generateRequestCode(), [id]);
 
   // Not every caption has a recognisable 📍/date-range destination (some
   // just never state one) — the tour title almost always names the city,
@@ -96,8 +101,16 @@ export default function TourItineraryPage() {
   const category = getTourCategory(tour);
   const categoryLabel = category.name !== 'Digər' ? t(`tourCategoryLabels.${category.name}`) : null;
 
-  const waStaleHref = `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('tourItinerary.staleBannerMessage', { title: tour.title }))}`;
-  const waHref = `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('common.tourInterestMessage', { title: tour.title }))}`;
+  const codeLine = '\n' + t('tourPackage.waCode', { code: requestCode });
+  const waStaleHref = `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('tourItinerary.staleBannerMessage', { title: tour.title }) + codeLine)}`;
+  const waHref = `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('common.tourInterestMessage', { title: tour.title }) + codeLine)}`;
+  const announceRequest = (kind) => () => postTourRequest(buildPlainTourRequest(tour, {
+    code: requestCode,
+    kind,
+    dates: parsed?.dateText || null,
+    price,
+    manager: manager.name || null,
+  }));
 
   return (
     <main className="tpwl-main">
@@ -106,7 +119,7 @@ export default function TourItineraryPage() {
           {expired && !bannerDismissed && (
             <div className="tl-itin-banner">
               <span className="tl-itin-banner-text">{t('tourItinerary.staleBanner')}</span>
-              <a href={waStaleHref} target="_blank" rel="noopener noreferrer" className="tl-itin-banner-cta">
+              <a href={waStaleHref} target="_blank" rel="noopener noreferrer" className="tl-itin-banner-cta" onClick={announceRequest('change')}>
                 {WA_ICON}
                 {t('tourItinerary.staleBannerCta')}
               </a>
@@ -283,7 +296,7 @@ export default function TourItineraryPage() {
                   </span>
                   <span className="tl-tourp-manager-actions">
                     <a href={`tel:+${manager.phone}`} aria-label={t('common.call')}>{PHONE_ICON}</a>
-                    <a href={waHref} target="_blank" rel="noopener noreferrer" className="wa" aria-label="WhatsApp">{WA_ICON}</a>
+                    <a href={waHref} target="_blank" rel="noopener noreferrer" className="wa" aria-label="WhatsApp" onClick={announceRequest('interest')}>{WA_ICON}</a>
                   </span>
                 </span>
               </div>

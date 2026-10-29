@@ -20,7 +20,7 @@ const WA_ICON = (
 // TravelProductsCrossSell.jsx) only the texts change: the products line
 // replaces the LP line, and the CTA becomes "Sorğu göndər" — the same
 // one combined request as the package sheet's own button.
-export default function TourStickyBar({ price, cashback, waHref, packageSummary, onPackageRequest }) {
+export default function TourStickyBar({ price, cashback, waHref, onWaClick, packageSummary, onPackageRequest }) {
   const { t } = useTranslation();
   const scrollDirection = useScrollDirection();
   const visible = scrollDirection === 'down';
@@ -45,7 +45,7 @@ export default function TourStickyBar({ price, cashback, waHref, packageSummary,
           {t('tourPackage.sendRequest')}
         </button>
       ) : (
-        <a href={waHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-stickybar-wa">
+        <a href={waHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-stickybar-wa" onClick={onWaClick}>
           {WA_ICON}
           {t('common.waWrite')}
         </a>

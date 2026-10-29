@@ -11,6 +11,8 @@ import { isTourExpired } from '../utils/tourDate';
 import { toTourCartItem } from '../utils/tourCartItem';
 import { parseTourCaption } from '../utils/parseTourCaption';
 import { buildTourWaText } from '../utils/tourWhatsapp';
+import { buildPlainTourRequest, generateRequestCode } from '../utils/tourPackage';
+import { postTourRequest } from '../api/tourRequests';
 import InstallmentCalculator from '../components/InstallmentCalculator';
 import TravelProductsSidePanel, { TourPackageMobile, TravelProductsPicker, useSendTourRequest, useTravelProductsCart } from '../components/TravelProductsCrossSell';
 import Breadcrumb from '../components/Breadcrumb';
@@ -71,6 +73,11 @@ export default function TourDetailPage() {
     const list = parsed?.managers || [];
     return list.length ? list[Math.floor(Math.random() * list.length)] : null;
   }, [parsed, id]);
+
+  // One request code per tour view — in the WhatsApp text and in the
+  // Telegram notification, so the manager can match the two (and a second
+  // tap on the same button isn't announced twice, see TourRequestService).
+  const requestCode = useMemo(() => generateRequestCode(), [id]);
 
   // What a tour package records about this tour (utils/tourPackage.js) —
   // computed before the early returns below since the package hook needs
@@ -139,15 +146,23 @@ export default function TourDetailPage() {
   // see utils/tourWhatsapp.js (also used by StoryViewer's Endirimlər
   // "WhatsApp yaz" button, so both produce the same message for the same
   // tour).
-  const waText = buildTourWaText(tour, t, { selectedHotel });
+  const waText = buildTourWaText(tour, t, { selectedHotel, code: requestCode });
   const waHref = (phone) => `https://wa.me/${phone}?text=${encodeURIComponent(waText)}`;
+  const announceRequest = (kind) => () => postTourRequest(buildPlainTourRequest(tour, {
+    code: requestCode,
+    kind,
+    hotel: selectedHotel?.name || null,
+    dates: parsed?.dateText || null,
+    price: currentPrice,
+    manager: manager?.name || null,
+  }));
 
   // Date/passenger-count change request — tours are a static Instagram
   // pull with no live API to re-price against, so this is the general
   // "anything about this tour needs adjusting" escape hatch, handled by
   // a human manager over WhatsApp rather than a dedicated flow.
   const waChangeHref = manager
-    ? `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('tourDetail.waChangeMessage', { title: tour.title }))}`
+    ? `https://wa.me/${manager.phone}?text=${encodeURIComponent(t('tourDetail.waChangeMessage', { title: tour.title }) + '\n' + t('tourPackage.waCode', { code: requestCode }))}`
     : null;
 
   const category = getTourCategory(tour);
@@ -202,6 +217,7 @@ export default function TourDetailPage() {
         href={manager ? (isMobile() ? waHref(manager.phone) : `tel:+${manager.phone}`) : '#'}
         target={isMobile() ? '_blank' : undefined}
         rel={isMobile() ? 'noopener noreferrer' : undefined}
+        onClick={manager && isMobile() ? announceRequest('interest') : undefined}
         className="tl-btn-book"
         style={{ display: 'inline-flex', textDecoration: 'none', background: 'var(--tl-green)', color: '#fff', padding: '13px 26px' }}
       >
@@ -225,7 +241,7 @@ export default function TourDetailPage() {
     <div className="tl-tourp-wachange">
       <h3>{t('tourDetail.whatsappRequestTitle')}</h3>
       <p>{t('tourDetail.whatsappRequestDesc')}</p>
-      <a href={waChangeHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-wachange-btn">
+      <a href={waChangeHref} target="_blank" rel="noopener noreferrer" className="tl-tourp-wachange-btn" onClick={announceRequest('change')}>
         {WA_ICON}
         {t('tourDetail.whatsappRequestBtn')}
       </a>
@@ -502,6 +518,7 @@ export default function TourDetailPage() {
           price={currentPrice}
           cashback={cashback}
           waHref={manager ? waHref(manager.phone) : '#'}
+          onWaClick={manager ? announceRequest('interest') : undefined}
           packageSummary={crossSellCart.summary.count > 0 ? crossSellCart.summary : null}
           onPackageRequest={() => sendTourRequest(crossSellCart.pkg)}
         />
