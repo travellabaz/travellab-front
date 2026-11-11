@@ -67,7 +67,10 @@
         { "id": "turistler-058", "type": "video", "media_url": "/stories/turistler/058.mp4", "duration_seconds": null, "link": null, "added_at": "2026-10-22" },
         { "id": "turistler-059", "type": "video", "media_url": "/stories/turistler/059.mp4", "duration_seconds": null, "link": null, "added_at": "2026-10-22" },
         { "id": "turistler-060", "type": "video", "media_url": "/stories/turistler/060.mp4", "duration_seconds": null, "link": null, "added_at": "2026-10-22" },
-        { "id": "turistler-061", "type": "image", "media_url": "/stories/turistler/061.jpg", "duration_seconds": 5, "link": null, "added_at": "2026-10-22" }
+        { "id": "turistler-061", "type": "image", "media_url": "/stories/turistler/061.jpg", "duration_seconds": 5, "link": null, "added_at": "2026-10-22" },
+        { "id": "turistler-062", "type": "video", "media_url": "/stories/turistler/062.mp4", "duration_seconds": null, "link": null, "added_at": "2026-11-11" },
+        { "id": "turistler-063", "type": "video", "media_url": "/stories/turistler/063.mp4", "duration_seconds": null, "link": null, "added_at": "2026-11-11" },
+        { "id": "turistler-064", "type": "video", "media_url": "/stories/turistler/064.mp4", "duration_seconds": null, "link": null, "added_at": "2026-11-11" }
       ]
     },
     {
