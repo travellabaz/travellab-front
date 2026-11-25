@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Breadcrumb from '../components/Breadcrumb';
 import SeoBodyText from '../components/SeoBodyText';
 import { MANAGERS, formatManagerNumber } from '../utils/managers';
+import { pushDataLayer } from '../utils/analytics';
 
 const AMOUNT_PRESETS = [100, 200, 300, 500, 1000];
 const MESSAGE_MAX = 200;
@@ -134,6 +135,8 @@ export default function GiftCardPage() {
     if (!senderName.trim()) return setError(t('giftCard.errorSender'));
     if (!recipientName.trim()) return setError(t('giftCard.errorRecipient'));
     if (phone.replace(/\D/g, '').length < 9) return setError(t('giftCard.errorPhone'));
+    // the form passed its checks and goes to WhatsApp (it has no backend of its own)
+    pushDataLayer({ event: 'form_submit', form_name: 'hediyye_karti' });
 
     const newLead = {
       amount,

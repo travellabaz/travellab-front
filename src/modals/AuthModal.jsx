@@ -4,6 +4,7 @@ import { useModals } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
 import { GOOGLE_CLIENT_ID } from '../config/google';
+import { pushDataLayer } from '../utils/analytics';
 
 const OTP_SECONDS = 120;
 
@@ -225,6 +226,8 @@ export default function AuthModal() {
       if (ok) {
         countdown.start(0);
         if (sessionRef.current.flow === 'reg') {
+          // the account exists only now, after the OTP was confirmed
+          pushDataLayer({ event: 'sign_up' });
           setSuccessMsg(t('auth.successRegisterMsg'));
           setSuccessAction(() => () => {
             setTab('login');

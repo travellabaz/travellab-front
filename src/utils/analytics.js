@@ -7,3 +7,12 @@ export function trackEvent(name, params = {}) {
   if (typeof window === 'undefined' || typeof window.gtag !== 'function') return;
   window.gtag('event', name, params);
 }
+
+// Google Tag Manager events (sign-ups, sent forms) for the marketing team.
+// Called only after the action really succeeded, never on the click itself.
+// Never put personal data (name, phone, e-mail) into the event.
+export function pushDataLayer(event) {
+  if (typeof window === 'undefined') return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(event);
+}

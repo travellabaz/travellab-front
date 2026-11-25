@@ -7,6 +7,7 @@ import SeaticsSeatMap from '../components/SeaticsSeatMap';
 import { useLocalizedNavigate } from '../components/LocalizedLink';
 import { getLocaleFromPathname } from '../utils/locale';
 import { formatDateTimeAz, formatDayMonthAz, formatDateOnlyAz, AZ_MONTHS } from '../utils/date';
+import { pushDataLayer } from '../utils/analytics';
 // Package-request CTA goes to Əfsanə specifically (not the general shop
 // WhatsApp line) — this number matches the one already in utils/managers.js,
 // not imported from there since that array rotates managers randomly and
@@ -1043,6 +1044,8 @@ export default function TicketNetworkEventsPage() {
       }
       const data = await res.json();
       if (data.success && data.redirectUrl) {
+        // the order is made and goes to the payment
+        pushDataLayer({ event: 'form_submit', form_name: 'bilet_sifarisi' });
         window.location.href = data.redirectUrl;
         return;
       }

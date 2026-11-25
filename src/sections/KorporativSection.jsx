@@ -6,6 +6,7 @@ import EventsGallery from '../components/EventsGallery';
 import PartnersSection from './PartnersSection';
 import { STATS } from '../config/companyInfo';
 import { MANAGERS } from '../utils/managers';
+import { pushDataLayer } from '../utils/analytics';
 
 // Corporate leads go to one specific person, not the round-robin pool the
 // rest of the site uses (see utils/managers.js) — same reasoning as
@@ -301,6 +302,8 @@ function CorpContactForm() {
     if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
     if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
     if (isPersonalEmail(email)) return setError(t('korporativ.errorEmailPersonal'));
+    // the form passed its checks and goes to WhatsApp (it has no backend of its own)
+    pushDataLayer({ event: 'form_submit', form_name: 'korporativ' });
 
     const msg =
       t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +
@@ -362,6 +365,8 @@ function CorpFinalSection() {
     if (phone.replace(/\D/g, '').length < 9) return setError(t('korporativ.errorPhone'));
     if (!email.trim() || !email.includes('@')) return setError(t('korporativ.errorEmail'));
     if (isPersonalEmail(email)) return setError(t('korporativ.errorEmailPersonal'));
+    // the form passed its checks and goes to WhatsApp (it has no backend of its own)
+    pushDataLayer({ event: 'form_submit', form_name: 'korporativ' });
 
     const msg =
       t('korporativ.waMessage', { name: name.trim(), company: company.trim(), phone: phone.trim(), email: email.trim() }) +

@@ -4,6 +4,7 @@ import { pickManager, formatManagerNumber } from '../utils/managers';
 import { VIZA_COUNTRIES_SCHENGEN, VIZA_COUNTRIES_OTHER } from '../data/vizaCountries';
 import CountrySelect from '../components/CountrySelect';
 import AvailabilityCalendar from '../components/AvailabilityCalendar';
+import { pushDataLayer } from '../utils/analytics';
 
 // initialCountry: pre-selects the dropdown when arriving from a
 // per-country page (VizaCountryPage.jsx) — the visa request itself still
@@ -55,6 +56,8 @@ export default function VizaSection({ initialCountry = '' }) {
     const manager = pickManager();
 
     const newLead = { country, name, surname, phone: phone.trim(), pax, date: dateText, note: note.trim(), manager };
+    // the form passed its checks and goes to WhatsApp (it has no backend of its own)
+    pushDataLayer({ event: 'form_submit', form_name: 'viza' });
 
     setLead(newLead);
     setView('done');

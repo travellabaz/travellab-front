@@ -1,4 +1,5 @@
 import { API_BASE, authFetch, tokenStore } from './client';
+import { pushDataLayer } from '../utils/analytics';
 
 // Tour package request → site-backend (TourRequestController), which
 // saves it and notifies the Shop team's Telegram group. Fire-and-forget:
@@ -13,5 +14,11 @@ export function postTourRequest(request) {
     keepalive: true,
   };
   const call = tokenStore.access ? authFetch('/tour-requests', opts) : fetch(API_BASE + '/tour-requests', opts);
-  return Promise.resolve(call).catch(() => null);
+  return Promise.resolve(call)
+    .then((res) => {
+      // counted only when the backend saved the request
+      if (res && res.ok) pushDataLayer({ event: 'form_submit', form_name: 'tur_sorgusu' });
+      return res;
+    })
+    .catch(() => null);
 }
