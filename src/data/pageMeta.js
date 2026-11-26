@@ -40,6 +40,11 @@ export const PAGE_META = {
     desc: 'Travellab — Bakıda fəaliyyət göstərən etibarlı səyahət agentliyi. ATAA üzvü, aviabilet, otel, tur və viza xidmətləri. Bizi tanıyın!',
     image: '/images/hero/mosque-og.jpg',
   },
+  '/ucuslar': {
+    title: 'Bakıdan aviabiletlər — 30 istiqamət, qiymətlər | Travellab',
+    desc: 'Bakıdan İstanbul, Dubay, Antalya, Moskva və digər 30 istiqamətə aviabiletlər: birbaşa reyslər, aktarmalar, qiymətlər. Sərfəli bilet üçün Travellab.',
+    image: '/images/hero/plane-wing-og.jpg',
+  },
   '/shop': {
     title: 'Travellab Shop - Səyahət Aksesuarları | Travellab',
     desc: 'Travellab Shop-da səyahət aksesuarları, çamadanlar və daha çoxunu kəşf edin. Sərfəli qiymətlər, sürətli çatdırılma, WhatsApp ilə sifariş.',

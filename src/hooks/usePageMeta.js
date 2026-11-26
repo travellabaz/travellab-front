@@ -44,6 +44,7 @@ const SEO_KEY_BY_PATH = {
   // real title instead of falling through to the "page not found"
   // default every other unmatched path gets.
   '/hesab/sifarislerim': 'ordersPage',
+  '/ucuslar': 'flightRoutes',
 };
 
 // Mirrors the original tlActivatePage()'s per-page <title>/meta/canonical/

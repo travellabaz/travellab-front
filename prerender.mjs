@@ -65,6 +65,7 @@ const SEO_KEY_BY_PATH = {
   '/korporativ': 'korporativ',
   '/endirimler': 'endirimler',
   '/shop': 'shop',
+  '/ucuslar': 'flightRoutes',
 };
 
 // Reads the JSON translation files straight off disk (not `import ... json`)
@@ -123,6 +124,56 @@ async function fetchActiveTours() {
   }
 }
 
+// Cities that name a destination without its country (the caption says "Antalya", not "Türkiyə")
+const DESTINATION_CITIES = {
+  turkiye: ['istanbul', 'antalya', 'alanya', 'bodrum', 'kapadok', 'trabzon', 'izmir', 'marmaris', 'fethiye', 'kemer', 'belek', 'side'],
+  gurcustan: ['tbilisi', 'batumi', 'kaxeti', 'bakuriani', 'qudauri', 'borjomi'],
+  misir: ['şarm', 'hurqada', 'qahirə'],
+  'birlesmis-ereb-emirlikleri': ['dubay', 'abu dabi', 'abu-dabi', 'şərcə', 'bəə', 'əmirlik'],
+  'maldiv-adalari': ['maldiv'],
+  'zanzibar-tanzaniya': ['zanzibar'],
+  indoneziya: ['bali'],
+  tailand: ['puket', 'pattaya', 'bangkok', 'samui'],
+  ozbekistan: ['səmərqənd', 'buxara', 'daşkənd', 'xivə'],
+  yunanistan: ['santorini', 'afina', 'mikonos', 'krit'],
+  monteneqro: ['budva', 'kotor'],
+  cin: ['pekin', 'şanxay'],
+  yaponiya: ['tokio', 'osaka', 'kioto'],
+  'sri-lanka': ['şri lanka', 'şri-lanka'],
+  qazaxistan: ['almatı', 'astana'],
+};
+
+// the destination page of a tour's caption: the first country (or its city) it names
+function destinationOfCaption(text) {
+  const lower = (text || '').toLocaleLowerCase('az');
+  if (!lower) return null;
+  for (const country of TOUR_SEARCH_COUNTRIES) {
+    const stem = country.nameAz.toLocaleLowerCase('az').slice(0, 5);
+    if (lower.includes(stem) || (DESTINATION_CITIES[country.slug] || []).some((city) => lower.includes(city))) {
+      return `/tours/search/${country.slug}`;
+    }
+  }
+  return null;
+}
+
+// {tourId: "/tours/search/<country>"} of the finished tours whose caption (kept by site-backend
+// while they were live) names a destination
+async function fetchInactiveTourDestinations() {
+  try {
+    const res = await fetch(`${INACTIVE_TOURS_API_URL}/details`);
+    if (!res.ok) throw new Error(`inactive tour details request failed: ${res.status}`);
+    const result = {};
+    for (const tour of await res.json()) {
+      const target = destinationOfCaption(`${tour.title || ''} ${tour.text || ''}`);
+      if (tour.id && target) result[tour.id] = target;
+    }
+    return result;
+  } catch (err) {
+    console.warn('Could not fetch inactive tour details:', err.message);
+    return {};
+  }
+}
+
 async function fetchInactiveTourIds() {
   try {
     const res = await fetch(INACTIVE_TOURS_API_URL);
@@ -140,13 +191,17 @@ async function fetchInactiveTourIds() {
 // vite build) — Netlify matches _redirects top to bottom, first rule wins.
 // One rule per language prefix, so a stale /ru/tours/<id> bookmark also
 // redirects correctly instead of falling through to the SPA catch-all.
-function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours) {
+function writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours, inactiveDestinations = {}) {
   const redirectsPath = path.join(distDir, '_redirects');
   const existing = fs.existsSync(redirectsPath) ? fs.readFileSync(redirectsPath, 'utf-8') : '';
-  const inactiveLines = inactiveTourIds.flatMap((id) => [
-    ...LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`),
-    ...LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}/itinerary`, lang)}  ${buildLocalizedPath('/tours', lang)}  301`),
-  ]);
+  // a finished tour goes to its destination page (/tours/search/turkiye), or /tours when unknown
+  const inactiveLines = inactiveTourIds.flatMap((id) => {
+    const target = inactiveDestinations[id] || '/tours';
+    return [
+      ...LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}`, lang)}  ${buildLocalizedPath(target, lang)}  301`),
+      ...LANGUAGES.map((lang) => `${buildLocalizedPath(`/tours/${id}/itinerary`, lang)}  ${buildLocalizedPath(target, lang)}  301`),
+    ];
+  });
 
   // Blog posts used to live at /<lang>/blog/<AZ-slug> in every language;
   // trilingual posts now carry a per-language slug, so the old localized
@@ -644,13 +699,31 @@ async function main() {
         html = html.replace('</head>', `<script type="application/ld+json" id="itemlist-ld">${itemListJson}</script>\n  </head>`);
       }
 
-      const outDir = isHome ? distDir : path.join(distDir, localizedRoutePath);
-      fs.mkdirSync(outDir, { recursive: true });
-      fs.writeFileSync(path.join(outDir, 'index.html'), html);
+      // "/tours/search/turkiye" is written as tours/search/turkiye.html, not a folder with an
+      // index.html: Netlify then answers the URL without a slash with 200 and 301s the slash
+      // version to it — the same URL as the canonical, the sitemap and the internal links.
+      const outFile = isHome ? path.join(distDir, 'index.html') : path.join(distDir, `${localizedRoutePath}.html`);
+      fs.mkdirSync(path.dirname(outFile), { recursive: true });
+      fs.writeFileSync(outFile, html);
       renderCount += 1;
     }
   }
   console.log(`prerendered ${renderCount} pages across ${routeEntries.length} routes x up to ${LANGUAGES.length} languages`);
+
+  // A real 404 page per language: Netlify answers an unknown URL with it and the 404 status
+  // (see public/_redirects), instead of the app shell with 200 (a soft 404 for Google).
+  for (const lang of LANGUAGES) {
+    const t = translators[lang];
+    let html = template.replace('<div id="root"></div>', `<div id="root">${render(buildLocalizedPath('/__not-found__', lang))}</div>`);
+    html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang}"`);
+    html = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(`${t('notFound.title')} — Travellab`)}</title>`);
+    html = setAttrById(html, 'meta-desc', 'content', t('notFound.desc'));
+    html = setAttrById(html, 'meta-robots', 'content', 'noindex, follow');
+    html = html.replace(/\s*<link[^>]*id=["']canonical["'][^>]*>/i, '');
+    const outFile = lang === DEFAULT_LANGUAGE ? path.join(distDir, '404.html') : path.join(distDir, lang, '404.html');
+    fs.mkdirSync(path.dirname(outFile), { recursive: true });
+    fs.writeFileSync(outFile, html);
+  }
 
   // Sitemap: one <url> per language variant of every route, each carrying
   // its own hreflang alternate entries (Google's documented multi-language
@@ -700,8 +773,9 @@ async function main() {
   console.log(`wrote dist/content/shop-products.json (${shopProducts.length} products)`);
 
   const inactiveTourIds = await fetchInactiveTourIds();
+  const inactiveDestinations = await fetchInactiveTourDestinations();
   const slugHistory = loadShopSlugRedirects();
-  writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours);
+  writeRedirects(inactiveTourIds, shopProducts, slugHistory, blogPosts, activeTours, inactiveDestinations);
 
   fs.rmSync(ssrDir, { recursive: true, force: true });
 }

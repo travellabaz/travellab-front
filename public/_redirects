@@ -1,1 +1,23 @@
-/*  /app-shell.html  200
+# Netlify reads these top to bottom; a rule never shadows a prerendered page (no "!"), so these
+# only answer URLs the build did not write. prerender.mjs puts its 301s (old slugs, finished
+# tours) above these lines.
+#
+# Pages that appear between builds (a new tour, an event, an order, a payment result, a
+# referral link) are opened by the app itself:
+/tours/*            /app-shell.html  200
+/events/*           /app-shell.html  200
+/hesab/*            /app-shell.html  200
+/privacy            /app-shell.html  200
+/r/*                /app-shell.html  200
+/ru/tours/*         /app-shell.html  200
+/ru/events/*        /app-shell.html  200
+/ru/hesab/*         /app-shell.html  200
+/ru/privacy         /app-shell.html  200
+/en/tours/*         /app-shell.html  200
+/en/events/*        /app-shell.html  200
+/en/hesab/*         /app-shell.html  200
+/en/privacy         /app-shell.html  200
+# Every other unknown URL is a real 404 (status 404, noindex), not the app with 200.
+/ru/*               /ru/404.html     404
+/en/*               /en/404.html     404
+/*                  /404.html        404

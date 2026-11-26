@@ -15234,3 +15234,33 @@ body.tl-cart-open .tl-tourp-stickybar {
     font-size: max(16px, 1em) !important;
   }
 }
+
+/* "/ucuslar" hub: one card per Baku route */
+.tl-flight-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.tl-flight-hub-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--tl-gray-200, #e5e7eb);
+  border-radius: 12px;
+  background: #fff;
+  text-decoration: none;
+  color: var(--tl-navy);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tl-flight-hub-card:hover {
+  border-color: var(--tl-green);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+.tl-flight-hub-route {
+  font-weight: 700;
+}
+.tl-flight-hub-meta {
+  font-size: 13px;
+  color: var(--tl-gray-600);
+}

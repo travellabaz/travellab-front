@@ -1046,7 +1046,11 @@
     "flightRouteTitle": "{{origin}}–{{destination}} Flights - Prices and Schedule | Travellab",
     "flightRouteDesc": "Flight prices, travel time and frequency from Baku to {{destination}}. Find the best deal with Travellab and book now!",
     "tourSubcategoryTitle": "{{place}} Tour - Affordable Packages | Travellab",
-    "tourSubcategoryDesc": "Affordable tour packages from Baku to {{place}}. Flight, hotel and transfer included. Book now!"
+    "tourSubcategoryDesc": "Affordable tour packages from Baku to {{place}}. Flight, hotel and transfer included. Book now!",
+    "flightRoutes": {
+      "title": "Flights from Baku — 30 routes and prices | Travellab",
+      "desc": "Flights from Baku to Istanbul, Dubai, Antalya, Moscow and 30 more routes: direct and connecting flights, prices. Good-value tickets with Travellab."
+    }
   },
   "flightCities": {
     "İstanbul": "Istanbul",
@@ -1330,5 +1334,13 @@
     "cartShopSend": "Send Shop order",
     "cartMoveHint": "Add this product to your tour and it's cheaper at tour price.",
     "cartMoveAction": "Add to tour"
+  },
+  "flightsHub": {
+    "title": "Flights from Baku: all routes",
+    "intro": "The most popular routes from Baku in one place: direct and connecting flights with approximate prices. Pick a route to see flights, travel time and airlines and find a good-value ticket.",
+    "direct": "Direct flight",
+    "connecting": "Connecting",
+    "from": "from {{price}} AZN",
+    "searchAll": "Search all flights"
   }
 }

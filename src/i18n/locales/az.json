@@ -1046,7 +1046,11 @@
     "flightRouteTitle": "{{origin}}-{{destination}} Aviabiletləri - Qiymətlər və Cədvəl | Travellab",
     "flightRouteDesc": "Bakıdan {{destination}} istiqamətinə aviabilet qiymətləri, uçuş müddəti və reys tezliyi haqqında məlumat. Ən sərfəli təklifi Travellab ilə indi tapın və bron edin!",
     "tourSubcategoryTitle": "{{place}} Turu - Sərfəli Paketlər | Travellab",
-    "tourSubcategoryDesc": "{{place}} üçün Bakıdan sərfəli tur paketləri. Aviabilet, otel və transfer daxil. İndi bron edin!"
+    "tourSubcategoryDesc": "{{place}} üçün Bakıdan sərfəli tur paketləri. Aviabilet, otel və transfer daxil. İndi bron edin!",
+    "flightRoutes": {
+      "title": "Bakıdan aviabiletlər — 30 istiqamət, qiymətlər | Travellab",
+      "desc": "Bakıdan İstanbul, Dubay, Antalya, Moskva və digər 30 istiqamətə aviabiletlər: birbaşa reyslər, aktarmalar, qiymətlər. Sərfəli bilet üçün Travellab."
+    }
   },
   "flightCities": {
     "İstanbul": "İstanbul",
@@ -1326,5 +1330,13 @@
     "cartShopSend": "Shop sifarişi göndər",
     "cartMoveHint": "Bu məhsulu tura əlavə etsəniz, tur qiyməti ilə daha ucuz olar.",
     "cartMoveAction": "Tura əlavə et"
+  },
+  "flightsHub": {
+    "title": "Bakıdan aviabiletlər: bütün istiqamətlər",
+    "intro": "Bakıdan ən çox uçulan istiqamətlər bir yerdə: birbaşa reys və aktarmalı uçuşlar, təxmini qiymətlər. İstiqaməti seçin — reys, uçuş müddəti və aviaşirkətlər haqqında məlumata baxın və sərfəli bileti tapın.",
+    "direct": "Birbaşa reys",
+    "connecting": "Aktarmalı",
+    "from": "{{price}} AZN-dan",
+    "searchAll": "Bütün aviabiletləri axtar"
   }
 }

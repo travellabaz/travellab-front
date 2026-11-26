@@ -27,6 +27,7 @@ import PaymentErrorPage from './pages/PaymentErrorPage';
 import VizaPage from './pages/VizaPage';
 import VizaCountryPage from './pages/VizaCountryPage';
 import FlightRoutePage from './pages/FlightRoutePage';
+import FlightRoutesHubPage from './pages/FlightRoutesHubPage';
 import AboutPage from './pages/AboutPage';
 import PrivacyPage from './pages/PrivacyPage';
 import ShopPage from './pages/ShopPage';
@@ -60,6 +61,7 @@ function localeRouteChildren() {
   return [
     <Route key="home" index element={<HomePage />} />,
     <Route key="search" path="search" element={<SearchPage />} />,
+    <Route key="ucuslar-hub" path="ucuslar" element={<FlightRoutesHubPage />} />,
     <Route key="ucuslar" path="ucuslar/:route" element={<FlightRoutePage />} />,
     <Route key="hotels" path="hotels" element={<HotelsPage />} />,
     <Route key="tours" path="tours" element={<ToursPage />} />,
