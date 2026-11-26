@@ -509,11 +509,13 @@ async function refreshPost(posts, drafts) {
   const pending = new Set(drafts.map((d) => d.refreshOf).filter(Boolean));
   let target = null;
   let query = null;
+  let queryRu = null;
   for (const row of keywords().filter((r) => r.status === 'refresh' && r.post_slug)) {
     const post = posts.find((p) => p.slug === row.post_slug);
     if (post && !pending.has(post.slug) && !(post.refreshedFor || []).includes(row.keyword_az)) {
       target = post;
       query = row.keyword_az;
+      queryRu = row.keyword_ru || null;
       break;
     }
   }
@@ -535,7 +537,7 @@ async function refreshPost(posts, drafts) {
         : null
       : target[lang];
     if (!old) continue;
-    const draft = await generate(lang, refreshPromptFor(lang, flat ? old : target, query));
+    const draft = await generate(lang, refreshPromptFor(lang, flat ? old : target, lang === 'ru' && queryRu ? queryRu : query));
     // the photos inside the text stay where they were: the new text goes between them
     const photos = old.body.filter((b) => b.type === 'img');
     const body = [...draft.body];
