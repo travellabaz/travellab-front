@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
 import { getPostBySlug, isPostAvailableInLocale, BLOG_POSTS, postSlugForLocale, allSlugsOf } from '../data/blog';
-import { absoluteImage, blogAuthor, isBlogPostIndexable } from '../data/blog/seo';
+import { absoluteImage, blogAuthor, blogDateTime, isBlogPostIndexable, PUBLISHER_LOGO } from '../data/blog/seo';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug, vizaCountrySlug } from '../data/vizaCountries';
@@ -286,13 +286,13 @@ export default function usePageMeta() {
         headline: post.title,
         description: post.excerpt,
         image: absoluteImage(post.coverImage, BASE_URL),
-        datePublished: post.date,
-        dateModified: post.dateModified || post.date,
+        datePublished: blogDateTime(post.date),
+        dateModified: blogDateTime(post.dateModified || post.date),
         author: blogAuthor(post, BASE_URL),
         publisher: {
           '@type': 'Organization',
           name: 'Travellab',
-          logo: { '@type': 'ImageObject', url: `${BASE_URL}/favicon.svg` },
+          logo: { '@type': 'ImageObject', url: `${BASE_URL}${PUBLISHER_LOGO}`, width: 192, height: 192 },
         },
         mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
         inLanguage: lang,

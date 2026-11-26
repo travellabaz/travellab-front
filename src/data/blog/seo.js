@@ -20,3 +20,12 @@ export function absoluteImage(src, baseUrl) {
   if (!src) return `${baseUrl}/images/hero/balloons.jpg`;
   return /^https?:\/\//.test(src) ? src : `${baseUrl}${src}`;
 }
+
+// Google wants the full date and time with the zone: "2026-11-15T10:00:00+04:00" (Baku)
+export function blogDateTime(date) {
+  if (!date) return undefined;
+  return /T/.test(date) ? date : `${date}T10:00:00+04:00`;
+}
+
+// Google takes a PNG or JPG of at least 112x112 for the publisher logo, not an SVG
+export const PUBLISHER_LOGO = '/favicon-192x192.png';

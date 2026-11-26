@@ -21,7 +21,7 @@ import { truncate } from './src/utils/text.js';
 import { toAccusative } from './src/utils/ruGrammar.js';
 import { slugify } from './src/utils/slugify.js';
 import { isTourExpired } from './src/utils/tourDate.js';
-import { absoluteImage, blogAuthor, isBlogPostIndexable } from './src/data/blog/seo.js';
+import { absoluteImage, blogAuthor, blogDateTime, isBlogPostIndexable, PUBLISHER_LOGO } from './src/data/blog/seo.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -293,13 +293,13 @@ function buildArticleJson(post, pageUrl, lang) {
     headline: post.title,
     description: post.excerpt,
     image: absoluteImage(post.coverImage, BASE_URL),
-    datePublished: post.date,
-    dateModified: post.dateModified || post.date,
+    datePublished: blogDateTime(post.date),
+    dateModified: blogDateTime(post.dateModified || post.date),
     author: blogAuthor(post, BASE_URL),
     publisher: {
       '@type': 'Organization',
       name: 'Travellab',
-      logo: { '@type': 'ImageObject', url: `${BASE_URL}/favicon.svg` },
+      logo: { '@type': 'ImageObject', url: `${BASE_URL}${PUBLISHER_LOGO}`, width: 192, height: 192 },
     },
     mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
     inLanguage: lang,

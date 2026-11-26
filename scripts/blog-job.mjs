@@ -336,6 +336,22 @@ async function coverPhoto(query) {
   };
 }
 
+// the cover is kept on our own domain (public/images/blog), as Google prefers; Pexels only on failure
+async function keepCover(photo, slug) {
+  if (!photo) return null;
+  try {
+    const res = await fetch(photo.src);
+    if (!res.ok) throw new Error(String(res.status));
+    const dir = path.join(ROOT, 'public/images/blog');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, `${slug}.jpg`), Buffer.from(await res.arrayBuffer()));
+    return `/images/blog/${slug}.jpg`;
+  } catch (err) {
+    console.warn(`Cover was not saved: ${err.message}`);
+    return photo.src;
+  }
+}
+
 // ---------- quality checks (B.4) ----------
 
 function qualityIssues(post, keyword, others) {
@@ -469,6 +485,7 @@ async function newPost(posts, drafts) {
   let slug = slugify(az.slug || row.keyword_az, 50);
   if (taken.has(slug)) slug = `${slug}-${new Date().getUTCFullYear()}`;
   const photo = await coverPhoto(az.imageQuery || row.keyword_az);
+  const cover = await keepCover(photo, slug);
   const today = new Date().toISOString().slice(0, 10);
   return {
     slug,
@@ -479,7 +496,7 @@ async function newPost(posts, drafts) {
     targetUrl: row.target_url,
     author: 'Travellab',
     date: today,
-    coverImage: photo?.src || '/images/hero/balloons.jpg',
+    coverImage: cover || '/images/hero/balloons.jpg',
     coverCredit: photo?.credit || null,
     az: content(az, slug, az.faq, photo, az.imageAlt),
     ru: content(ru, slugify(ru.slug || row.keyword_ru, 50), ru.faq, photo, ru.imageAlt),

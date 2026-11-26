@@ -113,6 +113,8 @@ export default function AuthModal() {
         (tab === 'register' ? setRegMsg : setLoginMsg)(msg);
         return;
       }
+      // only an account created by this sign-in counts as a sign-up, not a returning client
+      if (data.isNewUser === true) pushDataLayer({ event: 'sign_up', method: 'google' });
       closeAuth();
       await loginSuccess(data.tokens.accessToken, data.tokens.refreshToken);
     } catch {
@@ -227,7 +229,7 @@ export default function AuthModal() {
         countdown.start(0);
         if (sessionRef.current.flow === 'reg') {
           // the account exists only now, after the OTP was confirmed
-          pushDataLayer({ event: 'sign_up' });
+          pushDataLayer({ event: 'sign_up', method: 'phone' });
           setSuccessMsg(t('auth.successRegisterMsg'));
           setSuccessAction(() => () => {
             setTab('login');
