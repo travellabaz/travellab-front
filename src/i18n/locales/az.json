@@ -886,7 +886,9 @@
     "serviceLabel": "Xidmət",
     "tourCtaTitle": "Bu istiqamətə tur",
     "tourCtaText": "Aviabilet, otel və transfer daxil hazır tur paketlərinə baxın →",
-    "notAvailableInLanguage": "Bu yazı hazırda yalnız Azərbaycan dilində mövcuddur."
+    "notAvailableInLanguage": "Bu yazı hazırda yalnız Azərbaycan dilində mövcuddur.",
+    "faqTag": "Suallar",
+    "faqTitle": "Tez-tez verilən suallar"
   },
   "korporativ": {
     "heroTag": "KORPORATİV SƏYAHƏT",
@@ -1263,28 +1265,24 @@
     "title": "Etibarlı Tərəfdaşlarımız"
   },
   "blogCategoryLabels": {
-    "Getməzdən Əvvəl": "Getməzdən Əvvəl",
-    "Bilet": "Bilet",
-    "Viza": "Viza",
-    "Konsertlər": "Konsertlər",
-    "Korporativ": "Korporativ",
-    "Tibbi Turizm": "Tibbi Turizm",
-    "Səyahət Fəndləri": "Səyahət Fəndləri",
-    "Təbiət": "Təbiət",
-    "Xəbərlər": "Xəbərlər",
-    "Macəra": "Macəra"
+    "viza": "Viza bələdçisi",
+    "istiqametler": "İstiqamətlər",
+    "aviabilet": "Aviabilet və uçuşlar",
+    "balayi": "Balayı və romantik səyahət",
+    "mualice-turizmi": "Müalicə turizmi",
+    "konsertler": "Konsert və tədbirlər",
+    "korporativ": "Korporativ səyahət",
+    "xeberler": "Səyahət xəbərləri"
   },
   "blogServiceLinks": {
-    "Getməzdən Əvvəl": "Hazır tur paketləri",
-    "Bilet": "Aviabilet axtarışı",
-    "Viza": "Viza xidməti",
-    "Konsertlər": "Tədbir biletləri",
-    "Korporativ": "Korporativ xidmətlər",
-    "Tibbi Turizm": "Travellab haqqında",
-    "Səyahət Fəndləri": "Aviabilet axtarışı",
-    "Təbiət": "Ekzotik turlar",
-    "Xəbərlər": "Uçuş və otel təklifləri",
-    "Macəra": "Ekzotik turlar"
+    "viza": "Viza xidməti",
+    "istiqametler": "Hazır tur paketləri",
+    "aviabilet": "Aviabilet axtarışı",
+    "balayi": "Balayı turları",
+    "mualice-turizmi": "Müalicə və sanatoriya turları",
+    "konsertler": "Tədbir biletləri",
+    "korporativ": "Korporativ xidmətlər",
+    "xeberler": "Aktual turlar"
   },
   "navProfile": {
     "profile": "Profil",

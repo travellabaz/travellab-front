@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { BASE_URL, PAGE_META } from '../data/pageMeta';
 import { getPostBySlug, isPostAvailableInLocale, BLOG_POSTS, postSlugForLocale, allSlugsOf } from '../data/blog';
+import { absoluteImage, blogAuthor, isBlogPostIndexable } from '../data/blog/seo';
 import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug, vizaCountrySlug } from '../data/vizaCountries';
@@ -187,7 +188,13 @@ export default function usePageMeta() {
     // per the Itinerary brief they just drop out of the index instead,
     // with a banner pointing visitors to a manager for current dates.
     const itineraryStale = !!tourForItinerary && isTourExpired(tourForItinerary.description);
-    setMeta('meta-robots', 'content', tourNotFound || tourItineraryNotFound || itineraryStale ? 'noindex, follow' : 'index, follow');
+    // a blog post about nothing we sell, and the English posts, stay out of Google
+    const blogNoindex = !!rawPost && !isBlogPostIndexable(rawPost, lang);
+    setMeta(
+      'meta-robots',
+      'content',
+      tourNotFound || tourItineraryNotFound || itineraryStale || blogNoindex ? 'noindex, follow' : 'index, follow'
+    );
 
     // hreflang alternates — one per supported language pointing at the
     // equivalent page, plus x-default (-> AZ, the unprefixed default).
@@ -278,10 +285,10 @@ export default function usePageMeta() {
         '@type': 'BlogPosting',
         headline: post.title,
         description: post.excerpt,
-        image: BASE_URL + post.coverImage,
+        image: absoluteImage(post.coverImage, BASE_URL),
         datePublished: post.date,
-        dateModified: post.date,
-        author: { '@type': 'Organization', name: 'Travellab' },
+        dateModified: post.dateModified || post.date,
+        author: blogAuthor(post, BASE_URL),
         publisher: {
           '@type': 'Organization',
           name: 'Travellab',

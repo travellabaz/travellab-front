@@ -886,7 +886,9 @@
     "serviceLabel": "Service",
     "tourCtaTitle": "Tour to this destination",
     "tourCtaText": "See ready-made tour packages — flight, hotel and transfer included →",
-    "notAvailableInLanguage": "This post is currently only available in Azerbaijani."
+    "notAvailableInLanguage": "This post is currently only available in Azerbaijani.",
+    "faqTag": "FAQ",
+    "faqTitle": "Frequently asked questions"
   },
   "korporativ": {
     "heroTag": "CORPORATE TRAVEL",
@@ -1263,28 +1265,24 @@
     "title": "Our Trusted Partners"
   },
   "blogCategoryLabels": {
-    "Getməzdən Əvvəl": "Before You Go",
-    "Bilet": "Tickets",
-    "Viza": "Visa",
-    "Konsertlər": "Concerts",
-    "Korporativ": "Corporate",
-    "Tibbi Turizm": "Medical Tourism",
-    "Səyahət Fəndləri": "Travel Hacks",
-    "Təbiət": "Nature",
-    "Xəbərlər": "News",
-    "Macəra": "Adventure"
+    "viza": "Visa guide",
+    "istiqametler": "Destinations",
+    "aviabilet": "Flights",
+    "balayi": "Honeymoon",
+    "mualice-turizmi": "Medical tourism",
+    "konsertler": "Concerts and events",
+    "korporativ": "Corporate travel",
+    "xeberler": "Travel news"
   },
   "blogServiceLinks": {
-    "Getməzdən Əvvəl": "Ready-made tour packages",
-    "Bilet": "Flight search",
-    "Viza": "Visa service",
-    "Konsertlər": "Event tickets",
-    "Korporativ": "Corporate services",
-    "Tibbi Turizm": "About Travellab",
-    "Səyahət Fəndləri": "Flight search",
-    "Təbiət": "Exotic tours",
-    "Xəbərlər": "Flight and hotel deals",
-    "Macəra": "Exotic tours"
+    "viza": "Visa service",
+    "istiqametler": "Tour packages",
+    "aviabilet": "Flight search",
+    "balayi": "Honeymoon tours",
+    "mualice-turizmi": "Medical and spa tours",
+    "konsertler": "Event tickets",
+    "korporativ": "Corporate services",
+    "xeberler": "Current tours"
   },
   "navProfile": {
     "profile": "Profile",

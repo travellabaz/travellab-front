@@ -3,7 +3,7 @@ import { useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Link from '../components/LocalizedLink';
 import { getPostsForLocale } from '../data/blog';
-import { BLOG_CATEGORIES } from '../data/blog/categories';
+import { BLOG_CATEGORIES, LEGACY_CATEGORIES } from '../data/blog/categories';
 import { formatDateAz } from '../utils/date';
 import { paginationItems } from '../utils/pagination';
 import { getLocaleFromPathname } from '../utils/locale';
@@ -30,7 +30,8 @@ export default function BlogPage() {
   }, []);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const category = searchParams.get('category') || '';
+  const rawCategory = searchParams.get('category') || '';
+  const category = LEGACY_CATEGORIES[rawCategory] || rawCategory;
   const isKnownCategory = BLOG_CATEGORIES.some((c) => c.name === category);
   const localePosts = getPostsForLocale(lang);
   const filteredPosts = isKnownCategory ? localePosts.filter((p) => p.category === category) : localePosts;

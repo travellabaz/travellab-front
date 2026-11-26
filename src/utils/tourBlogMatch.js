@@ -1,6 +1,6 @@
 import { BLOG_POSTS, isPostAvailableInLocale, localizePost } from '../data/blog';
 
-const TRIP_GUIDE_CATEGORY = 'Getməzdən Əvvəl';
+const TRIP_GUIDE_CATEGORY = 'istiqametler';
 
 // A couple of guide posts' slug-prefix city name doesn't match how a tour
 // caption spells the same city — every other guide already matches by

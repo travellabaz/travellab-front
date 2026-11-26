@@ -1,0 +1,14 @@
+{
+  "_readme": "Filled by the visa team. The daily blog job writes visa fees, terms and documents ONLY from here; a fact missing here is not written. One entry per country slug of /viza/<slug> (e.g. almaniya, cin, birlesmis-ereb-emirlikleri). Fields are free text in Azerbaijani; leave out what you do not know.",
+  "_example": {
+    "almaniya": {
+      "visaType": "Şengen (C kateqoriyası), turist",
+      "fee": "90 EUR konsulluq rüsumu + VFS xidmət haqqı",
+      "processingTime": "adətən 15 iş günü",
+      "documents": ["Xarici pasport (son 10 ildə verilmiş, ən azı 3 ay qüvvədə)", "..."],
+      "notes": "",
+      "checkedAt": "2026-11-26"
+    }
+  },
+  "countries": {}
+}

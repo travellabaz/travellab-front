@@ -1,6 +1,6 @@
 {
   "slug": "simfonik-musiqi-sevenler-ucun-avropa-konsert-zallari-rehberi",
-  "category": "Konsertlər",
+  "category": "konsertler",
   "categoryClass": "cat-k",
   "topic": "Simfonik musiqi sevənlər üçün Avropa konsert zalları",
   "author": "Travellab",
@@ -371,5 +371,6 @@
         "text": "At Travellab, we pride ourselves on being your trusted agency partner for every stage of your journey. Whether you are looking for specialized [ready-made tour packages](/tours) or custom-designed itineraries tailored strictly to your musical tastes, our travel experts are ready to assist you. To learn more about our team and our commitment to exceptional travel planning, visit our [about us](/about) page, and start planning your next great symphonic adventure today."
       }
     ]
-  }
+  },
+  "noindex": true
 }

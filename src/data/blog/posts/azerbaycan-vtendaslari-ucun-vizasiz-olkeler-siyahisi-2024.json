@@ -1,6 +1,6 @@
 {
   "slug": "azerbaycan-vtendaslari-ucun-vizasiz-olkeler-siyahisi-2024",
-  "category": "Viza",
+  "category": "viza",
   "categoryClass": "cat-q",
   "author": "Travellab",
   "date": "2026-08-24",
@@ -346,5 +346,6 @@
       }
     ],
     "slug": "visa-free-countries-for-azerbaijani-citizens"
-  }
+  },
+  "enIndexed": true
 }

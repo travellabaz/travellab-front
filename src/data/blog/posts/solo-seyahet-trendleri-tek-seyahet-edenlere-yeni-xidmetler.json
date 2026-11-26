@@ -1,6 +1,6 @@
 {
   "slug": "solo-seyahet-trendleri-tek-seyahet-edenlere-yeni-xidmetler",
-  "category": "Xəbərlər",
+  "category": "xeberler",
   "categoryClass": "cat-n",
   "topic": "Solo səyahətin artması: tək səyahətçilər üçün yeni xidmətlər",
   "author": "Travellab",
@@ -415,5 +415,6 @@
         "text": "Taking that first step requires curiosity and a willing spirit, but you never have to navigate the planning alone. At Travellab, our specialists take pride in helping you craft personalized journeys tailored to your rhythm—pairing boutique stays, seamless route logistics, and responsive support from the moment you leave Baku until you arrive safely back home. The road is wide open, and your next great adventure is waiting for your signal."
       }
     ]
-  }
+  },
+  "noindex": true
 }

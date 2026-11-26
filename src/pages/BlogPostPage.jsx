@@ -9,16 +9,16 @@ import { formatDateAz } from '../utils/date';
 import { slugify } from '../utils/slugify';
 import { getLocaleFromPathname } from '../utils/locale';
 import Breadcrumb from '../components/Breadcrumb';
+import FaqSection from '../components/FaqSection';
 
-const TOC_MIN_WORDS = 800;
 
-// "Getməzdən Əvvəl" posts can carry two optional fields the generator
-// doesn't set — added by hand per post:
+// Destination ("istiqametler") posts can carry two optional fields the
+// generator doesn't set — added by hand per post:
 //   "videoUrl": a YouTube link/ID or a direct .mp4/.webm URL
 //   "tourCta":  { "to": "/tours/turkiye/istanbul", "label": "..." }
-// Any post in the "Getməzdən Əvvəl" category still gets a generic
-// "book a tour here" CTA even without its own tourCta.
-const TRIP_GUIDE_CATEGORY = 'Getməzdən Əvvəl';
+// Any destination post still gets a generic "book a tour here" CTA even
+// without its own tourCta.
+const TRIP_GUIDE_CATEGORY = 'istiqametler';
 const YT_PATTERN = /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/;
 
 function VideoEmbed({ url }) {
@@ -129,10 +129,12 @@ export default function BlogPostPage() {
   const headings = post.body
     .map((b, i) => (b.type === 'h2' ? { id: slugify(b.text), text: b.text, index: i } : null))
     .filter(Boolean);
-  const showToc = wordCount >= TOC_MIN_WORDS && headings.length > 1;
+  // at the top of every post with sections: Google may show them as jump links
+  const showToc = headings.length > 1;
 
   const endCardPosts = localePosts.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 2);
-  const endServiceLink = CATEGORY_SERVICE_LINKS[post.category];
+  // a post written for a keyword links to its own service page (targetUrl)
+  const endServiceLink = post.targetUrl ? { to: post.targetUrl } : CATEGORY_SERVICE_LINKS[post.category];
 
   // Plain <a href="#id"> doesn't reliably trigger the browser's native
   // scroll-to-anchor here (confirmed: the hash updates but scrollY stays
@@ -163,7 +165,7 @@ export default function BlogPostPage() {
           <div
             className="tl-article-cover"
             role="img"
-            aria-label={post.title}
+            aria-label={post.coverAlt || post.title}
             style={{ backgroundImage: `url('${post.coverImage}')` }}
           />
           {post.coverCredit && (
@@ -202,6 +204,10 @@ export default function BlogPostPage() {
               return <p key={i}>{renderParagraph(block.text)}</p>;
             })}
           </div>
+
+          {Array.isArray(post.faq) && post.faq.length > 0 && (
+            <FaqSection tag={t('blog.faqTag')} title={t('blog.faqTitle')} items={post.faq} />
+          )}
 
           {(post.tourCta || post.category === TRIP_GUIDE_CATEGORY) && (
             <Link

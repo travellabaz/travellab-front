@@ -21,6 +21,7 @@ import { truncate } from './src/utils/text.js';
 import { toAccusative } from './src/utils/ruGrammar.js';
 import { slugify } from './src/utils/slugify.js';
 import { isTourExpired } from './src/utils/tourDate.js';
+import { absoluteImage, blogAuthor, isBlogPostIndexable } from './src/data/blog/seo.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, 'dist');
@@ -291,10 +292,10 @@ function buildArticleJson(post, pageUrl, lang) {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: `${BASE_URL}${post.coverImage}`,
+    image: absoluteImage(post.coverImage, BASE_URL),
     datePublished: post.date,
-    dateModified: post.date,
-    author: { '@type': 'Organization', name: 'Travellab' },
+    dateModified: post.dateModified || post.date,
+    author: blogAuthor(post, BASE_URL),
     publisher: {
       '@type': 'Organization',
       name: 'Travellab',
@@ -530,6 +531,10 @@ async function main() {
       if (kind === 'tourItinerary' && isTourExpired(tour.description)) {
         html = setAttrById(html, 'meta-robots', 'content', 'noindex, follow');
       }
+      // a blog post about nothing we sell, and the English posts, stay out of Google
+      if (kind === 'blog' && !isBlogPostIndexable(blogPostBySlug[entry.slug], lang)) {
+        html = setAttrById(html, 'meta-robots', 'content', 'noindex, follow');
+      }
 
       const hreflangTags = buildHreflangTags(entry, langs);
       html = html.replace('</head>', `  ${hreflangTags}\n  </head>`);
@@ -643,6 +648,13 @@ async function main() {
     // as indexable URLs — they still get their own static HTML above, just
     // not a sitemap entry.
     .filter((entry) => !(entry.kind === 'tourItinerary' && isTourExpired(toursById[entry.tourId].description)))
+    // noindexed blog languages are not listed either (nor offered as alternates)
+    .map((entry) =>
+      entry.kind === 'blog'
+        ? { ...entry, langs: entry.langs.filter((l) => isBlogPostIndexable(blogPostBySlug[entry.slug], l)) }
+        : entry
+    )
+    .filter((entry) => entry.langs.length > 0)
     .flatMap((entry) =>
       entry.langs.map((lang) => {
         const localizedRoutePath = buildLocalizedPath(entryBarePath(entry, lang), lang);

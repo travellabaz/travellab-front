@@ -1,6 +1,6 @@
 {
   "slug": "biometrik-minme-uz-tanima-texnologiyasi-ile-ucusa-nece",
-  "category": "Xəbərlər",
+  "category": "xeberler",
   "categoryClass": "cat-n",
   "topic": "Biometrik minmə: üz tanıma ilə təyyarəyə minmək",
   "author": "Travellab",
@@ -375,5 +375,6 @@
         "text": "Whether you are planning a relaxing getaway or an adventure abroad, let Travellab handle the details while you enjoy the journey. Explore our curated selection of [tours](/tours) or browse our comfortable [hotels](/hotels) worldwide to start planning your next unforgettable trip today."
       }
     ]
-  }
+  },
+  "noindex": true
 }

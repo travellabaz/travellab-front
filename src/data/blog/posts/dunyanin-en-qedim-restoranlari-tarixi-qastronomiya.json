@@ -1,7 +1,7 @@
 {
   "slug": "dunyanin-en-qedim-restoranlari-tarixi-qastronomiya",
-  "category": "Səyahət Fəndləri",
-  "categoryClass": "cat-a",
+  "category": "istiqametler",
+  "categoryClass": "cat-t",
   "topic": "Top 5: dünyanın ən qədim restoranları",
   "author": "Travellab",
   "date": "2026-11-07",
@@ -471,5 +471,6 @@
         "text": "At Travellab, our agency team specializes in creating tailor-made itineraries that weave world-class dining, seamless flights, and authentic regional experiences into stress-free vacations. Contact our Baku office today to start planning your next historic gastronomy escape, and let us reserve your front-row seat to the world's most enduring dining legends."
       }
     ]
-  }
+  },
+  "noindex": true
 }
