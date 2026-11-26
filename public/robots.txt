@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /auth/
+Disallow: /*/auth/
 
 User-agent: GPTBot
 Allow: /

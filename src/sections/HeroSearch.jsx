@@ -51,7 +51,9 @@ const HERO_PHOTO_SRCS = [
 // across routes (see App.jsx for why), so per-route H1 text has to come
 // in as a prop rather than the component being remounted with different
 // content.
-export default function HeroSearch({ title }) {
+// visible: the hero is shown on this route. It stays mounted (hidden) everywhere else, and there its
+// title must not be an <h1> — every page has its own H1 (SEO: one H1 per page).
+export default function HeroSearch({ title, visible = true }) {
   const [photoIndex, setPhotoIndex] = useState(0);
   const { isAuthenticated } = useAuth();
   const { openAuth } = useModals();
@@ -63,7 +65,7 @@ export default function HeroSearch({ title }) {
 
   const heroTitle = title ?? (
     <>
-      {t('hero.homeTitlePlain')}<br />
+      {t('hero.homeTitlePlain')}{' '}<br />
       <span className="acc">{t('hero.homeTitleAccent')}</span>
     </>
   );
@@ -151,7 +153,7 @@ export default function HeroSearch({ title }) {
         <div className="tl-float tl-float-2">{t('hero.floatLabpoint')}</div>
         <div className="tl-hero-content">
           <div className="tl-hero-badge">{PLANE_ICON} {t('hero.badge')}</div>
-          <h1>{heroTitle}</h1>
+          {visible ? <h1>{heroTitle}</h1> : <div className="tl-hero-heading">{heroTitle}</div>}
           <p>{t('hero.subtitle')}</p>
         </div>
         {/* Quick-search-type switcher — pinned to the bottom-left of the

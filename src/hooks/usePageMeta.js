@@ -12,7 +12,7 @@ import { getParentBySlug, getSubcategory, tourParentSlug, tourSubSlug } from '..
 import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { getProductBySku } from '../data/shop';
 import { isTourExpired } from '../utils/tourDate';
-import { toAccusative } from '../utils/ruGrammar';
+import { destinationParams, toAccusative } from '../utils/ruGrammar';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../i18n';
 import { getLocaleFromPathname, stripLocalePrefix, buildLocalizedPath } from '../utils/locale';
 
@@ -51,6 +51,9 @@ const SEO_KEY_BY_PATH = {
 // location.hash. Locale-prefix-aware throughout: every lookup matches
 // against the bare (unprefixed) path, and hreflang alternates are added
 // for the other two languages.
+// query parameters that keep a page indexable (filters of the lists)
+const INDEXABLE_PARAMS = new Set(['category', 'page', 'tab']);
+
 export default function usePageMeta() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
@@ -137,7 +140,10 @@ export default function usePageMeta() {
           : vizaCountry
             ? { title: t('seo.vizaCountryTitle', { country: vizaCountryNameAcc, defaultValue: `${vizaCountryNameAcc} — Travellab` }), desc: t('seo.vizaCountryDesc', { country: vizaCountryNameAcc, defaultValue: '' }) }
             : tourSearchCountry
-              ? { title: t('seo.tourSearchCountryTitle', { country: tourSearchCountryName, defaultValue: `${tourSearchCountryName} — Travellab` }), desc: t('seo.tourSearchCountryDesc', { country: tourSearchCountryName, defaultValue: '' }) }
+              ? {
+                  title: t('seo.tourSearchCountryTitle', { ...destinationParams(tourSearchCountryName, lang), defaultValue: `${tourSearchCountryName} — Travellab` }),
+                  desc: t('seo.tourSearchCountryDesc', { ...destinationParams(tourSearchCountryName, lang), defaultValue: '' }),
+                }
               : flightRoute
                 ? { title: t('seo.flightRouteTitle', { origin: t('flights.baku'), destination: flightRouteDestination, defaultValue: `${flightRouteDestination} — Travellab` }), desc: t('seo.flightRouteDesc', { destination: flightRouteDestination, defaultValue: '' }) }
                 : tourSub
@@ -190,10 +196,20 @@ export default function usePageMeta() {
     const itineraryStale = !!tourForItinerary && isTourExpired(tourForItinerary.description);
     // a blog post about nothing we sell, and the English posts, stay out of Google
     const blogNoindex = !!rawPost && !isBlogPostIndexable(rawPost, lang);
+    // a search with its own parameters (?date=, ?q=, ...) is not a page of its own for Google;
+    // only the list filters (?category=, ?page=) and the analytics tags are kept indexable
+    const azOnlyNoindex =
+      lang !== DEFAULT_LANGUAGE &&
+      ((!!tourIdMatch && tourIdMatch[1] !== 'search') || !!tourItineraryMatch || !!shopProductMatch);
+    const searchParamsNoindex = [...new URLSearchParams(location.search).keys()].some(
+      (key) => !INDEXABLE_PARAMS.has(key) && !key.startsWith('utm_')
+    );
     setMeta(
       'meta-robots',
       'content',
-      tourNotFound || tourItineraryNotFound || itineraryStale || blogNoindex ? 'noindex, follow' : 'index, follow'
+      tourNotFound || tourItineraryNotFound || itineraryStale || blogNoindex || searchParamsNoindex || azOnlyNoindex
+        ? 'noindex, follow'
+        : 'index, follow'
     );
 
     // hreflang alternates — one per supported language pointing at the
@@ -201,9 +217,13 @@ export default function usePageMeta() {
     // Blog posts only get alternates for languages that post actually has
     // (see data/blog/index.js) — no old AZ-only post pretends to have a
     // RU/EN version.
-    const availableLangs = rawPost
+    const allLangs = rawPost
       ? SUPPORTED_LANGUAGES.filter((l) => isPostAvailableInLocale(rawPost, l))
       : SUPPORTED_LANGUAGES;
+    // tours and Shop are AZ-only for Google (see prerender.mjs AZ_ONLY_KINDS): RU/EN stay out of hreflang
+    const azOnlyPage =
+      (!!tourIdMatch && tourIdMatch[1] !== 'search') || !!tourItineraryMatch || !!shopProductMatch;
+    const availableLangs = azOnlyPage ? allLangs.filter((l) => l === DEFAULT_LANGUAGE) : allLangs;
     // Each language's alternate points at that language's own slug for a
     // blog post, not the shared AZ one.
     const hreflangBarePath = (l) =>
@@ -252,7 +272,7 @@ export default function usePageMeta() {
       } else if (tourSearchCountry) {
         items.push(
           { name: t('tourSearch.tourSearchCrumb'), url: BASE_URL + buildLocalizedPath('/tours/search', lang) },
-          { name: t('tourSearch.countryTitle', { country: tourSearchCountryName }), url: pageUrl }
+          { name: t('tourSearch.countryTitle', destinationParams(tourSearchCountryName, lang)), url: pageUrl }
         );
       } else if (tourSub) {
         items.push(

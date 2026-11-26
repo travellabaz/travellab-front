@@ -18,7 +18,7 @@ import { TOUR_SEARCH_COUNTRIES } from './src/data/tourSearchCountries.js';
 import { TOUR_SUBCATEGORIES, TOUR_PARENT_SLUGS, getActiveSubcategories, filterToursForSubcategory, tourParentSlug, tourSubSlug } from './src/data/tourSubcategories.js';
 import { FLIGHT_ROUTES } from './src/data/flightRoutes.js';
 import { truncate } from './src/utils/text.js';
-import { toAccusative } from './src/utils/ruGrammar.js';
+import { destinationParams, toAccusative } from './src/utils/ruGrammar.js';
 import { slugify } from './src/utils/slugify.js';
 import { isTourExpired } from './src/utils/tourDate.js';
 import { absoluteImage, blogAuthor, blogDateTime, isBlogPostIndexable, PUBLISHER_LOGO } from './src/data/blog/seo.js';
@@ -329,6 +329,15 @@ function buildBreadcrumbJson(items) {
 
 // hreflang alternates for a route: one per language the route actually
 // exists in (see availableLangs per-entry below), plus x-default -> AZ.
+// Tours and Shop are AZ-only for Google: their RU/EN pages repeat the same Instagram caption /
+// product and only compete with the AZ page. They stay online, noindexed, out of the sitemap and
+// hreflang. Destination pages (/ru/tours/search/{country}) keep all languages.
+const AZ_ONLY_KINDS = new Set(['tour', 'tourItinerary', 'shopProduct', 'shopCategory']);
+
+function indexedLangsOf(entry) {
+  return AZ_ONLY_KINDS.has(entry.kind) ? entry.langs.filter((l) => l === DEFAULT_LANGUAGE) : entry.langs;
+}
+
 function buildHreflangTags(entry, availableLangs, extraQuery = '') {
   const tags = availableLangs.map(
     (lang) => `<link rel="alternate" hreflang="${lang}" href="${BASE_URL}${buildLocalizedPath(entryBarePath(entry, lang), lang)}${extraQuery}" />`
@@ -467,8 +476,9 @@ async function main() {
         image = DEFAULT_OG_IMAGE;
       } else if (kind === 'tourSearchCountry') {
         const countryName = t(`countries.${entry.country.nameAz}`, entry.country.nameAz);
-        title = t('seo.tourSearchCountryTitle', { country: countryName });
-        desc = t('seo.tourSearchCountryDesc', { country: countryName });
+        // "Туры в Турцию", "отели на Мальдивах" — see src/utils/ruGrammar.js
+        title = t('seo.tourSearchCountryTitle', destinationParams(countryName, lang));
+        desc = t('seo.tourSearchCountryDesc', destinationParams(countryName, lang));
         image = DEFAULT_OG_IMAGE;
       } else if (kind === 'tourSubcategory') {
         const place = t(`tourSubcategoryLabels.${entry.sub.name}`, entry.sub.name);
@@ -535,8 +545,11 @@ async function main() {
       if (kind === 'blog' && !isBlogPostIndexable(blogPostBySlug[entry.slug], lang)) {
         html = setAttrById(html, 'meta-robots', 'content', 'noindex, follow');
       }
+      if (!indexedLangsOf(entry).includes(lang)) {
+        html = setAttrById(html, 'meta-robots', 'content', 'noindex, follow');
+      }
 
-      const hreflangTags = buildHreflangTags(entry, langs);
+      const hreflangTags = buildHreflangTags(entry, langs.filter((l) => indexedLangsOf(entry).includes(l)));
       html = html.replace('</head>', `  ${hreflangTags}\n  </head>`);
 
       const homeHref = BASE_URL + (buildLocalizedPath('/', lang) || '/');
@@ -652,7 +665,7 @@ async function main() {
     .map((entry) =>
       entry.kind === 'blog'
         ? { ...entry, langs: entry.langs.filter((l) => isBlogPostIndexable(blogPostBySlug[entry.slug], l)) }
-        : entry
+        : { ...entry, langs: indexedLangsOf(entry) }
     )
     .filter((entry) => entry.langs.length > 0)
     .flatMap((entry) =>

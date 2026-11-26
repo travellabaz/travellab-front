@@ -139,13 +139,13 @@ export default function App() {
       {t('flights.heroTitlePlain', {
         origin: t('flights.baku'),
         destination: t(`flightCities.${flightRoute.cityKey}`, flightRoute.cityKey),
-      })}
+      })}{' '}
       <br />
       <span className="acc">{t('flights.heroTitleAccent')}</span>
     </>
   ) : barePath === '/search' ? (
     <>
-      {t('hero.searchTitlePlain')}<br />
+      {t('hero.searchTitlePlain')}{' '}<br />
       <span className="acc">{t('hero.searchTitleAccent')}</span>
     </>
   ) : undefined;
@@ -155,7 +155,7 @@ export default function App() {
       <Nav />
       <MobileTabBar />
       <div className="tpwl-main" style={showHero ? undefined : { display: 'none' }}>
-        <HeroSearch title={heroTitle} />
+        <HeroSearch title={heroTitle} visible={showHero} />
       </div>
       <Routes>
         <Route path="/ru/*" element={<LocaleFrame lang="ru" />}>

@@ -375,7 +375,7 @@
     "liveSearchTag": "Поиск в реальном времени",
     "defaultTitle": "Найдите самое выгодное предложение",
     "defaultDesc": "Актуальные цены — ищите по направлению, дате, количеству ночей и звёздам, выберите лучший вариант отеля.",
-    "countryTitle": "Туры в {{country}}",
+    "countryTitle": "Туры {{toCountry}}",
     "countryDesc": "Актуальные цены на отели для направления {{country}} — ищите по дате, количеству ночей и звёздам, выберите лучшее предложение.",
     "searching": "Идёт поиск...",
     "searchFailed": "Во время поиска произошла ошибка, попробуйте снова.",
@@ -387,7 +387,7 @@
     "backToAll": "Смотреть все направления",
     "home": "Главная",
     "tourSearchCrumb": "Поиск туров",
-    "faqTitle": "Часто задаваемые вопросы о турах в {{country}}"
+    "faqTitle": "Часто задаваемые вопросы о турах {{toCountry}}"
   },
   "offerSearchFilters": {
     "destination": "Направление",
@@ -1041,8 +1041,8 @@
     },
     "vizaCountryTitle": "Виза в {{country}} - Документы и условия | Travellab",
     "vizaCountryDesc": "Необходимые документы, сроки и стоимость визы в {{country}}. Быстрая и надёжная визовая услуга с Travellab. Подайте заявку сейчас!",
-    "tourSearchCountryTitle": "Туры в {{country}} — актуальные цены — Travellab",
-    "tourSearchCountryDesc": "Ищите актуальные цены на отели в {{country}} — фильтруйте по дате, количеству ночей и звёздам, выберите лучшее предложение.",
+    "tourSearchCountryTitle": "Туры {{toCountry}} — актуальные цены — Travellab",
+    "tourSearchCountryDesc": "Ищите актуальные цены на отели {{inCountry}} — фильтруйте по дате, количеству ночей и звёздам, выберите лучшее предложение.",
     "flightRouteTitle": "Авиабилеты {{origin}}–{{destination}} - Цены и Расписание | Travellab",
     "flightRouteDesc": "Цены на авиабилеты, время в пути и частота рейсов из Баку в {{destination}}. Найдите самое выгодное предложение с Travellab прямо сейчас!",
     "tourSubcategoryTitle": "Тур в {{place}} - выгодные пакеты | Travellab",

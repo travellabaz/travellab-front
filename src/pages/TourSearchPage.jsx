@@ -11,6 +11,7 @@ import { getDestinationPhotos } from '../api/photos';
 import { photoQueryForCountry } from '../utils/destinationPhotos';
 import { paginationItems } from '../utils/pagination';
 import HotelFilter from '../components/HotelFilter';
+import { destinationParams } from '../utils/ruGrammar';
 
 const RESULTS_PER_PAGE = 12;
 
@@ -49,7 +50,7 @@ const HERO_PHOTOS = [
 // country. `initialCountryName` is the matching Russian name, Kompas's own
 // join key against the live destinations list (see OfferSearchFilters.jsx).
 export default function TourSearchPage({ initialCountryName, countryLabel }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const translatedCountryLabel = countryLabel ? t(`countries.${countryLabel}`, countryLabel) : undefined;
 
   const SORT_OPTIONS = [
@@ -157,13 +158,13 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
                 items={[
                   { name: t('tourSearch.home'), to: '/' },
                   { name: t('tourSearch.tourSearchCrumb'), to: '/tours/search' },
-                  { name: t('tourSearch.countryTitle', { country: translatedCountryLabel }) },
+                  { name: t('tourSearch.countryTitle', destinationParams(translatedCountryLabel, i18n.language)) },
                 ]}
               />
             </div>
           )}
           <div className="tl-hero-badge">🔍 {translatedCountryLabel || t('tourSearch.liveSearchTag')}</div>
-          <h1>{translatedCountryLabel ? t('tourSearch.countryTitle', { country: translatedCountryLabel }) : t('tourSearch.defaultTitle')}</h1>
+          <h1>{translatedCountryLabel ? t('tourSearch.countryTitle', destinationParams(translatedCountryLabel, i18n.language)) : t('tourSearch.defaultTitle')}</h1>
           <p>
             {translatedCountryLabel
               ? t('tourSearch.countryDesc', { country: translatedCountryLabel })
@@ -268,7 +269,7 @@ export default function TourSearchPage({ initialCountryName, countryLabel }) {
       </section>
 
       {translatedCountryLabel && (
-        <FaqSection tag={t('toursFaq.tag')} title={t('tourSearch.faqTitle', { country: translatedCountryLabel })} items={t('toursFaq.items', { returnObjects: true })} />
+        <FaqSection tag={t('toursFaq.tag')} title={t('tourSearch.faqTitle', destinationParams(translatedCountryLabel || '', i18n.language))} items={t('toursFaq.items', { returnObjects: true })} />
       )}
     </main>
   );
