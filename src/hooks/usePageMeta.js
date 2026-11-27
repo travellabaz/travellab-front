@@ -221,7 +221,7 @@ export default function usePageMeta() {
     // (see data/blog/index.js) — no old AZ-only post pretends to have a
     // RU/EN version.
     const allLangs = rawPost
-      ? SUPPORTED_LANGUAGES.filter((l) => isPostAvailableInLocale(rawPost, l))
+      ? SUPPORTED_LANGUAGES.filter((l) => isPostAvailableInLocale(rawPost, l) && isBlogPostIndexable(rawPost, l))
       : SUPPORTED_LANGUAGES;
     // tours and Shop are AZ-only for Google (see prerender.mjs AZ_ONLY_KINDS): RU/EN stay out of hreflang
     const azOnlyPage =

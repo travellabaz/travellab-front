@@ -392,6 +392,8 @@ const AZ_ONLY_KINDS = new Set(['tour', 'tourItinerary', 'shopProduct', 'shopCate
 
 function indexedLangsOf(entry) {
   if (AZ_ONLY_KINDS.has(entry.kind)) return entry.langs.filter((l) => l === DEFAULT_LANGUAGE);
+  // a post's noindexed languages are left out of its hreflang alternates too
+  if (entry.kind === 'blog' && entry.post) return entry.langs.filter((l) => isBlogPostIndexable(entry.post, l));
   return entry.kind === 'static' ? entry.langs.filter((l) => isPathIndexedInLang(entry.bareRoutePath, l)) : entry.langs;
 }
 
@@ -443,7 +445,7 @@ async function main() {
   for (const post of blogPosts) {
     const langs = LANGUAGES.filter((l) => isPostAvailableInLocale(post, l));
     const barePathByLang = Object.fromEntries(langs.map((l) => [l, `/blog/${postSlugForLocale(post, l)}`]));
-    routeEntries.push({ bareRoutePath: `/blog/${post.slug}`, barePathByLang, kind: 'blog', slug: post.slug, langs });
+    routeEntries.push({ bareRoutePath: `/blog/${post.slug}`, barePathByLang, kind: 'blog', slug: post.slug, post, langs });
   }
   for (const country of VIZA_COUNTRIES) {
     const barePathByLang = Object.fromEntries(LANGUAGES.map((l) => [l, `/viza/${vizaCountrySlug(country, l)}`]));
