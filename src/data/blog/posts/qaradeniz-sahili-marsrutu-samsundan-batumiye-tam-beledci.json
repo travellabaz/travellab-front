@@ -479,5 +479,8 @@
         "text": "As a premier Baku-based travel agency, Travellab specializes in designing bespoke itineraries that connect regional travelers with unforgettable destinations across Turkey, the Caucasus, and beyond. Every custom booking earns valuable points through our exclusive [Labpoint bonus program](/labpoint), unlocking premium perks and savings for your future travels. Get in touch with our travel specialists today, and let us map out your ultimate Black Sea coastal expedition."
       }
     ]
-  }
+  },
+  "noindexLangs": [
+    "ru"
+  ]
 }

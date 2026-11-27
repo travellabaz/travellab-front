@@ -427,5 +427,8 @@
         "text": "Visit our Baku office or connect with our advisors online to turn your dream of steaming wilderness pools into a tailored itinerary. Let the earth's natural warmth soothe your stress while you gaze out over untouched mountain ranges, knowing every flight, transfer, and stay has been meticulously crafted for your comfort."
       }
     ]
-  }
+  },
+  "noindexLangs": [
+    "ru"
+  ]
 }

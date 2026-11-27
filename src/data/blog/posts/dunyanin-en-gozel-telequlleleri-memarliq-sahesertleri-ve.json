@@ -379,5 +379,8 @@
         "text": "Every journey booked with Travellab also earns points toward your travel profile through our [Labpoint bonus program](/labpoint), unlocking valuable rewards on future getaways. Contact our team in Baku today, and let us design your next unforgettable adventure above the clouds."
       }
     ]
-  }
+  },
+  "noindexLangs": [
+    "ru"
+  ]
 }

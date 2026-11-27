@@ -21,6 +21,7 @@ import { truncate } from './src/utils/text.js';
 import { destinationParams, toAccusative } from './src/utils/ruGrammar.js';
 import { slugify } from './src/utils/slugify.js';
 import { isTourExpired } from './src/utils/tourDate.js';
+import { isPathIndexedInLang } from './src/data/pageLangs.js';
 import { absoluteImage, blogAuthor, blogDateTime, isBlogPostIndexable, PUBLISHER_LOGO } from './src/data/blog/seo.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -390,7 +391,8 @@ function buildBreadcrumbJson(items) {
 const AZ_ONLY_KINDS = new Set(['tour', 'tourItinerary', 'shopProduct', 'shopCategory']);
 
 function indexedLangsOf(entry) {
-  return AZ_ONLY_KINDS.has(entry.kind) ? entry.langs.filter((l) => l === DEFAULT_LANGUAGE) : entry.langs;
+  if (AZ_ONLY_KINDS.has(entry.kind)) return entry.langs.filter((l) => l === DEFAULT_LANGUAGE);
+  return entry.kind === 'static' ? entry.langs.filter((l) => isPathIndexedInLang(entry.bareRoutePath, l)) : entry.langs;
 }
 
 function buildHreflangTags(entry, availableLangs, extraQuery = '') {
@@ -705,6 +707,14 @@ async function main() {
       const outFile = isHome ? path.join(distDir, 'index.html') : path.join(distDir, `${localizedRoutePath}.html`);
       fs.mkdirSync(path.dirname(outFile), { recursive: true });
       fs.writeFileSync(outFile, html);
+      // the same page at the slash address (/tours/123/ answered by tours/123/index.html) with 200,
+      // its canonical still the address without the slash: browsers that cached an old
+      // "no slash -> slash" 301 would loop forever on a "slash -> no slash" 301
+      if (!isHome) {
+        const slashFile = path.join(distDir, localizedRoutePath, 'index.html');
+        fs.mkdirSync(path.dirname(slashFile), { recursive: true });
+        fs.writeFileSync(slashFile, html);
+      }
       renderCount += 1;
     }
   }

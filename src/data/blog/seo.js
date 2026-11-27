@@ -6,6 +6,8 @@
 // (post.enIndexed): EN posts bring no customers from Azerbaijan.
 export function isBlogPostIndexable(post, lang) {
   if (!post || post.noindex) return false;
+  // one language of a post on a general topic (e.g. its RU version) stays out of Google
+  if (Array.isArray(post.noindexLangs) && post.noindexLangs.includes(lang)) return false;
   if (lang === 'en' && !post.enIndexed) return false;
   return true;
 }

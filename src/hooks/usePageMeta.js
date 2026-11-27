@@ -8,6 +8,7 @@ import { useTours } from '../context/ToursContext';
 import { truncate } from '../utils/text';
 import { getVizaCountryBySlug, vizaCountrySlug } from '../data/vizaCountries';
 import { getTourSearchCountryBySlug } from '../data/tourSearchCountries';
+import { isPathIndexedInLang } from '../data/pageLangs';
 import { getParentBySlug, getSubcategory, tourParentSlug, tourSubSlug } from '../data/tourSubcategories';
 import { getFlightRouteBySlug } from '../data/flightRoutes';
 import { getProductBySku } from '../data/shop';
@@ -208,7 +209,8 @@ export default function usePageMeta() {
     setMeta(
       'meta-robots',
       'content',
-      tourNotFound || tourItineraryNotFound || itineraryStale || blogNoindex || searchParamsNoindex || azOnlyNoindex
+      tourNotFound || tourItineraryNotFound || itineraryStale || blogNoindex || searchParamsNoindex || azOnlyNoindex ||
+        !isPathIndexedInLang(path, lang)
         ? 'noindex, follow'
         : 'index, follow'
     );
@@ -224,7 +226,9 @@ export default function usePageMeta() {
     // tours and Shop are AZ-only for Google (see prerender.mjs AZ_ONLY_KINDS): RU/EN stay out of hreflang
     const azOnlyPage =
       (!!tourIdMatch && tourIdMatch[1] !== 'search') || !!tourItineraryMatch || !!shopProductMatch;
-    const availableLangs = azOnlyPage ? allLangs.filter((l) => l === DEFAULT_LANGUAGE) : allLangs;
+    const availableLangs = (azOnlyPage ? allLangs.filter((l) => l === DEFAULT_LANGUAGE) : allLangs).filter((l) =>
+      isPathIndexedInLang(path, l)
+    );
     // Each language's alternate points at that language's own slug for a
     // blog post, not the shared AZ one.
     const hreflangBarePath = (l) =>
