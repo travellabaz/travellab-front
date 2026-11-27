@@ -33,5 +33,7 @@ export function trackSignUp(method) {
     // no storage: the module flag below is the guard
   }
   signUpSent = true;
-  pushDataLayer({ event: 'sign_up', method });
+  // "tl_sign_up", not "sign_up": the GTM tag sends GA4's own sign_up through gtag, which writes
+  // into this same dataLayer — a "sign_up" here would fire that tag again, in a loop
+  pushDataLayer({ event: 'tl_sign_up', method });
 }
