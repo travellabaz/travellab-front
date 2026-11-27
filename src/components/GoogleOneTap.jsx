@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useModals } from '../context/ModalContext';
 import { GOOGLE_CLIENT_ID } from '../config/google';
 import * as authApi from '../api/auth';
-import { pushDataLayer } from '../utils/analytics';
+import { trackSignUp } from '../utils/analytics';
 
 // Proactively suggests Google sign-in via Google's own "One Tap" UI — a
 // small corner prompt that appears on its own for a visitor with an active
@@ -26,7 +26,7 @@ export default function GoogleOneTap() {
         const { ok, data } = await authApi.googleLogin(response.credential);
         if (!ok) return;
         // only an account created by this sign-in counts as a sign-up
-        if (data.isNewUser === true) pushDataLayer({ event: 'sign_up', method: 'google' });
+        if (data.isNewUser === true) trackSignUp('google');
         await loginSuccess(data.tokens.accessToken, data.tokens.refreshToken);
       } catch {
         // Passive suggestion, not a form the user is actively filling in —

@@ -16,3 +16,22 @@ export function pushDataLayer(event) {
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(event);
 }
+
+// sign_up goes out at most once per browser session: a page reload, a second
+// Google callback or a re-render never sends it again. The flag lives in
+// sessionStorage; where the storage is blocked, a module flag still keeps it
+// to one per page.
+const SIGN_UP_FLAG = 'tl_signup_sent';
+let signUpSent = false;
+
+export function trackSignUp(method) {
+  if (typeof window === 'undefined' || signUpSent) return;
+  try {
+    if (window.sessionStorage.getItem(SIGN_UP_FLAG)) return;
+    window.sessionStorage.setItem(SIGN_UP_FLAG, '1');
+  } catch {
+    // no storage: the module flag below is the guard
+  }
+  signUpSent = true;
+  pushDataLayer({ event: 'sign_up', method });
+}

@@ -4,7 +4,7 @@ import { useModals } from '../context/ModalContext';
 import { useAuth } from '../context/AuthContext';
 import * as authApi from '../api/auth';
 import { GOOGLE_CLIENT_ID } from '../config/google';
-import { pushDataLayer } from '../utils/analytics';
+import { trackSignUp } from '../utils/analytics';
 
 const OTP_SECONDS = 120;
 
@@ -114,7 +114,7 @@ export default function AuthModal() {
         return;
       }
       // only an account created by this sign-in counts as a sign-up, not a returning client
-      if (data.isNewUser === true) pushDataLayer({ event: 'sign_up', method: 'google' });
+      if (data.isNewUser === true) trackSignUp('google');
       closeAuth();
       await loginSuccess(data.tokens.accessToken, data.tokens.refreshToken);
     } catch {
@@ -229,7 +229,7 @@ export default function AuthModal() {
         countdown.start(0);
         if (sessionRef.current.flow === 'reg') {
           // the account exists only now, after the OTP was confirmed
-          pushDataLayer({ event: 'sign_up', method: 'phone' });
+          trackSignUp('phone');
           setSuccessMsg(t('auth.successRegisterMsg'));
           setSuccessAction(() => () => {
             setTab('login');
