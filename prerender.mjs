@@ -709,14 +709,6 @@ async function main() {
       const outFile = isHome ? path.join(distDir, 'index.html') : path.join(distDir, `${localizedRoutePath}.html`);
       fs.mkdirSync(path.dirname(outFile), { recursive: true });
       fs.writeFileSync(outFile, html);
-      // the same page at the slash address (/tours/123/ answered by tours/123/index.html) with 200,
-      // its canonical still the address without the slash: browsers that cached an old
-      // "no slash -> slash" 301 would loop forever on a "slash -> no slash" 301
-      if (!isHome) {
-        const slashFile = path.join(distDir, localizedRoutePath, 'index.html');
-        fs.mkdirSync(path.dirname(slashFile), { recursive: true });
-        fs.writeFileSync(slashFile, html);
-      }
       renderCount += 1;
     }
   }
